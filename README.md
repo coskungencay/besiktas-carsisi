@@ -227,9 +227,18 @@ Talimatta açık belirtilmeyen noktalarda alınan kararlar:
     sabit bir nötr arayüz kullanır — aksi halde kötü bir renk seçimi paneli
     okunamaz hale getirebilirdi.
 
-12. **`better-sqlite3` sürümü.** 13.x kullanıldı (prebuilt binary, Node 22+).
-    Better Auth peer olarak 12.x istiyor; bu yalnızca kendi kysely adaptörü için
-    geçerli, biz Drizzle adaptörünü kullandığımız için uyarı zararsızdır.
+12. **`better-sqlite3` sürümü ve Docker taban imajı.** 13.x kullanıldı — bu sürüm
+    prebuilt binary'leri paketin içinde taşır, yani Docker build'inde `node-gyp`
+    derlemesi gerekmez. Ancak bu binary **GLIBC ≥ 2.38** ister; bu yüzden taban
+    imaj `node:22-trixie-slim` (Debian 13, GLIBC 2.41). `bookworm-slim`'e
+    (GLIBC 2.36) düşürürseniz container açılışta `ERR_DLOPEN_FAILED` verir.
+    Ayrıca Better Auth peer olarak 12.x istiyor; bu yalnızca kendi kysely
+    adaptörü için geçerli, biz Drizzle adaptörünü kullandığımız için uyarı zararsızdır.
+
+13. **Build sırasında gizli anahtar aranmaz.** `BETTER_AUTH_SECRET` production'da
+    zorunludur ama `next build` sırasında (NEXT_PHASE = phase-production-build)
+    kontrol atlanır — imaja sır gömülmemesi için. Eksikse container **çalışma
+    anında ilk import'ta** hata verip durur (fail-fast).
 
 ---
 

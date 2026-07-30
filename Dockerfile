@@ -3,7 +3,7 @@
 ###############################################################################
 # 1) deps — sadece bagimliliklar (katman onbellegi icin ayri)
 ###############################################################################
-FROM node:22-bookworm-slim AS deps
+FROM node:22-trixie-slim AS deps
 WORKDIR /app
 
 RUN corepack enable
@@ -19,7 +19,7 @@ RUN pnpm install --frozen-lockfile
 ###############################################################################
 # 2) builder — Next.js standalone ciktisi
 ###############################################################################
-FROM node:22-bookworm-slim AS builder
+FROM node:22-trixie-slim AS builder
 WORKDIR /app
 
 RUN corepack enable
@@ -39,7 +39,7 @@ RUN pnpm build
 ###############################################################################
 # 3) runner — minimal calisma imaji
 ###############################################################################
-FROM node:22-bookworm-slim AS runner
+FROM node:22-trixie-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production \

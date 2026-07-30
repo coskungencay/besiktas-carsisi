@@ -5,6 +5,14 @@
 
 export const IS_PROD = process.env.NODE_ENV === "production";
 
+/**
+ * `next build` sirasinda NODE_ENV zaten "production" olur ama calisma
+ * ortaminin gizli anahtarlari HENUZ yoktur (ve olmamalidir — imaja sir gomulmez).
+ * Bu yuzden "zorunlu env" kontrolleri build asamasinda atlanir, container
+ * ayaga kalkarken ilk import'ta uygulanir.
+ */
+const IS_BUILD_PHASE = process.env.NEXT_PHASE === "phase-production-build";
+
 export function appUrl(): string {
   const raw =
     process.env.NEXT_PUBLIC_APP_URL?.trim() ||
@@ -20,11 +28,18 @@ export function uploadsDir(): string {
 export function authSecret(): string {
   const secret = process.env.BETTER_AUTH_SECRET?.trim();
   if (secret && secret.length >= 16) return secret;
-  if (IS_PROD) {
+
+  if (IS_PROD && !IS_BUILD_PHASE) {
     throw new Error(
       "BETTER_AUTH_SECRET tanimli degil (en az 16 karakter olmali). .env dosyanizi kontrol edin.",
     );
   }
+
+  if (IS_BUILD_PHASE) {
+    // Build ciktisina gomulmez; container calisirken gercek deger okunur.
+    return "build-phase-placeholder-secret-not-used-at-runtime";
+  }
+
   return "development-only-insecure-secret-change-me";
 }
 
