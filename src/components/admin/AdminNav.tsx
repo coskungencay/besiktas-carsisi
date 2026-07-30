@@ -12,6 +12,7 @@ const LINKS = [
   { href: "/admin/menu", label: "Menü" },
   { href: "/admin/galeri", label: "Galeri" },
   { href: "/admin/mesajlar", label: "Mesajlar" },
+  { href: "/admin/diller", label: "Diller & Çeviriler" },
   { href: "/admin/tema", label: "Tema & Renkler" },
 ] as const;
 

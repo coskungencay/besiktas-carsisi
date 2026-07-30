@@ -46,6 +46,10 @@ Claude Design'a brief verirken bunları belirtmek dönüşümü çok kısaltır:
   Menu (kategori → ürün listesi), Gallery (grid), Contact (bilgi + form)"
 - "Semantik HTML kullan: section, h1/h2/h3 hiyerarşisi, ul/li, dl/dt/dd"
 - "Harici font veya CDN görseli kullanma"
+- "Site 5 dilde yayınlanacak (TR/EN/ES/DE/AR): metin uzunluğu %40 artabilir,
+  başlıklar ve butonlar taşmasın — sabit yükseklik/genişlik verme"
+- "Arapça için sağdan sola (RTL) çalışmalı: ml/mr, pl/pr, left/right, text-left
+  yerine ms/me, ps/pe, start/end, text-start kullan"
 
 ---
 

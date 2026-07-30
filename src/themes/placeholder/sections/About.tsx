@@ -1,8 +1,9 @@
 import { Reveal } from "@/components/motion/Reveal";
+import { fill } from "@/i18n";
 import type { SectionProps } from "@/themes/types";
 
 export default function About({ content }: SectionProps) {
-  const { about, name, openingHours } = content;
+  const { about, name, openingHours, t } = content;
   if (!about && openingHours.length === 0) return null;
 
   const paragraphs = about
@@ -22,13 +23,13 @@ export default function About({ content }: SectionProps) {
             id="about-title"
             className="font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
           >
-            Hakkımızda
+            {t.about.title}
           </h2>
           <div className="mt-6 space-y-4 text-base leading-relaxed text-[var(--brand-ink-muted)] text-pretty sm:text-lg">
             {paragraphs.length > 0 ? (
               paragraphs.map((p, i) => <p key={i}>{p}</p>)
             ) : (
-              <p>{name} hakkında bilgi yakında eklenecek.</p>
+              <p>{fill(t.about.placeholder, { name })}</p>
             )}
           </div>
         </Reveal>
@@ -37,7 +38,7 @@ export default function About({ content }: SectionProps) {
           <Reveal delay={0.1}>
             <div className="rounded-[var(--radius-lg)] border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-6 shadow-[var(--shadow-sm)]">
               <h3 className="text-sm font-semibold tracking-[0.14em] text-[var(--brand-primary)] uppercase">
-                Çalışma Saatleri
+                {t.about.openingHours}
               </h3>
               <dl className="mt-5 space-y-2.5 text-sm">
                 {openingHours.map((h) => (
@@ -47,7 +48,13 @@ export default function About({ content }: SectionProps) {
                   >
                     <dt className="font-medium">{h.dayLabel}</dt>
                     <dd className="tabular-nums text-[var(--brand-ink-muted)]">
-                      {h.isClosed ? "Kapalı" : `${h.openTime} – ${h.closeTime}`}
+                      {h.isClosed ? (
+                        t.hours.closed
+                      ) : (
+                        <span dir="ltr">
+                          {h.openTime} – {h.closeTime}
+                        </span>
+                      )}
                     </dd>
                   </div>
                 ))}

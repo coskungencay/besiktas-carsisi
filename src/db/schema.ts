@@ -128,10 +128,52 @@ export const siteSettings = sqliteTable("site_settings", {
     .$type<Record<string, string>>()
     .default({}),
   themeSlug: text("theme_slug").notNull().default("placeholder"),
+  /**
+   * JSON dizisi: sitede secilebilir diller, orn. ["tr","en"].
+   * Ilk eleman varsayilan dildir. Bos dizi = sadece NEXT_PUBLIC_DEFAULT_LOCALE.
+   */
+  enabledLocales: text("enabled_locales", { mode: "json" })
+    .notNull()
+    .$type<string[]>()
+    .default([]),
   updatedAt: integer("updated_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
 });
+
+/**
+ * Musteri iceriginin dil cevirileri.
+ *
+ * Polimorfik (namespace + refId) tutuldu ki yeni ceviri alani eklemek
+ * migration gerektirmesin. Ceviri yoksa varsayilan dildeki asil deger kullanilir.
+ *
+ *   namespace      refId              field
+ *   -------------  -----------------  --------------------------
+ *   settings       0 (tekil)          name | tagline | about | address
+ *   menu_category  menu_categories.id name
+ *   menu_item      menu_items.id      name | description
+ *   gallery        gallery_images.id  alt
+ */
+export const translations = sqliteTable(
+  "translations",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    locale: text("locale").notNull(),
+    namespace: text("namespace").notNull(),
+    refId: integer("ref_id").notNull().default(0),
+    field: text("field").notNull(),
+    value: text("value").notNull().default(""),
+  },
+  (t) => [
+    uniqueIndex("translations_unique_idx").on(
+      t.locale,
+      t.namespace,
+      t.refId,
+      t.field,
+    ),
+    index("translations_lookup_idx").on(t.locale, t.namespace),
+  ],
+);
 
 export const openingHours = sqliteTable(
   "opening_hours",
@@ -230,3 +272,14 @@ export type MenuCategoryRow = typeof menuCategories.$inferSelect;
 export type MenuItemRow = typeof menuItems.$inferSelect;
 export type GalleryImageRow = typeof galleryImages.$inferSelect;
 export type ContactMessageRow = typeof contactMessages.$inferSelect;
+export type TranslationRow = typeof translations.$inferSelect;
+
+/** translations.namespace icin gecerli degerler. */
+export const TRANSLATION_NAMESPACES = [
+  "settings",
+  "menu_category",
+  "menu_item",
+  "gallery",
+] as const;
+
+export type TranslationNamespace = (typeof TRANSLATION_NAMESPACES)[number];

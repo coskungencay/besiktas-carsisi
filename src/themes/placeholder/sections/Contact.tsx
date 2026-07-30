@@ -1,36 +1,45 @@
 import { ContactForm } from "@/components/site/ContactForm";
 import { Reveal } from "@/components/motion/Reveal";
+import { fill } from "@/i18n";
 import type { SectionProps } from "@/themes/types";
 
 export default function Contact({ content }: SectionProps) {
-  const { contact, name } = content;
+  const { contact, name, t } = content;
 
   const rows = [
     contact.address
-      ? { label: "Adres", value: contact.address, href: contact.mapsUrl }
+      ? { label: t.contact.address, value: contact.address, href: contact.mapsUrl, ltr: false }
       : null,
     contact.phone
-      ? { label: "Telefon", value: contact.phone, href: contact.phoneHref }
+      ? { label: t.contact.phone, value: contact.phone, href: contact.phoneHref, ltr: true }
       : null,
     contact.whatsapp
       ? {
-          label: "WhatsApp",
+          label: t.contact.whatsapp,
           value: contact.whatsapp,
           href: contact.whatsappHref,
+          ltr: true,
         }
       : null,
     contact.email
-      ? { label: "E-posta", value: contact.email, href: `mailto:${contact.email}` }
+      ? {
+          label: t.contact.email,
+          value: contact.email,
+          href: `mailto:${contact.email}`,
+          ltr: true,
+        }
       : null,
     contact.instagram
       ? {
-          label: "Instagram",
+          label: t.contact.instagram,
           value: `@${contact.instagram}`,
           href: contact.instagramHref,
+          ltr: true,
         }
       : null,
-  ].filter((r): r is { label: string; value: string; href: string } =>
-    Boolean(r),
+  ].filter(
+    (r): r is { label: string; value: string; href: string; ltr: boolean } =>
+      Boolean(r),
   );
 
   return (
@@ -45,11 +54,10 @@ export default function Contact({ content }: SectionProps) {
             id="contact-title"
             className="font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
           >
-            İletişim
+            {t.contact.title}
           </h2>
           <p className="mt-4 max-w-md text-base leading-relaxed text-[var(--brand-ink-muted)] text-pretty">
-            {name} ekibine ulaşmak, rezervasyon ya da özel sipariş için
-            yazabilirsiniz.
+            {fill(t.contact.intro, { name })}
           </p>
 
           {rows.length > 0 ? (
@@ -59,7 +67,10 @@ export default function Contact({ content }: SectionProps) {
                   <dt className="font-semibold tracking-[0.12em] text-[var(--brand-primary)] uppercase">
                     {row.label}
                   </dt>
-                  <dd className="mt-1 text-[var(--brand-ink-muted)]">
+                  <dd
+                    className="mt-1 text-[var(--brand-ink-muted)]"
+                    {...(row.ltr ? { dir: "ltr" as const } : {})}
+                  >
                     {row.href ? (
                       <a
                         href={row.href}
@@ -82,7 +93,7 @@ export default function Contact({ content }: SectionProps) {
 
         <Reveal delay={0.1}>
           <div className="rounded-[var(--radius-lg)] border border-[var(--brand-border)] bg-[var(--brand-surface)] p-6 shadow-[var(--shadow-md)] sm:p-8">
-            <ContactForm />
+            <ContactForm locale={content.locale} messages={t} />
           </div>
         </Reveal>
       </div>

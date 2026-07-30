@@ -39,6 +39,7 @@ Sol taraftaki menüden 7 bölüme ulaşırsınız:
 | **Menü** | Kategoriler ve ürünler |
 | **Galeri** | Mekân fotoğrafları |
 | **Mesajlar** | Siteden size gelen iletişim formu mesajları |
+| **Diller & Çeviriler** | Sitenizin hangi dillerde yayınlanacağı ve metin çevirileri |
 | **Tema & Renkler** | Sitenin renkleri |
 
 Her sayfada değişiklikleri **Kaydet** butonuna bastığınızda site **anında** güncellenir.
@@ -193,7 +194,60 @@ neredeyse hiç spam düşmez.
 
 ---
 
-## 6. Tema & Renkler
+## 6. Diller & Çeviriler
+
+Siteniz 5 dilde yayınlanabilir: **Türkçe, İngilizce, İspanyolca, Almanca, Arapça**.
+Turistik bir bölgedeyseniz bu, doğrudan müşteri kazandırır.
+
+### Adım 1 — Hangi dilleri açacaksınız?
+
+Üstteki **"Sitedeki diller"** bölümünden istediklerinizi işaretleyip
+**Dilleri Kaydet**'e basın.
+
+> 💡 **Sadece gerçekten çevireceğiniz dilleri açın.** Bir dili açıp çeviri
+> girmezseniz o sayfada metinler Türkçe görünür — yabancı ziyaretçi için
+> kafa karıştırıcı olur.
+
+Varsayılan diliniz kapatılamaz. Tek dil açıksa sitede dil seçici görünmez.
+
+### Adım 2 — Çevirileri girin
+
+Alttaki sekmelerden bir dil seçin (İngilizce, İspanyolca…). Karşınıza sitenizdeki
+tüm metinler gelir:
+
+- **Genel bilgiler** — işletme adı, slogan, hakkımızda yazısı, adres
+- **Menü kategorileri** — kategori adları
+- **Menü ürünleri** — ürün adları ve açıklamaları
+- **Galeri açıklamaları** — fotoğraf açıklamaları
+
+Her alanın üstünde **"Orijinal:"** yazısıyla Türkçe metni görürsünüz. Altındaki
+kutuya o dildeki karşılığını yazın ve **Çevirileri Kaydet**'e basın.
+
+### Boş bıraktığınız alanlar ne olur?
+
+Otomatik olarak **Türkçe metni** gösterir. Yani:
+
+- Yarım kalmış çeviri siteyi asla bozmaz
+- Önce en önemli yerleri (slogan, hakkımızda, kategori adları) çevirebilirsiniz
+- Bir çeviriyi silmek isterseniz kutuyu boşaltıp kaydedin — Türkçe'ye geri döner
+
+### Nelerin çevirisini girmenize gerek YOK?
+
+Sitedeki sabit yazılar — "Menü", "Hakkımızda", "İletişim", "Mesaj Gönder",
+gün adları, "Kapalı" gibi — **otomatik olarak** her dilde doğru görünür.
+Siz sadece kendi işletmenize ait metinleri çevirirsiniz.
+
+### Ziyaretçi hangi dili görür?
+
+Sitenize ilk girildiğinde tarayıcı dili otomatik algılanır. Ziyaretçi sağ üstteki
+dil seçiciden istediği zaman değiştirebilir.
+
+> **Arapça hakkında:** Arapça seçildiğinde sayfa otomatik olarak sağdan sola
+> düzene geçer. Telefon numaraları ve saatler yine soldan sağa okunur.
+
+---
+
+## 7. Tema & Renkler
 
 Sitenizin renklerini buradan değiştirirsiniz.
 
@@ -226,6 +280,14 @@ Görünmüyorsa temanız sabitlenmiş demektir — değiştirmek için sitenizi 
 ---
 
 ## Sık sorulan sorular
+
+**Menümü İngilizce'ye çevirdim ama sitede Türkçe görünüyor.**
+Sağ üstteki dil seçiciden İngilizce'yi seçtiğinizden emin olun. Türkçe sayfada
+Türkçe metinler görünür — bu doğrudur.
+
+**Yeni bir ürün ekledim, çevirisi otomatik gelir mi?**
+Hayır. Yeni ürün eklediğinizde **Diller & Çeviriler** sayfasına gidip o ürünün
+çevirisini de girmeniz gerekir. Girmezseniz o dilde Türkçe adı görünür.
 
 **Değişiklik yaptım ama sitede görünmüyor.**
 Tarayıcınız eski sayfayı hatırlıyor olabilir. Sayfayı **Ctrl+F5** (Mac'te **Cmd+Shift+R**)

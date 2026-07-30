@@ -51,10 +51,11 @@ body {
   outline-offset: 2px;
 }
 
-/* Icerige atlama linki. */
+/* Icerige atlama linki. inset-inline-start kullaniliyor ki RTL'de (Arapca)
+   otomatik olarak sagda belirsin. */
 .skip-link {
   position: absolute;
-  left: 0.75rem;
+  inset-inline-start: 0.75rem;
   top: -4rem;
   z-index: 100;
   border-radius: var(--radius-sm);

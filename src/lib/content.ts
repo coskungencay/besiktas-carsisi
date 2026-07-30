@@ -9,10 +9,20 @@ import {
   menuItems,
   openingHours,
   siteSettings,
+  translations,
   type SiteSettingsRow,
+  type TranslationNamespace,
 } from "@/db/schema";
+import { getMessages } from "@/i18n";
 import {
-  DAY_LABELS,
+  DEFAULT_LOCALE,
+  LOCALE_META,
+  LOCALES,
+  isLocale,
+  type Locale,
+} from "@/i18n/config";
+import {
+  dayLabel,
   formatPrice,
   instagramHandle,
   instagramHref,
@@ -21,7 +31,7 @@ import {
   whatsappHref,
 } from "@/lib/format";
 import { resolveThemeSlug } from "@/themes/registry";
-import type { SiteContent } from "@/themes/types";
+import type { LocaleOption, SiteContent } from "@/themes/types";
 
 const EMPTY_SETTINGS: SiteSettingsRow = {
   id: SINGLETON_ID,
@@ -40,6 +50,7 @@ const EMPTY_SETTINGS: SiteSettingsRow = {
   heroImageUrl: "",
   brandColors: {},
   themeSlug: "placeholder",
+  enabledLocales: [],
   updatedAt: new Date(0),
 };
 
@@ -62,6 +73,82 @@ export function getSettings(): SiteSettingsRow {
 
   return inserted ?? EMPTY_SETTINGS;
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                   Diller                                    */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Sitede acik olan diller. Ilk eleman varsayilan dildir.
+ * Panelde hic dil secilmemisse yalnizca varsayilan dil aciktir.
+ */
+export function getEnabledLocales(settings?: SiteSettingsRow): Locale[] {
+  const raw = (settings ?? getSettings()).enabledLocales;
+  const cleaned = Array.isArray(raw) ? raw.filter(isLocale) : [];
+
+  if (cleaned.length === 0) return [DEFAULT_LOCALE];
+
+  // Varsayilan dil her zaman acik ve her zaman ilk sirada olmali.
+  const ordered = [
+    DEFAULT_LOCALE,
+    ...LOCALES.filter((l) => l !== DEFAULT_LOCALE && cleaned.includes(l)),
+  ];
+  return ordered;
+}
+
+export function isLocaleEnabled(locale: string): locale is Locale {
+  return isLocale(locale) && getEnabledLocales().includes(locale);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                  Ceviriler                                  */
+/* -------------------------------------------------------------------------- */
+
+type TranslationMap = Map<string, string>;
+
+function translationKey(
+  namespace: TranslationNamespace,
+  refId: number,
+  field: string,
+): string {
+  return `${namespace}:${refId}:${field}`;
+}
+
+/** Bir dile ait tum cevirileri tek sorguda okur. */
+export function getTranslations(locale: Locale): TranslationMap {
+  const map: TranslationMap = new Map();
+  if (locale === DEFAULT_LOCALE) return map;
+
+  const rows = db
+    .select()
+    .from(translations)
+    .where(eq(translations.locale, locale))
+    .all();
+
+  for (const row of rows) {
+    if (row.value.trim().length === 0) continue;
+    map.set(
+      translationKey(row.namespace as TranslationNamespace, row.refId, row.field),
+      row.value,
+    );
+  }
+  return map;
+}
+
+/** Ceviri varsa onu, yoksa varsayilan dildeki asil degeri dondurur. */
+function tr(
+  map: TranslationMap,
+  namespace: TranslationNamespace,
+  refId: number,
+  field: string,
+  fallback: string,
+): string {
+  return map.get(translationKey(namespace, refId, field)) ?? fallback;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                DB okuyuculari                               */
+/* -------------------------------------------------------------------------- */
 
 export function getOpeningHours() {
   return db
@@ -95,24 +182,42 @@ export function getGalleryImages() {
     .all();
 }
 
+/* -------------------------------------------------------------------------- */
+/*                          Temalarin gordugu tek veri                         */
+/* -------------------------------------------------------------------------- */
+
 /**
- * Temalarin gordugu tek veri kaynagi.
- * Burasi DB satirlarini sunuma hazir SiteContent'e cevirir; tema kodu
- * hicbir zaman DB'ye dokunmaz.
+ * DB satirlarini sunuma hazir SiteContent'e cevirir.
+ * Ceviriler burada uygulanir; tema kodu ne DB'ye ne de ceviri tablosuna dokunur.
  */
-export function getSiteContent(): SiteContent {
+export function getSiteContent(locale: Locale = DEFAULT_LOCALE): SiteContent {
   const settings = getSettings();
   const hours = getOpeningHours();
   const categories = getMenuCategories();
   const items = getMenuItems();
   const gallery = getGalleryImages();
+  const map = getTranslations(locale);
 
+  const enabled = getEnabledLocales(settings);
+  const locales: LocaleOption[] = enabled.map((code) => ({
+    locale: code,
+    label: LOCALE_META[code].nativeLabel,
+    href: `/${code}`,
+    isActive: code === locale,
+  }));
+
+  const name = tr(map, "settings", 0, "name", settings.name) || "İşletme Adı";
   const handle = instagramHandle(settings.instagram);
 
   return {
-    name: settings.name || "İşletme Adı",
-    tagline: settings.tagline,
-    about: settings.about,
+    locale,
+    dir: LOCALE_META[locale].dir,
+    t: getMessages(locale),
+    locales,
+
+    name,
+    tagline: tr(map, "settings", 0, "tagline", settings.tagline),
+    about: tr(map, "settings", 0, "about", settings.about),
     logoUrl: settings.logoUrl,
     heroImageUrl: settings.heroImageUrl,
     contact: {
@@ -121,7 +226,7 @@ export function getSiteContent(): SiteContent {
       whatsapp: settings.whatsapp,
       whatsappHref: whatsappHref(settings.whatsapp),
       email: settings.email,
-      address: settings.address,
+      address: tr(map, "settings", 0, "address", settings.address),
       lat: settings.lat,
       lng: settings.lng,
       mapsUrl: settings.mapsUrl,
@@ -130,21 +235,27 @@ export function getSiteContent(): SiteContent {
     },
     openingHours: hours.map((h) => ({
       dayOfWeek: h.dayOfWeek,
-      dayLabel: DAY_LABELS[h.dayOfWeek] ?? "",
+      dayLabel: dayLabel(h.dayOfWeek, locale),
       openTime: h.openTime,
       closeTime: h.closeTime,
       isClosed: h.isClosed,
     })),
     menu: categories.map((category) => ({
       id: category.id,
-      name: category.name,
+      name: tr(map, "menu_category", category.id, "name", category.name),
       items: items
         .filter((item) => item.categoryId === category.id && item.isActive)
         .map((item) => ({
           id: item.id,
-          name: item.name,
-          description: item.description,
-          price: formatPrice(item.price),
+          name: tr(map, "menu_item", item.id, "name", item.name),
+          description: tr(
+            map,
+            "menu_item",
+            item.id,
+            "description",
+            item.description,
+          ),
+          price: formatPrice(item.price, locale),
           priceValue: item.price,
           imageUrl: item.imageUrl,
           thumbUrl: thumbUrl(item.imageUrl),
@@ -155,7 +266,7 @@ export function getSiteContent(): SiteContent {
       id: image.id,
       url: image.url,
       thumbUrl: thumbUrl(image.url),
-      alt: image.alt,
+      alt: tr(map, "gallery", image.id, "alt", image.alt),
     })),
     brandColors: settings.brandColors ?? {},
     themeSlug: resolveThemeSlug(settings.themeSlug),

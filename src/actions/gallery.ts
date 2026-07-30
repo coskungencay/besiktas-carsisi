@@ -12,12 +12,13 @@ import {
   fromZodError,
   ok,
 } from "@/lib/action-result";
+import { purgeTranslations } from "@/actions/locales";
 import { requirePanelUser } from "@/lib/session";
 import { deleteImage, storeImage, UploadError } from "@/lib/uploads";
 import { galleryImageSchema, reorderSchema } from "@/lib/validators";
 
 function revalidateGallery() {
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   revalidatePath("/admin/galeri");
 }
 
@@ -105,6 +106,7 @@ export async function deleteGalleryImageAction(
     .get();
 
   db.delete(galleryImages).where(eq(galleryImages.id, id)).run();
+  await purgeTranslations("gallery", id);
   if (existing?.url) await deleteImage(existing.url);
 
   revalidateGallery();

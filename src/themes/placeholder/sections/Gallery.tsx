@@ -1,11 +1,14 @@
 import Image from "next/image";
 
 import { Reveal } from "@/components/motion/Reveal";
+import { fill } from "@/i18n";
 import type { SectionProps } from "@/themes/types";
 
 export default function Gallery({ content }: SectionProps) {
   const images = content.gallery;
   if (images.length === 0) return null;
+
+  const { t } = content;
 
   return (
     <section
@@ -19,7 +22,7 @@ export default function Gallery({ content }: SectionProps) {
             id="gallery-title"
             className="font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
           >
-            Galeri
+            {t.gallery.title}
           </h2>
         </Reveal>
 
@@ -29,7 +32,13 @@ export default function Gallery({ content }: SectionProps) {
               <figure className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] shadow-[var(--shadow-sm)]">
                 <Image
                   src={image.url}
-                  alt={image.alt || `${content.name} galeri görseli ${i + 1}`}
+                  alt={
+                    image.alt ||
+                    fill(t.gallery.imageAlt, {
+                      name: content.name,
+                      index: i + 1,
+                    })
+                  }
                   width={640}
                   height={640}
                   sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"

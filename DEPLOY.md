@@ -132,6 +132,10 @@ UPLOADS_DIR=/data/uploads
 # Temayı bu imaja sabitle (boş bırakılırsa müşteri panelden seçer)
 NEXT_PUBLIC_THEME=placeholder
 
+# Sitenin varsayılan dili (tr | en | es | de | ar). Kapatılamaz.
+# Diğer dilleri müşteri /admin/diller sayfasından açar.
+NEXT_PUBLIC_DEFAULT_LOCALE=tr
+
 # İletişim formu limiti (IP başına / saat)
 CONTACT_RATE_LIMIT_PER_HOUR=5
 
@@ -216,6 +220,7 @@ Ardından hızlıca kontrol edin:
 - **Çalışma Saatleri** → 7 gün
 - **Menü** → seed'den gelen örnek kategorileri silin veya düzenleyin
 - **Tema & Renkler** → marka renklerini ayarlayın
+- **Diller & Çeviriler** → müşteri birden fazla dil istiyorsa açın ve çevirileri girin
 
 ---
 
@@ -306,6 +311,8 @@ kaldırıp Traefik etiketlerini ekleyin:
 | `BETTER_AUTH_SECRET tanimli degil` hatası | Production'da bu değişken zorunlu; en az 16 karakter olmalı |
 | Görseller 404 | `UPLOADS_DIR=/data/uploads` ve volume mount'unu kontrol edin |
 | Tema değişmiyor | `NEXT_PUBLIC_THEME` dolu → tema imaja sabit. Boşaltıp yeniden deploy edin |
+| `/en` açılmıyor, `/tr`'ye atıyor | O dil panelde açık değil. `/admin/diller` → dili işaretleyip kaydedin |
+| Varsayılan dil yanlış | `NEXT_PUBLIC_DEFAULT_LOCALE` build'e gömülür — değiştirip **yeniden deploy** edin |
 | Mesaj mail'i gelmiyor | SMTP env'leri eksik/yanlış. Mesaj yine de panelde görünür; log'a bakın |
 | Form "çok fazla mesaj" diyor | Rate limit. `CONTACT_RATE_LIMIT_PER_HOUR` değerini artırın |
 

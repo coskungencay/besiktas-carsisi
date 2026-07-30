@@ -1,3 +1,6 @@
+import { LOCALE_META, type Locale } from "@/i18n/config";
+
+/** Yonetim panelinde (her zaman Turkce) kullanilan gun adlari. */
 export const DAY_LABELS = [
   "Pazar",
   "Pazartesi",
@@ -19,16 +22,49 @@ export const SCHEMA_DAYS = [
   "Saturday",
 ] as const;
 
-const priceFormatter = new Intl.NumberFormat("tr-TR", {
-  style: "currency",
-  currency: "TRY",
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 2,
-});
+const priceFormatters = new Map<string, Intl.NumberFormat>();
 
-export function formatPrice(value: number): string {
+function priceFormatter(locale: Locale): Intl.NumberFormat {
+  const tag = LOCALE_META[locale].intlTag;
+  let formatter = priceFormatters.get(tag);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(tag, {
+      style: "currency",
+      currency: "TRY",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+    priceFormatters.set(tag, formatter);
+  }
+  return formatter;
+}
+
+export function formatPrice(value: number, locale: Locale = "tr"): string {
   if (!Number.isFinite(value) || value <= 0) return "";
-  return priceFormatter.format(value);
+  return priceFormatter(locale).format(value);
+}
+
+const dayLabelCache = new Map<string, string>();
+
+/**
+ * Gun adini Intl ile uretir — 7 gun x 5 dil elle yazilmaz, dil eklemek bedava.
+ * 2024-01-07 bir Pazar gunudur; dayOfWeek 0 = Pazar.
+ */
+export function dayLabel(dayOfWeek: number, locale: Locale): string {
+  const key = `${locale}:${dayOfWeek}`;
+  const cached = dayLabelCache.get(key);
+  if (cached) return cached;
+
+  const date = new Date(Date.UTC(2024, 0, 7 + dayOfWeek));
+  const raw = new Intl.DateTimeFormat(LOCALE_META[locale].intlTag, {
+    weekday: "long",
+    timeZone: "UTC",
+  }).format(date);
+
+  // Bazi diller gun adini kucuk harfle uretir (orn. es: "lunes").
+  const label = raw.charAt(0).toLocaleUpperCase(locale) + raw.slice(1);
+  dayLabelCache.set(key, label);
+  return label;
 }
 
 const dateTimeFormatter = new Intl.DateTimeFormat("tr-TR", {

@@ -18,10 +18,13 @@ Bir tema yazarken hiçbir zaman `db`, `drizzle`, `getSettings()`, `fetch()` gibi
 şeylere ihtiyacınız olmaz. Elinizde hazır, sunuma uygun bir `SiteContent`
 objesi vardır — sadece onu HTML'e dökersiniz.
 
-Bir de ikinci kural var:
+Bir de iki kural daha var:
 
 > **Tema içinde sabit renk (hex/rgb) yazılmaz.** Her renk bir CSS değişkeninden gelir.
 > Aksi halde admin panelindeki renk seçici o rengi değiştiremez.
+
+> **Tema içinde sabit METİN yazılmaz.** "Menü", "İletişim" gibi her yazı
+> `content.t.*` sözlüğünden gelir. Aksi halde site 5 dilde çalışmaz.
 
 ---
 
@@ -93,6 +96,14 @@ type SiteContent = {
 
   brandColors: Record<string, string>;   // panelde seçilen renkler (tema kullanmaz)
   themeSlug: string;
+
+  // --- dil ---
+  locale: "tr" | "en" | "es" | "de" | "ar";
+  dir: "ltr" | "rtl";                    // <html dir> ile senkron, Arapça'da "rtl"
+  t: Messages;                           // arayüz metinleri sözlüğü
+  locales: {                             // dil seçici için
+    locale: string; label: string; href: string; isActive: boolean;
+  }[];
 };
 ```
 
@@ -274,6 +285,55 @@ Paragraf bölme:
   .map((p, i) => <p key={i}>{p}</p>)}
 ```
 
+### C2. Sabit metinleri sözlüğe taşıyın (5 dil)
+
+- [ ] Tasarımdaki her arayüz yazısını `content.t.*` ile değiştirin:
+      ```tsx
+      <h2>{t.menu.title}</h2>              // "Menü" / "Menu" / "Carta" / ...
+      <a href="#menu">{t.hero.viewMenu}</a>
+      ```
+- [ ] İçinde işletme adı geçen metinler için `fill` kullanın:
+      ```tsx
+      import { fill } from "@/i18n";
+      <p>{fill(t.contact.intro, { name: content.name })}</p>
+      ```
+- [ ] Sözlükte olmayan bir yazıya ihtiyacınız varsa **önce `src/i18n/messages/tr.ts`'e**
+      anahtarı ekleyin — TypeScript diğer 4 dilin eksik olduğunu size söyler.
+- [ ] Dil seçiciyi yerleştirin (site genelinde `page.tsx` içinde hazır durur;
+      temaya özel bir yere koymak isterseniz):
+      ```tsx
+      import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
+      {content.locales.length > 1 ? <LocaleSwitcher content={content} /> : null}
+      ```
+- [ ] Doğrulayın — tema klasöründe Türkçe sabit metin kalmamalı:
+      ```bash
+      grep -rnE '>[^<>{}]*[çğıöşüÇĞİÖŞÜ][^<>{}]*<' src/themes/<slug>/sections/
+      ```
+
+### C3. RTL (Arapça) uyumu
+
+Arapça açıldığında `<html dir="rtl">` olur. Tasarımın otomatik aynalanması için:
+
+- [ ] **Yön bağımlı sınıfları mantıksal olanlarla değiştirin:**
+
+      | Kullanmayın | Kullanın |
+      |---|---|
+      | `ml-2` / `mr-2` | `ms-2` / `me-2` |
+      | `pl-4` / `pr-4` | `ps-4` / `pe-4` |
+      | `left-0` / `right-0` | `start-0` / `end-0` |
+      | `text-left` / `text-right` | `text-start` / `text-end` |
+      | `border-l` / `border-r` | `border-s` / `border-e` |
+      | CSS `left:` / `right:` | `inset-inline-start:` / `inset-inline-end:` |
+
+- [ ] **Her zaman soldan sağa kalması gerekenlere `dir="ltr"` verin:**
+      telefon numaraları, saat aralıkları (`08:00 – 22:00`), e-posta, URL'ler.
+      ```tsx
+      <a href={contact.phoneHref} dir="ltr">{contact.phone}</a>
+      ```
+- [ ] Yön bağımlı ikonlar (→ ok, chevron) RTL'de ters dönmeli:
+      `rtl:rotate-180` sınıfını ekleyin.
+- [ ] Test: `/ar` sayfasında yatay kaydırma olmamalı, metin sağa yaslanmalı.
+
 ### D. Renkleri token'a çevirin
 
 - [ ] Tasarımdaki her hex rengi bul-değiştir ile bir değişkene bağlayın:
@@ -344,6 +404,12 @@ Paragraf bölme:
       bozulmadan çalışmalı
 - [ ] **Renk testi:** `/admin/tema`'dan ana rengi değiştirin — tasarımda
       değişmeyen bir yer kalmamalı
+- [ ] **Dil testi:** `/admin/diller`'den 5 dili açıp `/en`, `/es`, `/de` sayfalarını
+      gezin — Türkçe kalmış arayüz metni olmamalı
+- [ ] **RTL testi:** `/ar` sayfasında düzen aynalanmalı, yatay kaydırma olmamalı,
+      telefon/saat soldan sağa kalmalı
+- [ ] **JS kapalı testi:** tarayıcıda JavaScript'i kapatıp sayfayı açın —
+      içerik görünür olmalı (`<noscript>` kuralı bunu sağlar)
 - [ ] **Mobil:** 360px genişlikte yatay kaydırma olmamalı
 - [ ] **Klavye:** Tab ile gezinin, odak halkası her yerde görünür olmalı
 - [ ] **Reduced motion:** işletim sisteminden "hareketi azalt"ı açıp sayfayı
@@ -375,6 +441,9 @@ Yeni tema yazarken bu dosyaları yan yana açık tutun.
 | `tokens.css` seçicisini değiştirmeyi unutmak | Yeni tema `placeholder`'ın renklerini ezer | `[data-theme="<yeni-slug>"]` |
 | `globals.css`'e import eklememek | Tema renksiz görünür | `@import "../themes/<slug>/tokens.css";` |
 | Section'da sabit hex renk | Panelden renk değişmez | `var(--brand-*)` |
+| Section'da sabit Türkçe metin | Site 5 dilde çalışmaz | `content.t.*` |
+| `ml-2`, `text-left`, `left-0` | Arapça'da düzen bozulur | `ms-2`, `text-start`, `start-0` |
+| Telefona `dir="ltr"` vermemek | Arapça'da numara ters okunur | `<a dir="ltr">` |
 | Boş veri kontrolü yapmamak | Yeni sitede sayfa patlar | `if (!x) return null` |
 | Tema içinden DB okumak | Mimari bozulur, build kırılır | Sadece `content` props'u |
 | Harici görsel/font URL'i | Docker build ve CSP kırılır | Yerel SVG / sistem fontu |

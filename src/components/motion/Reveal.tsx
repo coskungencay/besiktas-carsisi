@@ -32,6 +32,9 @@ export function Reveal({
 
   return (
     <MotionTag
+      // data-reveal: JavaScript kapaliyken globals.css icindeki <noscript>
+      // kurali bu elemanlari gorunur yapar (yoksa sayfa bos gorunurdu).
+      data-reveal=""
       className={className}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}

@@ -17,7 +17,8 @@ müdahalesine ihtiyaç kalmaz.
 | **Admin panel** | `/admin`, arayüz tamamen Türkçe. İçerik, menü, galeri, saatler, mesajlar, renkler |
 | **Veritabanı** | SQLite tek dosya (`/data/app.db`), Drizzle ORM |
 | **Görseller** | `/data/uploads` altında; sharp ile 1920px WebP + 400px thumbnail + orijinal |
-| **SEO** | Metadata API, `CafeOrCoffeeShop` JSON-LD, sitemap, robots, dinamik OG görseli |
+| **Diller** | Türkçe, İngilizce, İspanyolca, Almanca, Arapça (RTL). Arayüz otomatik, müşteri içeriği panelden çevrilir |
+| **SEO** | Metadata API, `CafeOrCoffeeShop` JSON-LD, hreflang, çok dilli sitemap, robots, dinamik OG görseli |
 | **Deploy** | Multi-stage Dockerfile (standalone), tek named volume, `/api/health` |
 
 ---
@@ -31,6 +32,7 @@ müdahalesine ihtiyaç kalmaz.
 - **Drizzle ORM + better-sqlite3**
 - **Better Auth** (email + password, tek admin)
 - **zod** + **react-hook-form** — tüm mutasyonlar Server Actions üzerinden
+- **i18n** — bağımlılık yok; `/[locale]` route + middleware + tip güvenli sözlük
 - **sharp** (görsel işleme), **nodemailer** (opsiyonel SMTP)
 - **pnpm**
 
@@ -52,14 +54,15 @@ cafe-infra/
 │   │   ├── contact.ts            #   iletişim formu (honeypot + rate limit)
 │   │   ├── gallery.ts  hours.ts  menu.ts  messages.ts  settings.ts  theme.ts
 │   ├── app/
+│   │   ├── [locale]/             #   /tr /en /es /de /ar — public landing
 │   │   ├── admin/
-│   │   │   ├── layout.tsx        #   panel kabuğu (noindex)
+│   │   │   ├── layout.tsx        #   panel kabuğu (noindex, her zaman Türkçe)
 │   │   │   ├── giris/            #   /admin/giris          (korumasız)
 │   │   │   ├── sifre-degistir/   #   /admin/sifre-degistir (oturum ister)
 │   │   │   └── (panel)/          #   oturum + şifre değişimi tamamlanmış olmalı
 │   │   │       ├── layout.tsx    #     guard + sol menü
 │   │   │       ├── page.tsx      #     Dashboard
-│   │   │       ├── genel/  saatler/  menu/  galeri/  mesajlar/  tema/
+│   │   │       ├── genel/  saatler/  menu/  galeri/  mesajlar/  diller/  tema/
 │   │   ├── api/
 │   │   │   ├── auth/[...all]/    #   Better Auth handler
 │   │   │   ├── health/           #   healthcheck
@@ -70,7 +73,12 @@ cafe-infra/
 │   ├── components/
 │   │   ├── admin/                #   panel UI (SortableList, formlar, nav)
 │   │   ├── motion/Reveal.tsx     #   reduced-motion uyumlu animasyon sarmalayıcı
-│   │   └── site/ContactForm.tsx
+│   │   └── site/ContactForm.tsx  ·  site/LocaleSwitcher.tsx
+│   ├── i18n/
+│   │   ├── config.ts             #   diller, RTL, Accept-Language seçimi
+│   │   ├── index.ts              #   sözlük seçici + {kalıp} doldurucu
+│   │   └── messages/             #   tr.ts (referans) · en · es · de · ar
+│   ├── middleware.ts             #   / → /<dil> yönlendirmesi, x-locale başlığı
 │   ├── db/
 │   │   ├── index.ts              #   bağlantı (WAL, foreign_keys)
 │   │   └── schema.ts             #   tüm tablolar
@@ -134,12 +142,13 @@ Panel: `http://localhost:3000/admin` → ilk girişte şifre değiştirme zorunl
 
 | Tablo | Açıklama |
 |---|---|
-| `site_settings` | **Tekil satır** (id = 1). Ad, slogan, hakkımızda, telefon, whatsapp, e-posta, adres, lat/lng, maps linki, instagram, logo, hero görseli, `brandColors` (JSON), `themeSlug` |
+| `site_settings` | **Tekil satır** (id = 1). Ad, slogan, hakkımızda, telefon, whatsapp, e-posta, adres, lat/lng, maps linki, instagram, logo, hero görseli, `brandColors` (JSON), `themeSlug`, `enabledLocales` (JSON) |
 | `opening_hours` | `dayOfWeek` 0–6 (0 = Pazar), açılış/kapanış, `isClosed` |
 | `menu_categories` | Ad, `sortOrder` |
 | `menu_items` | Kategori, ad, açıklama, fiyat, görsel, `isFeatured`, `sortOrder`, `isActive` |
 | `gallery_images` | URL, alt metni, `sortOrder` |
 | `contact_messages` | Ad, telefon, e-posta, mesaj, `isRead`, `createdAt` |
+| `translations` | Müşteri içeriğinin dil çevirileri (`locale` + `namespace` + `refId` + `field`). Çeviri yoksa varsayılan dil kullanılır |
 | `rate_limits` | İletişim formu için IP başına saatlik sayaç |
 | `user` / `session` / `account` / `verification` | Better Auth. `user.mustChangePassword` ilk giriş zorunluluğu için eklendi |
 
@@ -166,6 +175,35 @@ DB ──► src/lib/content.ts ──► SiteContent ──► tema section'lar
 3. `placeholder` → fallback
 
 Yeni tema eklemek için: **[THEMING.md](./THEMING.md)**
+
+---
+
+## 6b. Dil desteği
+
+Desteklenen diller: **Türkçe, İngilizce, İspanyolca, Almanca, Arapça**.
+Arapça `dir="rtl"` ile sağdan sola render edilir.
+
+**İki ayrı katman var:**
+
+| Katman | Nerede | Kim çevirir |
+|---|---|---|
+| Arayüz metinleri ("Menü", "Mesaj Gönder", hata mesajları) | `src/i18n/messages/*.ts` | Hazır geliyor, kod tarafı |
+| Müşteri içeriği (slogan, hakkımızda, ürün adları, galeri açıklamaları) | `translations` tablosu | Müşteri, `/admin/diller` sayfasından |
+
+- **URL yapısı:** her dil kendi yolunda — `/tr`, `/en`, `/es`, `/de`, `/ar`.
+  `/` isteği `Accept-Language` başlığına göre uygun dile yönlendirilir.
+- **Fallback:** çevrilmemiş her alan otomatik olarak varsayılan dildeki metni gösterir.
+  Yarım kalmış çeviri siteyi asla boş bırakmaz.
+- **Aktif diller:** panelden seçilir (`site_settings.enabledLocales`). Kapalı bir
+  dile gelen istek varsayılan dile yönlendirilir. Tek dil açıksa dil seçici gizlenir.
+- **Varsayılan dil:** `NEXT_PUBLIC_DEFAULT_LOCALE` (yoksa `tr`). Kapatılamaz.
+- **Gün adları ve fiyatlar** `Intl` ile üretilir — 7 gün × 5 dil elle yazılmaz.
+- **SEO:** her dil için `hreflang` + `x-default`, çok dilli `sitemap.xml`,
+  dile göre `og:locale` ve `inLanguage` içeren JSON-LD.
+
+Tema yazarken: **sabit metin yazmayın**, `content.t.*` kullanın ve yön bağımlı
+Tailwind sınıfları yerine mantıksal olanları seçin (`ms-*`, `text-start`, `end-*`).
+Detay: [THEMING.md](./THEMING.md)
 
 ---
 
@@ -235,7 +273,25 @@ Talimatta açık belirtilmeyen noktalarda alınan kararlar:
     Ayrıca Better Auth peer olarak 12.x istiyor; bu yalnızca kendi kysely
     adaptörü için geçerli, biz Drizzle adaptörünü kullandığımız için uyarı zararsızdır.
 
-13. **Build sırasında gizli anahtar aranmaz.** `BETTER_AUTH_SECRET` production'da
+13. **Diller neden varsayılan olarak kapalı?** Yeni kurulumda sadece varsayılan dil
+    açıktır. Beşini birden açık getirmek, müşteri çeviri girmeden İngilizce sayfada
+    Türkçe menü göstermek anlamına gelirdi. Müşteri `/admin/diller`'den gerçekten
+    çevireceği dilleri açar.
+
+14. **Çeviri tablosu neden polimorfik?** `namespace + refId + field` şeklinde
+    (EAV benzeri) tutuldu; her yeni çevrilebilir alan için migration gerekmesin diye.
+    Boş bırakılan çeviri satırı **silinir** — kayıt yoksa fallback devreye girer.
+
+15. **Middleware veritabanı okumaz.** Edge runtime'da `better-sqlite3` çalışmaz.
+    Bu yüzden middleware yalnızca slug biçimini kontrol eder; hangi dillerin açık
+    olduğu `[locale]/layout.tsx` içinde kontrol edilir ve kapalı dil varsayılana
+    **yönlendirilir** (404 değil — tarayıcısı Almanca olan ziyaretçi 404 görmemeli).
+
+16. **JavaScript kapalıysa.** `Reveal` animasyonu içeriği `opacity:0` ile başlatır;
+    JS çalışmazsa sayfa boş görünürdü. `<noscript>` içindeki bir stil kuralı bu
+    durumda tüm `[data-reveal]` öğelerini görünür yapar.
+
+17. **Build sırasında gizli anahtar aranmaz.** `BETTER_AUTH_SECRET` production'da
     zorunludur ama `next build` sırasında (NEXT_PHASE = phase-production-build)
     kontrol atlanır — imaja sır gömülmemesi için. Eksikse container **çalışma
     anında ilk import'ta** hata verip durur (fail-fast).

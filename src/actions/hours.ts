@@ -50,6 +50,6 @@ export async function saveOpeningHoursAction(
     return fail("Çalışma saatleri kaydedilemedi.");
   }
 
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   return ok("Çalışma saatleri kaydedildi.");
 }

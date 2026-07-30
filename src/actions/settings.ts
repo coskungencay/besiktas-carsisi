@@ -18,7 +18,7 @@ import { deleteImage, storeImage, UploadError } from "@/lib/uploads";
 import { siteSettingsSchema } from "@/lib/validators";
 
 function revalidateSite() {
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   revalidatePath("/admin", "layout");
 }
 

@@ -2,6 +2,7 @@ import "server-only";
 
 import type { Metadata } from "next";
 
+import { LOCALE_META } from "@/i18n/config";
 import { appUrl } from "@/lib/env";
 import { SCHEMA_DAYS } from "@/lib/format";
 import type { SiteContent } from "@/themes/types";
@@ -12,7 +13,17 @@ export function buildMetadata(content: SiteContent): Metadata {
   const description =
     content.tagline ||
     content.about.slice(0, 155) ||
-    `${content.name} — kahve, tatlı ve sıcak bir atmosfer.`;
+    content.t.contact.intro.replace("{name}", content.name);
+
+  const path = `/${content.locale}`;
+
+  // hreflang: acik olan her dil icin bir alternatif + x-default varsayilan dile.
+  const languages: Record<string, string> = {};
+  for (const option of content.locales) {
+    languages[option.locale] = `${base}/${option.locale}`;
+  }
+  const fallback = content.locales[0];
+  if (fallback) languages["x-default"] = `${base}/${fallback.locale}`;
 
   return {
     metadataBase: new URL(base),
@@ -24,17 +35,21 @@ export function buildMetadata(content: SiteContent): Metadata {
     applicationName: title,
     keywords: [
       content.name,
-      "kahve",
-      "kafe",
-      "pastane",
-      "menü",
+      content.t.menu.title,
+      content.t.contact.title,
       content.contact.address.split(",").pop()?.trim() ?? "",
     ].filter(Boolean),
-    alternates: { canonical: "/" },
+    alternates: {
+      canonical: `${base}${path}`,
+      languages,
+    },
     openGraph: {
       type: "website",
-      locale: "tr_TR",
-      url: base,
+      locale: LOCALE_META[content.locale].ogLocale,
+      alternateLocale: content.locales
+        .filter((o) => o.locale !== content.locale)
+        .map((o) => LOCALE_META[o.locale].ogLocale),
+      url: `${base}${path}`,
       siteName: title,
       title,
       description,
@@ -55,7 +70,8 @@ export function buildMetadata(content: SiteContent): Metadata {
 
 /**
  * schema.org CafeOrCoffeeShop JSON-LD.
- * Adres, telefon, acilis saatleri ve koordinatlar site_settings'ten uretilir.
+ * Adres, telefon, acilis saatleri ve koordinatlar site_settings'ten uretilir;
+ * metinler aktif dilin cevirilerinden gelir.
  */
 export function buildJsonLd(content: SiteContent): Record<string, unknown> {
   const base = appUrl();
@@ -77,7 +93,8 @@ export function buildJsonLd(content: SiteContent): Record<string, unknown> {
     "@type": "CafeOrCoffeeShop",
     "@id": `${base}/#business`,
     name: content.name,
-    url: base,
+    url: `${base}/${content.locale}`,
+    inLanguage: content.locale,
     description: content.tagline || content.about.slice(0, 300) || undefined,
     servesCuisine: "Kahve",
     priceRange: "₺₺",
@@ -114,7 +131,8 @@ export function buildJsonLd(content: SiteContent): Record<string, unknown> {
   if (menuItems.length > 0) {
     jsonLd.hasMenu = {
       "@type": "Menu",
-      name: `${content.name} Menü`,
+      name: `${content.name} — ${content.t.menu.title}`,
+      inLanguage: content.locale,
       hasMenuSection: content.menu
         .filter((c) => c.items.length > 0)
         .map((category) => ({

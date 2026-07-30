@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+import type { Messages } from "@/i18n";
+import { LOCALES } from "@/i18n/config";
+
 const trimmed = (max: number) => z.string().trim().max(max);
 
 /** Bos string'i undefined'a cevirir; opsiyonel alanlar icin. */
@@ -117,27 +120,57 @@ export const themeSchema = z.object({
 
 /* ------------------------------ Iletisim formu ---------------------------- */
 
-export const contactMessageSchema = z
-  .object({
-    name: trimmed(120).min(2, "Adınızı yazın"),
-    phone: optionalText(40),
-    email: z
-      .union([
-        z.literal(""),
-        z.string().trim().email("Geçerli bir e-posta girin"),
-      ])
-      .optional()
-      .transform((v) => v ?? ""),
-    message: trimmed(2000).min(10, "Mesajınız en az 10 karakter olmalı"),
-    /** Honeypot: botlar doldurur, insanlar gormez. */
-    website: z.string().max(200).optional().default(""),
-  })
-  .refine((v) => v.phone.length > 0 || v.email.length > 0, {
-    message: "Telefon veya e-posta adresinden en az birini girin",
-    path: ["phone"],
-  });
+/**
+ * Iletisim formu semasi — hata mesajlari ziyaretcinin dilinde olsun diye
+ * bir fabrika. Ayni sema hem istemcide (react-hook-form) hem sunucuda
+ * (server action) kullanilir.
+ */
+export function makeContactMessageSchema(m: Messages) {
+  return z
+    .object({
+      name: trimmed(120).min(2, m.errors.nameTooShort),
+      phone: optionalText(40),
+      email: z
+        .union([
+          z.literal(""),
+          z.string().trim().email(m.errors.invalidEmail),
+        ])
+        .optional()
+        .transform((v) => v ?? ""),
+      message: trimmed(2000).min(10, m.errors.messageTooShort),
+      /** Honeypot: botlar doldurur, insanlar gormez. */
+      website: z.string().max(200).optional().default(""),
+      /** Hangi dilde gonderildigi (sunucu tarafi mesajlari icin). */
+      locale: z.string().trim().max(8).optional().default(""),
+    })
+    .refine((v) => v.phone.length > 0 || v.email.length > 0, {
+      message: m.errors.contactRequired,
+      path: ["phone"],
+    });
+}
 
-export type ContactMessageInput = z.input<typeof contactMessageSchema>;
+export type ContactMessageSchema = ReturnType<typeof makeContactMessageSchema>;
+export type ContactMessageInput = z.input<ContactMessageSchema>;
+
+/* --------------------------------- Diller --------------------------------- */
+
+export const localesSchema = z.object({
+  locales: z.array(z.enum(LOCALES)).max(LOCALES.length),
+});
+
+export const translationsSchema = z.object({
+  locale: z.enum(LOCALES),
+  entries: z
+    .array(
+      z.object({
+        namespace: z.enum(["settings", "menu_category", "menu_item", "gallery"]),
+        refId: z.coerce.number().int().min(0),
+        field: trimmed(40).min(1),
+        value: z.string().max(4000),
+      }),
+    )
+    .max(2000),
+});
 
 /* --------------------------------- Sifre ---------------------------------- */
 

@@ -1,5 +1,8 @@
 import type { ComponentType } from "react";
 
+import type { Locale } from "@/i18n/config";
+import type { Messages } from "@/i18n";
+
 /* -------------------------------------------------------------------------- */
 /*                        Temalarin gordugu TEK veri tipi                       */
 /* -------------------------------------------------------------------------- */
@@ -60,7 +63,28 @@ export type SiteContact = {
   instagramHref: string;
 };
 
+export type LocaleOption = {
+  locale: Locale;
+  /** Dilin kendi adi, orn. "Español" */
+  label: string;
+  /** Bu dile giden yol, orn. "/es" */
+  href: string;
+  isActive: boolean;
+};
+
 export type SiteContent = {
+  /** Sayfanin dili. */
+  locale: Locale;
+  /** "ltr" | "rtl" — Arapca'da "rtl". */
+  dir: "ltr" | "rtl";
+  /**
+   * Arayuz metinleri sozlugu. Tema SABIT METIN YAZMAZ, hepsini buradan alir.
+   * Kalip doldurmak icin: fill(t.hero.logoAlt, { name: content.name })
+   */
+  t: Messages;
+  /** Sitede acik olan diller (dil secici bunu render eder). */
+  locales: LocaleOption[];
+
   name: string;
   tagline: string;
   about: string;

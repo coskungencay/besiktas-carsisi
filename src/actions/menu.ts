@@ -12,6 +12,7 @@ import {
   fromZodError,
   ok,
 } from "@/lib/action-result";
+import { purgeTranslations } from "@/actions/locales";
 import { requirePanelUser } from "@/lib/session";
 import { deleteImage, storeImage, UploadError } from "@/lib/uploads";
 import {
@@ -21,7 +22,7 @@ import {
 } from "@/lib/validators";
 
 function revalidateMenu() {
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   revalidatePath("/admin/menu");
 }
 
@@ -83,7 +84,17 @@ export async function deleteCategoryAction(
     .where(eq(menuItems.categoryId, id))
     .all();
 
+  const itemIds = db
+    .select({ id: menuItems.id })
+    .from(menuItems)
+    .where(eq(menuItems.categoryId, id))
+    .all();
+
   db.delete(menuCategories).where(eq(menuCategories.id, id)).run();
+
+  await purgeTranslations("menu_category", id);
+  for (const item of itemIds) await purgeTranslations("menu_item", item.id);
+
   await Promise.all(
     items.filter((i) => i.imageUrl).map((i) => deleteImage(i.imageUrl)),
   );
@@ -173,6 +184,7 @@ export async function deleteItemAction(
     .get();
 
   db.delete(menuItems).where(eq(menuItems.id, id)).run();
+  await purgeTranslations("menu_item", id);
   if (existing?.imageUrl) await deleteImage(existing.imageUrl);
 
   revalidateMenu();

@@ -7,6 +7,8 @@ export default function Menu({ content }: SectionProps) {
   const categories = content.menu.filter((c) => c.items.length > 0);
   if (categories.length === 0) return null;
 
+  const { t } = content;
+
   return (
     <section
       id="menu"
@@ -19,7 +21,7 @@ export default function Menu({ content }: SectionProps) {
             id="menu-title"
             className="font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
           >
-            Menü
+            {t.menu.title}
           </h2>
         </Reveal>
 
@@ -51,8 +53,8 @@ export default function Menu({ content }: SectionProps) {
                         <h4 className="font-semibold text-pretty">
                           {item.name}
                           {item.isFeatured ? (
-                            <span className="ml-2 align-middle rounded-full bg-[var(--brand-accent)] px-2 py-0.5 text-[0.65rem] font-bold tracking-wide text-[var(--brand-primary-contrast)] uppercase">
-                              Öne çıkan
+                            <span className="ms-2 align-middle rounded-full bg-[var(--brand-accent)] px-2 py-0.5 text-[0.65rem] font-bold tracking-wide text-[var(--brand-primary-contrast)] uppercase">
+                              {t.menu.featured}
                             </span>
                           ) : null}
                         </h4>

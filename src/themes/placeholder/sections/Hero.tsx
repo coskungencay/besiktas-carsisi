@@ -1,10 +1,11 @@
 import Image from "next/image";
 
 import { Reveal } from "@/components/motion/Reveal";
+import { fill } from "@/i18n";
 import type { SectionProps } from "@/themes/types";
 
 export default function Hero({ content }: SectionProps) {
-  const { name, tagline, heroImageUrl, logoUrl, contact } = content;
+  const { name, tagline, heroImageUrl, logoUrl, contact, t } = content;
   const image = heroImageUrl || "/placeholders/hero.svg";
 
   return (
@@ -32,7 +33,7 @@ export default function Hero({ content }: SectionProps) {
           {logoUrl ? (
             <Image
               src={logoUrl}
-              alt={`${name} logosu`}
+              alt={fill(t.hero.logoAlt, { name })}
               width={132}
               height={132}
               className="mb-7 h-24 w-24 rounded-[var(--radius-md)] bg-[var(--brand-surface)] object-contain p-2 shadow-[var(--shadow-md)] sm:h-28 sm:w-28"
@@ -57,11 +58,12 @@ export default function Hero({ content }: SectionProps) {
               href="#menu"
               className="rounded-[var(--radius-sm)] bg-[var(--brand-primary)] px-6 py-3 text-sm font-semibold text-[var(--brand-primary-contrast)] shadow-[var(--shadow-md)] transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-primary-contrast)] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
             >
-              Menüyü İncele
+              {t.hero.viewMenu}
             </a>
             {contact.phoneHref ? (
               <a
                 href={contact.phoneHref}
+                dir="ltr"
                 className="rounded-[var(--radius-sm)] border border-[color-mix(in_srgb,var(--brand-primary-contrast)_55%,transparent)] px-6 py-3 text-sm font-semibold text-[var(--brand-primary-contrast)] transition-colors hover:bg-[color-mix(in_srgb,var(--brand-primary-contrast)_14%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-primary-contrast)]"
               >
                 {contact.phone}

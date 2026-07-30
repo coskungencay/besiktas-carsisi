@@ -41,6 +41,11 @@ const QUICK_LINKS = [
     description: "Siteden gelen iletişim mesajları.",
   },
   {
+    href: "/admin/diller",
+    label: "Diller & Çeviriler",
+    description: "Sitenin dillerini açın ve metin çevirilerini girin.",
+  },
+  {
     href: "/admin/tema",
     label: "Tema & Renkler",
     description: "Site temasını ve marka renklerini değiştirin.",

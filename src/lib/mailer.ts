@@ -8,6 +8,8 @@ export type ContactMailPayload = {
   phone: string;
   email: string;
   message: string;
+  /** Mesajin sitede hangi dilden gonderildigi (isletmeye ipucu). */
+  locale?: string;
 };
 
 function escapeHtml(value: string): string {
@@ -42,6 +44,7 @@ export async function sendContactMail(
       ["Ad Soyad", payload.name],
       ["Telefon", payload.phone || "-"],
       ["E-posta", payload.email || "-"],
+      ["Site dili", payload.locale || "-"],
     ];
 
     await transporter.sendMail({
