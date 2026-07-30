@@ -1,320 +1,322 @@
-# THEMING.md — Yeni tema ekleme
+# THEMING.md — Tema sistemi
 
-Bu dokümanın amacı: **elinizdeki bir HTML/JSX tasarımı, 30–60 dakikada
-çalışan bir temaya dönüştürmek.**
+Bu doküman iki soruyu yanıtlar:
 
----
-
-## 1. Temel kural
-
-> **Tema kodu asla veritabanına dokunmaz.**
-
-```
-DB ──► src/lib/content.ts ──► SiteContent ──► tema section'ları
-       (tek dönüşüm yeri)     (tek tip)       (SADECE görsel iş)
-```
-
-Bir tema yazarken hiçbir zaman `db`, `drizzle`, `getSettings()`, `fetch()` gibi
-şeylere ihtiyacınız olmaz. Elinizde hazır, sunuma uygun bir `SiteContent`
-objesi vardır — sadece onu HTML'e dökersiniz.
-
-Bir de iki kural daha var:
-
-> **Tema içinde sabit renk (hex/rgb) yazılmaz.** Her renk bir CSS değişkeninden gelir.
-> Aksi halde admin panelindeki renk seçici o rengi değiştiremez.
-
-> **Tema içinde sabit METİN yazılmaz.** "Menü", "İletişim" gibi her yazı
-> `content.t.*` sözlüğünden gelir. Aksi halde site 5 dilde çalışmaz.
+1. **Yeni bir tema nasıl eklenir?** (çoğu durumda: bir CSS dosyası + iki satır kayıt)
+2. **Yeni tasarım mevcut düzenlere uymuyorsa ne yapılır?**
 
 ---
 
-## 2. Bir temanın anatomisi
+## 1. Üç temel kural
+
+> **1. Tema kodu asla veritabanına dokunmaz.**
+> Tüm veri `SiteContent` tipinden gelir. `db`, `drizzle`, `getSettings()`, `fetch()` yok.
+
+> **2. Tema içinde sabit renk / radius / font / harf aralığı yazılmaz.**
+> Hepsi CSS değişkenlerinden gelir. Aksi halde admin panelindeki renk seçici çalışmaz.
+
+> **3. Tema içinde sabit metin yazılmaz.**
+> "Menü", "İletişim" gibi her yazı `content.t.*` sözlüğünden gelir. Aksi halde site 5 dilde çalışmaz.
+
+```
+DB ──► src/lib/content.ts ──► SiteContent ──► tema bölümleri
+       (tek dönüşüm yeri)     (tek tip)       (sadece görsel iş)
+```
+
+---
+
+## 2. Mimari: neden 9 tema ama 4 bölüm dosyası?
+
+Elimizdeki 8 tasarım ölçüldüğünde şu çıktı:
+
+| Bölüm | Tasarımlar arası fark |
+|---|---|
+| About, Menu, Gallery, Contact | **Yapısal olarak birebir aynı.** Fark yalnızca radius, kenarlık kalınlığı, başlık ağırlığı ve harf aralığı |
+| Hero | **5 gerçek düzen** var (split, overlay, centered, editorial, framed) |
+
+Bu yüzden:
+
+- Yapısal olarak aynı olan 4 bölüm **bir kez** yazıldı → `src/themes/shared/sections/`
+- Hero'nun 5 düzeni ayrı bileşen → `src/themes/shared/heroes/`
+- Tasarımlar arası tüm görsel fark **token'lara** indirildi → her temanın `tokens.css`'i
+
+Sonuç: aynı `Menu.tsx`'i 8 kez kopyalamıyoruz. Bir erişilebilirlik ya da RTL
+hatası düzeltildiğinde 9 temanın hepsi birden düzeliyor.
+
+```
+src/themes/
+├── types.ts                     # SiteContent + ThemeDefinition sözleşmesi
+├── registry.ts                  # Record<slug, ThemeDefinition>
+├── shared/
+│   ├── parts.tsx                # BrandMark, HeroActions, SectionHeader, ikonlar
+│   ├── heroes/                  # SplitHero, OverlayHero, CenteredHero,
+│   │                            #   EditorialHero, FramedHero
+│   └── sections/                # About, Menu, Gallery, Contact
+├── placeholder/                 # index.ts + tokens.css
+├── mera/  patika/  yesil-avlu/  kirk-yil/
+└── vela/  beyaz-oda/  tesviye/  sicak-firin/
+```
+
+Her tema klasöründe **yalnızca iki dosya** vardır:
 
 ```
 src/themes/<slug>/
-├── index.ts                 # ThemeDefinition — registry'ye bunu veriyoruz
-├── tokens.css               # [data-theme="<slug>"] altındaki CSS değişkenleri
-└── sections/
-    ├── Hero.tsx
-    ├── About.tsx
-    ├── Menu.tsx
-    ├── Gallery.tsx
-    └── Contact.tsx
+├── tokens.css     # görsel kimliğin TAMAMI
+└── index.ts       # hangi hero düzeni + panelde görünen ad/açıklama/renkler
 ```
-
-Beş section da zorunludur (landing sayfası hepsini bu sırayla render eder).
-Bir section'ın gösterilecek verisi yoksa `return null` demesi yeterlidir.
 
 ---
 
-## 3. `SiteContent` — elinizdeki tüm veri
+## 3. Token seti
 
-Tam tanım: `src/themes/types.ts`
+`tokens.css` içindeki her değişken, tasarımlar arasında gerçekten değişen bir şeydir:
 
-```ts
-type SiteContent = {
-  name: string;              // İşletme adı
-  tagline: string;           // Slogan
-  about: string;             // Hakkımızda (paragraflar \n\n ile ayrık)
-  logoUrl: string;           // "" olabilir
-  heroImageUrl: string;      // "" olabilir
+| Token | Ne yapar | Örnek değerler |
+|---|---|---|
+| `--brand-primary` | Butonlar, vurgular, fiyatlar | `#A9502F` |
+| `--brand-primary-contrast` | Ana renk üzerindeki yazı | `#FFFFFF` |
+| `--brand-accent` | Rozet, hata metni | `#FF6B3D` |
+| `--brand-surface` | Sayfa zemini | `#F2EFE7` |
+| `--brand-surface-alt` | Kart / kutu zemini | `#E5E0D3` |
+| `--brand-ink` | Ana metin | `#1A1714` |
+| `--brand-ink-muted` | İkincil metin | `#6F675C` |
+| `--brand-border` | Kenarlıklar | `#DDD6C8` |
+| `--brand-font-display` | Başlık fontu | `Georgia, serif` |
+| `--brand-font-body` | Gövde fontu | `system-ui, …` |
+| `--brand-display-weight` | Başlık kalınlığı | `300` `400` `500` `900` |
+| `--brand-eyebrow-tracking` | Küçük etiket harf aralığı | `0.24em` |
+| `--brand-eyebrow-transform` | Etiket büyük harf mi | `uppercase` \| `none` |
+| `--brand-radius` | Köşe yuvarlaklığı | `0rem` `1rem` `1.5rem` |
+| `--brand-border-width` | Kenarlık kalınlığı | `1px` `2px` |
+| `--brand-container` | İçerik genişliği | `1280px` |
+| `--brand-section-py` / `-lg` | Bölüm dikey boşluğu | `4rem` / `6rem` |
+| `color-scheme` | Tarayıcı form/scrollbar rengi | `light` \| `dark` |
 
-  contact: {
-    phone: string;           phoneHref: string;      // "tel:+90..."
-    whatsapp: string;        whatsappHref: string;   // "https://wa.me/90..."
-    email: string;
-    address: string;
-    lat: number | null;      lng: number | null;
-    mapsUrl: string;
-    instagram: string;       instagramHref: string;  // handle + tam URL
-  };
+### Yardımcı sınıflar
 
-  openingHours: {
-    dayOfWeek: number;       // 0 = Pazar
-    dayLabel: string;        // "Pazartesi"
-    openTime: string;        // "08:00"
-    closeTime: string;       // "22:00"
-    isClosed: boolean;
-  }[];
+Tekrar eden token üçlüleri `globals.css` içinde `@utility` olarak tanımlı:
 
-  menu: {
-    id: number;
-    name: string;            // Kategori adı
-    items: {
-      id: number;
-      name: string;
-      description: string;
-      price: string;         // "₺85,00" — boşsa fiyat gösterilmesin
-      priceValue: number;    // ham sayı
-      imageUrl: string;      // "" olabilir
-      thumbUrl: string;      // 400px küçük hâli
-      isFeatured: boolean;
-    }[];
-  }[];
-
-  gallery: { id: number; url: string; thumbUrl: string; alt: string }[];
-
-  brandColors: Record<string, string>;   // panelde seçilen renkler (tema kullanmaz)
-  themeSlug: string;
-
-  // --- dil ---
-  locale: "tr" | "en" | "es" | "de" | "ar";
-  dir: "ltr" | "rtl";                    // <html dir> ile senkron, Arapça'da "rtl"
-  t: Messages;                           // arayüz metinleri sözlüğü
-  locales: {                             // dil seçici için
-    locale: string; label: string; href: string; isActive: boolean;
-  }[];
-};
-```
-
-Her section şu tek props'u alır:
-
-```ts
-type SectionProps = { content: SiteContent };
-```
-
-**Boş veri her zaman mümkün.** Yeni kurulan bir sitede galeri boş, logo yok,
-telefon girilmemiş olabilir. Her alanı `if (!x) return null` / koşullu render ile koruyun.
+| Sınıf | Karşılığı |
+|---|---|
+| `brand-display` | `font-family: display` + `font-weight: display-weight` |
+| `brand-body` | `font-family: body` |
+| `brand-frame` | kenarlık (renk + kalınlık + stil) + radius |
+| `brand-rounded` | sadece radius |
+| `brand-eyebrow` | harf aralığı + büyük harf |
+| `brand-section` | bölüm dikey boşluğu (responsive) |
 
 ---
 
-## 4. Adım adım: yeni tema ekleme
+## 4. Yeni tema ekleme (token-only) — 10 dakika
+
+Yeni tasarım mevcut 5 hero düzeninden birine uyuyorsa yapılacak iş budur.
 
 ### Adım 0 — Ham tasarımı `design-input/` içine koyun
 
-Claude Design çıktısını `design-input/<slug>/` altına atın (format ve brief
-önerileri: [`design-input/README.md`](./design-input/README.md)). Bu klasör
-build'e dahil değildir, sadece çalışma alanıdır.
+Format ve brief önerileri: [`design-input/README.md`](./design-input/README.md).
 
-### Adım 1 — Klasörü oluşturun
-
-En hızlı yol, çalışan temayı kopyalamak:
+### Adım 1 — `tokens.css`
 
 ```bash
-cp -r src/themes/placeholder src/themes/vintage
+cp -r src/themes/mera src/themes/yeni-tema
 ```
 
-### Adım 2 — `tokens.css`'i güncelleyin
-
-Seçici **mutlaka** yeni slug olmalı:
+`src/themes/yeni-tema/tokens.css` içinde seçiciyi ve değerleri değiştirin:
 
 ```css
-/* src/themes/vintage/tokens.css */
-[data-theme="vintage"] {
-  --brand-primary: #2f4f4f;
-  --brand-primary-contrast: #fdfaf3;
-  --brand-accent: #b08968;
-  --brand-surface: #fdfaf3;
-  --brand-surface-alt: #efe6d8;
-  --brand-ink: #1c1c1c;
-  --brand-ink-muted: #5a5a5a;
-  --brand-border: #ded2be;
-
-  --font-display: "Playfair Display", Georgia, serif;
-  --font-body: var(--font-sans);
-
-  --radius-sm: 0;          /* bu temada köşeler keskin */
-  --radius-md: 0;
-  --radius-lg: 0;
-  --section-py: clamp(4rem, 9vw, 8rem);
-  --container-max: 68rem;
-
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.08);
-  --shadow-md: 0 10px 30px -14px rgb(0 0 0 / 0.3);
+html[data-theme="yeni-tema"] {
+  color-scheme: light;
+  --brand-primary: #2F4F4F;
+  /* … 8 renk, 3 tipografi, 2 etiket, 2 biçim, 3 ölçek token'ı … */
 }
 ```
 
-> **Sekiz `--brand-*` değişkenini mutlaka tanımlayın.** Bunlar admin panelindeki
-> renk seçiciye bağlıdır (`src/lib/theme-vars.ts`). Eksik bırakırsanız müşteri
-> o rengi değiştirdiğinde beklenmedik sonuç alır.
+> ⚠️ **Seçici `html[data-theme="…"]` olmalı**, sadece `[data-theme="…"]` değil.
+> `:root` fallback bloğuyla aynı özgüllükte olursa dosya sırası yüzünden tema
+> hiç uygulanmaz. (Bu hata bir kez yaşandı: 9 tema da aynı görünüyordu.)
 
-### Adım 3 — `globals.css`'e import ekleyin
-
-```css
-/* src/app/globals.css — mevcut import'ların altına */
-@import "../themes/placeholder/tokens.css";
-@import "../themes/vintage/tokens.css";      /* ← yeni satır */
-```
-
-Tüm temaların token'ları yüklenir ama yalnızca `<html data-theme="...">`
-ile eşleşen blok devreye girer.
-
-### Adım 4 — Section'ları yazın
-
-Tasarımınızı `sections/*.tsx` içine taşıyın (detaylı checklist: bölüm 5).
-
-### Adım 5 — `index.ts`
+### Adım 2 — `index.ts`
 
 ```ts
-// src/themes/vintage/index.ts
 import type { ThemeDefinition } from "@/themes/types";
+import SplitHero from "@/themes/shared/heroes/SplitHero";   // ← düzeni seçin
+import About from "@/themes/shared/sections/About";
+import Contact from "@/themes/shared/sections/Contact";
+import Gallery from "@/themes/shared/sections/Gallery";
+import Menu from "@/themes/shared/sections/Menu";
 
-import About from "./sections/About";
-import Contact from "./sections/Contact";
-import Gallery from "./sections/Gallery";
-import Hero from "./sections/Hero";
-import Menu from "./sections/Menu";
-
-const vintage: ThemeDefinition = {
-  name: "Vintage (klasik, serif)",       // panelde görünecek ad
-  sections: { Hero, About, Menu, Gallery, Contact },
-  tokensPath: "src/themes/vintage/tokens.css",
+const theme: ThemeDefinition = {
+  name: "Yeni Tema",
+  description: "Panelde görünecek tek cümlelik açıklama.",
+  scheme: "light",
+  sections: { Hero: SplitHero, About, Menu, Gallery, Contact },
+  tokensPath: "src/themes/yeni-tema/tokens.css",
+  // tokens.css'teki 8 renkle AYNI olmalı — panel bunları okur
+  defaultColors: {
+    "--brand-primary": "#2F4F4F",
+    /* … 8 renk … */
+  },
 };
 
-export default vintage;
+export default theme;
 ```
 
-### Adım 6 — Registry'ye kaydedin
+> **`defaultColors` neden var?** Admin panelindeki renk seçici, müşteri henüz
+> renk seçmemişken hangi değerleri göstereceğini bilmek zorunda. Bu olmadan tema
+> değiştirildiğinde form önceki temanın renklerini kaydeder ve yeni temanın
+> paletini ezer (açık temadan koyuya geçişte site okunamaz hale gelir).
+> **tokens.css ile senkron tutun.**
+
+### Adım 3 — İki satır kayıt
+
+```css
+/* src/app/globals.css — diğer import'ların altına */
+@import "../themes/yeni-tema/tokens.css";
+```
 
 ```ts
 // src/themes/registry.ts
-import placeholder from "./placeholder";
-import vintage from "./vintage";           // ← yeni
-
-export const themeRegistry: Record<string, ThemeDefinition> = {
-  placeholder,
-  vintage,                                  // ← yeni
-};
+import yeniTema from "./yeni-tema";
+export const themeRegistry = { …, "yeni-tema": yeniTema };
 ```
 
-### Adım 7 — Test edin
+### Adım 4 — Test
 
 ```bash
-pnpm dev
-# /admin/tema → "Vintage" seçin → Kaydet → / adresine bakın
-```
-
-Ya da env ile sabitleyin: `NEXT_PUBLIC_THEME=vintage pnpm dev`
-
-### Adım 8 — Kalite kapısı
-
-```bash
+pnpm dev            # /admin/tema → yeni temayı seç → / adresine bak
 pnpm lint && pnpm tsc --noEmit && pnpm build
 ```
 
+### Hero düzeni seçimi
+
+| Bileşen | Düzen | Kullanan |
+|---|---|---|
+| `SplitHero` | Metin bir yanda, 4:3 görsel diğer yanda | mera, yeşil avlu, sıcak fırın, placeholder |
+| `OverlayHero` | Tam genişlik görsel + yarı saydam örtü | patika, vela |
+| `CenteredHero` | Ortalanmış metin, altta 21:9 görsel | kırk yıl |
+| `EditorialHero` | Üstte marka satırı, 12'li ızgara, altta geniş görsel | beyaz oda |
+| `FramedHero` | Çerçeve içinde iki sütun | tesviye |
+
 ---
 
-## 5. Bir HTML tasarımını temaya çevirme checklist'i
+## 5. Mevcut düzene uymayan tasarım (escape hatch)
 
-Elinizde statik bir HTML (veya JSX) tasarım var. Sırayla:
+Yeni tasarımın Menü bölümü gerçekten farklıysa, o bölümü **kendi tema
+klasörünüzde** yazın ve `index.ts`'te değiştirin:
 
-### A. Hazırlık
+```
+src/themes/yeni-tema/
+├── tokens.css
+├── index.ts
+└── sections/
+    └── Menu.tsx          # sadece bu bölüm özel
+```
 
-- [ ] Tasarımı 5 parçaya bölün: Hero / About / Menu / Gallery / Contact.
-      Tasarımda karşılığı olmayan bir bölüm varsa o section `return null` desin.
-- [ ] Tasarımın header/nav ve footer'ı varsa: nav'ı Hero içine koyun,
-      footer zaten `src/app/page.tsx` içinde ortak olarak var.
+```ts
+import Menu from "./sections/Menu";                 // ← kendi dosyanız
+import About from "@/themes/shared/sections/About"; // ← diğerleri paylaşılan
+sections: { Hero: SplitHero, About, Menu, Gallery, Contact },
+```
 
-### B. Markup'ı taşıyın
+Aynısı Hero için de geçerli: yeni bir düzen gerekiyorsa ya `shared/heroes/`
+altına ekleyin (başka temalar da kullanacaksa) ya da tema klasörünüzde tutun.
 
-- [ ] HTML'i JSX'e çevirin: `class` → `className`, `for` → `htmlFor`,
-      kendiliğinden kapanan etiketler (`<img />`, `<br />`), stil objesi `style={{}}`
-- [ ] `<div>` çorbasını semantik etiketlerle değiştirin:
-      `<section>`, `<article>`, `<figure>`, `<ul>/<li>`, `<dl>/<dt>/<dd>`, `<time>`
-- [ ] Her section'a `id` ve `aria-labelledby` verin:
-      ```tsx
-      <section id="menu" aria-labelledby="menu-title">
-        <h2 id="menu-title">Menü</h2>
-      ```
-      Kullanılan id'ler: `hero`, `hakkimizda`, `menu`, `galeri`, `iletisim`
-      (Hero'daki "Menüyü İncele" butonu `#menu` bağlantısını kullanır)
-- [ ] Başlık hiyerarşisi doğru olsun: sayfada **tek bir `<h1>`** (Hero'da),
-      section başlıkları `<h2>`, alt başlıklar `<h3>`
+**Ne zaman paylaşılana taşımalı?** İkinci bir tema aynı düzeni isterse.
+Tek temaya özelse orada kalsın.
 
-### C. Sabit metinleri veriyle değiştirin
+---
+
+## 6. Bölüm yazma / değiştirme checklist'i
+
+Bu bölüm yalnızca **paylaşılan bir bölümü değiştirirken** veya yeni bir hero
+düzeni yazarken gerekir.
+
+### A. Markup
+
+- [ ] `class` → `className`, `for` → `htmlFor`, kendiliğinden kapanan etiketler
+- [ ] Semantik etiketler: `<section>`, `<ul>/<li>`, `<dl>/<dt>/<dd>`, `<figure>`
+- [ ] Bölüm id'leri sabit: `hero`, `hakkimizda`, `menu`, `galeri`, `iletisim`
+- [ ] `aria-labelledby` + başlık id'si
+- [ ] Sayfada **tek `<h1>`** (Hero'da), bölüm başlıkları `<h2>`
+
+### B. Veriye bağlama
 
 | Tasarımdaki | Yerine |
 |---|---|
 | "Coffee House" | `{content.name}` |
-| Slogan cümlesi | `{content.tagline}` |
-| Lorem ipsum paragraf | `content.about` (bkz. paragraf bölme örneği) |
-| "+1 234 567" | `{content.contact.phone}` / `href={content.contact.phoneHref}` |
-| Adres | `{content.contact.address}` |
+| Slogan | `{content.tagline}` |
+| Lorem paragraf | `content.about` (`\n\n` ile bölün) |
+| "Alaçatı / İzmir" | `{content.contact.locality}` (adresin son parçası) |
 | Menü ürünleri | `content.menu.map(...)` |
-| Galeri kutuları | `content.gallery.map(...)` |
-| Sosyal medya ikonları | `content.contact.instagramHref` (boşsa gizleyin) |
-| Çalışma saatleri tablosu | `content.openingHours.map(...)` |
+| Galeri | `content.gallery.map(...)` |
+| Saat tablosu | `content.openingHours.map(...)` |
+| Form | `<ContactForm locale={content.locale} messages={content.t} />` |
 
-Paragraf bölme:
+**Boş veri her zaman mümkün.** Yeni kurulan sitede galeri boş, logo yok,
+telefon girilmemiş olabilir:
 
 ```tsx
-{content.about
-  .split(/\n{2,}/)
-  .map((p) => p.trim())
-  .filter(Boolean)
-  .map((p, i) => <p key={i}>{p}</p>)}
+if (images.length === 0) return null;
+{content.tagline ? <p>{content.tagline}</p> : null}
+<Image src={content.heroImageUrl || HERO_FALLBACK} … />
 ```
 
-### C2. Sabit metinleri sözlüğe taşıyın (5 dil)
+### C. Metinleri sözlüğe taşıma (5 dil)
 
-- [ ] Tasarımdaki her arayüz yazısını `content.t.*` ile değiştirin:
+- [ ] Her arayüz yazısı `content.t.*` ile:
       ```tsx
-      <h2>{t.menu.title}</h2>              // "Menü" / "Menu" / "Carta" / ...
+      <h2>{t.menu.title}</h2>
       <a href="#menu">{t.hero.viewMenu}</a>
       ```
-- [ ] İçinde işletme adı geçen metinler için `fill` kullanın:
+- [ ] Kalıplı metinler `fill` ile:
       ```tsx
       import { fill } from "@/i18n";
       <p>{fill(t.contact.intro, { name: content.name })}</p>
       ```
-- [ ] Sözlükte olmayan bir yazıya ihtiyacınız varsa **önce `src/i18n/messages/tr.ts`'e**
-      anahtarı ekleyin — TypeScript diğer 4 dilin eksik olduğunu size söyler.
-- [ ] Dil seçiciyi yerleştirin (site genelinde `page.tsx` içinde hazır durur;
-      temaya özel bir yere koymak isterseniz):
-      ```tsx
-      import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
-      {content.locales.length > 1 ? <LocaleSwitcher content={content} /> : null}
-      ```
-- [ ] Doğrulayın — tema klasöründe Türkçe sabit metin kalmamalı:
+- [ ] Yeni anahtar gerekiyorsa **önce `src/i18n/messages/tr.ts`'e** ekleyin —
+      TypeScript diğer 4 dilin eksik olduğunu derleme anında söyler.
+- [ ] Doğrulayın:
       ```bash
-      grep -rnE '>[^<>{}]*[çğıöşüÇĞİÖŞÜ][^<>{}]*<' src/themes/<slug>/sections/
+      grep -rnE '>[^<>{}]*[çğıöşüÇĞİÖŞÜ][^<>{}]*<' src/themes/shared/
       ```
 
-### C3. RTL (Arapça) uyumu
+### D. Token'a çevirme
 
-Arapça açıldığında `<html dir="rtl">` olur. Tasarımın otomatik aynalanması için:
+- [ ] Sabit hex → `var(--brand-*)`; Tailwind ile `bg-[var(--brand-surface)]`
+- [ ] `rounded-2xl` → `brand-rounded` / `brand-frame`
+- [ ] `border` / `border-2` → `brand-frame`
+- [ ] `font-light` + `font-[family-name:…]` → `brand-display`
+- [ ] `tracking-[0.24em] uppercase` → `brand-eyebrow`
+- [ ] Yarı saydamlar `color-mix` ile:
+      `bg-[color-mix(in_srgb,var(--brand-surface)_78%,transparent)]`
+- [ ] Doğrulayın — hiç hex kalmamalı:
+      ```bash
+      grep -rn "#[0-9a-fA-F]\{3,6\}" src/themes/shared/
+      ```
 
-- [ ] **Yön bağımlı sınıfları mantıksal olanlarla değiştirin:**
+### E. Görseller
+
+- [ ] `<img>` yerine `next/image`; `sizes` mutlaka doğru
+- [ ] **Harici URL yok.** Yer tutucu: `/placeholders/hero.svg`
+- [ ] Hero görseline `priority`, diğerlerine hayır
+- [ ] Listelerde `thumbUrl`, tam boyda `url`
+- [ ] Dekoratif görsel: `alt=""` + `aria-hidden="true"`
+
+### F. Animasyon
+
+- [ ] Kendi motion kodunuz yerine hazır sarmalayıcı:
+      ```tsx
+      import { Reveal } from "@/components/motion/Reveal";
+      <Reveal delay={0.1}>…</Reveal>
+      <Reveal as="li" key={item.id}>…</Reveal>
+      ```
+      `prefers-reduced-motion` açıkken animasyon tamamen kapanır; JavaScript
+      kapalıyken `<noscript>` kuralı içeriği görünür yapar.
+- [ ] CSS hover efektlerine `motion-reduce:` varyantı ekleyin
+
+### G. RTL (Arapça)
+
+- [ ] Yön bağımlı sınıfları mantıksal olanlarla değiştirin:
 
       | Kullanmayın | Kullanın |
       |---|---|
@@ -323,147 +325,60 @@ Arapça açıldığında `<html dir="rtl">` olur. Tasarımın otomatik aynalanma
       | `left-0` / `right-0` | `start-0` / `end-0` |
       | `text-left` / `text-right` | `text-start` / `text-end` |
       | `border-l` / `border-r` | `border-s` / `border-e` |
-      | CSS `left:` / `right:` | `inset-inline-start:` / `inset-inline-end:` |
+      | CSS `left:` / `right:` | `inset-inline-start/end:` |
 
-- [ ] **Her zaman soldan sağa kalması gerekenlere `dir="ltr"` verin:**
-      telefon numaraları, saat aralıkları (`08:00 – 22:00`), e-posta, URL'ler.
-      ```tsx
-      <a href={contact.phoneHref} dir="ltr">{contact.phone}</a>
+- [ ] Soldan sağa kalması gerekenlere `dir="ltr"`: telefon, saat aralığı, e-posta, URL
+- [ ] Yön bağımlı ikonlara `rtl:-scale-x-100`
+- [ ] **Temanız monospace font kullanıyorsa** `tokens.css`'e Arapça istisnası ekleyin —
+      monospace yığınlar Arapça'da bitişik yazıyı koparır:
+      ```css
+      html[lang="ar"][data-theme="<slug>"] {
+        --brand-font-body: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+      }
       ```
-- [ ] Yön bağımlı ikonlar (→ ok, chevron) RTL'de ters dönmeli:
-      `rtl:rotate-180` sınıfını ekleyin.
-- [ ] Test: `/ar` sayfasında yatay kaydırma olmamalı, metin sağa yaslanmalı.
-
-### D. Renkleri token'a çevirin
-
-- [ ] Tasarımdaki her hex rengi bul-değiştir ile bir değişkene bağlayın:
-      ```
-      #2f4f4f  →  var(--brand-primary)
-      #fdfaf3  →  var(--brand-surface)
-      #1c1c1c  →  var(--brand-ink)
-      ```
-      Tailwind ile: `bg-[var(--brand-surface)]`, `text-[var(--brand-ink)]`
-- [ ] Yarı saydam tonlar için `color-mix` kullanın (yeni değişken eklemeden):
-      ```
-      bg-[color-mix(in_srgb,var(--brand-ink)_62%,transparent)]
-      ```
-- [ ] Bittiğinde doğrulayın — hiç hex kalmamalı:
-      ```bash
-      grep -rn "#[0-9a-fA-F]\{3,6\}" src/themes/vintage/sections/
-      ```
-
-### E. Görseller
-
-- [ ] `<img>` yerine `next/image` kullanın
-- [ ] **Harici URL yok.** Yer tutucu gerekirse `public/placeholders/*.svg`:
-      ```tsx
-      const image = content.heroImageUrl || "/placeholders/hero.svg";
-      ```
-- [ ] Hero görseline `priority` verin (LCP), diğerlerine vermeyin
-- [ ] `sizes` mutlaka doğru olsun:
-      ```tsx
-      sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
-      ```
-- [ ] Listelerde `thumbUrl` kullanın, tam boy `url`'i değil
-- [ ] Dekoratif görsellere `alt=""` + `aria-hidden="true"`;
-      içerik görsellerine anlamlı `alt` (galeride `image.alt`)
-
-### F. Animasyon
-
-- [ ] Kendi `framer-motion` kodunuzu yazmak yerine hazır sarmalayıcıyı kullanın:
-      ```tsx
-      import { Reveal } from "@/components/motion/Reveal";
-
-      <Reveal delay={0.1}>...</Reveal>
-      <Reveal as="li" key={item.id}>...</Reveal>
-      ```
-      `Reveal`, `prefers-reduced-motion` açıkken animasyonu **tamamen** devre dışı bırakır.
-- [ ] CSS transition/hover efektlerine `motion-reduce:` varyantı ekleyin:
-      ```
-      transition-transform hover:-translate-y-0.5
-      motion-reduce:transition-none motion-reduce:hover:translate-y-0
-      ```
-- [ ] Otomatik oynayan carousel / parallax kullanmayın (erişilebilirlik + performans)
-
-### G. İletişim formu
-
-- [ ] Formu **sıfırdan yazmayın.** Hazır bileşeni yerleştirin:
-      ```tsx
-      import { ContactForm } from "@/components/site/ContactForm";
-      ```
-      Honeypot, rate limit, zod doğrulaması ve server action bunun içinde.
-- [ ] Formun dış kutusunu tasarımınıza göre stillendirin; iç alanlar CSS
-      değişkenlerini zaten kullanıyor.
-
-### H. Son kontroller
-
-- [ ] `pnpm tsc --noEmit` temiz
-- [ ] `pnpm lint` temiz
-- [ ] `pnpm build` temiz
-- [ ] **Boş veri testi:** panelden galeriyi ve menüyü boşaltın — sayfa
-      bozulmadan çalışmalı
-- [ ] **Renk testi:** `/admin/tema`'dan ana rengi değiştirin — tasarımda
-      değişmeyen bir yer kalmamalı
-- [ ] **Dil testi:** `/admin/diller`'den 5 dili açıp `/en`, `/es`, `/de` sayfalarını
-      gezin — Türkçe kalmış arayüz metni olmamalı
-- [ ] **RTL testi:** `/ar` sayfasında düzen aynalanmalı, yatay kaydırma olmamalı,
-      telefon/saat soldan sağa kalmalı
-- [ ] **JS kapalı testi:** tarayıcıda JavaScript'i kapatıp sayfayı açın —
-      içerik görünür olmalı (`<noscript>` kuralı bunu sağlar)
-- [ ] **Mobil:** 360px genişlikte yatay kaydırma olmamalı
-- [ ] **Klavye:** Tab ile gezinin, odak halkası her yerde görünür olmalı
-- [ ] **Reduced motion:** işletim sisteminden "hareketi azalt"ı açıp sayfayı
-      yenileyin — hiçbir şey hareket etmemeli
-- [ ] **Lighthouse:** Performance / Accessibility / Best Practices / SEO ≥ 95
+      (Harf aralığı zaten `html[lang="ar"]` ile global olarak sıfırlanır.)
 
 ---
 
-## 6. Referans olarak `placeholder`
+## 7. Bitirmeden önce
 
-`src/themes/placeholder/` kasıtlı olarak sade tutuldu ve **her kalıbı** içeriyor:
+```bash
+pnpm lint && pnpm tsc --noEmit && pnpm build
+```
 
-| Nerede | Ne gösteriyor |
-|---|---|
-| `Hero.tsx` | `fill` görsel + `color-mix` overlay, `priority`, koşullu logo/telefon |
-| `About.tsx` | Paragraf bölme, `<dl>` ile çalışma saatleri |
-| `Menu.tsx` | İç içe map, thumbnail, koşullu fiyat, "öne çıkan" rozeti |
-| `Gallery.tsx` | Responsive grid, `sizes`, `Reveal as="li"`, motion-reduce hover |
-| `Contact.tsx` | Koşullu iletişim satırları, harici link `rel`, `ContactForm` |
-
-Yeni tema yazarken bu dosyaları yan yana açık tutun.
+- [ ] **Boş veri:** panelden galeriyi ve menüyü boşaltın — sayfa bozulmamalı
+- [ ] **Renk:** `/admin/tema`'dan ana rengi değiştirin — değişmeyen yer kalmamalı
+- [ ] **Tema geçişi:** başka temaya geçin, sonra geri dönün — palet doğru gelmeli
+- [ ] **Dil:** `/en`, `/es`, `/de` — Türkçe kalmış arayüz metni olmamalı
+- [ ] **RTL:** `/ar` — düzen aynalanmalı, yatay kaydırma olmamalı, telefon LTR kalmalı
+- [ ] **Mobil:** 360px genişlikte yatay kaydırma yok
+- [ ] **Klavye:** Tab ile gezin, odak halkası her yerde görünür
+- [ ] **Reduced motion:** işletim sisteminden açıp yenileyin — hiçbir şey hareket etmemeli
+- [ ] **JS kapalı:** içerik görünür kalmalı
+- [ ] **Lighthouse:** Performance / A11y / Best Practices / SEO ≥ 95
 
 ---
 
-## 7. Sık yapılan hatalar
+## 8. Sık yapılan hatalar
 
 | Hata | Sonuç | Doğrusu |
 |---|---|---|
-| `tokens.css` seçicisini değiştirmeyi unutmak | Yeni tema `placeholder`'ın renklerini ezer | `[data-theme="<yeni-slug>"]` |
-| `globals.css`'e import eklememek | Tema renksiz görünür | `@import "../themes/<slug>/tokens.css";` |
-| Section'da sabit hex renk | Panelden renk değişmez | `var(--brand-*)` |
-| Section'da sabit Türkçe metin | Site 5 dilde çalışmaz | `content.t.*` |
+| `[data-theme="x"]` (html'siz) | Tema hiç uygulanmaz, hepsi aynı görünür | `html[data-theme="x"]` |
+| `globals.css`'e import eklememek | Tema renksiz | `@import "../themes/<slug>/tokens.css";` |
+| `defaultColors` ≠ `tokens.css` | Panelde yanlış renk, tema geçişinde palet bozulur | İkisini senkron tutun |
+| Bölümde sabit hex | Panelden renk değişmez | `var(--brand-*)` |
+| Bölümde sabit Türkçe metin | Site 5 dilde çalışmaz | `content.t.*` |
 | `ml-2`, `text-left`, `left-0` | Arapça'da düzen bozulur | `ms-2`, `text-start`, `start-0` |
 | Telefona `dir="ltr"` vermemek | Arapça'da numara ters okunur | `<a dir="ltr">` |
-| Boş veri kontrolü yapmamak | Yeni sitede sayfa patlar | `if (!x) return null` |
-| Tema içinden DB okumak | Mimari bozulur, build kırılır | Sadece `content` props'u |
-| Harici görsel/font URL'i | Docker build ve CSP kırılır | Yerel SVG / sistem fontu |
-| `sizes` vermeden `next/image` | Lighthouse düşer | Doğru `sizes` yazın |
-| Her section'da `<h1>` | Erişilebilirlik hatası | Tek `<h1>` (Hero), diğerleri `<h2>` |
+| Monospace tema + Arapça istisnası yok | Arapça harfler kopuk görünür | `html[lang="ar"][data-theme="…"]` bloğu |
+| Boş veri kontrolü yok | Yeni sitede sayfa patlar | `if (!x) return null` |
+| Tema içinden DB okumak | Mimari bozulur | Sadece `content` props'u |
 
 ---
 
-## 8. Yeni bir renk değişkenini panele açmak
+## 9. Yeni bir renk değişkenini panele açmak
 
-Diyelim temanız `--brand-highlight` kullanıyor ve müşteri bunu değiştirebilsin:
-
-```ts
-// src/lib/theme-vars.ts
-export const EDITABLE_COLOR_VARS = [
-  // ... mevcutlar
-  { key: "--brand-highlight", label: "Işıltı rengi", fallback: "#ffd166" },
-] as const;
-```
-
-Sonra **tüm temaların** `tokens.css` dosyalarına bu değişkeni ekleyin
-(bir temada eksikse müşteri onu seçtiğinde etkisiz kalır) ve
-`src/app/globals.css` içindeki `:root` fallback bloğuna da bir varsayılan koyun.
+1. `src/lib/theme-vars.ts` → `EDITABLE_COLOR_VARS`'a bir satır
+2. **Tüm** temaların `tokens.css` dosyalarına değişkeni ekleyin
+3. **Tüm** temaların `index.ts` → `defaultColors` kaydına ekleyin
+4. `src/app/globals.css` içindeki `:root` fallback bloğuna bir varsayılan koyun

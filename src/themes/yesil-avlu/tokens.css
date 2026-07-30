@@ -1,5 +1,5 @@
 /*
- * Placeholder (nötr)
+ * Yeşil Avlu — botanik, yumuşak
  *
  * Bu dosya temanin TEK gorsel kaynagidir. Bilesenlerde sabit renk, radius,
  * font veya harf araligi YOKTUR; hepsi buradaki degiskenlerden okunur.
@@ -7,34 +7,34 @@
  * DIKKAT: secici html[data-theme] olmali — :root fallback ile ayni
  * ozgullukte olmasi durumunda dosya sirasi yuzunden tema uygulanmaz.
  *
- * DIKKAT: buradaki 8 renk, src/themes/placeholder/index.ts icindeki
+ * DIKKAT: buradaki 8 renk, src/themes/yesil-avlu/index.ts icindeki
  * defaultColors ile ayni olmali (admin paneli oradan okuyor).
  */
 
-html[data-theme="placeholder"] {
+html[data-theme="yesil-avlu"] {
   color-scheme: light;
 
   /* --- Marka renkleri (admin panelinden degistirilebilir) --- */
-  --brand-primary: #7A4A2B;
-  --brand-primary-contrast: #FFFAF4;
-  --brand-accent: #C98B4B;
-  --brand-surface: #FBF7F2;
-  --brand-surface-alt: #F2E9DE;
-  --brand-ink: #2B1D13;
-  --brand-ink-muted: #6D5B4C;
-  --brand-border: #E2D4C3;
+  --brand-primary: #1F3A2C;
+  --brand-primary-contrast: #FAF7EF;
+  --brand-accent: #7C8F5E;
+  --brand-surface: #FAF7EF;
+  --brand-surface-alt: #DFE3D5;
+  --brand-ink: #1F3A2C;
+  --brand-ink-muted: #7A8B72;
+  --brand-border: #DDE2D2;
 
   /* --- Tipografi (harici font yok; sistem yigini) --- */
-  --brand-font-display: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --brand-font-body: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --brand-display-weight: 400;
+  --brand-font-display: Georgia, 'Times New Roman', serif;
+  --brand-font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --brand-display-weight: 300;
 
   /* --- Kucuk etiketler (eyebrow, rozet) --- */
-  --brand-eyebrow-tracking: 0.14em;
+  --brand-eyebrow-tracking: 0.28em;
   --brand-eyebrow-transform: uppercase;
 
   /* --- Bicim --- */
-  --brand-radius: 0.75rem;
+  --brand-radius: 1.5rem;
   --brand-border-width: 1px;
 
   /* --- Olcek --- */

@@ -3,6 +3,9 @@
  *
  * Diger dillerin dosyalari bu tipe uymak ZORUNDA (Messages tipi),
  * bu yuzden bir anahtar eklediginizde TypeScript eksik cevirileri size soyler.
+ *
+ * NOT: Bu metinler arayuz kromudur ve TUM temalarda ortaktir. Musteriye ait
+ * icerik (slogan, hakkimizda, urun adlari) burada degil, veritabanindadir.
  */
 const tr = {
   nav: {
@@ -13,27 +16,34 @@ const tr = {
   hero: {
     viewMenu: "Menüyü İncele",
     logoAlt: "{name} logosu",
+    coverAlt: "{name} mekân fotoğrafı",
   },
   about: {
+    eyebrow: "Hikâyemiz",
     title: "Hakkımızda",
-    openingHours: "Çalışma Saatleri",
+    openingHours: "Çalışma saatleri",
+    hoursNote: "Bayram günlerinde çalışma saatleri değişebilir.",
     placeholder: "{name} hakkında bilgi yakında eklenecek.",
   },
   hours: {
     closed: "Kapalı",
   },
   menu: {
-    title: "Menü",
+    eyebrow: "Menü",
+    title: "Bugün tezgâhta ne var?",
     featured: "Öne çıkan",
   },
   gallery: {
-    title: "Galeri",
+    eyebrow: "Galeri",
+    title: "Mekândan kareler",
     imageAlt: "{name} galeri görseli {index}",
   },
   contact: {
-    title: "İletişim",
+    eyebrow: "İletişim",
+    title: "Bize ulaşın",
     intro:
-      "{name} ekibine ulaşmak, rezervasyon ya da özel sipariş için yazabilirsiniz.",
+      "Rezervasyon, özel gün ve toplu sipariş için yazabilir ya da arayabilirsiniz.",
+    formTitle: "Mesaj bırakın",
     address: "Adres",
     phone: "Telefon",
     whatsapp: "WhatsApp",
@@ -42,13 +52,19 @@ const tr = {
   },
   form: {
     name: "Ad Soyad",
+    namePlaceholder: "Adınız ve soyadınız",
     phone: "Telefon",
+    phonePlaceholder: "+90 5xx xxx xx xx",
     email: "E-posta",
+    emailPlaceholder: "ornek@eposta.com",
     message: "Mesajınız",
+    messagePlaceholder: "Bize iletmek istedikleriniz…",
     honeypot: "Web siteniz",
-    submit: "Mesaj Gönder",
+    submit: "Mesajı gönder",
     submitting: "Gönderiliyor…",
     success: "Mesajınız alındı. En kısa sürede dönüş yapacağız.",
+    consent:
+      "Formu göndererek kişisel verilerinizin işlenmesine izin vermiş olursunuz.",
   },
   errors: {
     nameTooShort: "Adınızı yazın",

@@ -16,6 +16,8 @@ export default function AdminRootLayout({
   // Panel, sitenin marka renklerinden bagimsiz sabit bir arayuz kullanir;
   // musterinin sectigi renkler paneli asla okunamaz hale getiremez.
   return (
-    <div className="min-h-screen bg-zinc-100 text-zinc-900">{children}</div>
+    <div className="admin-shell min-h-screen bg-zinc-100 text-zinc-900">
+      {children}
+    </div>
   );
 }

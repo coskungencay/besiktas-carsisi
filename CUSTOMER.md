@@ -274,8 +274,25 @@ Renk kutucuğuna tıklayıp seçebilir ya da yanındaki kutuya renk kodunu
 Beğenmediyseniz **"Varsayılan renklere dön"** ile başlangıç renklerine
 tek tıkla geri dönebilirsiniz.
 
-**Aktif tema** kutusu görünüyorsa, sitenin genel tasarım şablonunu değiştirebilirsiniz.
-Görünmüyorsa temanız sabitlenmiş demektir — değiştirmek için sitenizi kuran kişiye ulaşın.
+### Tema seçimi
+
+Sayfanın üstünde **9 hazır tasarım** listelenir. Her birinin altında renk şeridi
+ve kısa bir açıklama vardır; "koyu" etiketli olanlar siyah zeminlidir.
+
+Birini seçip **Temayı Kaydet**'e basmanız yeterli — site anında değişir.
+
+> ⚠️ **Tema değiştirdiğinizde özel renkleriniz sıfırlanır** ve yeni temanın kendi
+> renkleri gelir. Bu bilinçli bir davranıştır: açık bir temanın renkleri koyu bir
+> temada okunmaz hale gelirdi. Onay kutusu sizi uyarır.
+
+Tema seçim kutusu görünmüyorsa temanız sunucu tarafında sabitlenmiş demektir —
+değiştirmek için sitenizi kuran kişiye ulaşın.
+
+### Bir rengi geri alma
+
+Her rengin yanındaki **↺** düğmesi o rengi temanın varsayılanına döndürür.
+Hepsini birden döndürmek için sayfanın altındaki **"Tüm renkleri temaya döndür"**
+düğmesini kullanın.
 
 ---
 

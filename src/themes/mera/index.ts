@@ -7,28 +7,28 @@ import Gallery from "@/themes/shared/sections/Gallery";
 import Menu from "@/themes/shared/sections/Menu";
 
 /**
- * Placeholder (nötr)
+ * Mera
  *
- * Gorsel kimligin tamami src/themes/placeholder/tokens.css icindedir.
+ * Gorsel kimligin tamami src/themes/mera/tokens.css icindedir.
  * Bolumler paylasilan uygulamalardan gelir; bu temaya ozel bir duzen
  * gerekirse ilgili bolumu bu klasorde yazip asagida degistirin.
  */
 const theme: ThemeDefinition = {
-  name: "Placeholder (nötr)",
-  description: "Sade, nötr bir başlangıç teması. Tasarım seçilene kadar güvenli varsayılan.",
+  name: "Mera",
+  description: "Editoryal serif başlıklar, sıcak toprak tonları, keskin köşeler.",
   scheme: "light",
   sections: { Hero: SplitHero, About, Menu, Gallery, Contact },
-  tokensPath: "src/themes/placeholder/tokens.css",
+  tokensPath: "src/themes/mera/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {
-    "--brand-primary": "#7A4A2B",
-    "--brand-primary-contrast": "#FFFAF4",
-    "--brand-accent": "#C98B4B",
-    "--brand-surface": "#FBF7F2",
-    "--brand-surface-alt": "#F2E9DE",
-    "--brand-ink": "#2B1D13",
-    "--brand-ink-muted": "#6D5B4C",
-    "--brand-border": "#E2D4C3",
+    "--brand-primary": "#A9502F",
+    "--brand-primary-contrast": "#FFFFFF",
+    "--brand-accent": "#1A1714",
+    "--brand-surface": "#F2EFE7",
+    "--brand-surface-alt": "#E5E0D3",
+    "--brand-ink": "#1A1714",
+    "--brand-ink-muted": "#6F675C",
+    "--brand-border": "#DDD6C8",
   },
 };
 

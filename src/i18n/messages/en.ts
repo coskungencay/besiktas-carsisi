@@ -9,27 +9,34 @@ const en: Messages = {
   hero: {
     viewMenu: "View the Menu",
     logoAlt: "{name} logo",
+    coverAlt: "Photo of {name}",
   },
   about: {
+    eyebrow: "Our Story",
     title: "About Us",
-    openingHours: "Opening Hours",
+    openingHours: "Opening hours",
+    hoursNote: "Opening hours may change on public holidays.",
     placeholder: "Information about {name} is coming soon.",
   },
   hours: {
     closed: "Closed",
   },
   menu: {
-    title: "Menu",
+    eyebrow: "Menu",
+    title: "What's on the counter today?",
     featured: "Featured",
   },
   gallery: {
-    title: "Gallery",
+    eyebrow: "Gallery",
+    title: "Moments from the shop",
     imageAlt: "{name} gallery image {index}",
   },
   contact: {
-    title: "Contact",
+    eyebrow: "Contact",
+    title: "Get in touch",
     intro:
-      "Get in touch with the {name} team for reservations or special orders.",
+      "Write or call us for reservations, special occasions and bulk orders.",
+    formTitle: "Leave a message",
     address: "Address",
     phone: "Phone",
     whatsapp: "WhatsApp",
@@ -38,13 +45,19 @@ const en: Messages = {
   },
   form: {
     name: "Full name",
+    namePlaceholder: "Your first and last name",
     phone: "Phone",
+    phonePlaceholder: "+90 5xx xxx xx xx",
     email: "Email",
+    emailPlaceholder: "you@example.com",
     message: "Your message",
+    messagePlaceholder: "Anything you'd like to tell us…",
     honeypot: "Your website",
-    submit: "Send Message",
+    submit: "Send message",
     submitting: "Sending…",
     success: "Thanks! We received your message and will get back to you soon.",
+    consent:
+      "By submitting this form you consent to the processing of your personal data.",
   },
   errors: {
     nameTooShort: "Please enter your name",

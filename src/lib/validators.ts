@@ -110,8 +110,11 @@ export const galleryImageSchema = z.object({
 
 /* --------------------------------- Tema ----------------------------------- */
 
-export const themeSchema = z.object({
-  themeSlug: trimmed(60).min(1),
+export const themeSlugSchema = z.object({
+  themeSlug: trimmed(60).min(1, "Tema seçin"),
+});
+
+export const colorsSchema = z.object({
   colors: z.record(
     z.string().regex(/^--[a-z0-9-]+$/, "Geçersiz değişken adı"),
     hexColorSchema,

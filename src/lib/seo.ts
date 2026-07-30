@@ -35,8 +35,8 @@ export function buildMetadata(content: SiteContent): Metadata {
     applicationName: title,
     keywords: [
       content.name,
-      content.t.menu.title,
-      content.t.contact.title,
+      content.t.menu.eyebrow,
+      content.t.contact.eyebrow,
       content.contact.address.split(",").pop()?.trim() ?? "",
     ].filter(Boolean),
     alternates: {
@@ -131,7 +131,7 @@ export function buildJsonLd(content: SiteContent): Record<string, unknown> {
   if (menuItems.length > 0) {
     jsonLd.hasMenu = {
       "@type": "Menu",
-      name: `${content.name} — ${content.t.menu.title}`,
+      name: `${content.name} — ${content.t.menu.eyebrow}`,
       inLanguage: content.locale,
       hasMenuSection: content.menu
         .filter((c) => c.items.length > 0)

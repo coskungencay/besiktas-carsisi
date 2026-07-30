@@ -9,27 +9,34 @@ const es: Messages = {
   hero: {
     viewMenu: "Ver la carta",
     logoAlt: "Logotipo de {name}",
+    coverAlt: "Foto de {name}",
   },
   about: {
+    eyebrow: "Nuestra historia",
     title: "Sobre nosotros",
     openingHours: "Horario",
+    hoursNote: "El horario puede variar en días festivos.",
     placeholder: "Pronto habrá más información sobre {name}.",
   },
   hours: {
     closed: "Cerrado",
   },
   menu: {
-    title: "Carta",
+    eyebrow: "Carta",
+    title: "¿Qué hay hoy en la barra?",
     featured: "Destacado",
   },
   gallery: {
-    title: "Galería",
+    eyebrow: "Galería",
+    title: "Momentos del local",
     imageAlt: "Imagen {index} de la galería de {name}",
   },
   contact: {
-    title: "Contacto",
+    eyebrow: "Contacto",
+    title: "Ponte en contacto",
     intro:
-      "Escríbenos para contactar con el equipo de {name}, reservar o hacer un pedido especial.",
+      "Escríbenos o llámanos para reservas, celebraciones y pedidos grandes.",
+    formTitle: "Déjanos un mensaje",
     address: "Dirección",
     phone: "Teléfono",
     whatsapp: "WhatsApp",
@@ -38,13 +45,19 @@ const es: Messages = {
   },
   form: {
     name: "Nombre y apellidos",
+    namePlaceholder: "Tu nombre y apellidos",
     phone: "Teléfono",
+    phonePlaceholder: "+90 5xx xxx xx xx",
     email: "Correo electrónico",
+    emailPlaceholder: "tu@ejemplo.com",
     message: "Tu mensaje",
+    messagePlaceholder: "Lo que quieras contarnos…",
     honeypot: "Tu sitio web",
     submit: "Enviar mensaje",
     submitting: "Enviando…",
     success: "¡Gracias! Hemos recibido tu mensaje y te responderemos pronto.",
+    consent:
+      "Al enviar el formulario, aceptas el tratamiento de tus datos personales.",
   },
   errors: {
     nameTooShort: "Escribe tu nombre",

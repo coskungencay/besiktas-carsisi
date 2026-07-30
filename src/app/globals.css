@@ -6,16 +6,23 @@
  * Yeni tema eklerken buraya BIR satir import eklenir. (bkz. THEMING.md)
  * -------------------------------------------------------------------------- */
 @import "../themes/placeholder/tokens.css";
+@import "../themes/mera/tokens.css";
+@import "../themes/patika/tokens.css";
+@import "../themes/yesil-avlu/tokens.css";
+@import "../themes/kirk-yil/tokens.css";
+@import "../themes/vela/tokens.css";
+@import "../themes/beyaz-oda/tokens.css";
+@import "../themes/tesviye/tokens.css";
+@import "../themes/sicak-firin/tokens.css";
 
-@theme {
-  --font-sans:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-}
-
+/* --------------------------------------------------------------------------
+ * Varsayilan token degerleri
+ * Hicbir tema yuklenemezse bile sayfa okunabilir ve tutarli kalir.
+ * -------------------------------------------------------------------------- */
 :root {
   color-scheme: light;
-  /* Hicbir tema yuklenemezse bile sayfa okunabilir kalsin. */
+
+  /* Renkler */
   --brand-primary: #7a4a2b;
   --brand-primary-contrast: #fffaf4;
   --brand-accent: #c98b4b;
@@ -24,31 +31,118 @@
   --brand-ink: #18181b;
   --brand-ink-muted: #52525b;
   --brand-border: #e4e4e7;
-  --radius-sm: 0.5rem;
-  --radius-md: 0.875rem;
-  --radius-lg: 1.5rem;
-  --section-py: clamp(3.5rem, 8vw, 6.5rem);
-  --container-max: 72rem;
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.06);
-  --shadow-md: 0 8px 24px -12px rgb(0 0 0 / 0.22);
+
+  /* Tipografi */
+  --brand-font-display:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --brand-font-body:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Baslik kalinligi: 300 | 400 | 500 | 900 */
+  --brand-display-weight: 400;
+
+  /* Kucuk uppercase etiketler (eyebrow, rozet) */
+  --brand-eyebrow-tracking: 0.2em;
+  --brand-eyebrow-transform: uppercase;
+
+  /* Bicim */
+  --brand-radius: 0rem;
+  --brand-border-width: 1px;
+
+  /* Olcek */
+  --brand-container: 1280px;
+  --brand-section-py: 4rem;
+  --brand-section-py-lg: 6rem;
 }
 
+/*
+ * Arapca ozel durumu.
+ *
+ * letter-spacing, Arapca'da bitisik yazilan harfleri BIRBIRINDEN AYIRIR ve
+ * metin bozuk gorunur. Bu yuzden Arapca'da harf araligi sifirlanir.
+ * (Seciciler esit ozgullukte oldugu icin bu blok tema import'larindan SONRA
+ * gelmeli — kaynak sirasi kazanir.)
+ */
+html[lang="ar"] {
+  --brand-eyebrow-tracking: 0;
+}
+
+/* --------------------------------------------------------------------------
+ * Tema yardimci siniflari
+ * Tema bilesenleri bu uc utility'yi kullanir; boylece 8 temada tekrar eden
+ * "font + agirlik", "kenarlik + radius", "tracking + uppercase" ucluleri
+ * tek yerde tanimlanir.
+ * -------------------------------------------------------------------------- */
+@utility brand-display {
+  font-family: var(--brand-font-display);
+  font-weight: var(--brand-display-weight);
+}
+
+@utility brand-body {
+  font-family: var(--brand-font-body);
+}
+
+@utility brand-frame {
+  border-style: solid;
+  border-width: var(--brand-border-width);
+  border-color: var(--brand-border);
+  border-radius: var(--brand-radius);
+}
+
+@utility brand-rounded {
+  border-radius: var(--brand-radius);
+}
+
+@utility brand-eyebrow {
+  letter-spacing: var(--brand-eyebrow-tracking);
+  text-transform: var(--brand-eyebrow-transform);
+}
+
+@utility brand-section {
+  padding-block: var(--brand-section-py);
+}
+
+@media (min-width: 640px) {
+  .brand-section {
+    padding-block: var(--brand-section-py-lg);
+  }
+}
+
+/* --------------------------------------------------------------------------
+ * Temel
+ * -------------------------------------------------------------------------- */
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
-  font-family: var(--font-sans);
+  font-family: var(--brand-font-body);
   background: var(--brand-surface);
   color: var(--brand-ink);
   -webkit-font-smoothing: antialiased;
 }
 
+/*
+ * Yonetim paneli tema token'larindan ETKILENMEZ.
+ * body{font-family:var(--brand-font-body)} kurali paneli de sarardi; boylece
+ * monospace bir tema secildiginde panel de monospace olurdu.
+ */
+.admin-shell {
+  font-family:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  letter-spacing: normal;
+}
+
 /* Klavye kullanicilari icin gorunur odak halkasi. */
 :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
-  outline: 2px solid currentColor;
+  outline: 2px solid var(--brand-primary);
   outline-offset: 2px;
+}
+
+/* Panelde odak halkasi da tema renginden bagimsiz. */
+.admin-shell
+  :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline-color: #18181b;
 }
 
 /* Icerige atlama linki. inset-inline-start kullaniliyor ki RTL'de (Arapca)
@@ -58,7 +152,7 @@ body {
   inset-inline-start: 0.75rem;
   top: -4rem;
   z-index: 100;
-  border-radius: var(--radius-sm);
+  border-radius: var(--brand-radius);
   background: var(--brand-primary);
   color: var(--brand-primary-contrast);
   padding: 0.75rem 1.25rem;

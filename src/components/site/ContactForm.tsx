@@ -8,12 +8,19 @@ import { submitContactAction } from "@/actions/contact";
 import type { Messages } from "@/i18n";
 import type { Locale } from "@/i18n/config";
 import { IDLE } from "@/lib/action-result";
+import { ArrowIcon } from "@/themes/shared/parts";
 import { makeContactMessageSchema } from "@/lib/validators";
 
-const fieldClass =
-  "mt-1.5 w-full rounded-[var(--radius-sm)] border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-[var(--brand-ink)] outline-none transition-colors focus:border-[var(--brand-primary)]";
+/**
+ * Tum temalarin kullandigi TEK iletisim formu.
+ * Gorunumu tamamen tema token'larindan (--brand-*) gelir, bu yuzden 9 temada
+ * da yerinde durur; honeypot, rate limit ve zod dogrulamasi burada tek yerde.
+ */
 
-const labelClass = "block text-sm font-medium text-[var(--brand-ink)]";
+const fieldClass =
+  "brand-frame w-full bg-[var(--brand-surface)] px-4 py-3 text-sm text-[var(--brand-ink)] outline-none transition-colors placeholder:text-[var(--brand-ink-muted)] focus:border-[var(--brand-primary)]";
+
+const labelClass = "text-sm font-medium";
 
 export function ContactForm({
   locale,
@@ -60,33 +67,34 @@ export function ContactForm({
         void trigger();
       }}
       noValidate
-      className="space-y-4"
+      className="mt-6"
     >
       <input type="hidden" name="locale" value={locale} />
 
-      <div>
-        <label htmlFor="contact-name" className={labelClass}>
-          {messages.form.name} <span aria-hidden="true">*</span>
-        </label>
-        <input
-          id="contact-name"
-          type="text"
-          autoComplete="name"
-          required
-          aria-invalid={Boolean(errors.name)}
-          aria-describedby={errors.name ? "contact-name-error" : undefined}
-          className={fieldClass}
-          {...register("name")}
-        />
-        {errors.name ? (
-          <p id="contact-name-error" className="mt-1 text-sm text-red-700">
-            {errors.name.message}
-          </p>
-        ) : null}
-      </div>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div className="flex flex-col gap-2 sm:col-span-2">
+          <label htmlFor="contact-name" className={labelClass}>
+            {messages.form.name} <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="contact-name"
+            type="text"
+            autoComplete="name"
+            required
+            placeholder={messages.form.namePlaceholder}
+            aria-invalid={Boolean(errors.name)}
+            aria-describedby={errors.name ? "contact-name-error" : undefined}
+            className={fieldClass}
+            {...register("name")}
+          />
+          {errors.name ? (
+            <p id="contact-name-error" className="text-sm text-[var(--brand-accent)]">
+              {errors.name.message}
+            </p>
+          ) : null}
+        </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
+        <div className="flex flex-col gap-2">
           <label htmlFor="contact-phone" className={labelClass}>
             {messages.form.phone}
           </label>
@@ -95,11 +103,18 @@ export function ContactForm({
             type="tel"
             dir="ltr"
             autoComplete="tel"
+            placeholder={messages.form.phonePlaceholder}
             className={fieldClass}
             {...register("phone")}
           />
+          {errors.phone ? (
+            <p className="text-sm text-[var(--brand-accent)]">
+              {errors.phone.message}
+            </p>
+          ) : null}
         </div>
-        <div>
+
+        <div className="flex flex-col gap-2">
           <label htmlFor="contact-email" className={labelClass}>
             {messages.form.email}
           </label>
@@ -108,37 +123,43 @@ export function ContactForm({
             type="email"
             dir="ltr"
             autoComplete="email"
+            placeholder={messages.form.emailPlaceholder}
             aria-invalid={Boolean(errors.email)}
             className={fieldClass}
             {...register("email")}
           />
+          {errors.email ? (
+            <p className="text-sm text-[var(--brand-accent)]">
+              {errors.email.message}
+            </p>
+          ) : null}
         </div>
-      </div>
-      {errors.phone ? (
-        <p className="text-sm text-red-700">{errors.phone.message}</p>
-      ) : null}
-      {errors.email ? (
-        <p className="text-sm text-red-700">{errors.email.message}</p>
-      ) : null}
 
-      <div>
-        <label htmlFor="contact-message" className={labelClass}>
-          {messages.form.message} <span aria-hidden="true">*</span>
-        </label>
-        <textarea
-          id="contact-message"
-          rows={5}
-          required
-          aria-invalid={Boolean(errors.message)}
-          aria-describedby={errors.message ? "contact-message-error" : undefined}
-          className={`${fieldClass} resize-y`}
-          {...register("message")}
-        />
-        {errors.message ? (
-          <p id="contact-message-error" className="mt-1 text-sm text-red-700">
-            {errors.message.message}
-          </p>
-        ) : null}
+        <div className="flex flex-col gap-2 sm:col-span-2">
+          <label htmlFor="contact-message" className={labelClass}>
+            {messages.form.message} <span aria-hidden="true">*</span>
+          </label>
+          <textarea
+            id="contact-message"
+            rows={4}
+            required
+            placeholder={messages.form.messagePlaceholder}
+            aria-invalid={Boolean(errors.message)}
+            aria-describedby={
+              errors.message ? "contact-message-error" : undefined
+            }
+            className={`${fieldClass} resize-y`}
+            {...register("message")}
+          />
+          {errors.message ? (
+            <p
+              id="contact-message-error"
+              className="text-sm text-[var(--brand-accent)]"
+            >
+              {errors.message.message}
+            </p>
+          ) : null}
+        </div>
       </div>
 
       {/* Honeypot: gercek kullanicilar gormez, botlar doldurur. */}
@@ -156,21 +177,26 @@ export function ContactForm({
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-[var(--radius-sm)] bg-[var(--brand-primary)] px-6 py-3 font-semibold text-[var(--brand-primary-contrast)] transition-opacity disabled:opacity-60"
+        className="brand-rounded mt-6 inline-flex items-center gap-2 bg-[var(--brand-primary)] px-6 py-3 text-sm font-medium text-[var(--brand-primary-contrast)] transition-opacity hover:opacity-85 disabled:opacity-60"
       >
-        {pending ? messages.form.submitting : messages.form.submit}
+        <span>{pending ? messages.form.submitting : messages.form.submit}</span>
+        <ArrowIcon />
       </button>
 
       <p
         role="status"
         aria-live="polite"
-        className={
+        className={`mt-4 text-sm font-medium ${
           state.status === "error"
-            ? "text-sm font-medium text-red-700"
-            : "text-sm font-medium text-[var(--brand-primary)]"
-        }
+            ? "text-[var(--brand-accent)]"
+            : "text-[var(--brand-primary)]"
+        }`}
       >
         {state.message}
+      </p>
+
+      <p className="mt-2 text-xs leading-relaxed text-[var(--brand-ink-muted)]">
+        {messages.form.consent}
       </p>
     </form>
   );

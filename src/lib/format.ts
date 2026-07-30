@@ -112,3 +112,16 @@ export function thumbUrl(url: string): string {
   if (!url.startsWith("/api/uploads/")) return url;
   return url.replace(/\.webp$/, ".thumb.webp");
 }
+
+/**
+ * Tam adresten kisa yer bilgisi cikarir.
+ * "Örnek Mah., Kahve Sok. No:12, Kadıköy / İstanbul" -> "Kadıköy / İstanbul"
+ */
+export function localityFrom(address: string): string {
+  const parts = address
+    .split(",")
+    .map((p) => p.trim())
+    .filter(Boolean);
+  if (parts.length === 0) return "";
+  return parts.slice(-1)[0] ?? "";
+}

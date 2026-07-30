@@ -1,5 +1,5 @@
 /*
- * Placeholder (nötr)
+ * Patika — koyu, iddialı, neon
  *
  * Bu dosya temanin TEK gorsel kaynagidir. Bilesenlerde sabit renk, radius,
  * font veya harf araligi YOKTUR; hepsi buradaki degiskenlerden okunur.
@@ -7,35 +7,35 @@
  * DIKKAT: secici html[data-theme] olmali — :root fallback ile ayni
  * ozgullukte olmasi durumunda dosya sirasi yuzunden tema uygulanmaz.
  *
- * DIKKAT: buradaki 8 renk, src/themes/placeholder/index.ts icindeki
+ * DIKKAT: buradaki 8 renk, src/themes/patika/index.ts icindeki
  * defaultColors ile ayni olmali (admin paneli oradan okuyor).
  */
 
-html[data-theme="placeholder"] {
-  color-scheme: light;
+html[data-theme="patika"] {
+  color-scheme: dark;
 
   /* --- Marka renkleri (admin panelinden degistirilebilir) --- */
-  --brand-primary: #7A4A2B;
-  --brand-primary-contrast: #FFFAF4;
-  --brand-accent: #C98B4B;
-  --brand-surface: #FBF7F2;
-  --brand-surface-alt: #F2E9DE;
-  --brand-ink: #2B1D13;
-  --brand-ink-muted: #6D5B4C;
-  --brand-border: #E2D4C3;
+  --brand-primary: #D9FF4D;
+  --brand-primary-contrast: #0D0D0C;
+  --brand-accent: #FF6B3D;
+  --brand-surface: #0D0D0C;
+  --brand-surface-alt: #16160F;
+  --brand-ink: #F6F4EC;
+  --brand-ink-muted: #B9B6AA;
+  --brand-border: #2C2C24;
 
   /* --- Tipografi (harici font yok; sistem yigini) --- */
-  --brand-font-display: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --brand-font-body: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --brand-display-weight: 400;
+  --brand-font-display: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --brand-font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --brand-display-weight: 900;
 
   /* --- Kucuk etiketler (eyebrow, rozet) --- */
-  --brand-eyebrow-tracking: 0.14em;
+  --brand-eyebrow-tracking: 0.18em;
   --brand-eyebrow-transform: uppercase;
 
   /* --- Bicim --- */
-  --brand-radius: 0.75rem;
-  --brand-border-width: 1px;
+  --brand-radius: 1rem;
+  --brand-border-width: 2px;
 
   /* --- Olcek --- */
   --brand-container: 1280px;

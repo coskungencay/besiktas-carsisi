@@ -2,18 +2,36 @@ import { headers } from "next/headers";
 import type { Viewport } from "next";
 import type { CSSProperties, ReactNode } from "react";
 
-import { LOCALE_META, isLocale, DEFAULT_LOCALE } from "@/i18n/config";
+import { DEFAULT_LOCALE, LOCALE_META, isLocale } from "@/i18n/config";
 import { getSettings } from "@/lib/content";
+import { getTheme, resolveThemeSlug } from "@/themes/registry";
 
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
 
-export const viewport: Viewport = {
-  themeColor: "#7a4a2b",
-  width: "device-width",
-  initialScale: 1,
-};
+/** Aktif temanin (veya musterinin sectigi) ana rengini dondurur. */
+function activeThemeColor(): string {
+  const settings = getSettings();
+  const theme = getTheme(resolveThemeSlug(settings.themeSlug));
+  return (
+    settings.brandColors?.["--brand-primary"] ??
+    theme.defaultColors["--brand-primary"] ??
+    "#7a4a2b"
+  );
+}
+
+/**
+ * Mobil tarayici cubugunun rengi aktif temadan gelir; sabit birakilsaydi
+ * 9 temanin 8'inde yanlis renk gorunurdu.
+ */
+export function generateViewport(): Viewport {
+  return {
+    themeColor: activeThemeColor(),
+    width: "device-width",
+    initialScale: 1,
+  };
+}
 
 /**
  * Kok layout yalnizca <html> kabugunu kurar.
@@ -37,7 +55,7 @@ export default async function RootLayout({
     <html
       lang={locale}
       dir={dir}
-      data-theme={settings.themeSlug}
+      data-theme={resolveThemeSlug(settings.themeSlug)}
       style={brandStyle}
     >
       <body>

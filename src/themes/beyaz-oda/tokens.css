@@ -1,0 +1,58 @@
+/*
+ * Beyaz Oda — minimal, monospace
+ *
+ * Bu dosya temanin TEK gorsel kaynagidir. Bilesenlerde sabit renk, radius,
+ * font veya harf araligi YOKTUR; hepsi buradaki degiskenlerden okunur.
+ *
+ * DIKKAT: secici html[data-theme] olmali — :root fallback ile ayni
+ * ozgullukte olmasi durumunda dosya sirasi yuzunden tema uygulanmaz.
+ *
+ * DIKKAT: buradaki 8 renk, src/themes/beyaz-oda/index.ts icindeki
+ * defaultColors ile ayni olmali (admin paneli oradan okuyor).
+ */
+
+html[data-theme="beyaz-oda"] {
+  color-scheme: light;
+
+  /* --- Marka renkleri (admin panelinden degistirilebilir) --- */
+  --brand-primary: #101112;
+  --brand-primary-contrast: #FFFFFF;
+  --brand-accent: #46606E;
+  --brand-surface: #FFFFFF;
+  --brand-surface-alt: #F2F3F4;
+  --brand-ink: #101112;
+  --brand-ink-muted: #6E7479;
+  --brand-border: #E4E5E7;
+
+  /* --- Tipografi (harici font yok; sistem yigini) --- */
+  --brand-font-display: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --brand-font-body: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+  --brand-display-weight: 300;
+
+  /* --- Kucuk etiketler (eyebrow, rozet) --- */
+  --brand-eyebrow-tracking: 0.16em;
+  --brand-eyebrow-transform: uppercase;
+
+  /* --- Bicim --- */
+  --brand-radius: 0rem;
+  --brand-border-width: 1px;
+
+  /* --- Olcek --- */
+  --brand-container: 1280px;
+  --brand-section-py: 4rem;
+  --brand-section-py-lg: 6rem;
+}
+
+/*
+ * Arapca istisnasi.
+ *
+ * Bu tema govde metninde monospace kullaniyor. Monospace yiginlar Arapca'da
+ * her harfi sabit genislikte bir hucreye oturtur ve BITISIK YAZIYI KOPARIR.
+ * Bu yuzden yalnizca Arapca'da orantili bir yigina geciyoruz.
+ *
+ * Secici ozgullugu (0,2,1) — hem tema blogunu hem :root'u gecer.
+ * Monospace kullanan her yeni tema ayni blogu eklemeli (bkz. THEMING.md).
+ */
+html[lang="ar"][data-theme="beyaz-oda"] {
+  --brand-font-body: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+}

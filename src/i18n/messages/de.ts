@@ -9,27 +9,34 @@ const de: Messages = {
   hero: {
     viewMenu: "Zur Speisekarte",
     logoAlt: "Logo von {name}",
+    coverAlt: "Foto von {name}",
   },
   about: {
+    eyebrow: "Unsere Geschichte",
     title: "Über uns",
     openingHours: "Öffnungszeiten",
+    hoursNote: "An Feiertagen können die Öffnungszeiten abweichen.",
     placeholder: "Informationen über {name} folgen in Kürze.",
   },
   hours: {
     closed: "Geschlossen",
   },
   menu: {
-    title: "Speisekarte",
+    eyebrow: "Speisekarte",
+    title: "Was gibt es heute an der Theke?",
     featured: "Empfehlung",
   },
   gallery: {
-    title: "Galerie",
+    eyebrow: "Galerie",
+    title: "Eindrücke aus dem Laden",
     imageAlt: "Galeriebild {index} von {name}",
   },
   contact: {
-    title: "Kontakt",
+    eyebrow: "Kontakt",
+    title: "Kontakt aufnehmen",
     intro:
-      "Schreiben Sie dem Team von {name} für Reservierungen oder Sonderbestellungen.",
+      "Schreiben oder rufen Sie uns an — für Reservierungen, Anlässe und Großbestellungen.",
+    formTitle: "Nachricht hinterlassen",
     address: "Adresse",
     phone: "Telefon",
     whatsapp: "WhatsApp",
@@ -38,13 +45,19 @@ const de: Messages = {
   },
   form: {
     name: "Vor- und Nachname",
+    namePlaceholder: "Ihr Vor- und Nachname",
     phone: "Telefon",
+    phonePlaceholder: "+90 5xx xxx xx xx",
     email: "E-Mail",
+    emailPlaceholder: "sie@beispiel.com",
     message: "Ihre Nachricht",
+    messagePlaceholder: "Was Sie uns mitteilen möchten…",
     honeypot: "Ihre Website",
     submit: "Nachricht senden",
     submitting: "Wird gesendet…",
     success: "Vielen Dank! Wir haben Ihre Nachricht erhalten und melden uns bald.",
+    consent:
+      "Mit dem Absenden des Formulars stimmen Sie der Verarbeitung Ihrer personenbezogenen Daten zu.",
   },
   errors: {
     nameTooShort: "Bitte geben Sie Ihren Namen ein",

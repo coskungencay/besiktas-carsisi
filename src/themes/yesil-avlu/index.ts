@@ -7,28 +7,28 @@ import Gallery from "@/themes/shared/sections/Gallery";
 import Menu from "@/themes/shared/sections/Menu";
 
 /**
- * Placeholder (nötr)
+ * Yeşil Avlu
  *
- * Gorsel kimligin tamami src/themes/placeholder/tokens.css icindedir.
+ * Gorsel kimligin tamami src/themes/yesil-avlu/tokens.css icindedir.
  * Bolumler paylasilan uygulamalardan gelir; bu temaya ozel bir duzen
  * gerekirse ilgili bolumu bu klasorde yazip asagida degistirin.
  */
 const theme: ThemeDefinition = {
-  name: "Placeholder (nötr)",
-  description: "Sade, nötr bir başlangıç teması. Tasarım seçilene kadar güvenli varsayılan.",
+  name: "Yeşil Avlu",
+  description: "Botanik yeşiller, krem zemin, yumuşak ve geniş yuvarlatmalar.",
   scheme: "light",
   sections: { Hero: SplitHero, About, Menu, Gallery, Contact },
-  tokensPath: "src/themes/placeholder/tokens.css",
+  tokensPath: "src/themes/yesil-avlu/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {
-    "--brand-primary": "#7A4A2B",
-    "--brand-primary-contrast": "#FFFAF4",
-    "--brand-accent": "#C98B4B",
-    "--brand-surface": "#FBF7F2",
-    "--brand-surface-alt": "#F2E9DE",
-    "--brand-ink": "#2B1D13",
-    "--brand-ink-muted": "#6D5B4C",
-    "--brand-border": "#E2D4C3",
+    "--brand-primary": "#1F3A2C",
+    "--brand-primary-contrast": "#FAF7EF",
+    "--brand-accent": "#7C8F5E",
+    "--brand-surface": "#FAF7EF",
+    "--brand-surface-alt": "#DFE3D5",
+    "--brand-ink": "#1F3A2C",
+    "--brand-ink-muted": "#7A8B72",
+    "--brand-border": "#DDE2D2",
   },
 };
 

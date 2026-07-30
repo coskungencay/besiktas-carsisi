@@ -56,6 +56,11 @@ export type SiteContact = {
   whatsappHref: string;
   email: string;
   address: string;
+  /**
+   * Adresin son iki parcasi, orn. "Kadıköy / İstanbul".
+   * Hero'larda tam adres yerine bu kisa satir kullanilir.
+   */
+  locality: string;
   lat: number | null;
   lng: number | null;
   mapsUrl: string;
@@ -114,10 +119,25 @@ export type ThemeSections = Record<SectionKey, ComponentType<SectionProps>>;
 export type ThemeDefinition = {
   /** Panelde gosterilen okunabilir ad. */
   name: string;
+  /** Panelde temayi bir cumlede anlatan aciklama. */
+  description: string;
   /** Landing sayfasinda sirayla render edilen bolumler. */
   sections: ThemeSections;
   /** globals.css'e import edilen token dosyasinin repo-koku yolu. */
   tokensPath: string;
+  /**
+   * Temanin tokens.css'indeki 8 marka rengi.
+   *
+   * NEDEN GEREKLI: admin panelindeki renk secici, musteri henuz renk
+   * secmemisken hangi degerleri gosterecegini bilmeli. Bu olmadan tema
+   * degistirildiginde form onceki temanin renklerini kaydeder ve yeni
+   * temanin paletini ezer.
+   *
+   * DIKKAT: tokens.css ile ayni tutulmali. (bkz. THEMING.md)
+   */
+  defaultColors: Record<string, string>;
+  /** Panelde kucuk onizleme icin: temanin acik mi koyu mu oldugu. */
+  scheme: "light" | "dark";
 };
 
 /** Landing sayfasindaki sabit render sirasi. */

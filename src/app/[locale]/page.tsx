@@ -49,8 +49,13 @@ export default async function HomePage({
         })}
       </main>
 
-      <footer className="bg-[var(--brand-ink)] py-10 text-[color-mix(in_srgb,var(--brand-primary-contrast)_75%,transparent)]">
-        <div className="mx-auto flex w-full max-w-[var(--container-max)] flex-col gap-2 px-5 text-sm sm:flex-row sm:items-center sm:justify-between sm:px-8">
+      {/*
+        Footer tema token'lariyla calisir: --brand-ink'i ZEMIN olarak kullanmak
+        koyu temalarda (patika, vela) rengi ters cevirirdi. surface-alt her
+        temada dogru tarafta kalir.
+      */}
+      <footer className="brand-body border-t border-[var(--brand-border)] bg-[var(--brand-surface-alt)] py-10 text-[var(--brand-ink-muted)]">
+        <div className="mx-auto flex w-full max-w-[var(--brand-container)] flex-col gap-2 px-6 text-sm sm:flex-row sm:items-center sm:justify-between sm:px-10">
           <p>
             © {year} {content.name}
           </p>

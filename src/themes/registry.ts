@@ -1,15 +1,31 @@
+import beyazOda from "./beyaz-oda";
+import kirkYil from "./kirk-yil";
+import mera from "./mera";
+import patika from "./patika";
 import placeholder from "./placeholder";
+import sicakFirin from "./sicak-firin";
+import tesviye from "./tesviye";
+import vela from "./vela";
+import yesilAvlu from "./yesil-avlu";
 import type { ThemeDefinition } from "./types";
 
 /**
  * Yeni tema ekleme:
- *  1) src/themes/<slug>/ klasorunu olustur (tokens.css + sections/* + index.ts)
+ *  1) src/themes/<slug>/ klasorunu olustur (tokens.css + index.ts)
  *  2) asagiya bir satir ekle
  *  3) src/app/globals.css icine tokens.css import'unu ekle
  * Detay: THEMING.md
  */
 export const themeRegistry: Record<string, ThemeDefinition> = {
   placeholder,
+  mera,
+  patika,
+  "yesil-avlu": yesilAvlu,
+  "kirk-yil": kirkYil,
+  vela,
+  "beyaz-oda": beyazOda,
+  tesviye,
+  "sicak-firin": sicakFirin,
 };
 
 export const DEFAULT_THEME_SLUG = "placeholder";
@@ -39,4 +55,9 @@ export function pinnedThemeSlug(): string | null {
  */
 export function resolveThemeSlug(dbSlug?: string | null): string {
   return pinnedThemeSlug() ?? (isThemeSlug(dbSlug) ? dbSlug : DEFAULT_THEME_SLUG);
+}
+
+/** Bir temanin marka renkleri; panelde form varsayilanlari icin. */
+export function themeDefaultColors(slug: string | null | undefined) {
+  return getTheme(slug).defaultColors;
 }

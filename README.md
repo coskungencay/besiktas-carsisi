@@ -13,7 +13,7 @@ müdahalesine ihtiyaç kalmaz.
 | Katman | Özet |
 |---|---|
 | **Public site** | Tek sayfa landing: Hero → Hakkımızda → Menü → Galeri → İletişim |
-| **Tema sistemi** | Görsel tasarım `src/themes/<slug>/` altında izole. Yeni tasarım eklemek sadece görsel iştir; veri katmanına dokunulmaz |
+| **Tema sistemi** | **9 hazır tema** (placeholder + 8 tasarım). Görsel kimlik tamamen CSS token'larında; yeni tema = bir `tokens.css` + iki satır kayıt |
 | **Admin panel** | `/admin`, arayüz tamamen Türkçe. İçerik, menü, galeri, saatler, mesajlar, renkler |
 | **Veritabanı** | SQLite tek dosya (`/data/app.db`), Drizzle ORM |
 | **Görseller** | `/data/uploads` altında; sharp ile 1920px WebP + 400px thumbnail + orijinal |
@@ -90,9 +90,14 @@ cafe-infra/
 │   └── themes/
 │       ├── types.ts              #   SiteContent + ThemeDefinition sözleşmesi
 │       ├── registry.ts           #   Record<slug, ThemeDefinition>
-│       └── placeholder/
-│           ├── index.ts  tokens.css
-│           └── sections/{Hero,About,Menu,Gallery,Contact}.tsx
+│       ├── shared/
+│       │   ├── parts.tsx         #   BrandMark, HeroActions, SectionHeader, ikonlar
+│       │   ├── heroes/           #   5 hero düzeni (Split/Overlay/Centered/
+│       │   │                     #     Editorial/Framed)
+│       │   └── sections/         #   About, Menu, Gallery, Contact (tek uygulama)
+│       ├── placeholder/          #   tokens.css + index.ts
+│       ├── mera/ patika/ yesil-avlu/ kirk-yil/
+│       └── vela/ beyaz-oda/ tesviye/ sicak-firin/
 ├── Dockerfile  docker-compose.yml  docker-entrypoint.sh
 ├── .env.example
 └── README.md  DEPLOY.md  CUSTOMER.md  THEMING.md
@@ -163,11 +168,16 @@ DB ──► src/lib/content.ts ──► SiteContent ──► tema section'lar
        (tek dönüşüm yeri)     (tek tip)       (sadece görsel iş)
 ```
 
-- Her tema `src/themes/<slug>/` altında: `tokens.css`, `sections/{Hero,About,Menu,Gallery,Contact}.tsx`, `index.ts`
-- `src/themes/registry.ts` → `Record<slug, ThemeDefinition>`, `ThemeDefinition = { name, sections, tokensPath }`
+**9 tema hazır:** `placeholder`, `mera`, `patika`, `yesil-avlu`, `kirk-yil`,
+`vela`, `beyaz-oda`, `tesviye`, `sicak-firin` (ikisi koyu tema).
+
+- Her tema `src/themes/<slug>/` altında **yalnızca iki dosya**: `tokens.css` + `index.ts`
+- Bölüm bileşenleri `src/themes/shared/` altında **tek kez** yazılır; temalar bunları
+  kullanır. Bir tema farklı bir düzen isterse kendi bölümünü yazıp değiştirebilir
 - Tüm section'lar tek bir props alır: `{ content: SiteContent }`
-- Renkler **yalnızca** CSS değişkenleriyle (`--brand-primary`, `--brand-surface`, `--brand-ink`, …).
-  Panelden seçilen renkler `<html>` üzerine inline style olarak basılır ve tema varsayılanlarını ezer.
+- Renk, radius, kenarlık kalınlığı, başlık ağırlığı, harf aralığı ve fontlar
+  **yalnızca** CSS değişkenleriyle. Panelden seçilen renkler `<html>` üzerine
+  inline style olarak basılır ve tema varsayılanlarını ezer
 
 **Aktif tema çözümleme sırası:**
 1. `NEXT_PUBLIC_THEME` (geçerli bir slug ise) → imaja sabitlenmiş tema
@@ -261,9 +271,24 @@ Talimatta açık belirtilmeyen noktalarda alınan kararlar:
 10. **Menü ürünü silinince** görselinin 3 varyantı da diskten silinir. Kategori
     silinince içindeki ürünler ve onların görselleri de silinir (`onDelete: cascade`).
 
-11. **Admin panel teması.** Panel, müşterinin seçtiği marka renklerinden bağımsız
-    sabit bir nötr arayüz kullanır — aksi halde kötü bir renk seçimi paneli
-    okunamaz hale getirebilirdi.
+11. **Admin panel teması.** Panel, müşterinin seçtiği marka renklerinden ve
+    fontlarından bağımsız sabit bir nötr arayüz kullanır (`.admin-shell`) —
+    aksi halde monospace bir tema seçildiğinde panel de monospace olur, kötü bir
+    renk seçimi de paneli okunamaz hale getirebilirdi.
+
+11b. **Tema mimarisi: 9 tema, 4 bölüm dosyası.** 8 tasarım ölçüldüğünde
+    About/Menu/Gallery/Contact'ın yapısal olarak birebir aynı olduğu, farkın
+    yalnızca 4 token (radius, kenarlık kalınlığı, başlık ağırlığı, harf aralığı)
+    olduğu görüldü. Bu yüzden bu 4 bölüm bir kez yazıldı; Hero'nun ise 5 gerçek
+    düzeni olduğu için 5 ayrı bileşen var. Alternatif (her tema için 5 dosya =
+    40 dosya) 32 tanesi neredeyse birebir aynı dosya üretir ve bir hata
+    düzeltmesini 8 kez tekrarlamayı gerektirirdi.
+
+11c. **Tema değişince özel renkler sıfırlanır.** Aksi halde açık bir temadan
+    koyu bir temaya geçerken önceki paletin üzerine yazılır ve site okunamaz
+    hale gelirdi. Ayrıca yalnızca temanın varsayılanından **farklı** olan
+    renkler saklanır; böylece tema güncellenirse müşteri dokunmadığı renklerde
+    otomatik olarak yeni paleti alır.
 
 12. **`better-sqlite3` sürümü ve Docker taban imajı.** 13.x kullanıldı — bu sürüm
     prebuilt binary'leri paketin içinde taşır, yani Docker build'inde `node-gyp`

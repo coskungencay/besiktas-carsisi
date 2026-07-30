@@ -1,5 +1,5 @@
 /*
- * Placeholder (nötr)
+ * Kırk Yıl — nostaljik, klasik
  *
  * Bu dosya temanin TEK gorsel kaynagidir. Bilesenlerde sabit renk, radius,
  * font veya harf araligi YOKTUR; hepsi buradaki degiskenlerden okunur.
@@ -7,34 +7,34 @@
  * DIKKAT: secici html[data-theme] olmali — :root fallback ile ayni
  * ozgullukte olmasi durumunda dosya sirasi yuzunden tema uygulanmaz.
  *
- * DIKKAT: buradaki 8 renk, src/themes/placeholder/index.ts icindeki
+ * DIKKAT: buradaki 8 renk, src/themes/kirk-yil/index.ts icindeki
  * defaultColors ile ayni olmali (admin paneli oradan okuyor).
  */
 
-html[data-theme="placeholder"] {
+html[data-theme="kirk-yil"] {
   color-scheme: light;
 
   /* --- Marka renkleri (admin panelinden degistirilebilir) --- */
-  --brand-primary: #7A4A2B;
-  --brand-primary-contrast: #FFFAF4;
-  --brand-accent: #C98B4B;
-  --brand-surface: #FBF7F2;
-  --brand-surface-alt: #F2E9DE;
-  --brand-ink: #2B1D13;
-  --brand-ink-muted: #6D5B4C;
-  --brand-border: #E2D4C3;
+  --brand-primary: #6E1F26;
+  --brand-primary-contrast: #EDE3D0;
+  --brand-accent: #B08A45;
+  --brand-surface: #EDE3D0;
+  --brand-surface-alt: #E2D5BD;
+  --brand-ink: #2A211B;
+  --brand-ink-muted: #6A5B4C;
+  --brand-border: #D3C4A8;
 
   /* --- Tipografi (harici font yok; sistem yigini) --- */
-  --brand-font-display: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --brand-font-body: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --brand-font-display: Georgia, 'Times New Roman', serif;
+  --brand-font-body: Georgia, 'Times New Roman', serif;
   --brand-display-weight: 400;
 
   /* --- Kucuk etiketler (eyebrow, rozet) --- */
-  --brand-eyebrow-tracking: 0.14em;
+  --brand-eyebrow-tracking: 0.26em;
   --brand-eyebrow-transform: uppercase;
 
   /* --- Bicim --- */
-  --brand-radius: 0.75rem;
+  --brand-radius: 0rem;
   --brand-border-width: 1px;
 
   /* --- Olcek --- */

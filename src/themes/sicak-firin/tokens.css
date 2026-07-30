@@ -1,5 +1,5 @@
 /*
- * Placeholder (nötr)
+ * Sıcak Fırın — mahalle, samimi
  *
  * Bu dosya temanin TEK gorsel kaynagidir. Bilesenlerde sabit renk, radius,
  * font veya harf araligi YOKTUR; hepsi buradaki degiskenlerden okunur.
@@ -7,34 +7,34 @@
  * DIKKAT: secici html[data-theme] olmali — :root fallback ile ayni
  * ozgullukte olmasi durumunda dosya sirasi yuzunden tema uygulanmaz.
  *
- * DIKKAT: buradaki 8 renk, src/themes/placeholder/index.ts icindeki
+ * DIKKAT: buradaki 8 renk, src/themes/sicak-firin/index.ts icindeki
  * defaultColors ile ayni olmali (admin paneli oradan okuyor).
  */
 
-html[data-theme="placeholder"] {
+html[data-theme="sicak-firin"] {
   color-scheme: light;
 
   /* --- Marka renkleri (admin panelinden degistirilebilir) --- */
-  --brand-primary: #7A4A2B;
-  --brand-primary-contrast: #FFFAF4;
-  --brand-accent: #C98B4B;
-  --brand-surface: #FBF7F2;
-  --brand-surface-alt: #F2E9DE;
-  --brand-ink: #2B1D13;
-  --brand-ink-muted: #6D5B4C;
-  --brand-border: #E2D4C3;
+  --brand-primary: #8A5524;
+  --brand-primary-contrast: #FFFBF3;
+  --brand-accent: #A63A50;
+  --brand-surface: #FFFBF3;
+  --brand-surface-alt: #F6E7CE;
+  --brand-ink: #3A2A1C;
+  --brand-ink-muted: #7A6551;
+  --brand-border: #EBDCC2;
 
   /* --- Tipografi (harici font yok; sistem yigini) --- */
-  --brand-font-display: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --brand-font-body: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --brand-display-weight: 400;
+  --brand-font-display: Georgia, 'Times New Roman', serif;
+  --brand-font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --brand-display-weight: 500;
 
   /* --- Kucuk etiketler (eyebrow, rozet) --- */
   --brand-eyebrow-tracking: 0.14em;
-  --brand-eyebrow-transform: uppercase;
+  --brand-eyebrow-transform: none;
 
   /* --- Bicim --- */
-  --brand-radius: 0.75rem;
+  --brand-radius: 1rem;
   --brand-border-width: 1px;
 
   /* --- Olcek --- */
