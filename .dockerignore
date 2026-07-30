@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.gitignore
+data
+.env
+.env.*
+!.env.example
+npm-debug.log*
+.DS_Store
+.playwright-mcp
+.tmp-test
+README.md
+DEPLOY.md
+CUSTOMER.md
+THEMING.md
+backups

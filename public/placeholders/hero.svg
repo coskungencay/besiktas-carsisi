@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Kapak görseli yer tutucusu">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7a4a2b"/>
+      <stop offset="55%" stop-color="#a9713f"/>
+      <stop offset="100%" stop-color="#c98b4b"/>
+    </linearGradient>
+    <pattern id="dots" width="48" height="48" patternUnits="userSpaceOnUse">
+      <circle cx="24" cy="24" r="2" fill="#fffaf4" fill-opacity="0.16"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#g)"/>
+  <rect width="1600" height="900" fill="url(#dots)"/>
+  <g fill="none" stroke="#fffaf4" stroke-opacity="0.35" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M660 400h230v130a115 115 0 0 1-115 115h0a115 115 0 0 1-115-115z"/>
+    <path d="M890 430h55a55 55 0 0 1 0 110h-55"/>
+    <path d="M700 330c0-30 30-30 30-60"/>
+    <path d="M775 330c0-30 30-30 30-60"/>
+    <path d="M620 700h330"/>
+  </g>
+</svg>

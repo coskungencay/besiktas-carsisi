@@ -1,0 +1,35 @@
+/*
+ * placeholder temasi - tasarim token'lari
+ *
+ * Kural: tema icindeki hicbir component'te sabit renk (hex/rgb) yazilmaz.
+ * Her renk buradaki bir CSS degiskeni uzerinden gelir; admin panelindeki
+ * "Tema & Renkler" sayfasi bu degiskenleri <html> uzerine inline style
+ * olarak yazarak ezer.
+ */
+
+[data-theme="placeholder"] {
+  /* --- Marka renkleri (panelden degistirilebilir) --- */
+  --brand-primary: #7a4a2b;
+  --brand-primary-contrast: #fffaf4;
+  --brand-accent: #c98b4b;
+  --brand-surface: #fbf7f2;
+  --brand-surface-alt: #f2e9de;
+  --brand-ink: #2b1d13;
+  --brand-ink-muted: #6d5b4c;
+  --brand-border: #e2d4c3;
+
+  /* --- Tipografi --- */
+  --font-display: var(--font-sans);
+  --font-body: var(--font-sans);
+
+  /* --- Olcek --- */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.5rem;
+  --section-py: clamp(3.5rem, 8vw, 6.5rem);
+  --container-max: 72rem;
+
+  /* --- Golgeler --- */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.06);
+  --shadow-md: 0 8px 24px -12px rgb(0 0 0 / 0.22);
+}

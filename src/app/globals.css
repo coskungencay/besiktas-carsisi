@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/* --------------------------------------------------------------------------
+ * Tema token'lari
+ * Her tema kendi tokens.css'ini [data-theme="<slug>"] altinda tanimlar.
+ * Yeni tema eklerken buraya BIR satir import eklenir. (bkz. THEMING.md)
+ * -------------------------------------------------------------------------- */
+@import "../themes/placeholder/tokens.css";
+
+@theme {
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+:root {
+  color-scheme: light;
+  /* Hicbir tema yuklenemezse bile sayfa okunabilir kalsin. */
+  --brand-primary: #7a4a2b;
+  --brand-primary-contrast: #fffaf4;
+  --brand-accent: #c98b4b;
+  --brand-surface: #ffffff;
+  --brand-surface-alt: #f4f4f5;
+  --brand-ink: #18181b;
+  --brand-ink-muted: #52525b;
+  --brand-border: #e4e4e7;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.5rem;
+  --section-py: clamp(3.5rem, 8vw, 6.5rem);
+  --container-max: 72rem;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.06);
+  --shadow-md: 0 8px 24px -12px rgb(0 0 0 / 0.22);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--brand-surface);
+  color: var(--brand-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Klavye kullanicilari icin gorunur odak halkasi. */
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Icerige atlama linki. */
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: -4rem;
+  z-index: 100;
+  border-radius: var(--radius-sm);
+  background: var(--brand-primary);
+  color: var(--brand-primary-contrast);
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  transition: top 150ms ease;
+}
+.skip-link:focus {
+  top: 0.75rem;
+}
+
+/* --------------------------------------------------------------------------
+ * Erisilebilirlik: hareket azaltma tercihi
+ * -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,252 @@
+# cafe-infra
+
+Kahveci / bakery / restoran gibi mekânlara satılan **landing page sitelerinin altyapı şablonu**.
+
+Her müşteri için bu repodan bir kopya alınır, kendi sunucusunda Docker ile çalışır,
+müşteri tüm içeriğini kendi admin panelinden yönetir. Kurulumdan sonra geliştirici
+müdahalesine ihtiyaç kalmaz.
+
+---
+
+## 1. Ne yapar?
+
+| Katman | Özet |
+|---|---|
+| **Public site** | Tek sayfa landing: Hero → Hakkımızda → Menü → Galeri → İletişim |
+| **Tema sistemi** | Görsel tasarım `src/themes/<slug>/` altında izole. Yeni tasarım eklemek sadece görsel iştir; veri katmanına dokunulmaz |
+| **Admin panel** | `/admin`, arayüz tamamen Türkçe. İçerik, menü, galeri, saatler, mesajlar, renkler |
+| **Veritabanı** | SQLite tek dosya (`/data/app.db`), Drizzle ORM |
+| **Görseller** | `/data/uploads` altında; sharp ile 1920px WebP + 400px thumbnail + orijinal |
+| **SEO** | Metadata API, `CafeOrCoffeeShop` JSON-LD, sitemap, robots, dinamik OG görseli |
+| **Deploy** | Multi-stage Dockerfile (standalone), tek named volume, `/api/health` |
+
+---
+
+## 2. Teknoloji
+
+- **Next.js 15** (App Router, `output: "standalone"`)
+- **TypeScript** strict (+ `noUncheckedIndexedAccess`)
+- **Tailwind CSS v4** — tema token'ları CSS değişkenleriyle
+- **motion** (framer-motion) — `prefers-reduced-motion` destekli
+- **Drizzle ORM + better-sqlite3**
+- **Better Auth** (email + password, tek admin)
+- **zod** + **react-hook-form** — tüm mutasyonlar Server Actions üzerinden
+- **sharp** (görsel işleme), **nodemailer** (opsiyonel SMTP)
+- **pnpm**
+
+---
+
+## 3. Klasör yapısı
+
+```
+cafe-infra/
+├── drizzle/                      # üretilmiş SQL migration'ları (commit edilir)
+├── public/placeholders/          # yerel SVG yer tutucular (harici URL yok)
+├── scripts/
+│   ├── migrate.ts                # pnpm db:migrate
+│   ├── seed.ts                   # pnpm db:seed  (idempotent)
+│   └── backup.sh                 # sqlite .backup + uploads tar
+├── src/
+│   ├── actions/                  # "use server" — TÜM mutasyonlar burada
+│   │   ├── account.ts            #   şifre değiştirme, çıkış
+│   │   ├── contact.ts            #   iletişim formu (honeypot + rate limit)
+│   │   ├── gallery.ts  hours.ts  menu.ts  messages.ts  settings.ts  theme.ts
+│   ├── app/
+│   │   ├── admin/
+│   │   │   ├── layout.tsx        #   panel kabuğu (noindex)
+│   │   │   ├── giris/            #   /admin/giris          (korumasız)
+│   │   │   ├── sifre-degistir/   #   /admin/sifre-degistir (oturum ister)
+│   │   │   └── (panel)/          #   oturum + şifre değişimi tamamlanmış olmalı
+│   │   │       ├── layout.tsx    #     guard + sol menü
+│   │   │       ├── page.tsx      #     Dashboard
+│   │   │       ├── genel/  saatler/  menu/  galeri/  mesajlar/  tema/
+│   │   ├── api/
+│   │   │   ├── auth/[...all]/    #   Better Auth handler
+│   │   │   ├── health/           #   healthcheck
+│   │   │   └── uploads/[...path] #   /data/uploads servisi (uuid + traversal koruması)
+│   │   ├── globals.css           #   Tailwind + tema tokens.css import'ları
+│   │   ├── layout.tsx  page.tsx  icon.svg
+│   │   ├── opengraph-image.tsx  robots.ts  sitemap.ts
+│   ├── components/
+│   │   ├── admin/                #   panel UI (SortableList, formlar, nav)
+│   │   ├── motion/Reveal.tsx     #   reduced-motion uyumlu animasyon sarmalayıcı
+│   │   └── site/ContactForm.tsx
+│   ├── db/
+│   │   ├── index.ts              #   bağlantı (WAL, foreign_keys)
+│   │   └── schema.ts             #   tüm tablolar
+│   ├── lib/
+│   │   ├── auth.ts  auth-client.ts  session.ts
+│   │   ├── content.ts            #   DB → SiteContent dönüşümü (TEK yer)
+│   │   ├── action-result.ts  env.ts  format.ts  mailer.ts
+│   │   ├── rate-limit.ts  seo.ts  theme-vars.ts  uploads.ts  validators.ts
+│   └── themes/
+│       ├── types.ts              #   SiteContent + ThemeDefinition sözleşmesi
+│       ├── registry.ts           #   Record<slug, ThemeDefinition>
+│       └── placeholder/
+│           ├── index.ts  tokens.css
+│           └── sections/{Hero,About,Menu,Gallery,Contact}.tsx
+├── Dockerfile  docker-compose.yml  docker-entrypoint.sh
+├── .env.example
+└── README.md  DEPLOY.md  CUSTOMER.md  THEMING.md
+```
+
+---
+
+## 4. Yerel geliştirme
+
+```bash
+pnpm install
+
+cp .env.example .env
+# .env içinde en az şunları ayarlayın:
+#   NEXT_PUBLIC_APP_URL=http://localhost:3000
+#   BETTER_AUTH_SECRET=$(openssl rand -base64 32)
+#   DATABASE_PATH=./data/app.db
+#   UPLOADS_DIR=./data/uploads
+#   ADMIN_EMAIL=admin@ornek.com
+#   ADMIN_PASSWORD=degistir123
+
+pnpm db:migrate     # tabloları oluştur
+pnpm db:seed        # örnek içerik + admin kullanıcı
+pnpm dev            # http://localhost:3000
+```
+
+Panel: `http://localhost:3000/admin` → ilk girişte şifre değiştirme zorunlu.
+
+### Komutlar
+
+| Komut | Ne yapar |
+|---|---|
+| `pnpm dev` | Geliştirme sunucusu |
+| `pnpm build` | Production build (standalone) |
+| `pnpm start` | Build edilmiş uygulamayı çalıştırır |
+| `pnpm lint` | ESLint |
+| `pnpm tsc --noEmit` | Tip kontrolü |
+| `pnpm db:generate` | Şema değişikliğinden SQL migration üretir |
+| `pnpm db:migrate` | Migration'ları uygular |
+| `pnpm db:seed` | Başlangıç içeriği + admin kullanıcı (idempotent) |
+| `pnpm db:studio` | Drizzle Studio |
+| `./scripts/backup.sh` | DB + görsel yedeği |
+
+---
+
+## 5. Veri modeli
+
+| Tablo | Açıklama |
+|---|---|
+| `site_settings` | **Tekil satır** (id = 1). Ad, slogan, hakkımızda, telefon, whatsapp, e-posta, adres, lat/lng, maps linki, instagram, logo, hero görseli, `brandColors` (JSON), `themeSlug` |
+| `opening_hours` | `dayOfWeek` 0–6 (0 = Pazar), açılış/kapanış, `isClosed` |
+| `menu_categories` | Ad, `sortOrder` |
+| `menu_items` | Kategori, ad, açıklama, fiyat, görsel, `isFeatured`, `sortOrder`, `isActive` |
+| `gallery_images` | URL, alt metni, `sortOrder` |
+| `contact_messages` | Ad, telefon, e-posta, mesaj, `isRead`, `createdAt` |
+| `rate_limits` | İletişim formu için IP başına saatlik sayaç |
+| `user` / `session` / `account` / `verification` | Better Auth. `user.mustChangePassword` ilk giriş zorunluluğu için eklendi |
+
+---
+
+## 6. Tema sistemi (mimarinin kalbi)
+
+**Kural: tema kodu asla veritabanına dokunmaz.**
+
+```
+DB ──► src/lib/content.ts ──► SiteContent ──► tema section'ları
+       (tek dönüşüm yeri)     (tek tip)       (sadece görsel iş)
+```
+
+- Her tema `src/themes/<slug>/` altında: `tokens.css`, `sections/{Hero,About,Menu,Gallery,Contact}.tsx`, `index.ts`
+- `src/themes/registry.ts` → `Record<slug, ThemeDefinition>`, `ThemeDefinition = { name, sections, tokensPath }`
+- Tüm section'lar tek bir props alır: `{ content: SiteContent }`
+- Renkler **yalnızca** CSS değişkenleriyle (`--brand-primary`, `--brand-surface`, `--brand-ink`, …).
+  Panelden seçilen renkler `<html>` üzerine inline style olarak basılır ve tema varsayılanlarını ezer.
+
+**Aktif tema çözümleme sırası:**
+1. `NEXT_PUBLIC_THEME` (geçerli bir slug ise) → imaja sabitlenmiş tema
+2. `site_settings.themeSlug` → panelden seçilen tema
+3. `placeholder` → fallback
+
+Yeni tema eklemek için: **[THEMING.md](./THEMING.md)**
+
+---
+
+## 7. Güvenlik notları
+
+- Kayıt (sign-up) endpoint'i kapalı; kullanıcı yalnızca seed ile oluşur.
+- `/admin` altındaki her sayfa sunucu tarafında oturum kontrolünden geçer (`(panel)/layout.tsx`).
+- İlk girişte şifre değiştirme zorunlu (`user.mustChangePassword`).
+- Oturum cookie cache'i **kapalı** — açık olsaydı şifre değişiminden sonra 5 dakika eski kullanıcı verisi okunurdu.
+- Yükleme yolları yalnızca `uuid.webp` / `uuid.thumb.webp` / `uuid.orig.<ext>` kalıbına izin verir; path traversal engellidir.
+- İletişim formunda honeypot alanı + IP başına saatlik rate limit (DB tabanlı, restart'a dayanıklı).
+- `robots.ts` `/admin` ve `/api` yollarını dışlar; panel `noindex`.
+
+---
+
+## 8. Assumptions (belirsizliklerde verilen kararlar)
+
+Talimatta açık belirtilmeyen noktalarda alınan kararlar:
+
+1. **Tema seçimi env mi DB mi?** İkisi de destekleniyor. `NEXT_PUBLIC_THEME` doluysa
+   tema imaja sabitlenir ve panelde seçim kutusu kilitlenir (uyarı gösterilir);
+   boşsa müşteri panelden seçer. Böylece hem "env'den okunsun" şartı hem de
+   `site_settings.themeSlug` kolonu anlamlı kalıyor.
+
+2. **Render stratejisi.** Tüm rotalar `dynamic = "force-dynamic"`. Gerekçe: SQLite
+   okuması sub-milisaniye, ve Docker build'inin veritabanına ihtiyaç duymaması
+   gerekiyor (build sırasında `/data` volume'ü henüz yok). Mutasyonlar yine de
+   şartname gereği `revalidatePath("/")` çağırıyor — ileride ISR'e geçilmek
+   istenirse kod hazır.
+
+3. **Rate limit nerede tutuluyor?** Bellek yerine `rate_limits` tablosunda.
+   Container restart'ında sayaç sıfırlanmıyor. Tek container varsayımı geçerli.
+
+4. **Sürükle-bırak.** Ek kütüphane eklenmedi; HTML5 drag & drop kullanıldı.
+   Dokunmatik cihazlar ve klavye kullanıcıları için her satırda ↑ / ↓ butonları var
+   (ikisi de aynı server action'ı çağırır).
+
+5. **Fiyat tipi.** `real` (TL cinsinden ondalık) olarak saklanıyor, `Intl.NumberFormat("tr-TR")`
+   ile biçimleniyor. `0` girilirse fiyat sitede gösterilmiyor.
+
+6. **Font.** Harici font indirilmiyor (Google Fonts yok). Sistem font yığını
+   kullanılıyor — böylece Docker build'i ağ erişimi olmadan çalışır, LCP daha iyi
+   ve GDPR açısından sorun çıkmaz. Tema kendi fontunu `--font-display` ile ezebilir.
+
+7. **Placeholder görseller.** Harici URL yok; `public/placeholders/*.svg` içinde
+   yerel SVG'ler üretildi (hero, kare, logo).
+
+8. **SMTP opsiyonel.** `SMTP_HOST` + `CONTACT_TO_EMAIL` doluysa mail gider.
+   Mail gönderimi başarısız olsa bile form asla hata vermez — mesaj zaten DB'ye yazılmıştır.
+
+9. **Seed davranışı.** `pnpm db:seed` idempotent ve container her açılışta çalışır
+   (`RUN_SEED=false` ile kapatılabilir). Mevcut kayıtları ezmez; admin kullanıcı
+   zaten varsa dokunmaz.
+
+10. **Menü ürünü silinince** görselinin 3 varyantı da diskten silinir. Kategori
+    silinince içindeki ürünler ve onların görselleri de silinir (`onDelete: cascade`).
+
+11. **Admin panel teması.** Panel, müşterinin seçtiği marka renklerinden bağımsız
+    sabit bir nötr arayüz kullanır — aksi halde kötü bir renk seçimi paneli
+    okunamaz hale getirebilirdi.
+
+12. **`better-sqlite3` sürümü.** 13.x kullanıldı (prebuilt binary, Node 22+).
+    Better Auth peer olarak 12.x istiyor; bu yalnızca kendi kysely adaptörü için
+    geçerli, biz Drizzle adaptörünü kullandığımız için uyarı zararsızdır.
+
+---
+
+## 9. Kalite kapısı
+
+```bash
+pnpm lint          # temiz
+pnpm tsc --noEmit  # temiz
+pnpm build         # temiz
+```
+
+Üçü de bu repoda doğrulanmıştır.
+
+---
+
+## 10. Sonraki adımlar
+
+- Yeni müşteri kurulumu → **[DEPLOY.md](./DEPLOY.md)** (15 dakikalık checklist)
+- Müşteriye verilecek kılavuz → **[CUSTOMER.md](./CUSTOMER.md)**
+- Yeni tasarım/tema ekleme → **[THEMING.md](./THEMING.md)**
