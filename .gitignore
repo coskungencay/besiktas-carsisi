@@ -41,3 +41,7 @@ yarn-error.log*
 .tmp-test/
 /coverage
 *.tsbuildinfo
+
+# ham tasarim dosyalari (sadece README izlenir)
+design-input/*
+!design-input/README.md

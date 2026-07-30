@@ -109,6 +109,12 @@ telefon girilmemiş olabilir. Her alanı `if (!x) return null` / koşullu render
 
 ## 4. Adım adım: yeni tema ekleme
 
+### Adım 0 — Ham tasarımı `design-input/` içine koyun
+
+Claude Design çıktısını `design-input/<slug>/` altına atın (format ve brief
+önerileri: [`design-input/README.md`](./design-input/README.md)). Bu klasör
+build'e dahil değildir, sadece çalışma alanıdır.
+
 ### Adım 1 — Klasörü oluşturun
 
 En hızlı yol, çalışan temayı kopyalamak:
