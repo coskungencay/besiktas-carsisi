@@ -1,25 +1,27 @@
 import type { ThemeDefinition } from "@/themes/types";
 
-import SplitHero from "@/themes/shared/heroes/SplitHero";
-import About from "@/themes/shared/sections/About";
-import Contact from "@/themes/shared/sections/Contact";
-import Gallery from "@/themes/shared/sections/Gallery";
-import Footer from "@/themes/shared/Footer";
-import Menu from "@/themes/shared/sections/Menu";
+import About from "@/themes/sicak-firin/sections/About";
+import Contact from "@/themes/sicak-firin/sections/Contact";
+import Footer from "@/themes/sicak-firin/sections/Footer";
+import Gallery from "@/themes/sicak-firin/sections/Gallery";
+import Header from "@/themes/sicak-firin/sections/Header";
+import Hero from "@/themes/sicak-firin/sections/Hero";
+import Menu from "@/themes/sicak-firin/sections/Menu";
 
 /**
- * Sıcak Fırın
+ * Sıcak Fırın — mahalle firini.
  *
- * Gorsel kimligin tamami src/themes/sicak-firin/tokens.css icindedir.
- * Bolumler paylasilan uygulamalardan gelir; bu temaya ozel bir duzen
- * gerekirse ilgili bolumu bu klasorde yazip asagida degistirin.
+ * Tum bolumler bu klasorun altinda; ortak katmandan yalnizca MANTIK alinir
+ * (@/themes/_shared). Gorsel kimlik tokens.css icinde: yumusak yaricap, sicak
+ * firin tonlari, kenarlik yerine dolgulu yuzeyler.
  */
 const theme: ThemeDefinition = {
   name: "Sıcak Fırın",
   description: "Mahalle fırını sıcaklığı, yumuşak köşeler, tracking’siz samimi etiketler.",
   scheme: "light",
+  Header,
   sections: [
-    { id: "hero", Component: SplitHero },
+    { id: "hero", Component: Hero },
     { id: "hakkimizda", Component: About },
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },

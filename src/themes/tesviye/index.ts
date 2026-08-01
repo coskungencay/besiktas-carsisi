@@ -1,25 +1,27 @@
 import type { ThemeDefinition } from "@/themes/types";
 
-import FramedHero from "@/themes/shared/heroes/FramedHero";
-import About from "@/themes/shared/sections/About";
-import Contact from "@/themes/shared/sections/Contact";
-import Gallery from "@/themes/shared/sections/Gallery";
-import Footer from "@/themes/shared/Footer";
-import Menu from "@/themes/shared/sections/Menu";
+import About from "@/themes/tesviye/sections/About";
+import Contact from "@/themes/tesviye/sections/Contact";
+import Footer from "@/themes/tesviye/sections/Footer";
+import Gallery from "@/themes/tesviye/sections/Gallery";
+import Header from "@/themes/tesviye/sections/Header";
+import Hero from "@/themes/tesviye/sections/Hero";
+import Menu from "@/themes/tesviye/sections/Menu";
 
 /**
- * Tesviye
+ * Tesviye — teknik cizim paftasi.
  *
- * Gorsel kimligin tamami src/themes/tesviye/tokens.css icindedir.
- * Bolumler paylasilan uygulamalardan gelir; bu temaya ozel bir duzen
- * gerekirse ilgili bolumu bu klasorde yazip asagida degistirin.
+ * Her bolum kalin cerceveli tek bir kutu; kutunun basinda numarali monospace
+ * kunye, ic bolmeler yine kalin cizgilerle ayrilmis. Gorsel kimligin kaynagi
+ * src/themes/tesviye/tokens.css, ortak katmandan yalnizca MANTIK alinir.
  */
 const theme: ThemeDefinition = {
   name: "Tesviye",
   description: "Brutalist çerçeveler, elektrik mavisi, kalın kenarlıklar ve monospace.",
   scheme: "light",
+  Header,
   sections: [
-    { id: "hero", Component: FramedHero },
+    { id: "hero", Component: Hero },
     { id: "hakkimizda", Component: About },
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },

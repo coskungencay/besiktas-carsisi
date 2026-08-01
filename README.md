@@ -173,10 +173,10 @@ DB ──► src/lib/content.ts ──► SiteContent ──► tema section'lar
 
 - **Bölümlerin sayısı ve sırası temanın kararıdır**: `ThemeDefinition` bir
   `Header?`, bir `sections[]` dizisi ve bir `Footer?` verir; sayfa yalnızca sırayla basar
+- **Her tema kendi bölümlerini yazar** (`src/themes/<slug>/sections/`). Ortak bölüm
+  bileşeni yoktur — 9 temanın aynı görünmesinin sebebi oydu, kaldırıldı
 - Temalar arasında **yalnızca mantık** paylaşılır (`src/themes/_shared/`): menü
   gruplama, saat aralığı, koordinat biçimi, form hook'u, ikonlar. Görsel karar paylaşılmaz
-- `src/themes/shared/` **legacy**'dir: henüz tasarımına göre yeniden yazılmamış
-  temaların ortak iskeleti. Yeniden yazılan ilk tema: `beyaz-oda`
 - Tüm section'lar tek bir props alır: `{ content: SiteContent }`
 - Renk, radius, kenarlık kalınlığı, başlık ağırlığı, harf aralığı ve fontlar
   **yalnızca** CSS değişkenleriyle. Panelden seçilen renkler `<html>` üzerine

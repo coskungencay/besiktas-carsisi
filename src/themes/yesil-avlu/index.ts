@@ -1,25 +1,27 @@
 import type { ThemeDefinition } from "@/themes/types";
 
-import SplitHero from "@/themes/shared/heroes/SplitHero";
-import About from "@/themes/shared/sections/About";
-import Contact from "@/themes/shared/sections/Contact";
-import Gallery from "@/themes/shared/sections/Gallery";
-import Footer from "@/themes/shared/Footer";
-import Menu from "@/themes/shared/sections/Menu";
+import About from "@/themes/yesil-avlu/sections/About";
+import Contact from "@/themes/yesil-avlu/sections/Contact";
+import Footer from "@/themes/yesil-avlu/sections/Footer";
+import Gallery from "@/themes/yesil-avlu/sections/Gallery";
+import Header from "@/themes/yesil-avlu/sections/Header";
+import Hero from "@/themes/yesil-avlu/sections/Hero";
+import Menu from "@/themes/yesil-avlu/sections/Menu";
 
 /**
- * Yeşil Avlu
+ * Yeşil Avlu — botanik bahce.
  *
- * Gorsel kimligin tamami src/themes/yesil-avlu/tokens.css icindedir.
- * Bolumler paylasilan uygulamalardan gelir; bu temaya ozel bir duzen
- * gerekirse ilgili bolumu bu klasorde yazip asagida degistirin.
+ * Tum bolumler bu klasorde ve tek eksende ORTALANMIS bir duzen kurar; gorsel
+ * kimlik src/themes/yesil-avlu/tokens.css icinde. Ortak katmandan yalnizca
+ * MANTIK alinir (@/themes/_shared).
  */
 const theme: ThemeDefinition = {
   name: "Yeşil Avlu",
   description: "Botanik yeşiller, krem zemin, yumuşak ve geniş yuvarlatmalar.",
   scheme: "light",
+  Header,
   sections: [
-    { id: "hero", Component: SplitHero },
+    { id: "hero", Component: Hero },
     { id: "hakkimizda", Component: About },
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },

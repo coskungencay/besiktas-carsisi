@@ -1,25 +1,27 @@
 import type { ThemeDefinition } from "@/themes/types";
 
-import SplitHero from "@/themes/shared/heroes/SplitHero";
-import About from "@/themes/shared/sections/About";
-import Contact from "@/themes/shared/sections/Contact";
-import Gallery from "@/themes/shared/sections/Gallery";
-import Footer from "@/themes/shared/Footer";
-import Menu from "@/themes/shared/sections/Menu";
+import About from "@/themes/mera/sections/About";
+import Contact from "@/themes/mera/sections/Contact";
+import Footer from "@/themes/mera/sections/Footer";
+import Gallery from "@/themes/mera/sections/Gallery";
+import Header from "@/themes/mera/sections/Header";
+import Hero from "@/themes/mera/sections/Hero";
+import Menu from "@/themes/mera/sections/Menu";
 
 /**
- * Mera
+ * Mera — bir yemek dergisinin ic sayfasi.
  *
- * Gorsel kimligin tamami src/themes/mera/tokens.css icindedir.
- * Bolumler paylasilan uygulamalardan gelir; bu temaya ozel bir duzen
- * gerekirse ilgili bolumu bu klasorde yazip asagida degistirin.
+ * Tum bolumler bu klasorde; paylasilan katmandan yalnizca MANTIK alinir
+ * (@/themes/_shared). Gorsel kimligin tamami src/themes/mera/tokens.css
+ * icindedir: serif basliklar, keskin koseler, sicak toprak tonlari.
  */
 const theme: ThemeDefinition = {
   name: "Mera",
   description: "Editoryal serif başlıklar, sıcak toprak tonları, keskin köşeler.",
   scheme: "light",
+  Header,
   sections: [
-    { id: "hero", Component: SplitHero },
+    { id: "hero", Component: Hero },
     { id: "hakkimizda", Component: About },
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },

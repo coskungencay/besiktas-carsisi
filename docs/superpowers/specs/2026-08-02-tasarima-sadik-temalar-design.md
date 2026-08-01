@@ -83,7 +83,7 @@ src/themes/
     └── sections/       # Header.tsx, Hero.tsx, … temaya özel
 ```
 
-- `src/themes/shared/*` **silinmez, LEGACY olarak işaretlenir**.
+- `src/themes/shared/*` **silinir** (ikinci turda tamamlandı — aşağıdaki nota bakın).
 
   > **Uygulama sırasında değişen karar.** Spec başta bu klasörün silinmesini
   > öngörüyordu. Ama kalan 7 tema bu bileşenleri kullanıyor; silmek için her
@@ -180,6 +180,28 @@ Komut **kopya repoda** çalıştırılmak üzere tasarlanır; şablon repoda yan
 - **Doğrulama tuzağı:** `Reveal` bileşeni viewport'a girince açıldığı için tam
   sayfa (fullPage) ekran görüntüsünde bölümler boş çıkıyor. Bölüm doğrulaması
   viewport ekran görüntüsüyle yapılmalı.
+
+## İkinci tur: kalan 8 tema (2026-08-02)
+
+Pilotun ardından `mera`, `patika`, `yesil-avlu`, `kirk-yil`, `vela`, `tesviye`,
+`sicak-firin` ve `placeholder` da kendi bölümlerine kavuştu. 7 tema paralel
+ajanlarla yazıldı (her ajan yalnızca kendi tema klasörüne), ardından her tema
+bağımsız bir denetim ajanından geçti; `placeholder` elle taşındı.
+
+Sonuç: `src/themes/shared/` ve `src/components/site/ContactForm.tsx` **silindi** —
+artık hiçbir tema ortak bir bölüm bileşeni kullanmıyor. `new:customer` komutundaki
+legacy temizleme mantığı da ölü kod olduğu için kaldırıldı.
+
+Her temaya verilen düzen kimlikleri THEMING.md'de tablo hâlinde duruyor. Kimlikler
+Design export'u hâlâ gelmediği için `tokens.css` (font/ağırlık/radius/tracking) ve
+tema açıklamalarından türetildi — yani "orijinal tasarıma birebir sadık" değil,
+"temanın görsel kimliğine sadık ve birbirinden gerçekten farklı". Export geldiğinde
+tema tema karşılaştırılmalı.
+
+Elle yakalanan ve düzeltilen üç sorun:
+- `patika` ve `tesviye` hero başlıklarında çok sıkı `leading`, Türkçe'de `Ç`/`Ş`
+  kuyruklarının alt satıra girmesine yol açıyordu.
+- `placeholder`'ın hero CTA'sı menü boşken bile `#menu`'ye gidiyordu (kırık çapa).
 
 ## Kapsam dışı
 
