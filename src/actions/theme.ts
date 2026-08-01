@@ -13,7 +13,7 @@ import {
 } from "@/lib/action-result";
 import { requirePanelUser } from "@/lib/session";
 import { EDITABLE_COLOR_VARS } from "@/lib/theme-vars";
-import { getTheme, isThemeSlug } from "@/themes/registry";
+import { getTheme, isThemeSlug, pinnedThemeSlug } from "@/themes/registry";
 import { colorsSchema, themeSlugSchema } from "@/lib/validators";
 
 function revalidateAll() {
@@ -33,6 +33,15 @@ export async function saveThemeSlugAction(
   formData: FormData,
 ): Promise<ActionState> {
   await requirePanelUser();
+
+  /*
+   * Tema imaja pinlenmisse panel bunu hic gostermez; yine de sunucu tarafinda
+   * reddediyoruz. Aksi halde elle hazirlanmis bir istek DB'deki themeSlug'i
+   * degistirir ve pin kaldirildigi gun site baska bir temayla acilirdi.
+   */
+  if (pinnedThemeSlug()) {
+    return fail("Bu sitede tema sabitlenmiş; değiştirilemez.");
+  }
 
   const parsed = themeSlugSchema.safeParse({
     themeSlug: String(formData.get("themeSlug") ?? ""),

@@ -15,11 +15,36 @@ import {
 import { getSettings } from "@/lib/content";
 import { requirePanelUser } from "@/lib/session";
 import { deleteImage, storeImage, UploadError } from "@/lib/uploads";
-import { siteSettingsSchema } from "@/lib/validators";
+import {
+  MAX_HIGHLIGHTS,
+  highlightsSchema,
+  siteSettingsSchema,
+} from "@/lib/validators";
 
 function revalidateSite() {
   revalidatePath("/", "layout");
   revalidatePath("/admin", "layout");
+}
+
+/**
+ * Kunye satirlarini duz form alanlarindan toplar:
+ *   highlightLabel0 / highlightValue0 … highlightLabel3 / highlightValue3
+ *
+ * Iki tarafi da bos olan satirlar atilir; boylece musteri bir satiri
+ * temizleyerek kaldirabilir. Yalnizca degeri girilip etiketi bos birakilan
+ * satirlar korunur — tasarimlar etiketsiz satiri da basabiliyor.
+ */
+function readHighlights(formData: FormData) {
+  const rows: { label: string; value: string }[] = [];
+
+  for (let index = 0; index < MAX_HIGHLIGHTS; index += 1) {
+    const label = String(formData.get(`highlightLabel${index}`) ?? "").trim();
+    const value = String(formData.get(`highlightValue${index}`) ?? "").trim();
+    if (!label && !value) continue;
+    rows.push({ label, value });
+  }
+
+  return highlightsSchema.safeParse(rows);
 }
 
 export async function saveSettingsAction(
@@ -30,6 +55,9 @@ export async function saveSettingsAction(
 
   const parsed = siteSettingsSchema.safeParse(formToObject(formData));
   if (!parsed.success) return fromZodError(parsed.error);
+
+  const highlights = readHighlights(formData);
+  if (!highlights.success) return fromZodError(highlights.error);
 
   const current = getSettings();
 
@@ -54,6 +82,7 @@ export async function saveSettingsAction(
     db.update(siteSettings)
       .set({
         ...parsed.data,
+        highlights: highlights.data,
         logoUrl,
         heroImageUrl,
         updatedAt: new Date(),

@@ -13,7 +13,7 @@ müdahalesine ihtiyaç kalmaz.
 | Katman | Özet |
 |---|---|
 | **Public site** | Tek sayfa landing: Hero → Hakkımızda → Menü → Galeri → İletişim |
-| **Tema sistemi** | **9 hazır tema** (placeholder + 8 tasarım). Görsel kimlik tamamen CSS token'larında; yeni tema = bir `tokens.css` + iki satır kayıt |
+| **Tema sistemi** | **9 hazır tema** (placeholder + 8 tasarım). Her tema kendi bölümlerini ve sırasını tanımlar; renk/tipografi `tokens.css`'te. Müşteri repo'sunda tema pinlenir (`pnpm new:customer`) |
 | **Admin panel** | `/admin`, arayüz tamamen Türkçe. İçerik, menü, galeri, saatler, mesajlar, renkler |
 | **Veritabanı** | SQLite tek dosya (`/data/app.db`), Drizzle ORM |
 | **Görseller** | `/data/uploads` altında; sharp ile 1920px WebP + 400px thumbnail + orijinal |
@@ -171,9 +171,12 @@ DB ──► src/lib/content.ts ──► SiteContent ──► tema section'lar
 **9 tema hazır:** `placeholder`, `mera`, `patika`, `yesil-avlu`, `kirk-yil`,
 `vela`, `beyaz-oda`, `tesviye`, `sicak-firin` (ikisi koyu tema).
 
-- Her tema `src/themes/<slug>/` altında **yalnızca iki dosya**: `tokens.css` + `index.ts`
-- Bölüm bileşenleri `src/themes/shared/` altında **tek kez** yazılır; temalar bunları
-  kullanır. Bir tema farklı bir düzen isterse kendi bölümünü yazıp değiştirebilir
+- **Bölümlerin sayısı ve sırası temanın kararıdır**: `ThemeDefinition` bir
+  `Header?`, bir `sections[]` dizisi ve bir `Footer?` verir; sayfa yalnızca sırayla basar
+- Temalar arasında **yalnızca mantık** paylaşılır (`src/themes/_shared/`): menü
+  gruplama, saat aralığı, koordinat biçimi, form hook'u, ikonlar. Görsel karar paylaşılmaz
+- `src/themes/shared/` **legacy**'dir: henüz tasarımına göre yeniden yazılmamış
+  temaların ortak iskeleti. Yeniden yazılan ilk tema: `beyaz-oda`
 - Tüm section'lar tek bir props alır: `{ content: SiteContent }`
 - Renk, radius, kenarlık kalınlığı, başlık ağırlığı, harf aralığı ve fontlar
   **yalnızca** CSS değişkenleriyle. Panelden seçilen renkler `<html>` üzerine
@@ -234,9 +237,10 @@ Detay: [THEMING.md](./THEMING.md)
 Talimatta açık belirtilmeyen noktalarda alınan kararlar:
 
 1. **Tema seçimi env mi DB mi?** İkisi de destekleniyor. `NEXT_PUBLIC_THEME` doluysa
-   tema imaja sabitlenir ve panelde seçim kutusu kilitlenir (uyarı gösterilir);
-   boşsa müşteri panelden seçer. Böylece hem "env'den okunsun" şartı hem de
-   `site_settings.themeSlug` kolonu anlamlı kalıyor.
+   tema imaja sabitlenir, panelde seçici **hiç görünmez** ve sunucu tarafı tema
+   değişikliğini reddeder; boşsa müşteri panelden seçer. Müşteri repo'larında tema
+   her zaman pinlenir (`pnpm new:customer --theme=<slug>`), böylece müşteri yalnızca
+   renkleri değiştirebilir.
 
 2. **Render stratejisi.** Tüm rotalar `dynamic = "force-dynamic"`. Gerekçe: SQLite
    okuması sub-milisaniye, ve Docker build'inin veritabanına ihtiyaç duymaması

@@ -25,45 +25,66 @@ DB ──► src/lib/content.ts ──► SiteContent ──► tema bölümleri
 
 ---
 
-## 2. Mimari: neden 9 tema ama 4 bölüm dosyası?
+## 2. Mimari: her tema kendi bölümlerini yazar
 
-Elimizdeki 8 tasarım ölçüldüğünde şu çıktı:
+**Eski yaklaşım terk edildi.** Başlangıçta 4 bölüm (About/Menu/Gallery/Contact)
+tüm temalarda ortak, hero ise 5 hazır düzenden biriydi. Sonuç: 9 tema aynı siteye
+benziyordu, sadece rengi değişiyordu. Tasarımların özgün düzeni (kendi nav'ı, kendi
+ızgarası, kendi bölüm sırası) bu ortak iskelete sığmıyordu.
 
-| Bölüm | Tasarımlar arası fark |
-|---|---|
-| About, Menu, Gallery, Contact | **Yapısal olarak birebir aynı.** Fark yalnızca radius, kenarlık kalınlığı, başlık ağırlığı ve harf aralığı |
-| Hero | **5 gerçek düzen** var (split, overlay, centered, editorial, framed) |
+Artık **bölümlerin sayısı ve sırası temanın kararı**:
 
-Bu yüzden:
+```ts
+const theme: ThemeDefinition = {
+  Header,                      // opsiyonel — temanın kendi üst şeridi
+  sections: [                  // sıra ve sayı serbest
+    { id: "hero", Component: Hero },
+    { id: "menu", Component: Menu },
+  ],
+  Footer,                      // opsiyonel
+  tokensPath, defaultColors, name, description, scheme,
+};
+```
 
-- Yapısal olarak aynı olan 4 bölüm **bir kez** yazıldı → `src/themes/shared/sections/`
-- Hero'nun 5 düzeni ayrı bileşen → `src/themes/shared/heroes/`
-- Tasarımlar arası tüm görsel fark **token'lara** indirildi → her temanın `tokens.css`'i
+`src/app/[locale]/page.tsx` yalnızca `Header → sections → Footer` basar.
+`section.id` HTML anchor'ıdır; temanın kendi nav'ı bu id'lere bağlanır.
 
-Sonuç: aynı `Menu.tsx`'i 8 kez kopyalamıyoruz. Bir erişilebilirlik ya da RTL
-hatası düzeltildiğinde 9 temanın hepsi birden düzeliyor.
+### Neyi paylaşıyoruz, neyi paylaşmıyoruz
+
+| Katman | İçerik | Kural |
+|---|---|---|
+| `src/themes/_shared/` | Menü gruplama, saat aralığı, koordinat biçimi, görsel fallback, `useContactForm` hook'u, ikonlar | **Sadece mantık.** Renk, ızgara, boşluk, sınıf adı buraya giremez |
+| `src/themes/<slug>/` | Header, bölümler, footer, `tokens.css` | Görsel kararların tamamı |
+| `src/themes/shared/` | **LEGACY** — henüz tasarımına göre yeniden yazılmamış temaların ortak iskeleti | Yeni tema burayı kullanmaz |
+
+Örnek alınacak yapı: **`src/themes/beyaz-oda/`** — tasarımına göre yeniden
+yazılmış ilk tema.
 
 ```
 src/themes/
 ├── types.ts                     # SiteContent + ThemeDefinition sözleşmesi
 ├── registry.ts                  # Record<slug, ThemeDefinition>
-├── shared/
-│   ├── parts.tsx                # BrandMark, HeroActions, SectionHeader, ikonlar
-│   ├── heroes/                  # SplitHero, OverlayHero, CenteredHero,
-│   │                            #   EditorialHero, FramedHero
-│   └── sections/                # About, Menu, Gallery, Contact
-├── placeholder/                 # index.ts + tokens.css
-├── mera/  patika/  yesil-avlu/  kirk-yil/
-└── vela/  beyaz-oda/  tesviye/  sicak-firin/
+├── _shared/                     # ORTAK MANTIK (görsel karar yok)
+│   ├── data.ts                  #   menuWithItems, hoursRange, coordinateLabel…
+│   ├── icons.tsx                #   currentColor ile çizilmiş ikonlar
+│   └── useContactForm.ts        #   form mantığı — işaretleme yok
+├── beyaz-oda/                   # YENİ YAPI: kendi bölümleri
+│   ├── index.ts
+│   ├── tokens.css
+│   ├── parts.tsx                #   temaya özel küçük parçalar
+│   └── sections/                #   Header, Hero, About, Menu, Gallery, Contact, Footer
+├── shared/                      # LEGACY (aşağıdaki temalar hâlâ kullanıyor)
+└── placeholder/ mera/ patika/ yesil-avlu/ kirk-yil/ vela/ tesviye/ sicak-firin/
 ```
 
-Her tema klasöründe **yalnızca iki dosya** vardır:
+### Bir temayı tasarımına göre yeniden yazmak
 
-```
-src/themes/<slug>/
-├── tokens.css     # görsel kimliğin TAMAMI
-└── index.ts       # hangi hero düzeni + panelde görünen ad/açıklama/renkler
-```
+1. `src/themes/<slug>/sections/` klasörünü açın.
+2. Bölümleri tek tek yazın; veri `SiteContent`ten, görsel `tokens.css`ten gelir.
+3. `index.ts` içinde `sections` dizisini kendi bileşenlerinize çevirin, gerekiyorsa
+   `Header`/`Footer` ekleyin.
+4. Artık `@/themes/shared/*` import etmediğinizden emin olun — o tema legacy
+   katmandan kurtulmuş olur.
 
 ---
 
@@ -107,21 +128,24 @@ Tekrar eden token üçlüleri `globals.css` içinde `@utility` olarak tanımlı:
 
 ---
 
-## 4. Yeni tema ekleme (token-only) — 10 dakika
+## 4. Yeni tema ekleme
 
-Yeni tasarım mevcut 5 hero düzeninden birine uyuyorsa yapılacak iş budur.
+Yeni tasarımı temaya çevirirken izlenecek yol.
 
 ### Adım 0 — Ham tasarımı `design-input/` içine koyun
 
 Format ve brief önerileri: [`design-input/README.md`](./design-input/README.md).
+Claude Design kullanıyorsanız **Share → Export → Project HTML** çıktısı en
+güvenilir kaynaktır: gerçek boşluk/ölçü değerleri kodda gelir.
 
-### Adım 1 — `tokens.css`
+### Adım 1 — Klasörü açın
 
 ```bash
-cp -r src/themes/mera src/themes/yeni-tema
+mkdir -p src/themes/yeni-tema/sections
+cp src/themes/beyaz-oda/tokens.css src/themes/yeni-tema/tokens.css
 ```
 
-`src/themes/yeni-tema/tokens.css` içinde seçiciyi ve değerleri değiştirin:
+`tokens.css` içinde seçiciyi ve değerleri değiştirin:
 
 ```css
 html[data-theme="yeni-tema"] {
@@ -135,21 +159,34 @@ html[data-theme="yeni-tema"] {
 > `:root` fallback bloğuyla aynı özgüllükte olursa dosya sırası yüzünden tema
 > hiç uygulanmaz. (Bu hata bir kez yaşandı: 9 tema da aynı görünüyordu.)
 
-### Adım 2 — `index.ts`
+### Adım 2 — Bölümleri yazın
+
+`src/themes/yeni-tema/sections/` altına tasarımın bölümlerini yazın. Örnek
+alınacak tema: `src/themes/beyaz-oda/sections/`.
+
+- Veri **yalnızca** `content` (`SiteContent`) üzerinden gelir.
+- Tekrar eden mantık için `@/themes/_shared/data` (menü gruplama, saat aralığı,
+  koordinat, görsel fallback) ve `@/themes/_shared/icons`.
+- İletişim formu için `@/themes/_shared/useContactForm` — işaretlemeyi siz yazarsınız.
+
+### Adım 3 — `index.ts`
 
 ```ts
 import type { ThemeDefinition } from "@/themes/types";
-import SplitHero from "@/themes/shared/heroes/SplitHero";   // ← düzeni seçin
-import About from "@/themes/shared/sections/About";
-import Contact from "@/themes/shared/sections/Contact";
-import Gallery from "@/themes/shared/sections/Gallery";
-import Menu from "@/themes/shared/sections/Menu";
+import Header from "@/themes/yeni-tema/sections/Header";
+import Hero from "@/themes/yeni-tema/sections/Hero";
+/* … */
 
 const theme: ThemeDefinition = {
   name: "Yeni Tema",
   description: "Panelde görünecek tek cümlelik açıklama.",
   scheme: "light",
-  sections: { Hero: SplitHero, About, Menu, Gallery, Contact },
+  Header,
+  sections: [
+    { id: "hero", Component: Hero },
+    /* tasarımın istediği sıra ve sayı */
+  ],
+  Footer,
   tokensPath: "src/themes/yeni-tema/tokens.css",
   // tokens.css'teki 8 renkle AYNI olmalı — panel bunları okur
   defaultColors: {
@@ -167,7 +204,7 @@ export default theme;
 > paletini ezer (açık temadan koyuya geçişte site okunamaz hale gelir).
 > **tokens.css ile senkron tutun.**
 
-### Adım 3 — İki satır kayıt
+### Adım 4 — İki satır kayıt
 
 ```css
 /* src/app/globals.css — diğer import'ların altına */
@@ -180,49 +217,44 @@ import yeniTema from "./yeni-tema";
 export const themeRegistry = { …, "yeni-tema": yeniTema };
 ```
 
-### Adım 4 — Test
+### Adım 5 — Test
 
 ```bash
 pnpm dev            # /admin/tema → yeni temayı seç → / adresine bak
-pnpm lint && pnpm tsc --noEmit && pnpm build
+pnpm lint && pnpm typecheck && pnpm build
 ```
 
-### Hero düzeni seçimi
+Sınır durumlarını mutlaka deneyin: menü boş, galeri boş, hero görseli yok, çok
+uzun işletme adı, tek dil, Arapça (RTL).
 
-| Bileşen | Düzen | Kullanan |
-|---|---|---|
-| `SplitHero` | Metin bir yanda, 4:3 görsel diğer yanda | mera, yeşil avlu, sıcak fırın, placeholder |
-| `OverlayHero` | Tam genişlik görsel + yarı saydam örtü | patika, vela |
-| `CenteredHero` | Ortalanmış metin, altta 21:9 görsel | kırk yıl |
-| `EditorialHero` | Üstte marka satırı, 12'li ızgara, altta geniş görsel | beyaz oda |
-| `FramedHero` | Çerçeve içinde iki sütun | tesviye |
+> Bölümü içerik boşken gizliyorsanız (örn. galeri yoksa `return null`), temanın
+> nav'ındaki bağlantıyı da aynı koşulla gizleyin — yoksa hiçbir yere gitmeyen
+> kırık bir çapa kalır.
 
 ---
 
-## 5. Mevcut düzene uymayan tasarım (escape hatch)
+## 5. Müşteri repo'su: temayı pinlemek
 
-Yeni tasarımın Menü bölümü gerçekten farklıysa, o bölümü **kendi tema
-klasörünüzde** yazın ve `index.ts`'te değiştirin:
+Müşteri işine başlarken bu şablonun bir kopyasını alır, seçtiğimiz temayı bırakır,
+kalanları sileriz:
 
-```
-src/themes/yeni-tema/
-├── tokens.css
-├── index.ts
-└── sections/
-    └── Menu.tsx          # sadece bu bölüm özel
+```bash
+pnpm new:customer --theme=beyaz-oda --dry-run   # ne yapacağını gösterir
+pnpm new:customer --theme=beyaz-oda             # onay sorar, sonra uygular
 ```
 
-```ts
-import Menu from "./sections/Menu";                 // ← kendi dosyanız
-import About from "@/themes/shared/sections/About"; // ← diğerleri paylaşılan
-sections: { Hero: SplitHero, About, Menu, Gallery, Contact },
-```
+Komut şunları yapar: diğer tema klasörlerini siler, `registry.ts` ve
+`globals.css` import'larını tek temaya indirir, `.env.example` içine
+`NEXT_PUBLIC_THEME=<slug>` yazar, kalan tema legacy ortak kodu kullanmıyorsa
+`src/themes/shared/` klasörünü de kaldırır.
 
-Aynısı Hero için de geçerli: yeni bir düzen gerekiyorsa ya `shared/heroes/`
-altına ekleyin (başka temalar da kullanacaksa) ya da tema klasörünüzde tutun.
+`NEXT_PUBLIC_THEME` dolu olduğunda panelde tema seçici **hiç görünmez** ve sunucu
+tarafı tema değişikliğini reddeder — müşteri yalnızca renkleri değiştirebilir.
 
-**Ne zaman paylaşılana taşımalı?** İkinci bir tema aynı düzeni isterse.
-Tek temaya özelse orada kalsın.
+> Şablon repoda çalıştırmayın. Komut geri alınamaz; önce `--dry-run` ile bakın.
+
+Müşteri repo'su şablonu `upstream` remote olarak tutar; şablonda kritik bir
+düzeltme olduğunda `git cherry-pick` ile o repoya taşınabilir.
 
 ---
 

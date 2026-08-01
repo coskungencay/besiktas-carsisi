@@ -103,6 +103,14 @@ function seedSettings() {
       id: SINGLETON_ID,
       name: "Kahve Durağı",
       tagline: "Her fincanda taze çekilmiş kahve, her tabakta ev yapımı tat.",
+      // Hero basligi: musteri panelden degistirir. Bos birakilirsa `name` kullanilir.
+      heroHeadline: "Küçük bir dükkân,",
+      heroSubline: "büyük bir fincan.",
+      highlights: [
+        { label: "Saat", value: "08–22" },
+        { label: "Kapalı", value: "Pazar" },
+        { label: "Oturma", value: "24" },
+      ],
       about:
         "2015'ten beri mahallemizin buluşma noktasıyız. Kahvelerimizi kendi kavurma tesisimizde haftalık partiler hâlinde kavuruyor, tatlılarımızı her sabah taze hazırlıyoruz.\n\nİster kitabınızla sessiz bir köşede, ister arkadaşlarınızla uzun sohbetlerde — kapımız her zaman açık.",
       phone: "+90 555 111 22 33",

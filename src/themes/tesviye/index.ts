@@ -4,6 +4,7 @@ import FramedHero from "@/themes/shared/heroes/FramedHero";
 import About from "@/themes/shared/sections/About";
 import Contact from "@/themes/shared/sections/Contact";
 import Gallery from "@/themes/shared/sections/Gallery";
+import Footer from "@/themes/shared/Footer";
 import Menu from "@/themes/shared/sections/Menu";
 
 /**
@@ -17,7 +18,14 @@ const theme: ThemeDefinition = {
   name: "Tesviye",
   description: "Brutalist çerçeveler, elektrik mavisi, kalın kenarlıklar ve monospace.",
   scheme: "light",
-  sections: { Hero: FramedHero, About, Menu, Gallery, Contact },
+  sections: [
+    { id: "hero", Component: FramedHero },
+    { id: "hakkimizda", Component: About },
+    { id: "menu", Component: Menu },
+    { id: "galeri", Component: Gallery },
+    { id: "iletisim", Component: Contact },
+  ],
+  Footer,
   tokensPath: "src/themes/tesviye/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {

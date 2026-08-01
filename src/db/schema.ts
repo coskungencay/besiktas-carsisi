@@ -112,6 +112,21 @@ export const siteSettings = sqliteTable("site_settings", {
   name: text("name").notNull().default(""),
   tagline: text("tagline").notNull().default(""),
   about: text("about").notNull().default(""),
+  /**
+   * Hero'daki buyuk baslik. Bos birakilirsa `name` kullanilir — boylece
+   * mevcut kurulumlar bu alan doldurulmadan da dogru gorunur.
+   */
+  heroHeadline: text("hero_headline").notNull().default(""),
+  /** Basligin soluk devami, orn. "Fazlasi yok." */
+  heroSubline: text("hero_subline").notNull().default(""),
+  /**
+   * JSON dizisi: en cok 4 adet { label, value } kunye satiri.
+   * Orn. [{ "label": "SAAT", "value": "08–18" }]
+   */
+  highlights: text("highlights", { mode: "json" })
+    .notNull()
+    .$type<{ label: string; value: string }[]>()
+    .default([]),
   phone: text("phone").notNull().default(""),
   whatsapp: text("whatsapp").notNull().default(""),
   email: text("email").notNull().default(""),
@@ -150,9 +165,11 @@ export const siteSettings = sqliteTable("site_settings", {
  *   namespace      refId              field
  *   -------------  -----------------  --------------------------
  *   settings       0 (tekil)          name | tagline | about | address
+ *                                     heroHeadline | heroSubline
  *   menu_category  menu_categories.id name
  *   menu_item      menu_items.id      name | description
  *   gallery        gallery_images.id  alt
+ *   highlight      dizideki sira 0-3  label | value
  */
 export const translations = sqliteTable(
   "translations",
@@ -274,12 +291,8 @@ export type GalleryImageRow = typeof galleryImages.$inferSelect;
 export type ContactMessageRow = typeof contactMessages.$inferSelect;
 export type TranslationRow = typeof translations.$inferSelect;
 
-/** translations.namespace icin gecerli degerler. */
-export const TRANSLATION_NAMESPACES = [
-  "settings",
-  "menu_category",
-  "menu_item",
-  "gallery",
-] as const;
-
-export type TranslationNamespace = (typeof TRANSLATION_NAMESPACES)[number];
+// Namespace listesi istemci tarafinda da gerektigi icin ayri dosyada durur.
+export {
+  TRANSLATION_NAMESPACES,
+  type TranslationNamespace,
+} from "@/db/namespaces";

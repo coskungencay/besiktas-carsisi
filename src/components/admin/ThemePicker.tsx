@@ -16,30 +16,18 @@ type ThemeOption = {
   isActive: boolean;
 };
 
+/**
+ * Tema secici — YALNIZCA tema pinlenmemisken basilir (bkz. admin/tema/page.tsx).
+ * Musteri repo'sunda NEXT_PUBLIC_THEME dolu oldugu icin hic gorunmez.
+ */
 export function ThemePicker({
   themes,
   activeSlug,
-  pinnedSlug,
 }: {
   themes: ThemeOption[];
   activeSlug: string;
-  pinnedSlug: string | null;
 }) {
   const [state, formAction] = useActionState(saveThemeSlugAction, IDLE);
-
-  if (pinnedSlug) {
-    const pinned = themes.find((t) => t.slug === pinnedSlug);
-    return (
-      <section className={cardClass}>
-        <h2 className="text-lg font-semibold">Tema</h2>
-        <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
-          Tema sunucu ayarlarında <strong>{pinned?.name ?? pinnedSlug}</strong>{" "}
-          olarak sabitlenmiş (NEXT_PUBLIC_THEME). Buradan değiştirilemez;
-          renkler yine de değiştirilebilir.
-        </p>
-      </section>
-    );
-  }
 
   return (
     <form action={formAction} className={cardClass}>

@@ -4,6 +4,7 @@ import SplitHero from "@/themes/shared/heroes/SplitHero";
 import About from "@/themes/shared/sections/About";
 import Contact from "@/themes/shared/sections/Contact";
 import Gallery from "@/themes/shared/sections/Gallery";
+import Footer from "@/themes/shared/Footer";
 import Menu from "@/themes/shared/sections/Menu";
 
 /**
@@ -17,7 +18,14 @@ const theme: ThemeDefinition = {
   name: "Placeholder (nötr)",
   description: "Sade, nötr bir başlangıç teması. Tasarım seçilene kadar güvenli varsayılan.",
   scheme: "light",
-  sections: { Hero: SplitHero, About, Menu, Gallery, Contact },
+  sections: [
+    { id: "hero", Component: SplitHero },
+    { id: "hakkimizda", Component: About },
+    { id: "menu", Component: Menu },
+    { id: "galeri", Component: Gallery },
+    { id: "iletisim", Component: Contact },
+  ],
+  Footer,
   tokensPath: "src/themes/placeholder/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {

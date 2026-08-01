@@ -76,9 +76,20 @@ export default async function LocalesPage({
           settings: {
             name: settings.name,
             tagline: settings.tagline,
+            heroHeadline: settings.heroHeadline,
+            heroSubline: settings.heroSubline,
             about: settings.about,
             address: settings.address,
           },
+          // Yalnizca gercekten girilmis kunye satirlari cevrilebilir.
+          highlights: (Array.isArray(settings.highlights)
+            ? settings.highlights
+            : []
+          ).map((highlight, index) => ({
+            index,
+            label: highlight?.label ?? "",
+            value: highlight?.value ?? "",
+          })),
           categories: categories.map((c) => ({ id: c.id, name: c.name })),
           items: items.map((i) => ({
             id: i.id,

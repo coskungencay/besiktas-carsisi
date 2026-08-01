@@ -1,23 +1,33 @@
 import type { ThemeDefinition } from "@/themes/types";
 
-import EditorialHero from "@/themes/shared/heroes/EditorialHero";
-import About from "@/themes/shared/sections/About";
-import Contact from "@/themes/shared/sections/Contact";
-import Gallery from "@/themes/shared/sections/Gallery";
-import Menu from "@/themes/shared/sections/Menu";
+import About from "@/themes/beyaz-oda/sections/About";
+import Contact from "@/themes/beyaz-oda/sections/Contact";
+import Footer from "@/themes/beyaz-oda/sections/Footer";
+import Gallery from "@/themes/beyaz-oda/sections/Gallery";
+import Header from "@/themes/beyaz-oda/sections/Header";
+import Hero from "@/themes/beyaz-oda/sections/Hero";
+import Menu from "@/themes/beyaz-oda/sections/Menu";
 
 /**
- * Beyaz Oda
+ * Beyaz Oda — tasarimina gore yeniden yazilmis ILK tema.
  *
- * Gorsel kimligin tamami src/themes/beyaz-oda/tokens.css icindedir.
- * Bolumler paylasilan uygulamalardan gelir; bu temaya ozel bir duzen
- * gerekirse ilgili bolumu bu klasorde yazip asagida degistirin.
+ * Bu tema paylasilan bir bolum kullanmaz: tum bolumler sections/ altinda,
+ * gorsel kimlik tokens.css icinde. Ortak katmandan yalnizca MANTIK alir
+ * (@/themes/_shared). Yeni tema yazarken ornek alinacak yapi budur.
  */
 const theme: ThemeDefinition = {
   name: "Beyaz Oda",
   description: "Saf beyaz, monospace gövde metni, editoryal ızgara.",
   scheme: "light",
-  sections: { Hero: EditorialHero, About, Menu, Gallery, Contact },
+  Header,
+  sections: [
+    { id: "hero", Component: Hero },
+    { id: "hakkimizda", Component: About },
+    { id: "menu", Component: Menu },
+    { id: "galeri", Component: Gallery },
+    { id: "iletisim", Component: Contact },
+  ],
+  Footer,
   tokensPath: "src/themes/beyaz-oda/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {

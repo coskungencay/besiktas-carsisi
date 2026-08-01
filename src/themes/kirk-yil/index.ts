@@ -4,6 +4,7 @@ import CenteredHero from "@/themes/shared/heroes/CenteredHero";
 import About from "@/themes/shared/sections/About";
 import Contact from "@/themes/shared/sections/Contact";
 import Gallery from "@/themes/shared/sections/Gallery";
+import Footer from "@/themes/shared/Footer";
 import Menu from "@/themes/shared/sections/Menu";
 
 /**
@@ -17,7 +18,14 @@ const theme: ThemeDefinition = {
   name: "Kırk Yıl",
   description: "Nostaljik bordo ve altın, baştan sona serif, ortalanmış klasik düzen.",
   scheme: "light",
-  sections: { Hero: CenteredHero, About, Menu, Gallery, Contact },
+  sections: [
+    { id: "hero", Component: CenteredHero },
+    { id: "hakkimizda", Component: About },
+    { id: "menu", Component: Menu },
+    { id: "galeri", Component: Gallery },
+    { id: "iletisim", Component: Contact },
+  ],
+  Footer,
   tokensPath: "src/themes/kirk-yil/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {

@@ -10,7 +10,7 @@ adımları. Sırayla takip edin; her adımın yanında tahmini süre var.
 
 ## Hızlı checklist
 
-- [ ] 1. Repo kopyası oluşturuldu (2 dk)
+- [ ] 1. Müşteri repo'su açıldı ve tema pinlendi (4 dk)
 - [ ] 2. Domain DNS'i sunucuya yönlendirildi (2 dk)
 - [ ] 3. Coolify'da uygulama oluşturuldu (3 dk)
 - [ ] 4. Persistent volume `/data` tanımlandı (1 dk)
@@ -23,33 +23,48 @@ adımları. Sırayla takip edin; her adımın yanında tahmini süre var.
 
 ---
 
-## 1. Repo kopyası (2 dk)
+## 1. Müşteri repo'su (4 dk)
 
-Her müşteri **kendi** repo kopyasını alır — böylece bir müşteride yapılan
-tema değişikliği diğerlerini etkilemez.
+Her müşteri **kendi** repo kopyasını alır. Şablonu `upstream` olarak bırakıyoruz:
+böylece müşteri repo'sunda istediğiniz kadar özelleştirme yapabilir, şablonda
+kritik bir düzeltme çıktığında onu cherry-pick ile çekebilirsiniz.
 
 ```bash
-# Şablonu klonla, geçmişi sıfırla
 git clone <cafe-infra-repo-url> musteri-adi-site
 cd musteri-adi-site
-rm -rf .git
-git init
-git add -A
-git commit -m "chore: musteri-adi icin ilk kurulum"
 
-# Kendi Git sunucunuza / GitHub'a gönderin
+# Sablon "upstream", musterinin kendi repo'su "origin" olur
+git remote rename origin upstream
 git remote add origin git@github.com:<hesap>/musteri-adi-site.git
 git push -u origin main
 ```
+
+Ardından **temayı pinleyin** — müşteri panelden tema seçemeyecek:
+
+```bash
+pnpm install
+pnpm new:customer --theme=beyaz-oda --dry-run   # once ne yapacagina bakin
+pnpm new:customer --theme=beyaz-oda             # onay sorar
+
+pnpm typecheck && pnpm build                    # her sey derleniyor mu
+git add -A && git commit -m "chore: musteri-adi icin tema pinlendi"
+git push
+```
+
+Komut seçilen tema dışındaki tema klasörlerini siler, `registry.ts` ile
+`globals.css` import'larını tek temaya indirir ve `.env.example` içine
+`NEXT_PUBLIC_THEME=<slug>` yazar.
 
 **Bu müşteri için özelleştirilecekler:**
 
 | Ne | Nerede |
 |---|---|
-| Tema | `NEXT_PUBLIC_THEME` (env) veya panelden seçim |
+| Tema | `pnpm new:customer --theme=<slug>` (env'e pinlenir) |
 | Renkler | Panelden (`/admin/tema`) — kod değişikliği gerekmez |
 | İçerik | Panelden — kod değişikliği gerekmez |
-| Örnek seed içeriği | `scripts/seed.ts` (isteğe bağlı; müşteri zaten panelden değiştirebilir) |
+| Temaya özel düzen değişikliği | `src/themes/<slug>/sections/` — bu repo artık müşteriye ait, serbestçe değiştirin |
+
+> Şablondaki düzeltmeleri çekmek için: `git fetch upstream && git cherry-pick <sha>`
 
 ---
 

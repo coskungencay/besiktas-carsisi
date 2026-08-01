@@ -12,7 +12,12 @@ import { ArrowIcon } from "@/themes/shared/parts";
 import { makeContactMessageSchema } from "@/lib/validators";
 
 /**
- * Tum temalarin kullandigi TEK iletisim formu.
+ * LEGACY form — tasarimina gore yeniden yazilmamis temalarin kullandigi form.
+ *
+ * YENI TEMA YAZARKEN KULLANMAYIN: mantigi @/themes/_shared/useContactForm
+ * hook'undan alip kendi isaretlemenizi yazin (ornek: beyaz-oda/sections/ContactForm).
+ *
+ * Onceki tasarim notu:
  * Gorunumu tamamen tema token'larindan (--brand-*) gelir, bu yuzden 9 temada
  * da yerinde durur; honeypot, rate limit ve zod dogrulamasi burada tek yerde.
  */

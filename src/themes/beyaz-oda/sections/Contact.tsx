@@ -1,20 +1,7 @@
-/*
- * LEGACY ORTAK BILESEN
- *
- * Bu klasordeki bilesenler, tasarimina gore HENUZ yeniden yazilmamis temalarin
- * ortak iskeletidir — dokuz temanin ayni gorunmesinin sebebi de buydu.
- *
- * YENI TEMA YAZARKEN KULLANMAYIN. Ornek yapi: src/themes/beyaz-oda/
- * Ortak MANTIK icin: src/themes/_shared/  (bkz. THEMING.md)
- */
-import { ContactForm } from "@/components/site/ContactForm";
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
-import {
-  SectionHeader,
-  containerClass,
-  sectionClass,
-} from "@/themes/shared/parts";
+import { SectionIndex, meta, shell, surface } from "@/themes/beyaz-oda/parts";
+import { ContactForm } from "@/themes/beyaz-oda/sections/ContactForm";
 import type { SectionProps } from "@/themes/types";
 
 type Row = { term: string; value: string; href: string; ltr: boolean };
@@ -54,41 +41,44 @@ export default function Contact({ content }: SectionProps) {
       ltr: true,
     },
   ].filter((row): row is Row => Boolean(row));
+  // Koordinat bu listede YOK: header ve footer'da zaten var, ucuncu kez
+  // tekrarlamak "Adres" etiketini iki satirda gosterirdi.
 
   return (
-    <section id="iletisim" aria-labelledby="contact-title" className={sectionClass}>
-      <div className={`${containerClass} brand-section`}>
+    <section id="iletisim" aria-labelledby="contact-title" className={surface}>
+      <div className={`${shell} brand-section border-t border-[var(--brand-border)]`}>
         <Reveal>
-          <SectionHeader
-            eyebrow={t.contact.eyebrow}
+          <SectionIndex
+            index="04"
             title={t.contact.title}
             titleId="contact-title"
-          />
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
-            {fill(t.contact.intro, { name })}
-          </p>
+          >
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
+              {fill(t.contact.intro, { name })}
+            </p>
+          </SectionIndex>
         </Reveal>
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:gap-16">
+        <div className="mt-12 grid gap-12 lg:grid-cols-2 lg:gap-16">
           {rows.length > 0 ? (
             <Reveal>
               <dl className="flex flex-col">
-                {rows.map((row) => (
+                {rows.map((row, index) => (
                   <div
-                    key={row.term}
-                    className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-b border-[var(--brand-border)] py-4"
+                    key={`${row.term}-${index}`}
+                    className="flex flex-wrap items-baseline gap-x-6 gap-y-1 border-t border-[var(--brand-border)] py-4"
                   >
-                    <dt className="brand-eyebrow text-xs text-[var(--brand-ink-muted)]">
+                    <dt className={`${meta} brand-eyebrow w-24 shrink-0`}>
                       {row.term}
                     </dt>
                     <dd
-                      className="flex-1 text-start text-base"
+                      className="flex-1 text-start text-sm"
                       {...(row.ltr ? { dir: "ltr" as const } : {})}
                     >
                       {row.href ? (
                         <a
                           href={row.href}
-                          className="underline-offset-4 transition-colors hover:text-[var(--brand-primary)] hover:underline"
+                          className="underline-offset-4 transition-colors hover:text-[var(--brand-ink-muted)] hover:underline"
                           {...(row.href.startsWith("http")
                             ? { target: "_blank", rel: "noopener noreferrer" }
                             : {})}
@@ -105,9 +95,9 @@ export default function Contact({ content }: SectionProps) {
             </Reveal>
           ) : null}
 
-          <Reveal delay={0.1} className={rows.length === 0 ? "lg:col-span-2" : ""}>
-            <div className="brand-frame bg-[var(--brand-surface-alt)] p-6 sm:p-8">
-              <h3 className="brand-display text-xl">{t.contact.formTitle}</h3>
+          <Reveal delay={0.08} className={rows.length === 0 ? "lg:col-span-2" : ""}>
+            <h3 className={`${meta} brand-eyebrow`}>{t.contact.formTitle}</h3>
+            <div className="mt-6">
               <ContactForm locale={content.locale} messages={t} />
             </div>
           </Reveal>

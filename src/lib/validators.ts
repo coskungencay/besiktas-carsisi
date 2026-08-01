@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { TRANSLATION_NAMESPACES } from "@/db/namespaces";
 import type { Messages } from "@/i18n";
 import { LOCALES } from "@/i18n/config";
 
@@ -34,10 +35,29 @@ export const hexColorSchema = z
 
 /* ----------------------------- Genel bilgiler ----------------------------- */
 
+/**
+ * Hero'daki kunye satiri sayisi. Tasarimlar en fazla 4 satir tasiyor; ustu
+ * hem panelde hem sayfada tasar. Panel formu, dogrulama ve okuma bu sabiti
+ * paylasir ki uc yerde farkli limit olusmasin.
+ */
+export const MAX_HIGHLIGHTS = 4;
+
+/** Kunye satirlari: bos satirlar cagiran tarafta ayiklanir. */
+export const highlightsSchema = z
+  .array(
+    z.object({
+      label: trimmed(40),
+      value: trimmed(60),
+    }),
+  )
+  .max(MAX_HIGHLIGHTS);
+
 export const siteSettingsSchema = z.object({
   name: trimmed(120).min(1, "İşletme adı zorunlu"),
   tagline: optionalText(200),
   about: optionalText(4000),
+  heroHeadline: optionalText(160),
+  heroSubline: optionalText(160),
   phone: optionalText(40),
   whatsapp: optionalText(40),
   email: z
@@ -166,7 +186,7 @@ export const translationsSchema = z.object({
   entries: z
     .array(
       z.object({
-        namespace: z.enum(["settings", "menu_category", "menu_item", "gallery"]),
+        namespace: z.enum(TRANSLATION_NAMESPACES),
         refId: z.coerce.number().int().min(0),
         field: trimmed(40).min(1),
         value: z.string().max(4000),
