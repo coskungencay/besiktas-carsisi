@@ -83,7 +83,16 @@ src/themes/
     └── sections/       # Header.tsx, Hero.tsx, … temaya özel
 ```
 
-- `src/themes/shared/heroes/*`, `shared/sections/*`, `shared/parts.tsx` **silinir**.
+- `src/themes/shared/*` **silinmez, LEGACY olarak işaretlenir**.
+
+  > **Uygulama sırasında değişen karar.** Spec başta bu klasörün silinmesini
+  > öngörüyordu. Ama kalan 7 tema bu bileşenleri kullanıyor; silmek için her
+  > temaya birer kopya koymak gerekirdi — 42 dosyalık, birkaç hafta içinde
+  > yeniden yazılacak ölü tekrar. Bunun yerine klasörün her dosyasına "yeni tema
+  > yazarken kullanmayın" başlığı eklendi. Bir tema tasarımına göre yeniden
+  > yazıldıkça legacy bağımlılığı azalır; son tema da kurtulduğunda klasör
+  > silinir. `pnpm new:customer` zaten kalan tema legacy kod kullanmıyorsa
+  > klasörü müşteri repo'sundan otomatik kaldırıyor.
 - Her tema klasörü kendi kendine yeter: dışarıdan yalnızca `@/themes/_shared/*`,
   `@/i18n`, `@/components/motion` ve `@/themes/types` import eder. Bu kural, müşteri
   repo komutunun bir temayı bırakıp diğerlerini silebilmesinin ön koşuludur.
@@ -153,6 +162,24 @@ Komut **kopya repoda** çalıştırılmak üzere tasarlanır; şablon repoda yan
 - Sınır durumları elle sınanır: menü boş, galeri boş, hero görseli yok, çok uzun
   işletme adı, `highlights` boş, tek dil açık, Arapça RTL.
 - `new:customer` komutu `--dry-run` ile ve tek kullanımlık bir kopyada denenir.
+
+## Uygulama sonrası notlar (2026-08-02)
+
+- **Pilot tema kısmen kör yazıldı.** Design'ın Project HTML export'u iş sırasında
+  elimize ulaşmadı; `beyaz-oda` ekran görüntüsündeki 1. sayfaya (header, hero,
+  künye satırları, adres bağlantısı, görsel bandı) sadık biçimde yazıldı. Kalan
+  bölümler (About, Menu, Gallery, Contact) aynı görsel dilde — editoryal ızgara,
+  monospace künye, ince ayraç, bölüm indeksi — kurgulandı. **Export gelince bu
+  dört bölüm tasarımla karşılaştırılıp revize edilmeli.**
+- **Nav ve bölüm görünürlüğü aynı koşula bağlı.** Bölümler içerik boşken kendini
+  basmıyor; header'daki bağlantılar da aynı koşulla gizleniyor, yoksa kırık çapa
+  kalıyordu.
+- **Dil seçici temanın işi.** Kendi header'ı olan tema dil seçiciyi kendi basar;
+  header'ı olmayan temalar için sayfa sağ üst köşeye koyar. Aksi halde yeni
+  header ile üst üste biniyordu.
+- **Doğrulama tuzağı:** `Reveal` bileşeni viewport'a girince açıldığı için tam
+  sayfa (fullPage) ekran görüntüsünde bölümler boş çıkıyor. Bölüm doğrulaması
+  viewport ekran görüntüsüyle yapılmalı.
 
 ## Kapsam dışı
 
