@@ -26,7 +26,15 @@ type LocaleRow = {
 };
 
 type BaseContent = {
-  settings: { name: string; tagline: string; about: string; address: string };
+  settings: {
+    name: string;
+    tagline: string;
+    heroHeadline: string;
+    heroSubline: string;
+    about: string;
+    address: string;
+  };
+  highlights: { index: number; label: string; value: string }[];
   categories: { id: number; name: string }[];
   items: { id: number; name: string; description: string }[];
   gallery: { id: number; alt: string; thumb: string }[];
@@ -35,6 +43,8 @@ type BaseContent = {
 const SETTINGS_FIELDS = [
   { field: "name", label: "İşletme adı", multiline: false },
   { field: "tagline", label: "Slogan", multiline: false },
+  { field: "heroHeadline", label: "Ana sayfa başlığı", multiline: false },
+  { field: "heroSubline", label: "Başlığın devamı", multiline: false },
   { field: "about", label: "Hakkımızda", multiline: true },
   { field: "address", label: "Adres", multiline: true },
 ] as const;
@@ -195,6 +205,58 @@ export function LocalesManager({
                 ))}
               </div>
             </div>
+
+            {/* Künye satırları */}
+            {base.highlights.length > 0 ? (
+              <div>
+                <h3 className="text-sm font-semibold tracking-wide text-zinc-700 uppercase">
+                  Künye satırları
+                </h3>
+                <div className="mt-3 space-y-4">
+                  {base.highlights.map((highlight) => (
+                    <div
+                      key={highlight.index}
+                      className="grid gap-3 sm:grid-cols-2"
+                    >
+                      <div>
+                        <label
+                          htmlFor={name("highlight", highlight.index, "label")}
+                          className="text-xs text-zinc-500"
+                        >
+                          Orijinal etiket:{" "}
+                          <span className="text-zinc-700">
+                            {highlight.label || "—"}
+                          </span>
+                        </label>
+                        <input
+                          id={name("highlight", highlight.index, "label")}
+                          name={name("highlight", highlight.index, "label")}
+                          defaultValue={val("highlight", highlight.index, "label")}
+                          className={inputClass}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor={name("highlight", highlight.index, "value")}
+                          className="text-xs text-zinc-500"
+                        >
+                          Orijinal değer:{" "}
+                          <span className="text-zinc-700">
+                            {highlight.value || "—"}
+                          </span>
+                        </label>
+                        <input
+                          id={name("highlight", highlight.index, "value")}
+                          name={name("highlight", highlight.index, "value")}
+                          defaultValue={val("highlight", highlight.index, "value")}
+                          className={inputClass}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
 
             {/* Menü kategorileri */}
             {base.categories.length > 0 ? (

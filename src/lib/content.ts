@@ -31,6 +31,7 @@ import {
   thumbUrl,
   whatsappHref,
 } from "@/lib/format";
+import { MAX_HIGHLIGHTS } from "@/lib/validators";
 import { resolveThemeSlug } from "@/themes/registry";
 import type { LocaleOption, SiteContent } from "@/themes/types";
 
@@ -39,6 +40,9 @@ const EMPTY_SETTINGS: SiteSettingsRow = {
   name: "İşletme Adı",
   tagline: "",
   about: "",
+  heroHeadline: "",
+  heroSubline: "",
+  highlights: [],
   phone: "",
   whatsapp: "",
   email: "",
@@ -210,6 +214,22 @@ export function getSiteContent(locale: Locale = DEFAULT_LOCALE): SiteContent {
   const name = tr(map, "settings", 0, "name", settings.name) || "İşletme Adı";
   const handle = instagramHandle(settings.instagram);
 
+  // Panelde bos birakildiysa isletme adina duser; tema icin asla bos gelmez.
+  const heroHeadline =
+    tr(map, "settings", 0, "heroHeadline", settings.heroHeadline) || name;
+
+  // Bozuk/eski JSON'a karsi savunma: dizi degilse yok say, bos satirlari at.
+  const rawHighlights = Array.isArray(settings.highlights)
+    ? settings.highlights
+    : [];
+  const highlights = rawHighlights
+    .map((highlight, index) => ({
+      label: tr(map, "highlight", index, "label", highlight?.label ?? ""),
+      value: tr(map, "highlight", index, "value", highlight?.value ?? ""),
+    }))
+    .filter((highlight) => highlight.label || highlight.value)
+    .slice(0, MAX_HIGHLIGHTS);
+
   return {
     locale,
     dir: LOCALE_META[locale].dir,
@@ -219,6 +239,9 @@ export function getSiteContent(locale: Locale = DEFAULT_LOCALE): SiteContent {
     name,
     tagline: tr(map, "settings", 0, "tagline", settings.tagline),
     about: tr(map, "settings", 0, "about", settings.about),
+    heroHeadline,
+    heroSubline: tr(map, "settings", 0, "heroSubline", settings.heroSubline),
+    highlights,
     logoUrl: settings.logoUrl,
     heroImageUrl: settings.heroImageUrl,
     contact: {

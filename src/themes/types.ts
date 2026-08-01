@@ -68,6 +68,15 @@ export type SiteContact = {
   instagramHref: string;
 };
 
+/**
+ * Hero'da veya bolum kenarlarinda gosterilen kisa kunye satiri.
+ * Ornek: { label: "SAAT", value: "08–18" }
+ */
+export type Highlight = {
+  label: string;
+  value: string;
+};
+
 export type LocaleOption = {
   locale: Locale;
   /** Dilin kendi adi, orn. "Español" */
@@ -93,6 +102,15 @@ export type SiteContent = {
   name: string;
   tagline: string;
   about: string;
+  /**
+   * Hero'daki buyuk baslik. Musteri panelde bos biraktiysa `name` ile doldurulur,
+   * yani tema icin ASLA bos gelmez.
+   */
+  heroHeadline: string;
+  /** Basligin soluk devami, orn. "Fazlasi yok." Bos olabilir. */
+  heroSubline: string;
+  /** En cok 4 kisa kunye satiri. Bos olabilir. */
+  highlights: Highlight[];
   logoUrl: string;
   heroImageUrl: string;
   contact: SiteContact;
@@ -112,17 +130,31 @@ export type SectionProps = {
   content: SiteContent;
 };
 
-export type SectionKey = "Hero" | "About" | "Menu" | "Gallery" | "Contact";
-
-export type ThemeSections = Record<SectionKey, ComponentType<SectionProps>>;
+/**
+ * Sayfada render edilen tek bir bolum.
+ *
+ * `id` HTML anchor'i olur (orn. "menu" -> "#menu"); temanin kendi nav'i bu
+ * id'lere baglanir. Ayni id iki kez kullanilmamali.
+ */
+export type ThemeSection = {
+  id: string;
+  Component: ComponentType<SectionProps>;
+};
 
 export type ThemeDefinition = {
   /** Panelde gosterilen okunabilir ad. */
   name: string;
   /** Panelde temayi bir cumlede anlatan aciklama. */
   description: string;
-  /** Landing sayfasinda sirayla render edilen bolumler. */
-  sections: ThemeSections;
+  /** Sayfanin en ustu. Tema istemezse hic header olmaz. */
+  Header?: ComponentType<SectionProps>;
+  /**
+   * Landing sayfasinda sirayla render edilen bolumler.
+   * Sayilari ve sirasi TEMANIN karari; ortak bir sablon dayatilmaz.
+   */
+  sections: ThemeSection[];
+  /** Sayfanin en alti. Tema istemezse hic footer olmaz. */
+  Footer?: ComponentType<SectionProps>;
   /** globals.css'e import edilen token dosyasinin repo-koku yolu. */
   tokensPath: string;
   /**
@@ -139,12 +171,3 @@ export type ThemeDefinition = {
   /** Panelde kucuk onizleme icin: temanin acik mi koyu mu oldugu. */
   scheme: "light" | "dark";
 };
-
-/** Landing sayfasindaki sabit render sirasi. */
-export const SECTION_ORDER: SectionKey[] = [
-  "Hero",
-  "About",
-  "Menu",
-  "Gallery",
-  "Contact",
-];

@@ -26,6 +26,7 @@ const tr = {
     placeholder: "{name} hakkında bilgi yakında eklenecek.",
   },
   hours: {
+    label: "Saat",
     closed: "Kapalı",
   },
   menu: {

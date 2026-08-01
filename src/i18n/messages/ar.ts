@@ -19,6 +19,7 @@ const ar: Messages = {
     placeholder: "سيتم إضافة معلومات عن {name} قريبًا.",
   },
   hours: {
+    label: "الساعات",
     closed: "مغلق",
   },
   menu: {

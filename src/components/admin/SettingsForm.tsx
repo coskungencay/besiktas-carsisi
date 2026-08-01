@@ -17,9 +17,14 @@ import {
 } from "@/components/admin/ui";
 import type { SiteSettingsRow } from "@/db/schema";
 import { IDLE } from "@/lib/action-result";
+import { MAX_HIGHLIGHTS } from "@/lib/validators";
 
 export function SettingsForm({ settings }: { settings: SiteSettingsRow }) {
   const [state, formAction] = useActionState(saveSettingsAction, IDLE);
+  // Bozuk JSON'a karsi: dizi degilse bos kabul et, panel yine acilsin.
+  const highlights = Array.isArray(settings.highlights)
+    ? settings.highlights
+    : [];
   const [removeState, removeAction] = useActionState(
     removeSettingsImageAction,
     IDLE,
@@ -80,6 +85,95 @@ export function SettingsForm({ settings }: { settings: SiteSettingsRow }) {
               </p>
               <FieldError state={state} name="about" />
             </div>
+          </div>
+        </section>
+
+        <section className={cardClass}>
+          <h2 className="text-lg font-semibold">Ana sayfa başlığı</h2>
+          <p className="mt-1 text-sm text-zinc-600">
+            Sitenin en üstünde görünen büyük yazı. Boş bırakırsanız işletme adı
+            kullanılır.
+          </p>
+
+          <div className="mt-4 space-y-4">
+            <div>
+              <label htmlFor="heroHeadline" className={labelClass}>
+                Başlık
+              </label>
+              <input
+                id="heroHeadline"
+                name="heroHeadline"
+                maxLength={160}
+                defaultValue={settings.heroHeadline}
+                placeholder="Beyaz bir oda, siyah bir kahve."
+                className={inputClass}
+              />
+              <FieldError state={state} name="heroHeadline" />
+            </div>
+
+            <div>
+              <label htmlFor="heroSubline" className={labelClass}>
+                Başlığın devamı (soluk yazılır)
+              </label>
+              <input
+                id="heroSubline"
+                name="heroSubline"
+                maxLength={160}
+                defaultValue={settings.heroSubline}
+                placeholder="Fazlası yok."
+                className={inputClass}
+              />
+              <FieldError state={state} name="heroSubline" />
+            </div>
+          </div>
+
+          <h3 className="mt-8 text-sm font-semibold">Künye satırları</h3>
+          <p className="mt-1 text-sm text-zinc-600">
+            Başlığın altında görünen kısa bilgiler. En fazla {MAX_HIGHLIGHTS}{" "}
+            satır; boş bıraktıklarınız gösterilmez. Hiç doldurmazsanız çalışma
+            saatlerinizden otomatik üretilir.
+          </p>
+
+          <div className="mt-4 space-y-3">
+            {Array.from({ length: MAX_HIGHLIGHTS }, (_, index) => {
+              const row = highlights[index];
+              return (
+                <div key={index} className="grid gap-3 sm:grid-cols-[1fr_2fr]">
+                  <div>
+                    <label
+                      htmlFor={`highlightLabel${index}`}
+                      className="sr-only"
+                    >
+                      {index + 1}. satır etiketi
+                    </label>
+                    <input
+                      id={`highlightLabel${index}`}
+                      name={`highlightLabel${index}`}
+                      maxLength={40}
+                      defaultValue={row?.label ?? ""}
+                      placeholder={index === 0 ? "SAAT" : "Etiket"}
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor={`highlightValue${index}`}
+                      className="sr-only"
+                    >
+                      {index + 1}. satır değeri
+                    </label>
+                    <input
+                      id={`highlightValue${index}`}
+                      name={`highlightValue${index}`}
+                      maxLength={60}
+                      defaultValue={row?.value ?? ""}
+                      placeholder={index === 0 ? "08–18" : "Değer"}
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </section>
 

@@ -19,6 +19,7 @@ const es: Messages = {
     placeholder: "Pronto habrá más información sobre {name}.",
   },
   hours: {
+    label: "Horario",
     closed: "Cerrado",
   },
   menu: {

@@ -4,6 +4,7 @@ import OverlayHero from "@/themes/shared/heroes/OverlayHero";
 import About from "@/themes/shared/sections/About";
 import Contact from "@/themes/shared/sections/Contact";
 import Gallery from "@/themes/shared/sections/Gallery";
+import Footer from "@/themes/shared/Footer";
 import Menu from "@/themes/shared/sections/Menu";
 
 /**
@@ -17,7 +18,14 @@ const theme: ThemeDefinition = {
   name: "Vela",
   description: "Koyu butik atmosfer, altın vurgu, geniş harf aralıkları.",
   scheme: "dark",
-  sections: { Hero: OverlayHero, About, Menu, Gallery, Contact },
+  sections: [
+    { id: "hero", Component: OverlayHero },
+    { id: "hakkimizda", Component: About },
+    { id: "menu", Component: Menu },
+    { id: "galeri", Component: Gallery },
+    { id: "iletisim", Component: Contact },
+  ],
+  Footer,
   tokensPath: "src/themes/vela/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {

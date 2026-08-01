@@ -1,3 +1,12 @@
+/*
+ * LEGACY ORTAK BILESEN
+ *
+ * Bu klasordeki bilesenler, tasarimina gore HENUZ yeniden yazilmamis temalarin
+ * ortak iskeletidir — dokuz temanin ayni gorunmesinin sebebi de buydu.
+ *
+ * YENI TEMA YAZARKEN KULLANMAYIN. Ornek yapi: src/themes/beyaz-oda/
+ * Ortak MANTIK icin: src/themes/_shared/  (bkz. THEMING.md)
+ */
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import {

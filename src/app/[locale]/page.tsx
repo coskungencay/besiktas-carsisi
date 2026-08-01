@@ -5,7 +5,6 @@ import { isLocale } from "@/i18n/config";
 import { getSiteContent } from "@/lib/content";
 import { buildJsonLd } from "@/lib/seo";
 import { getTheme } from "@/themes/registry";
-import { SECTION_ORDER } from "@/themes/types";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +19,8 @@ export default async function HomePage({
   const content = getSiteContent(locale);
   const theme = getTheme(content.themeSlug);
   const jsonLd = buildJsonLd(content);
-  const year = new Date().getFullYear();
+
+  const { Header, Footer } = theme;
 
   return (
     <>
@@ -36,34 +36,30 @@ export default async function HomePage({
         {content.t.nav.skipToContent}
       </a>
 
-      {content.locales.length > 1 ? (
+      {/*
+        Dil seciciyi kendi header'i olan tema KENDI basar (kendi tasarimina
+        oturtsun diye). Header'i olmayan temalar icin sayfa sag ust koseye
+        koyar; yoksa cok dilli sitede dil degistirmek imkansiz olurdu.
+      */}
+      {content.locales.length > 1 && !Header ? (
         <div className="absolute end-4 top-4 z-40">
           <LocaleSwitcher content={content} />
         </div>
       ) : null}
 
-      <main id="main">
-        {SECTION_ORDER.map((key) => {
-          const Section = theme.sections[key];
-          return <Section key={key} content={content} />;
-        })}
-      </main>
+      {Header ? <Header content={content} /> : null}
 
       {/*
-        Footer tema token'lariyla calisir: --brand-ink'i ZEMIN olarak kullanmak
-        koyu temalarda (patika, vela) rengi ters cevirirdi. surface-alt her
-        temada dogru tarafta kalir.
+        Bolumlerin sayisi ve sirasi TEMANIN karari (bkz. ThemeDefinition).
+        Sayfa yalnizca sirayla basar; sabit bir bolum sablonu dayatmaz.
       */}
-      <footer className="brand-body border-t border-[var(--brand-border)] bg-[var(--brand-surface-alt)] py-10 text-[var(--brand-ink-muted)]">
-        <div className="mx-auto flex w-full max-w-[var(--brand-container)] flex-col gap-2 px-6 text-sm sm:flex-row sm:items-center sm:justify-between sm:px-10">
-          <p>
-            © {year} {content.name}
-          </p>
-          {content.contact.address ? (
-            <p className="text-pretty">{content.contact.address}</p>
-          ) : null}
-        </div>
-      </footer>
+      <main id="main">
+        {theme.sections.map(({ id, Component }) => (
+          <Component key={id} content={content} />
+        ))}
+      </main>
+
+      {Footer ? <Footer content={content} /> : null}
     </>
   );
 }
