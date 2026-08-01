@@ -47,11 +47,14 @@ export default function ThemePage() {
         </p>
       </header>
 
-      <ThemePicker
-        themes={themes}
-        activeSlug={activeSlug}
-        pinnedSlug={pinned}
-      />
+      {/*
+        Tema pinlenmisse secici HIC basilmaz: musteri repo'sunda tema bizim
+        kararimiz, panelde gorunmesi yalnizca kafa karistirirdi. Sunucu tarafi
+        da ayrica reddediyor (saveThemeSlugAction).
+      */}
+      {pinned ? null : (
+        <ThemePicker themes={themes} activeSlug={activeSlug} />
+      )}
 
       <ThemeColorsForm
         themeName={active.name}
