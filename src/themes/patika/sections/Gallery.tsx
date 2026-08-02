@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
-import { SQUARE_FALLBACK, imageOrFallback } from "@/themes/_shared/data";
+import { SQUARE_FALLBACK_DARK, imageOrFallback } from "@/themes/_shared/data";
 import { SectionHead, shell, surface } from "@/themes/patika/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -39,7 +39,7 @@ export default function Gallery({ content }: SectionProps) {
                 <Image
                   src={imageOrFallback(
                     image.thumbUrl || image.url,
-                    SQUARE_FALLBACK,
+                    SQUARE_FALLBACK_DARK,
                   )}
                   alt={
                     image.alt ||

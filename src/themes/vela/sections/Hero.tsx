@@ -2,50 +2,81 @@ import Image from "next/image";
 
 import { fill } from "@/i18n";
 import {
-  HERO_FALLBACK,
-  hasMenu,
+  HERO_FALLBACK_DARK,
   highlightsOrDerived,
   imageOrFallback,
+  paragraphs,
 } from "@/themes/_shared/data";
-import { ArrowIcon } from "@/themes/_shared/icons";
-import {
-  label,
-  meta,
-  metaInk,
-  metaMuted,
-  prose,
-  shell,
-  surface,
-} from "@/themes/vela/parts";
+import { meta, proseOnPhoto, shell, surface } from "@/themes/vela/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Tasarimin hero'su: once ince bir altin cizgi CIZILIR, hemen ardindan
- * buyuk serif baslik asagidan yukari suzulur, en son da sagdaki dar kolon
- * gelir. Bu kademeli giris temanin ilk izlenimi.
+ * Tasarimin hero'su TAM EKRAN BIR FOTOGRAF: karanlik, atmosferik bir mekân
+ * goruntusu hafifce ic zoom yapar, uzerine ustten ve alttan koyulasan bir
+ * perde iner ve butun yazi bu perdenin ALT kenarina yaslanir. Temanin
+ * "butik otel" hissi bu tek karardan geliyor; yaziyi gorselden ayirip alt
+ * alta koymak tasarimi siradan bir bloga cevirir.
+ *
+ * Alt blokta once ince bir altin cizgi CIZILIR (soldan saga, saydama giden
+ * gecis), hemen ardindan buyuk serif baslik asagidan yukari suzulur, en son
+ * da sagdaki dar kolon gelir.
  *
  * NEDEN Reveal YOK: bu blok sayfanin ilk ekraninda; scroll ile tetiklenen
  * Reveal burada ya hic calismaz ya da gec kalir. Yerine tokens.css'teki saf
  * CSS acilis animasyonlari (vl-*) kullanildi — SSR ile ilk boyamada baslar.
  *
+ * NEDEN HERO'DA BUTON YOK: tasarimda da yok; menuye ust seritteki nav
+ * goturuyor. Fotografin uzerindeki tek eylem cagrisi basligin kendisi.
+ *
  * Baslik `heroHeadline`ten gelir; panelde bos birakilirsa icerik katmani
  * isletme adini koyuyor, yani burada asla bos degil.
  */
 export default function Hero({ content }: SectionProps) {
-  const { heroHeadline, heroSubline, heroImageUrl, contact, name, tagline, t } =
-    content;
+  const { heroHeadline, heroSubline, heroImageUrl, tagline, name, t } = content;
 
   const highlights = highlightsOrDerived(content);
-  // Basligin ustundeki etiket ayri bir DB alani degil: slogan, yoksa semt.
-  const kicker = tagline || contact.locality;
+  /*
+   * Sagdaki dar kolonun metni tasarimda mekâni anlatan KISA bir paragraf
+   * ("sekiz masa, tek kavurma partisi..."), slogan degil. Kaynagi
+   * hakkimizda'nin ilk paragrafi; musteri henuz yazmadiysa slogana duser.
+   */
+  const intro = paragraphs(content.about)[0] ?? tagline;
 
   return (
-    <section id="hero" aria-labelledby="hero-title" className={surface}>
-      <div className={`${shell} pt-16 pb-14 sm:pt-24 sm:pb-[4.875rem]`}>
-        {kicker ? (
-          <p className={`${label} vl-up-early mb-8`}>{kicker}</p>
-        ) : null}
+    <section
+      id="hero"
+      aria-labelledby="hero-title"
+      /*
+       * Yukseklik tasarimda 780px; ust serit (Header) bizde ayri bir bolum
+       * oldugu icin onun payi dusuldu. flex + items-end yazinin her zaman
+       * alt kenara yaslanmasini saglar: fotograf uzasa da baslik ile alt
+       * kenar arasindaki 78px'lik bosluk sabit kalir.
+       */
+      className={`${surface} relative flex min-h-[32rem] items-end overflow-hidden lg:min-h-[43.125rem]`}
+    >
+      {/*
+       * Fotograf hafifce ic zoom yapiyor; sarmalayici overflow-hidden olmali
+       * yoksa buyuyen kenarlar yatay kaydirma yaratir.
+       */}
+      <div aria-hidden="true" className="absolute inset-0">
+        <Image
+          src={imageOrFallback(heroImageUrl, HERO_FALLBACK_DARK)}
+          alt={fill(t.hero.coverAlt, { name })}
+          fill
+          sizes="100vw"
+          priority
+          className="vl-zoom object-cover"
+        />
+      </div>
 
+      {/*
+       * Uc duraklı perde: ust kenar koyu (ust seritle birlesir), orta acilir
+       * (fotograf nefes alir), alt kenar en koyu (yazinin kontrasti musteri
+       * hangi fotografi yuklerse yuklesin garanti altina alinir).
+       */}
+      <div aria-hidden="true" className="vl-veil absolute inset-0" />
+
+      <div className={`${shell} relative w-full pt-24 pb-14 lg:pb-[4.875rem]`}>
         {/*
          * Cizgi tasarimda altindan saydama giden bir gecis; tek renk bir cubuk
          * degil. scaleX ile cizildigi icin transform-origin tokens.css'te.
@@ -62,58 +93,49 @@ export default function Hero({ content }: SectionProps) {
             className="vl-up brand-display max-w-[47.5rem] text-[clamp(2.5rem,6.6vw,5.25rem)] leading-[1.02] tracking-[-0.01em] text-balance"
           >
             {heroHeadline}
+            {/*
+             * Tasarimda basligin bir parcasi ITALIK VE ALTIN — temanin imzasi
+             * bu tek vurgu. Ayni punto ve ayni satir icinde akar; kucuk punto
+             * ile ayri bir yere basmak vurguyu yok eder.
+             */}
+            {heroSubline ? (
+              <>
+                {" "}
+                <span className="italic text-[var(--brand-primary)]">
+                  {heroSubline}
+                </span>
+              </>
+            ) : null}
           </h1>
 
           {/* Dar kolon tasarimda sabit 330px; buyuyen baslik onu ezmesin. */}
           <div className="vl-up-late w-full lg:w-[20.625rem] lg:shrink-0">
-            {heroSubline ? <p className={prose}>{heroSubline}</p> : null}
+            {intro ? <p className={proseOnPhoto}>{intro}</p> : null}
 
+            {/*
+             * Tasarimda paragrafin 20px altinda tek satirlik altin bir kunye
+             * var ("09:00 — 22:00 · Her gun"). Kunyeler cogalirsa satir sarar,
+             * alt alta yigilmaz — o dar kolonu uzatirdi.
+             *
+             * NEDEN ETIKET DE ALTIN: tasarimda bu satirin TAMAMI altin, tek
+             * parca bir cizgi gibi okunuyor; etiketi soluk griye almak hem o
+             * imzayi bolerdi hem de fotograf uzerinde okunmaz kalirdi.
+             */}
             {highlights.length > 0 ? (
-              <dl className="mt-5 flex flex-col gap-3">
+              <dl className="mt-5 flex flex-wrap items-baseline gap-x-4 gap-y-2">
                 {highlights.map((highlight, index) => (
                   <div
                     key={index}
-                    className="flex flex-wrap items-baseline gap-x-3 gap-y-1"
+                    className="flex flex-wrap items-baseline gap-x-2"
                   >
-                    <dt className={metaMuted}>{highlight.label}</dt>
+                    <dt className={meta}>{highlight.label}</dt>
                     <dd className={meta}>{highlight.value}</dd>
                   </div>
                 ))}
               </dl>
             ) : null}
-
-            {hasMenu(content) ? (
-              <a
-                href="#menu"
-                className="mt-7 inline-flex items-center gap-3 border-b border-[var(--brand-primary)] pb-2 transition-colors hover:text-[var(--brand-primary)]"
-              >
-                <span className={metaInk}>{t.hero.viewMenu}</span>
-                <ArrowIcon className="size-3.5 text-[var(--brand-primary)]" />
-              </a>
-            ) : null}
           </div>
         </div>
-      </div>
-
-      {/*
-       * Kenardan kenara cok yatay bant: sayfanin ilk nefes molasi.
-       * Gorsel hafifce ic zoom yapiyor; sarmalayici overflow-hidden olmali
-       * yoksa buyuyen kenarlar yatay kaydirma yaratir.
-       */}
-      <div className="relative aspect-[3/2] w-full overflow-hidden bg-[var(--brand-surface-alt)] sm:aspect-[21/9]">
-        <Image
-          src={imageOrFallback(heroImageUrl, HERO_FALLBACK)}
-          alt={fill(t.hero.coverAlt, { name })}
-          fill
-          sizes="100vw"
-          priority
-          className="vl-zoom object-cover"
-        />
-        {/* Alt kenardaki koyulasma: bandin sayfaya baglanmasi icin. */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-linear-to-b from-transparent to-[var(--brand-surface)] opacity-70"
-        />
       </div>
     </section>
   );

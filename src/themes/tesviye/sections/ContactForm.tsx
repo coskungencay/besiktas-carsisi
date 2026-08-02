@@ -18,7 +18,7 @@ import { mono } from "@/themes/tesviye/parts";
  */
 
 const field =
-  "brand-frame w-full bg-[var(--brand-surface)] px-3 py-2.5 text-[var(--ts-body-sm)] font-light outline-none transition-colors placeholder:text-[var(--brand-ink-muted)] focus:border-[var(--brand-primary)]";
+  "brand-frame w-full bg-[var(--brand-surface)] px-3 py-2.5 text-[length:var(--ts-body-sm)] font-light outline-none transition-colors placeholder:text-[var(--brand-ink-muted)] focus:border-[var(--brand-primary)]";
 
 const label = `${mono} flex flex-wrap items-baseline gap-x-2 text-[var(--brand-ink-muted)]`;
 

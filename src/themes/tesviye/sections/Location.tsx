@@ -131,7 +131,7 @@ export default function Location({ content }: SectionProps) {
                      * yalnizca ozet aralik, tasarimin buyuk rakam dilinde.
                      */
                     <p
-                      className="brand-display mt-[18px] text-[var(--ts-title)] leading-[var(--ts-title-leading)] tabular-nums"
+                      className="brand-display mt-[18px] text-[length:var(--ts-title)] leading-[var(--ts-title-leading)] tabular-nums"
                       dir="ltr"
                     >
                       {range}
@@ -152,7 +152,7 @@ export default function Location({ content }: SectionProps) {
                     </dl>
                   ) : null}
 
-                  <p className="mt-5 text-[var(--ts-label)] leading-[1.8] font-light text-[var(--brand-ink-muted)]">
+                  <p className="mt-5 text-[length:var(--ts-label)] leading-[1.8] font-light text-[var(--brand-ink-muted)]">
                     {t.about.hoursNote}
                   </p>
                 </div>

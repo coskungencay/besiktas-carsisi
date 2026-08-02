@@ -3,15 +3,14 @@ import { Fragment } from "react";
 
 import { fill } from "@/i18n";
 import {
-  HERO_FALLBACK,
+  HERO_FALLBACK_DARK,
   featuredItems,
-  hasMenu,
   highlightsOrDerived,
   hoursRange,
   imageOrFallback,
+  paragraphs,
 } from "@/themes/_shared/data";
-import { ArrowIcon } from "@/themes/_shared/icons";
-import { pillLine, pillSolid, shell, surface } from "@/themes/patika/parts";
+import { pillLine, shell, surface } from "@/themes/patika/parts";
 import type { SectionProps } from "@/themes/types";
 
 /*
@@ -33,10 +32,22 @@ const HEADLINE_STAGGER = ["pk-up-1", "pk-up-2", "pk-up-3"];
  * var: sunucudan gelen HTML'de aninda ve sirali calisir.
  */
 export default function Hero({ content }: SectionProps) {
-  const { heroHeadline, heroSubline, tagline, heroImageUrl, name, t } = content;
+  const { heroHeadline, heroSubline, tagline, heroImageUrl, contact, name, t } =
+    content;
 
   const highlights = highlightsOrDerived(content);
-  const showMenuLink = hasMenu(content);
+  /* Sol kolonun metni: hakkimizda'nin ilk paragrafi, yoksa slogan. */
+  const intro = paragraphs(content.about)[0] ?? tagline;
+
+  /*
+   * Basligin ikinci parcasindaki son noktalama isareti ayriliyor: tasarimda o
+   * tek karakter turuncu. Isaret yoksa ikinci parca oldugu gibi basilir.
+   */
+  const sublineMatch = /([.!?…]+)$/.exec(heroSubline);
+  const sublinePunctuation = sublineMatch?.[1] ?? "";
+  const sublineText = sublinePunctuation
+    ? heroSubline.slice(0, -sublinePunctuation.length)
+    : heroSubline;
 
   /* Kelime kelime animasyon icin ayrilir; birden fazla bosluk sorun cikarmasin. */
   const headlineWords = heroHeadline.split(/\s+/).filter(Boolean);
@@ -79,9 +90,15 @@ export default function Hero({ content }: SectionProps) {
           </div>
         ) : null}
 
-        {tagline ? (
+        {/*
+          Tasarimda bu satir KONUM ("Kadikoy · Yeldegirmeni") — kisa ve neon.
+          Slogan burada degil: uzun bir cumle bu 12px'lik genis harf arali
+          satirda iki satira boluniyor ve devasa basligin ustundeki gerilimi
+          bozuyor. Semt yoksa slogana duseriz.
+        */}
+        {contact.locality || tagline ? (
           <p className="pk-up pk-eyebrow text-[var(--brand-primary)]">
-            {tagline}
+            {contact.locality || tagline}
           </p>
         ) : null}
 
@@ -106,6 +123,24 @@ export default function Hero({ content }: SectionProps) {
               </span>
             </Fragment>
           ))}
+
+          {/*
+            Tasarimin imzasi: basligin bir parcasi NEON, sonundaki nokta
+            turuncu. Panelde baslik tek satirlik bir alan oldugu icin ikinci
+            rengi "baslik devami" alanindan aliyoruz — boylece musteri kendi
+            metnini yazdiginda da iki tonlu ritim korunuyor.
+          */}
+          {heroSubline ? (
+            <span className="pk-up-3 block text-[var(--brand-primary)]">
+              {sublineText}
+              {/* Tasarimda cumleyi bitiren nokta turuncu — kucuk ama imza. */}
+              {sublinePunctuation ? (
+                <span className="text-[var(--brand-accent)]">
+                  {sublinePunctuation}
+                </span>
+              ) : null}
+            </span>
+          ) : null}
         </h1>
 
         {/*
@@ -113,37 +148,28 @@ export default function Hero({ content }: SectionProps) {
           hizali, boylece farkli yuksekteki bloklar tek bir cizgide biter.
         */}
         <div className="mt-10 grid items-end gap-7 lg:mt-13 lg:grid-cols-3">
-          {heroSubline ? (
+          {/*
+            Tasarimda sol kolonda mekani anlatan kisa bir paragraf var; slogan
+            degil. "Hakkimizda"nin ilk paragrafini kullaniyoruz, o da yoksa
+            slogana duseriz.
+          */}
+          {intro ? (
             <p className="pk-up-4 pk-lead max-w-[24rem] text-pretty text-[var(--brand-ink-muted)]">
-              {heroSubline}
+              {intro}
             </p>
           ) : null}
 
-          {showMenuLink || highlights.length > 0 ? (
-            <div className="pk-up-5 flex flex-wrap items-center gap-2.5">
-              {showMenuLink ? (
-                <a
-                  href="#menu"
-                  className={`${pillSolid} transition-colors hover:border-[var(--brand-accent)] hover:bg-[var(--brand-accent)]`}
-                >
-                  <span>{t.hero.viewMenu}</span>
-                  <ArrowIcon className="size-4" />
-                </a>
-              ) : null}
-
-              {highlights.length > 0 ? (
-                <dl className="flex flex-wrap items-center gap-2.5">
-                  {highlights.map((highlight, index) => (
-                    <div key={index} className={pillLine}>
-                      <dt className="text-[var(--brand-ink-muted)]">
-                        {highlight.label}
-                      </dt>
-                      <dd className="font-bold">{highlight.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              ) : null}
-            </div>
+          {highlights.length > 0 ? (
+            <dl className="pk-up-5 flex flex-wrap items-center gap-2.5">
+              {highlights.map((highlight, index) => (
+                <div key={index} className={pillLine}>
+                  <dt className="text-[var(--brand-ink-muted)]">
+                    {highlight.label}
+                  </dt>
+                  <dd className="font-bold">{highlight.value}</dd>
+                </div>
+              ))}
+            </dl>
           ) : null}
 
           {/*
@@ -154,7 +180,7 @@ export default function Hero({ content }: SectionProps) {
           <div className="pk-up-6 lg:col-start-3">
             <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[var(--brand-radius-media)] bg-[var(--brand-surface-alt)] lg:aspect-auto lg:h-[14.375rem]">
               <Image
-                src={imageOrFallback(heroImageUrl, HERO_FALLBACK)}
+                src={imageOrFallback(heroImageUrl, HERO_FALLBACK_DARK)}
                 alt={fill(t.hero.coverAlt, { name })}
                 fill
                 sizes="(min-width: 1024px) 30rem, 100vw"

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Kapak görseli yer tutucusu">
+  <!--
+    KOYU tema yer tutucusu. Acik gri surumu koyu zeminde parlak bir dikdortgen
+    gibi duruyor ve sayfanin en dikkat ceken ogesi haline geliyordu; burada
+    zemine yakin bir ton ve kesikli cerceve kullaniliyor.
+  -->
+  <rect width="1600" height="900" fill="#171717"/>
+  <rect x="6" y="6" width="1588" height="888" fill="none" stroke="#3A3A3A" stroke-width="3" stroke-dasharray="14 12"/>
+  <g fill="none" stroke="#3F3F3F" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M660 400h230v130a115 115 0 0 1-115 115h0a115 115 0 0 1-115-115z"/>
+    <path d="M890 430h55a55 55 0 0 1 0 110h-55"/>
+    <path d="M700 330c0-30 30-30 30-60"/>
+    <path d="M775 330c0-30 30-30 30-60"/>
+    <path d="M620 700h330"/>
+  </g>
+</svg>

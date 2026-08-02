@@ -98,7 +98,8 @@ export function SettingsForm({ settings }: { settings: SiteSettingsRow }) {
           <h2 className="text-lg font-semibold">Ana sayfa başlığı</h2>
           <p className="mt-1 text-sm text-zinc-600">
             Sitenin en üstünde görünen büyük yazı. Boş bırakırsanız işletme adı
-            kullanılır.
+            kullanılır. <strong>Kısa tutun</strong> — bu yazı çok büyük punto ile
+            gösterilir, 2-4 kelime en iyi sonucu verir.
           </p>
 
           <div className="mt-4 space-y-4">

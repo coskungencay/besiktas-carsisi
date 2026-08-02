@@ -60,7 +60,7 @@ export default function Menu({ content }: SectionProps) {
                     >
                       <div className="min-w-0 flex-1">
                         {/* Tasarimda urun adi da Anton: liste bir cetvel gibi okunuyor. */}
-                        <p className="brand-display text-[var(--ts-item)] leading-[1.25] tracking-[0.01em] uppercase">
+                        <p className="brand-display text-[length:var(--ts-item)] leading-[1.25] tracking-[0.01em] uppercase">
                           {item.name}
                           {item.isFeatured ? (
                             <span
@@ -72,7 +72,7 @@ export default function Menu({ content }: SectionProps) {
                         </p>
 
                         {item.description ? (
-                          <p className="mt-1 text-[var(--ts-body-sm)] leading-[var(--ts-body-sm-leading)] font-light text-pretty text-[var(--brand-ink-muted)]">
+                          <p className="mt-1 text-[length:var(--ts-body-sm)] leading-[var(--ts-body-sm-leading)] font-light text-pretty text-[var(--brand-ink-muted)]">
                             {item.description}
                           </p>
                         ) : null}
@@ -80,7 +80,7 @@ export default function Menu({ content }: SectionProps) {
 
                       {item.price ? (
                         <p
-                          className="text-[var(--ts-body)] font-medium tabular-nums"
+                          className="text-[length:var(--ts-body)] font-medium tabular-nums"
                           dir="ltr"
                         >
                           {item.price}

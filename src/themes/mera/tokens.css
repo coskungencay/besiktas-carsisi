@@ -132,6 +132,13 @@ html[data-theme="mera"] .mera-mark {
 
 html[data-theme="mera"] .mera-wide {
   letter-spacing: var(--mera-track-wide);
+  /*
+   * NEDEN line-height: tasarimda bu satirin satir yuksekligi hic ayarlanmaz
+   * (normal). Kucuk etiket olcegimiz `leading-none` tasidigi icin, semt yerine
+   * uzun slogana dusuldugunde 390px'de satir ikiye boluniyor ve harfler ust
+   * uste biniyordu. Tek satirda gorunum degismez, sarinca okunakli kalir.
+   */
+  line-height: normal;
 }
 
 html[data-theme="mera"] .mera-caption {

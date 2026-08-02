@@ -116,7 +116,7 @@ export default function Testimonials({ content }: SectionProps) {
                       {item.author ? (
                         /* mt-auto: metin kisa olsa da imza hucrenin dibine oturur. */
                         <footer className="mt-auto">
-                          <cite className="brand-display text-[var(--ts-item)] leading-[1.25] tracking-[0.01em] not-italic uppercase text-[var(--brand-ink)]">
+                          <cite className="brand-display text-[length:var(--ts-item)] leading-[1.25] tracking-[0.01em] not-italic uppercase text-[var(--brand-ink)]">
                             {item.author}
                           </cite>
                         </footer>

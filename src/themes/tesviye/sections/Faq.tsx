@@ -63,7 +63,7 @@ export default function Faq({ content }: SectionProps) {
                     {String(index + 1).padStart(2, "0")}
                   </span>
 
-                  <span className="brand-display min-w-0 flex-1 text-[var(--ts-item)] leading-[1.25] tracking-[0.01em] uppercase">
+                  <span className="brand-display min-w-0 flex-1 text-[length:var(--ts-item)] leading-[1.25] tracking-[0.01em] uppercase">
                     {item.question}
                   </span>
 

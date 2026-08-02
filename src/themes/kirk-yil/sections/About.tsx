@@ -6,19 +6,33 @@ import {
   SectionTitle,
   column,
   meta,
+  metaMuted,
   shell,
   surface,
 } from "@/themes/kirk-yil/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Ortalanmis dar kolon: once metin, altinda KLASIK saat tablosu
- * (gun basta, saat sonda, satirlari ince cizgi ayirir).
- * Ne metin ne saat varsa bolum hic basilmaz.
+ * Ortalanmis dar kolon: once metin, altinda kunye rakamlari, en altta KLASIK
+ * saat tablosu (gun basta, saat sonda, satirlari ince cizgi ayirir).
+ * Hicbiri yoksa bolum hic basilmaz.
  */
 export default function About({ content }: SectionProps) {
-  const { about, name, openingHours, t } = content;
-  if (!about && openingHours.length === 0) return null;
+  const { about, highlights, name, openingHours, t } = content;
+
+  /*
+   * Kunye rakamlari (1986 / 3. kusak / kum ocaginda) tasarimda HERO'DA DEGIL,
+   * hikaye bolumunun altinda cift cizginin uzerinde duruyor. Hero afis
+   * ritmini bozmasin diye buraya alindi.
+   *
+   * DIKKAT: burada highlightsOrDerived KULLANILMAZ. Musteri kunye girmediginde
+   * o yardimci calisma saatinden ("07–23 / Saatler") satir uretiyor; hemen
+   * altindaki saat tablosu ayni bilgiyi zaten veriyor ve rakam iki kez cikiyor.
+   * Turetilmis kunyenin yeri hero'daki muhur.
+   */
+  if (!about && openingHours.length === 0 && highlights.length === 0) {
+    return null;
+  }
 
   const body = paragraphs(about);
   const hours = hoursFromMonday(openingHours);
@@ -45,6 +59,32 @@ export default function About({ content }: SectionProps) {
             )}
           </div>
         </Reveal>
+
+        {highlights.length > 0 ? (
+          <Reveal delay={0.1}>
+            <div className={`${column} mt-12`}>
+              <DoubleRule />
+
+              {/*
+                Rakam ustte, etiket altta: DOM'da <dt> once gelmek ZORUNDA
+                (gecerli <dl>), gorsel sirayi flex-col-reverse cozuyor.
+              */}
+              <dl className="flex flex-wrap items-start justify-center gap-x-11 gap-y-7 pt-6">
+                {highlights.map((highlight, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col-reverse items-center gap-1.5 text-center"
+                  >
+                    <dt className={metaMuted}>{highlight.label}</dt>
+                    <dd className="brand-display ky-stat text-[var(--brand-primary)]">
+                      {highlight.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </Reveal>
+        ) : null}
 
         {hours.length > 0 ? (
           <Reveal delay={0.12}>

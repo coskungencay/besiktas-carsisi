@@ -155,6 +155,48 @@ html[data-theme="yesil-avlu"] .ya-arch {
     52% 52% var(--brand-radius) var(--brand-radius);
 }
 
+/*
+ * Dar ekranda kutu dikeye doner; ayni yuzdeler orada 230px'i asan bir dikey
+ * yarıcap uretiyor ve kubbe hero yazisini kirpacak kadar iceri giriyordu.
+ * Yatayda genisletip dikeyde kisaltinca kemer korunuyor, kirpma bitiyor.
+ */
+@media (width < 40rem) {
+  html[data-theme="yesil-avlu"] .ya-arch {
+    border-radius: 38% 38% var(--brand-radius) var(--brand-radius) /
+      24% 24% var(--brand-radius) var(--brand-radius);
+  }
+}
+
+/*
+ * Kemerin uzerindeki perde. Tasarimda hero yazisi fotografin ustunde duruyor
+ * ve okunurlugu bu ust/alt koyu gradyan sagliyor (ortasi neredeyse seffaf, ki
+ * fotograf bogulmasin). Renk color-mix ile --brand-primary'den turetiliyor:
+ * panelden marka rengi degisince perde de uyum saglar.
+ */
+html[data-theme="yesil-avlu"] .ya-hero-veil {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--brand-primary) 34%, transparent) 0%,
+    color-mix(in srgb, var(--brand-primary) 6%, transparent) 34%,
+    color-mix(in srgb, var(--brand-primary) 50%, transparent) 100%
+  );
+}
+
+/*
+ * Dar ekranda baslik kemerin daha buyuk bir kismini kapliyor ve fotografin
+ * acik bolgelerine denk gelme olasiligi artiyor; perde orada koyulastirilir.
+ */
+@media (width < 40rem) {
+  html[data-theme="yesil-avlu"] .ya-hero-veil {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--brand-primary) 46%, transparent) 0%,
+      color-mix(in srgb, var(--brand-primary) 24%, transparent) 34%,
+      color-mix(in srgb, var(--brand-primary) 66%, transparent) 100%
+    );
+  }
+}
+
 /* Galeri karesi: tasarimda 170px / 430x340 kutu (tam yarim daire). */
 html[data-theme="yesil-avlu"] .ya-arch-sm {
   border-radius: 40% 40% var(--brand-radius) var(--brand-radius) /
@@ -297,27 +339,29 @@ html[data-theme="yesil-avlu"] .ya-fade {
 }
 
 /*
- * Hero merdiveni. Tasarimdaki gecikmeler (.5s / .6s / .8s / 1s) ilk ekran
- * icin fazla uzundu; sira korunarak sikistirildi.
+ * Hero merdiveni. Tasarimdaki SIRA: once kemer acilir (0s), sonra sirasiyla
+ * yer/yil satiri (.5s), baslik (.6s), tepedeki fisilti (.8s) ve alttaki kunye
+ * seridi (1s). Gecikmeler ilk ekran icin fazla uzundu; sira aynen korunarak
+ * sikistirildi. Kemer artik yaziyi da tasidigi icin ilk adim o.
  */
+html[data-theme="yesil-avlu"] .ya-arch-in {
+  animation: yaArch 1.3s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
 html[data-theme="yesil-avlu"] .ya-fade-1 {
-  animation: yaFade 1.4s 0.15s both;
+  animation: yaFade 1.4s 0.25s both;
+}
+
+html[data-theme="yesil-avlu"] .ya-rise {
+  animation: yaRise 1.2s 0.35s cubic-bezier(0.2, 0.75, 0.2, 1) both;
 }
 
 html[data-theme="yesil-avlu"] .ya-fade-2 {
-  animation: yaFade 1.6s 0.45s both;
+  animation: yaFade 1.6s 0.5s both;
 }
 
 html[data-theme="yesil-avlu"] .ya-fade-3 {
   animation: yaFade 1.6s 0.65s both;
-}
-
-html[data-theme="yesil-avlu"] .ya-rise {
-  animation: yaRise 1.2s 0.25s cubic-bezier(0.2, 0.75, 0.2, 1) both;
-}
-
-html[data-theme="yesil-avlu"] .ya-arch-in {
-  animation: yaArch 1.3s 0.3s cubic-bezier(0.2, 0.75, 0.2, 1) both;
 }
 
 /* Tasarimdaki asili rozetin salinimi; burada ayracin yapragini tasiyor. */
