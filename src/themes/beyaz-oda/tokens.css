@@ -63,7 +63,16 @@ html[data-theme="beyaz-oda"] {
    * Tasarim 1440px genisliginde, 48px yan bosluklu, 12 kolon / 24px gap.
    * Bolumler arasi ritim: 118px ust bosluk + ince cizgi + 34px.
    */
-  --brand-container: 1440px;
+  /*
+   * Sayfa siniri.
+   *
+   * Tasarim dosyasinda sayfa genelinde max-width YOK: icerik ekrani doldurur,
+   * yalnizca kenar boslugu birakilir. 1440px'lik eski sinir genis ekranlarda
+   * iki yanda olu alan birakiyor ve tasarimi oldugundan kucuk gosteriyordu.
+   * Buradaki deger bir "tasarim sinir" degil, 4K ekranlarda satir uzunlugu
+   * okunamaz hale gelmesin diye birakilan ust siniridir.
+   */
+  --brand-container: 2200px;
   --brand-section-py: 4.5rem; /* 72px — dar ekran */
   --brand-section-py-lg: 7.375rem; /* 118px — tasarimdaki gercek deger */
 }

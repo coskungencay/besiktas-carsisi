@@ -66,7 +66,16 @@ html[data-theme="yesil-avlu"] {
    * 1440px yaziliyor — 1280px'te hero kemeri ve galeri tasarimdakinden
    * 160px dar kaliyordu.
    */
-  --brand-container: 1440px;
+  /*
+   * Sayfa siniri.
+   *
+   * Tasarim dosyasinda sayfa genelinde max-width YOK: icerik ekrani doldurur,
+   * yalnizca kenar boslugu birakilir. 1440px'lik eski sinir genis ekranlarda
+   * iki yanda olu alan birakiyor ve tasarimi oldugundan kucuk gosteriyordu.
+   * Buradaki deger bir "tasarim sinir" degil, 4K ekranlarda satir uzunlugu
+   * okunamaz hale gelmesin diye birakilan ust siniridir.
+   */
+  --brand-container: 2200px;
   --brand-gutter: 3.25rem; /* tasarimdaki 52px yan bosluk */
   /* Tasarimda bolumler arasi bosluk 130px. Komsu iki bolum de kendi
      padding'ini koydugu icin degerin YARISI yaziliyor. */

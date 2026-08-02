@@ -160,7 +160,16 @@ html[data-theme="sicak-firin"] {
   /* --- Olcek ---
    * 1440px ekranda govde 1344px (1440 - 2*48 kenar boslugu).
    */
-  --brand-container: 1440px;
+  /*
+   * Sayfa siniri.
+   *
+   * Tasarim dosyasinda sayfa genelinde max-width YOK: icerik ekrani doldurur,
+   * yalnizca kenar boslugu birakilir. 1440px'lik eski sinir genis ekranlarda
+   * iki yanda olu alan birakiyor ve tasarimi oldugundan kucuk gosteriyordu.
+   * Buradaki deger bir "tasarim sinir" degil, 4K ekranlarda satir uzunlugu
+   * okunamaz hale gelmesin diye birakilan ust siniridir.
+   */
+  --brand-container: 2200px;
   /*
    * Tasarimda bolumler yalnizca ustten 104px bosluk aliyor. Burada padding
    * simetrik (padding-block), yani KOMSU iki bolumun toplami 104px etmeli:

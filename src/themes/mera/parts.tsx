@@ -15,7 +15,7 @@ import type { ReactNode } from "react";
 
 /** Dergi sayfasinin ic marjlari — tasarimda 56px, tum bolumlerde ayni. */
 export const page =
-  "mx-auto w-full max-w-[var(--brand-container)] px-5 sm:px-8 lg:px-14";
+  "mx-auto w-full max-w-[var(--brand-container)] px-5 sm:px-14 lg:px-14";
 
 /** Bolum kabugu: zemin + govde yazi tipi. */
 export const surface = "bg-[var(--brand-surface)] text-[var(--brand-ink)]";
