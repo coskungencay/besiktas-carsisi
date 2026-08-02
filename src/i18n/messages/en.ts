@@ -18,6 +18,9 @@ const en: Messages = {
     hoursNote: "Opening hours may change on public holidays.",
     placeholder: "Information about {name} is coming soon.",
   },
+  site: {
+    since: "Est.",
+  },
   hours: {
     label: "Hours",
     closed: "Closed",

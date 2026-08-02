@@ -82,6 +82,7 @@ export const siteSettingsSchema = z.object({
   instagram: optionalText(80),
   logoUrl: optionalText(400),
   heroImageUrl: optionalText(400),
+  founded: optionalText(10),
   announcement: optionalText(200),
 });
 

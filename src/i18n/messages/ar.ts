@@ -18,6 +18,9 @@ const ar: Messages = {
     hoursNote: "قد تتغير ساعات العمل في أيام العطل الرسمية.",
     placeholder: "سيتم إضافة معلومات عن {name} قريبًا.",
   },
+  site: {
+    since: "تأسست",
+  },
   hours: {
     label: "الساعات",
     closed: "مغلق",

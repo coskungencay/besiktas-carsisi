@@ -104,6 +104,7 @@ function seedSettings() {
     .values({
       id: SINGLETON_ID,
       name: "Kahve Durağı",
+      founded: "2015",
       tagline: "Her fincanda taze çekilmiş kahve, her tabakta ev yapımı tat.",
       // Hero basligi: musteri panelden degistirir. Bos birakilirsa `name` kullanilir.
       // Kisa tutuldu: hero basligi temalarda 100-168px punto ile basiliyor,

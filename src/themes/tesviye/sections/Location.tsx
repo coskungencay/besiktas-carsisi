@@ -1,6 +1,6 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
-import { coordinateLabel, hoursFromMonday } from "@/themes/_shared/data";
+import { placeStamp, hoursFromMonday } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   Plate,
@@ -36,7 +36,7 @@ export default function Location({ content }: SectionProps) {
 
   const { contact, name, openingHours, t } = content;
 
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
   const hours = hoursFromMonday(openingHours);
 
   /*

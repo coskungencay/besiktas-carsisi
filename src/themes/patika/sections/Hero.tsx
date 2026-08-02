@@ -69,6 +69,18 @@ export default function Hero({ content }: SectionProps) {
   /* Kayan serit: one cikan urunler. Isaretli urun yoksa serit hic basilmaz. */
   const strip = featuredItems(content, 6);
 
+  /*
+   * Serit iki ozdes kopyadan olusuyor ve animasyon -%50 kaydiriyor; kopya
+   * ekran genisliginden DAR kalirsa aradan bos zemin goruluyor. Az sayida
+   * one cikan urun oldugunda (orn. 2) her kopyanin icinde urunleri
+   * tekrarlayarak kopyayi genisletiyoruz — 8 oge her ekran genisligini
+   * asiyor, en genis masaustunde bile dikis gorunmuyor.
+   */
+  const stripRow =
+    strip.length > 0
+      ? Array.from({ length: Math.max(1, Math.ceil(8 / strip.length)) }, () => strip).flat()
+      : [];
+
   return (
     <section id="hero" aria-labelledby="hero-title" className={surface}>
       {/*
@@ -209,8 +221,8 @@ export default function Hero({ content }: SectionProps) {
           className={`mt-[4.75rem] overflow-hidden border-y-[length:var(--brand-border-width)] border-[var(--brand-border)] bg-[var(--brand-primary)] py-[0.9375rem] text-[var(--brand-primary-contrast)]`}
         >
           <div className="pk-marquee">
-            <MarqueeRow items={strip} />
-            <MarqueeRow items={strip} ariaHidden />
+            <MarqueeRow items={stripRow} />
+            <MarqueeRow items={stripRow} ariaHidden />
           </div>
         </div>
       ) : null}
@@ -231,9 +243,9 @@ function MarqueeRow({
       className="flex shrink-0 items-center gap-11 pe-11"
       {...(ariaHidden ? { "aria-hidden": true } : {})}
     >
-      {items.map((item) => (
+      {items.map((item, index) => (
         <li
-          key={item.id}
+          key={`${item.id}-${index}`}
           className="pk-marquee-item flex shrink-0 items-center gap-11 whitespace-nowrap"
         >
           <span>

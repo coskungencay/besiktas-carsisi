@@ -2,7 +2,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import {
   closedDayLabels,
-  coordinateLabel,
+  placeStamp,
   hoursRange,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
@@ -33,7 +33,7 @@ export default function Location({ content }: SectionProps) {
 
   const { contact, name, openingHours, t } = content;
 
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
   const range = hoursRange(openingHours);
   const closed = closedDayLabels(openingHours);
 

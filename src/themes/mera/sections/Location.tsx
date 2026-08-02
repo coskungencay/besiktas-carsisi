@@ -1,5 +1,5 @@
 import { Reveal } from "@/components/motion/Reveal";
-import { coordinateLabel } from "@/themes/_shared/data";
+import { placeStamp } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   SectionHead,
@@ -31,7 +31,7 @@ export default function Location({ content }: SectionProps) {
 
   const { contact, t } = content;
 
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
 
   /*
    * Yol tarifi hedefi, elde ne varsa ona duser: musterinin girdigi harita

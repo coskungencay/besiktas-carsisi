@@ -1,5 +1,5 @@
 import { Reveal } from "@/components/motion/Reveal";
-import { coordinateLabel } from "@/themes/_shared/data";
+import { placeStamp } from "@/themes/_shared/data";
 import { SectionHeading, eyebrow, shell, surface } from "@/themes/yesil-avlu/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -24,7 +24,7 @@ export default function Location({ content }: SectionProps) {
 
   const { contact, t } = content;
 
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
 
   /*
    * Yol tarifi hedefi: once musterinin girdigi hazir harita linki, sonra

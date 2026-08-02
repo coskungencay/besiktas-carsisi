@@ -139,6 +139,22 @@ export function coordinateLabel(
   return `${Math.abs(lat).toFixed(digits)}°${ns} / ${Math.abs(lng).toFixed(digits)}°${ew}`;
 }
 
+/**
+ * Kucuk kunye damgasi: tasarimlarda header/footer koselerinde duran tek satir.
+ *
+ * ONCELIK: kurulus yili ("Kurulus 2015") -> koordinat -> bos.
+ *
+ * NEDEN: koordinat teknik ve soguk bir bilgi; musteriye "40.9903°N" hicbir sey
+ * anlatmiyor. Tasarimlarin kendisi de orada kurulus yili kullaniyor
+ * ("EST. 1986 · BEYOGLU"). Yil girilmemisse eski davranisa duseriz, boylece
+ * mevcut kurulumlarda bosluk olusmaz.
+ */
+export function placeStamp(content: SiteContent): string {
+  const year = content.founded.trim();
+  if (year) return `${content.t.site.since} ${year}`;
+  return coordinateLabel(content.contact.lat, content.contact.lng);
+}
+
 /* -------------------------------------------------------------------------- */
 /*                                  Kunyeler                                   */
 /* -------------------------------------------------------------------------- */

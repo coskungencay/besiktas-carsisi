@@ -1,4 +1,4 @@
-import { coordinateLabel } from "@/themes/_shared/data";
+import { placeStamp } from "@/themes/_shared/data";
 import { shell, surface } from "@/themes/beyaz-oda/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -11,9 +11,9 @@ import type { SectionProps } from "@/themes/types";
  * blok hic basilmaz, serit tek basina kalir.
  */
 export default function Footer({ content }: SectionProps) {
-  const { name, contact, socialLinks, t } = content;
+  const { name, socialLinks, t } = content;
   const year = new Date().getFullYear();
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
 
   return (
     <footer className={surface}>

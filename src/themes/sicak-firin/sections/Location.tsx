@@ -1,6 +1,6 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
-import { coordinateLabel, hoursFromMonday } from "@/themes/_shared/data";
+import { placeStamp, hoursFromMonday } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   SectionHead,
@@ -38,7 +38,7 @@ export default function Location({ content }: SectionProps) {
   const { contact, name, openingHours, t } = content;
 
   const hours = hoursFromMonday(openingHours);
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
 
   /*
    * Tasarimdaki kolon oranlari: 1.15fr / .85fr / .85fr. Saat satiri hic

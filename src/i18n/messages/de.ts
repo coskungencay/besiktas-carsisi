@@ -18,6 +18,9 @@ const de: Messages = {
     hoursNote: "An Feiertagen können die Öffnungszeiten abweichen.",
     placeholder: "Informationen über {name} folgen in Kürze.",
   },
+  site: {
+    since: "Seit",
+  },
   hours: {
     label: "Zeiten",
     closed: "Geschlossen",

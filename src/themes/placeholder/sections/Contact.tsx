@@ -55,7 +55,7 @@ export default function Contact({ content }: SectionProps) {
             title={t.contact.title}
             titleId="contact-title"
           />
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
+          <p className="mt-4 max-w-3xl text-base leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
             {fill(t.contact.intro, { name })}
           </p>
         </Reveal>

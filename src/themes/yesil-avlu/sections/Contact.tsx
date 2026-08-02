@@ -171,7 +171,7 @@ export default function Contact({ content }: SectionProps) {
           icin kendi satirinda duruyor.
         */}
         <Reveal delay={0.12}>
-          <div className="mx-auto mt-16 w-full max-w-2xl">
+          <div className="mx-auto mt-16 w-full max-w-4xl">
             <h3 className={`${eyebrow} text-center`}>{t.contact.formTitle}</h3>
             <div className="mt-6">
               <ContactForm locale={content.locale} messages={t} />

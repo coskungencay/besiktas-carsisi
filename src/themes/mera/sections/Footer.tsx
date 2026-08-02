@@ -1,4 +1,4 @@
-import { coordinateLabel } from "@/themes/_shared/data";
+import { placeStamp } from "@/themes/_shared/data";
 import {
   labelStrip,
   labelStripBase,
@@ -21,7 +21,7 @@ import type { SectionProps } from "@/themes/types";
 export default function Footer({ content }: SectionProps) {
   const { name, tagline, contact, socialLinks, t } = content;
   const year = new Date().getFullYear();
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
 
   const mark = contact.locality ? `${name} · ${contact.locality}` : name;
 

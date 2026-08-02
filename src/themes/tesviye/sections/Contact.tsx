@@ -1,6 +1,6 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
-import { coordinateLabel } from "@/themes/_shared/data";
+import { placeStamp } from "@/themes/_shared/data";
 import {
   Plate,
   bodyText,
@@ -25,7 +25,7 @@ type Row = { term: string; value: string; href: string; ltr: boolean };
  */
 export default function Contact({ content }: SectionProps) {
   const { contact, name, t } = content;
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
 
   const rows: Row[] = [
     contact.address && {

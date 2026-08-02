@@ -151,6 +151,11 @@ export const siteSettings = sqliteTable("site_settings", {
     .notNull()
     .$type<string[]>()
     .default([]),
+  /**
+   * Kurulus yili, orn. "2015". Tasarimlarda kucuk kunye satiri bunu tasiyor
+   * ("EST. 1986 · BEYOGLU"); bos birakilirsa koordinata dusulur.
+   */
+  founded: text("founded").notNull().default(""),
   /** Sayfanin en ustunde gecen tek satirlik duyuru. Bos = serit hic basilmaz. */
   announcement: text("announcement").notNull().default(""),
   /**

@@ -1,5 +1,5 @@
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
-import { coordinateLabel, hasMenu } from "@/themes/_shared/data";
+import { placeStamp, hasMenu } from "@/themes/_shared/data";
 import { hasAboutSection, shell, surface } from "@/themes/beyaz-oda/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -11,8 +11,8 @@ import type { SectionProps } from "@/themes/types";
  * Girilmemisse orta sutun bos kalir, duzen bozulmaz.
  */
 export default function Header({ content }: SectionProps) {
-  const { name, contact, t } = content;
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const { name, t } = content;
+  const coords = placeStamp(content);
 
   /*
    * Bolumler icerik bosken kendini basmiyor (About, Menu, Gallery). Nav de

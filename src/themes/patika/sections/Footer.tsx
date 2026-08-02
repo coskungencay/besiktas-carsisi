@@ -1,4 +1,4 @@
-import { coordinateLabel } from "@/themes/_shared/data";
+import { placeStamp } from "@/themes/_shared/data";
 import { pillLine, shell, surface } from "@/themes/patika/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -22,7 +22,7 @@ const metaLink = `${pillLine} pk-meta transition-colors hover:border-[var(--bran
 export default function Footer({ content }: SectionProps) {
   const { name, tagline, contact, socialLinks, t } = content;
   const year = new Date().getFullYear();
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
 
   /*
    * Instagram iki yerden gelebiliyor: iletisim alani (kullanici adi) ve sosyal

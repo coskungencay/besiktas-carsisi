@@ -25,6 +25,9 @@ const tr = {
     hoursNote: "Bayram günlerinde çalışma saatleri değişebilir.",
     placeholder: "{name} hakkında bilgi yakında eklenecek.",
   },
+  site: {
+    since: "Kuruluş",
+  },
   hours: {
     label: "Saat",
     closed: "Kapalı",

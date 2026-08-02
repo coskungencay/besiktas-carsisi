@@ -18,6 +18,9 @@ const es: Messages = {
     hoursNote: "El horario puede variar en días festivos.",
     placeholder: "Pronto habrá más información sobre {name}.",
   },
+  site: {
+    since: "Desde",
+  },
   hours: {
     label: "Horario",
     closed: "Cerrado",

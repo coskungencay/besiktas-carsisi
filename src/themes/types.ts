@@ -144,6 +144,8 @@ export type SiteContent = {
   testimonials: Testimonial[];
   faq: FaqItem[];
   socialLinks: SocialLink[];
+  /** Kurulus yili, orn. "2015". Bos olabilir. */
+  founded: string;
   /** Sayfanin en ustundeki duyuru; bos olabilir. */
   announcement: string;
   /**

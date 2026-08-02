@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 
-import { coordinateLabel } from "@/themes/_shared/data";
+import { placeStamp } from "@/themes/_shared/data";
 import {
   edgeBottom,
   edgeTop,
@@ -17,7 +17,7 @@ import type { SectionProps } from "@/themes/types";
 export default function Footer({ content }: SectionProps) {
   const { name, contact, socialLinks, t } = content;
   const year = new Date().getFullYear();
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
 
   return (
     <footer className="brand-body bg-[var(--brand-surface)]" style={edgeTop}>

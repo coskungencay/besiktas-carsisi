@@ -1,6 +1,6 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
-import { coordinateLabel, hoursFromMonday } from "@/themes/_shared/data";
+import { placeStamp, hoursFromMonday } from "@/themes/_shared/data";
 import {
   goldLink,
   Hairline,
@@ -30,7 +30,7 @@ type Row = { term: string; value: string; href: string; ltr: boolean };
  */
 export default function Contact({ content }: SectionProps) {
   const { contact, name, openingHours, t } = content;
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
   const hours = hoursFromMonday(openingHours);
 
   const rows: Row[] = [

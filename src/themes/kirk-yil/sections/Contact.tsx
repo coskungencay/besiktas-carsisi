@@ -171,7 +171,7 @@ export default function Contact({ content }: SectionProps) {
 
         <Reveal delay={0.16}>
           {/* Form kolonu bilerek okuma kolonundan da dar: fis hissi. */}
-          <div className="mx-auto mt-16 w-full max-w-2xl text-center">
+          <div className="mx-auto mt-16 w-full max-w-4xl text-center">
             <h3 className="brand-display ky-h3">{t.contact.formTitle}</h3>
             <Ornament className="mt-5" />
 
