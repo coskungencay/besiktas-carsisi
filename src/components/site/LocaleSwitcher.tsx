@@ -52,9 +52,19 @@ export function LocaleSwitcher({
 
   return (
     <>
-      {/* Dar ekran: ikon + aktif dil, dokununca acilan liste. */}
+      {/*
+        Dar ekran: sag ust kosede SABIT duran ikon + aktif dil; dokununca liste
+        aciliyor.
+
+        NEDEN SABIT (fixed): dokuz temanin header yapisi birbirinden farkli
+        (kimi tek serit, kimi uc katli, kimi sticky). Seciciyi her header'in
+        icine yerlestirmeye calismak dar ekranda ya ucuncu bir satir aciyor ya
+        da acilan listeyi ekran disina tasiyordu. Sag ust kose her temada bos
+        ve acilan liste end-0 ile hep sola dogru aciliyor — hicbir ekranda
+        tasma olmuyor. Genis ekranda secici header'daki yerine donuyor.
+      */}
       <details
-        className={`brand-body relative sm:hidden ${className}`}
+        className={`brand-body fixed end-3 top-3 z-40 sm:hidden ${className}`}
         aria-label={content.t.nav.changeLanguage}
       >
         <summary className="brand-frame brand-rounded flex cursor-pointer list-none items-center gap-1.5 bg-[var(--brand-surface)] px-2.5 py-1.5 text-xs font-medium text-[var(--brand-ink)] [&::-webkit-details-marker]:hidden">
@@ -66,9 +76,14 @@ export function LocaleSwitcher({
           aria-label={content.t.nav.changeLanguage}
           /*
             Mutlak konum: acilan liste sayfayi asagi itmemeli, yoksa ust serit
-            her acilista zipliyor. end-0 sayesinde Arapca'da sola aciliyor.
+            her acilista zipliyor.
+            
+            TASMA: liste secicinin SAG kenarina hizali (end-0) ve genisligi
+            ekrandan tasamayacak sekilde sinirli. Secici header'in sag ucunda
+            durdugu icin liste sola dogru aciliyor ve hicbir ekranda disari
+            cikmiyor; Arapca'da yon kendiliginden tersleniyor.
           */
-          className="brand-frame brand-rounded absolute end-0 z-50 mt-1.5 flex min-w-32 flex-col gap-1 bg-[var(--brand-surface)] p-1.5 shadow-lg"
+          className="brand-frame brand-rounded absolute end-0 z-50 mt-1.5 flex w-max max-w-[calc(100vw-1.5rem)] min-w-32 flex-col gap-1 bg-[var(--brand-surface)] p-1.5 shadow-lg"
         >
           {content.locales.map((option) => (
             <Link

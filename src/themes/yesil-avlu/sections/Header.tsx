@@ -66,7 +66,7 @@ export default function Header({ content }: SectionProps) {
       */}
       <nav
         aria-label={name}
-        className={`${shell} grid items-center gap-x-8 gap-y-4 py-6 sm:grid-cols-3`}
+        className={`${shell} pe-14 sm:pe-0 grid items-center gap-x-8 gap-y-4 py-6 sm:grid-cols-3`}
       >
         <ul className="flex flex-wrap items-center justify-center gap-x-[1.875rem] gap-y-2 sm:justify-start">
           {leadingLinks.map((link) => (

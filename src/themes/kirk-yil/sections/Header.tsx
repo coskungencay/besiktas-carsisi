@@ -46,7 +46,7 @@ export default function Header({ content }: SectionProps) {
       className={`${surface} brand-body ky-fade border-b-[3px] border-double border-[color-mix(in_srgb,var(--brand-ink)_32%,transparent)]`}
     >
       <div
-        className={`${shell} flex flex-wrap items-center justify-between gap-x-8 gap-y-3 py-4`}
+        className={`${shell} pe-14 sm:pe-0 flex flex-wrap items-center justify-between gap-x-8 gap-y-3 py-4`}
       >
         {/*
           Sol uc: tasarimda "Est. 1986 · Beyoglu". Bizde kurulus yili diye bir

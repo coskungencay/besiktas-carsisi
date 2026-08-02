@@ -66,7 +66,7 @@ export default function Header({ content }: SectionProps) {
        */}
       <nav
         aria-label={name}
-        className={`${shell} flex flex-wrap items-center justify-center gap-x-8 gap-y-4 py-[1.875rem] lg:grid lg:grid-cols-[1fr_auto_1fr]`}
+        className={`${shell} pe-14 sm:pe-0 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 py-[1.875rem] lg:grid lg:grid-cols-[1fr_auto_1fr]`}
       >
         {/* Nav ogeleri arasi 34px — tasarimdaki deger. */}
         <ul className="order-2 flex flex-wrap items-center justify-center gap-x-[2.125rem] gap-y-2 lg:order-none lg:justify-start">

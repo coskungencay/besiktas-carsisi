@@ -50,7 +50,7 @@ export default function Header({ content }: SectionProps) {
   return (
     <header className={`${surface} ${edgeBottom} brand-body sticky top-0 z-20`}>
       <div
-        className={`${shell} flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5`}
+        className={`${shell} pe-14 sm:pe-0 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5`}
       >
         <a href="#hero" className="flex items-center gap-3">
           {logoUrl ? (

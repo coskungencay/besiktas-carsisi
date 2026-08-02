@@ -41,7 +41,7 @@ export default function Header({ content }: SectionProps) {
       className={`${surface} bo-fade border-b border-[var(--brand-border)]`}
     >
       <div
-        className={`${shell} flex flex-wrap items-center justify-between gap-x-8 gap-y-3 py-[28px] lg:grid lg:grid-cols-12 lg:gap-6`}
+        className={`${shell} pe-14 sm:pe-0 flex flex-wrap items-center justify-between gap-x-8 gap-y-3 py-[28px] lg:grid lg:grid-cols-12 lg:gap-6`}
       >
         <a
           href="#hero"

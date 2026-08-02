@@ -45,7 +45,7 @@ export default function Header({ content }: SectionProps) {
     <header className={`${surface} brand-body`}>
       {/* mera-fade: acilista serit yumusakca belirir (tasarim: meraFade .8s). */}
       <div
-        className={`${page} mera-fade flex flex-wrap items-baseline justify-between gap-x-10 gap-y-4 pt-6 sm:pt-[1.625rem]`}
+        className={`${page} mera-fade flex flex-wrap items-baseline justify-between gap-x-10 gap-y-4 pt-6 pe-14 sm:pt-[1.625rem] sm:pe-0`}
       >
         <a href="#hero" className="flex items-baseline gap-3">
           {/* Logo yoksa hic basilmaz: bu tasarimda marka adi zaten kunyenin

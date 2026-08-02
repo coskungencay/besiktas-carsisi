@@ -61,7 +61,7 @@ export default function Header({ content }: SectionProps) {
       className="sf-fade brand-body border-b border-dashed border-[var(--brand-hairline)] bg-[var(--brand-surface)] text-[var(--brand-ink)]"
     >
       <div
-        className={`${shell} flex flex-wrap items-center justify-between gap-x-8 gap-y-4 py-5`}
+        className={`${shell} pe-14 sm:pe-0 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 py-5`}
       >
         {/*
           Marka blogu tasarimda YALIN yazi: 20px slab, sonunda vurgu noktasi.

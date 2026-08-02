@@ -56,7 +56,7 @@ export default function Header({ content }: SectionProps) {
       className="ts-fade brand-body bg-[var(--brand-surface)]"
     >
       <div
-        className={`${shell} flex flex-wrap items-stretch`}
+        className={`${shell} pe-14 sm:pe-0 flex flex-wrap items-stretch`}
         style={edgeBottom}
       >
         {/*

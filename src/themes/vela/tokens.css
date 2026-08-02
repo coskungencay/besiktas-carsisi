@@ -270,6 +270,26 @@ html[data-theme="vela"] .vl-veil {
   pointer-events: none;
 }
 
+/*
+ * Dar ekranda perde DAHA KOYU.
+ *
+ * NEDEN: masaustunde metin gorselin bos kalan sol yarisinda duruyor ve %28'lik
+ * orta durak yetiyor. Mobilde ayni metin gorselin tam ustune biniyor; fincanin
+ * acik gri konturlari harflerin arasindan geciyor ve okunurluk sansa kaliyor.
+ * Burada orta durak %28 -> %72'ye cikiyor, gorsel doku olarak kaliyor ama
+ * metnin arkasi netlesiyor.
+ */
+@media (max-width: 639px) {
+  html[data-theme="vela"] .vl-veil {
+    background-image: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--brand-surface) 88%, transparent) 0%,
+      color-mix(in srgb, var(--brand-surface) 72%, transparent) 40%,
+      color-mix(in srgb, var(--brand-surface) 94%, transparent) 100%
+    );
+  }
+}
+
 /* --------------------------------------------------------------------------
  * SSS (details/summary)
  *
