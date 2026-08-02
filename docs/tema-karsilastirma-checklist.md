@@ -74,12 +74,35 @@ nav gri kalmıştı. Kolayca gözden kaçar çünkü inline style'larda görünm
 - [ ] Çerçeve/iç boşluk/altyazı var mı?
 - [ ] Koyu temada koyu yer tutucu kullanılıyor mu?
 
+## 5b. Gözle "farklı" görünen ama ölçünce aynı çıkanlar
+
+Bir şey daha ince/soluk görünüyorsa **tahmin etme, ölç.** Playwright'ta iki
+sayfada da aynı öğenin hesaplanmış stilini oku:
+
+```js
+const a = document.querySelector('header nav a');
+const s = getComputedStyle(a);
+({ font: s.fontFamily, weight: s.fontWeight, size: s.fontSize,
+   tracking: s.letterSpacing, color: s.color })
+```
+
+Kırk Yıl'da nav "daha ince" görünüyordu; ölçüm ikisinin de Crimson Pro / 400 /
+13px / 2.34px / `rgb(110,31,38)` olduğunu gösterdi — fark ekran görüntülerinin
+farklı ölçekte alınmasındandı. Ama aynı turda **gerçek** bir fark çıktı:
+çift çizgi rengi. Tasarım `rgba(42,33,27,.32)` kullanıyordu, biz
+`--brand-border` (#D3C4A8) — belirgin daha soluk.
+
+- [ ] Kenarlık/ayraç renkleri: tasarım token yerine **mürekkebin opaklığını**
+      kullanıyor olabilir. Token'a dokunmadan
+      `color-mix(in srgb, var(--brand-ink) 32%, transparent)` ile üret.
+
 ## 6. Tipografi (en çok gözden kaçan)
 
 Her metin öğesi için tasarımdaki inline style'dan oku:
 
 - [ ] `font-size` — clamp üst sınırı tasarımdaki değere yakın mı?
-- [ ] `font-weight` — 300 mü 400 mü? (Kırk Yıl menüsünde ürünler 300)
+- [ ] `font-weight` — **tasarımda yazmıyorsa 400'dür**, 300 varsayma.
+      Kırk Yıl'da menü ürünleri ve yorumlar açıkça 300, gövde metni ise 400.
 - [ ] `letter-spacing`
 - [ ] `line-height`
 - [ ] **Renk** — özellikle vurgu rengi (altın/bordo) doğru öğede mi?

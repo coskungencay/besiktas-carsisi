@@ -37,7 +37,13 @@ export default function Header({ content }: SectionProps) {
   return (
     // ky-fade: tasarimda serit sayfayla birlikte usulca beliriyor.
     <header
-      className={`${surface} brand-body ky-fade border-b-[3px] border-double border-[var(--brand-border)]`}
+      /*
+        Cift cizgi rengi tasarimda mürekkebin %32 opakligi; --brand-border
+        (#D3C4A8) bunun yaninda belirgin sekilde soluk kaliyor ve serit
+        sayfadan ayrilmiyordu. color-mix ile token'a dokunmadan tasarimdaki
+        tonu uretiyoruz.
+      */
+      className={`${surface} brand-body ky-fade border-b-[3px] border-double border-[color-mix(in_srgb,var(--brand-ink)_32%,transparent)]`}
     >
       <div
         className={`${shell} flex flex-wrap items-center justify-between gap-x-8 gap-y-3 py-4`}
