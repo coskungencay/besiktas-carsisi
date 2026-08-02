@@ -42,7 +42,7 @@ export default function Footer({ content }: SectionProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={link.label}
-                      className="bo-mono brand-eyebrow border-b border-transparent pb-[3px] text-[10.5px] text-[var(--brand-ink-muted)] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
+                      className="bo-mono brand-eyebrow border-b border-transparent pb-[3px] font-light text-[10.5px] text-[var(--brand-ink-muted)] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
                     >
                       {link.label}
                     </a>
@@ -58,7 +58,9 @@ export default function Footer({ content }: SectionProps) {
           bosluk ve ikinci bir cizgi ritmi bozardi).
         */}
         <div
-          className={`grid gap-x-6 gap-y-2 pb-10 sm:grid-cols-12 ${
+          /* Sayfanin alt boslugu tasarimda 60px — iletisim bolumunun degil,
+             seridin altinda. */
+          className={`grid gap-x-6 gap-y-2 pb-[60px] sm:grid-cols-12 ${
             socialLinks.length > 0
               ? "mt-10"
               : "mt-20 border-t border-[var(--brand-border)] pt-5"

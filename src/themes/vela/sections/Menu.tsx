@@ -1,6 +1,6 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { menuWithItems } from "@/themes/_shared/data";
-import { SectionHead, shell, surface } from "@/themes/vela/parts";
+import { SectionHead, sectionTop, shell, surface } from "@/themes/vela/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
@@ -22,7 +22,7 @@ export default function Menu({ content }: SectionProps) {
 
   return (
     <section id="menu" aria-labelledby="menu-title" className={surface}>
-      <div className={`${shell} brand-section`}>
+      <div className={`${shell} ${sectionTop}`}>
         <Reveal>
           <SectionHead
             eyebrow={t.menu.eyebrow}
@@ -42,6 +42,17 @@ export default function Menu({ content }: SectionProps) {
             // Tek sayili kategoriler krem panele dusuyor (tasarimdaki sag blok).
             const isLight = index % 2 === 1;
 
+            /*
+             * Kategori sayisi tek oldugunda ikili izgarada son panelin yaninda
+             * bos bir hucre kaliyor ve o satir yarim gorunuyordu. Son panel iki
+             * kolonu birden kapliyor: bant kenardan kenara uzuyor, tasarimin
+             * "dolu blok" dili bozulmuyor.
+             */
+            const isOddTail =
+              categories.length > 1 &&
+              categories.length % 2 === 1 &&
+              index === categories.length - 1;
+
             const panel = isLight
               ? "bg-[var(--brand-accent)] text-[var(--brand-surface)]"
               : "bg-[var(--brand-surface-alt)] text-[var(--brand-ink)] border border-[var(--brand-frame-gold)]";
@@ -57,7 +68,11 @@ export default function Menu({ content }: SectionProps) {
               : "text-[var(--brand-ink-muted)]";
 
             return (
-              <Reveal key={category.id} delay={index === 0 ? 0 : 0.12}>
+              <Reveal
+                key={category.id}
+                delay={index === 0 ? 0 : 0.12}
+                className={isOddTail ? "lg:col-span-2" : undefined}
+              >
                 <div className={`${panel} h-full px-8 py-12 sm:px-[3.75rem] sm:py-16`}>
                   <h3
                     className={`brand-body brand-eyebrow text-[0.6875rem] leading-[1.6] ${eyebrowTone}`}

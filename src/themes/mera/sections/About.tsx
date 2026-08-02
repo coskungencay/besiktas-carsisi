@@ -1,11 +1,9 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
-import { hoursFromMonday, paragraphs } from "@/themes/_shared/data";
+import { paragraphs } from "@/themes/_shared/data";
 import {
-  Hairline,
   SectionHead,
   bodyText,
-  label,
   page,
   sectionPad,
   surface,
@@ -14,8 +12,12 @@ import type { SectionProps } from "@/themes/types";
 
 /**
  * Dergi yazisi duzeni: tasarimdaki gibi metin UC ince kolona bolunur
- * (15px / 1.7), ilk paragraf "drop cap" ile acilir. Calisma saatleri kutu
- * icinde DEGIL, yalnizca cizgilerle ayrilmis liste halinde en altta durur.
+ * (15px / 1.7), ilk paragraf "drop cap" ile acilir.
+ *
+ * BURADA CALISMA SAATLERI YOK. Tasarimda saatler kapanis (iletisim) bolumunun
+ * orta kolonunda duruyor; yedi satirlik dokum bu yazi bolumunun ortasina
+ * konuldugunda bolumu iki katina cikariyor ve dergi yazisinin akisini
+ * kesiyordu. Tek yer: Contact.
  *
  * Paragraf sayisi kolon sayisini belirler: tek paragrafi uc kolona bolmek
  * sayfayi bos gosterirdi, bu yuzden az metinde izgara daralir.
@@ -24,11 +26,12 @@ import type { SectionProps } from "@/themes/types";
  * bitisik yazimini bozar.
  */
 export default function About({ content }: SectionProps) {
-  const { about, name, openingHours, t } = content;
-  if (!about && openingHours.length === 0) return null;
+  const { about, name, t } = content;
+  // Metin yoksa bolum hic basilmaz: saatler artik kapanis bolumunde oldugu
+  // icin geriye gosterilecek bir sey kalmiyor.
+  if (!about) return null;
 
   const body = paragraphs(about);
-  const hours = hoursFromMonday(openingHours);
 
   const columns =
     body.length >= 3
@@ -68,43 +71,6 @@ export default function About({ content }: SectionProps) {
                 </p>
               )}
             </Reveal>
-
-            {hours.length > 0 ? (
-              <Reveal delay={0.16}>
-                <Hairline className="mt-14" />
-
-                <div className="mt-9 grid gap-x-16 gap-y-9 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
-                  <div>
-                    <h3 className={label}>{t.about.openingHours}</h3>
-                    <p className="mt-4 text-[0.8125rem] leading-[1.6] text-[var(--brand-ink-faint)]">
-                      {t.about.hoursNote}
-                    </p>
-                  </div>
-
-                  <dl className="text-[0.845rem]">
-                    {hours.map((hour) => (
-                      <div
-                        key={hour.dayOfWeek}
-                        className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 border-b border-[var(--brand-border)] py-2.5 last:border-0"
-                      >
-                        <dt className="text-[var(--brand-ink-body)]">
-                          {hour.dayLabel}
-                        </dt>
-                        <dd className="tabular-nums text-[var(--brand-ink)]">
-                          {hour.isClosed ? (
-                            t.hours.closed
-                          ) : (
-                            <span dir="ltr">
-                              {hour.openTime} — {hour.closeTime}
-                            </span>
-                          )}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-              </Reveal>
-            ) : null}
           </SectionHead>
         </Reveal>
       </div>

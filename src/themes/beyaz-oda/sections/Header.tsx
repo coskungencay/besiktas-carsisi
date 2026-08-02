@@ -1,6 +1,6 @@
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { coordinateLabel, hasMenu } from "@/themes/_shared/data";
-import { shell, surface } from "@/themes/beyaz-oda/parts";
+import { hasAboutSection, shell, surface } from "@/themes/beyaz-oda/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
@@ -20,7 +20,7 @@ export default function Header({ content }: SectionProps) {
    * yayina alinca "Galeri" linki hicbir yere gitmeyen kirik bir capa olurdu.
    */
   const links = [
-    (content.about || content.openingHours.length > 0) && {
+    hasAboutSection(content) && {
       href: "#hakkimizda",
       label: t.about.title,
     },
@@ -45,14 +45,25 @@ export default function Header({ content }: SectionProps) {
       >
         <a
           href="#hero"
-          className="brand-display text-[13px] font-medium tracking-[0.02em] lg:col-span-4"
+          /*
+            Tasarimda marka bir <div>, bizde hero'ya giden bir baglanti. Global
+            "a:hover { color:#46606E }" kurali orada her baglantiyi kapsadigi
+            icin vurgu rengi burada da EL ILE veriliyor; yoksa sayfadaki tek
+            hover'siz baglanti bu olurdu.
+          */
+          className="brand-display text-[13px] font-medium tracking-[0.02em] transition-colors hover:text-[var(--brand-accent)] lg:col-span-4"
         >
           {name}
         </a>
 
         {coords ? (
           <p
-            className="bo-mono order-3 w-full text-[11px] tracking-[0.02em] text-[var(--brand-ink-faint)] sm:order-none sm:w-auto lg:col-span-4"
+            /*
+              Koordinat tasarimda bolum indekslerinden (#A2A7AC) bir kademe
+              KOYU (#8A8F94); ust seritte marka ile nav arasinda kaybolmasin
+              diye. Karsiligi --brand-ink-dim.
+            */
+            className="bo-mono order-3 w-full font-light text-[11px] tracking-[0.02em] text-[var(--brand-ink-dim)] sm:order-none sm:w-auto lg:col-span-4"
             dir="ltr"
           >
             {coords}

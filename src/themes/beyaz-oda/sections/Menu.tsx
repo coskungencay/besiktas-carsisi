@@ -3,6 +3,7 @@ import { menuWithItems } from "@/themes/_shared/data";
 import {
   SectionIndex,
   meta,
+  rowNumber,
   sectionGrid,
   sectionTop,
   surface,
@@ -54,7 +55,7 @@ export default function Menu({ content }: SectionProps) {
                           delay={Math.min(itemIndex, 4) * 0.06}
                         >
                           <div className="grid items-baseline gap-x-6 gap-y-1 border-b border-[var(--brand-border)] py-[22px] lg:grid-cols-[36px_minmax(0,1fr)_300px_90px]">
-                            <span className="bo-index" aria-hidden="true">
+                            <span className={rowNumber} aria-hidden="true">
                               {number}
                             </span>
 

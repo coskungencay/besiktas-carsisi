@@ -3,16 +3,23 @@ import Image from "next/image";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { fill } from "@/i18n";
 import { hasMenu } from "@/themes/_shared/data";
-import { eyebrow, shell, surface } from "@/themes/yesil-avlu/parts";
+import { shell, surface } from "@/themes/yesil-avlu/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Kenarliksiz, ortalanmis ust serit: once marka, altinda nav.
+ * TEK ince serit: solda nav'in yarisi, ORTADA marka adi, sagda nav'in diger
+ * yarisi. Tasarimda serit 24px dolgulu tek satir.
  *
- * Bilerek cizgi yok — bu tasarimda bolumleri ayiran sey bosluk, kenarlik degil.
+ * NEDEN TEK KAT: onceki hali marka + slogan + nav + dil secici = dort kat
+ * yuksekligindeydi ve hero kemerini asagi itiyordu. Slogan burada YOK cunku
+ * hero'nun tepesindeki italik fisilti satiri zaten o metni tasiyor; ayni cumleyi
+ * 100px arayla iki kez gostermek acilisin etkisini dagitiyordu.
+ *
+ * Marka adi tasarimda header'in TA KENDISI (ortadaki 17px'lik genis harf arali
+ * kelime), o yuzden Kirk Yil'in aksine burada kalir.
  */
 export default function Header({ content }: SectionProps) {
-  const { name, logoUrl, tagline, t } = content;
+  const { name, logoUrl, t } = content;
 
   /*
    * Bolumler icerik bosken kendini basmiyor (About, Menu, Gallery). Nav de ayni
@@ -35,52 +42,84 @@ export default function Header({ content }: SectionProps) {
     { href: "#iletisim", label: t.contact.eyebrow },
   ].filter((link): link is { href: string; label: string } => Boolean(link));
 
+  /*
+   * Tasarimda serit iki yana iki linkle simetrik duruyor. Link sayisi musteriye
+   * gore degistigi icin liste ikiye BOLUNUYOR; tek sayida linkte fazlalik sola
+   * gider (soldan okunan dilde serit basi daha dolu durur).
+   */
+  const half = Math.ceil(links.length / 2);
+  const leadingLinks = links.slice(0, half);
+  const trailingLinks = links.slice(half);
+
+  // Hover rengi tema genelinde tanimli (tokens.css); burada yalnizca gecisi var.
+  const linkClass = "ya-nav transition-colors";
+
   return (
     // ya-fade: tasarimda ust serit sayfa acilir acilmaz yerinde beliriyor.
     <header className={`${surface} brand-body ya-fade`}>
-      <div
-        className={`${shell} flex flex-col items-center gap-5 py-6 text-center sm:gap-6 sm:py-7`}
+      {/*
+        Uc esit kolonlu izgara: marka adinin GERCEKTEN ortada durmasi buna
+        bagli. flex + justify-between kullanilsaydi dil secici sag ucu
+        sisirdigi icin marka adi sola kayardi.
+
+        Dar ekranda tek kolona duser ve marka adi (order-first) en uste cikar.
+      */}
+      <nav
+        aria-label={name}
+        className={`${shell} grid items-center gap-x-8 gap-y-4 py-6 sm:grid-cols-3`}
       >
-        <a href="#hero" className="flex flex-col items-center gap-3">
+        <ul className="flex flex-wrap items-center justify-center gap-x-[1.875rem] gap-y-2 sm:justify-start">
+          {leadingLinks.map((link) => (
+            <li key={link.href}>
+              <a href={link.href} className={linkClass}>
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <a
+          href="#hero"
+          className="order-first flex items-center justify-center gap-3 sm:order-none"
+        >
           {/* trim(): sadece bosluk iceren bir logo alani next/image'i patlatirdi. */}
           {logoUrl.trim() ? (
             <Image
               src={logoUrl}
               alt={fill(t.hero.logoAlt, { name })}
-              width={48}
-              height={48}
-              className="size-12 object-contain"
+              width={36}
+              height={36}
+              className="size-9 object-contain"
             />
           ) : null}
           {/*
-            Tasarimda marka adi serif ama BUYUK ve cok genis harf arali
+            Tasarimda marka adi serif ama KUCUK ve cok genis harf arali
             (17px / .34em); boyutunu degil araligini tasiyor.
           */}
-          <span className="brand-display ya-serif-book ya-wordmark text-[1.0625rem] leading-none sm:text-xl">
+          <span className="brand-display ya-serif-book ya-wordmark text-[1.0625rem] leading-none">
             {name}
           </span>
-          {tagline ? <span className={eyebrow}>{tagline}</span> : null}
         </a>
 
-        <nav aria-label={name}>
-          {/* Tasarimdaki nav ritmi: 30px bosluk, 12.5px, .14em. */}
-          <ul className="flex flex-wrap items-center justify-center gap-x-[1.875rem] gap-y-3">
-            {links.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  className="ya-nav transition-colors hover:text-[var(--brand-accent)]"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <div className="flex flex-wrap items-center justify-center gap-x-[1.875rem] gap-y-3 sm:justify-end">
+          {trailingLinks.length > 0 ? (
+            <ul className="flex flex-wrap items-center gap-x-[1.875rem] gap-y-2">
+              {trailingLinks.map((link) => (
+                <li key={link.href}>
+                  <a href={link.href} className={linkClass}>
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
 
-        {/* Tek dil aciksa secici hic basilmaz. */}
-        {content.locales.length > 1 ? <LocaleSwitcher content={content} /> : null}
-      </div>
+          {/* Tek dil aciksa secici hic basilmaz. */}
+          {content.locales.length > 1 ? (
+            <LocaleSwitcher content={content} />
+          ) : null}
+        </div>
+      </nav>
     </header>
   );
 }

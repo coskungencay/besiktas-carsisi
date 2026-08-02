@@ -2,8 +2,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import { coordinateLabel } from "@/themes/_shared/data";
 import {
-  Sheet,
-  SheetHead,
+  Plate,
   bodyText,
   bodyTextSm,
   cell,
@@ -67,20 +66,19 @@ export default function Contact({ content }: SectionProps) {
       aria-labelledby="contact-title"
       className="bg-[var(--brand-surface)]"
     >
-      <div
-        className={`${shell} pb-[var(--brand-section-py)] sm:pb-[var(--brand-section-py-lg)]`}
-      >
-        <Sheet>
-          <Reveal>
-            <SheetHead
-              code="07"
-              eyebrow={t.contact.eyebrow}
-              title={t.contact.title}
-              titleId="contact-title"
-            />
-          </Reveal>
-
-          <Reveal delay={0.08}>
+      {/*
+        Alt cizgi YOK: sayfanin son bolumu bu ve hemen ardindan gelen kunye
+        seridinin kendi ust cizgisi var. Ikisi birden cizilince bolumler
+        arasindaki 2px'lik ritim burada 4px'e cikip goze carpiyordu.
+      */}
+      <div className={shell}>
+        <Reveal>
+          <Plate
+            code="07"
+            eyebrow={t.contact.eyebrow}
+            title={t.contact.title}
+            titleId="contact-title"
+          >
             <div className={`${splitGrid} lg:grid-cols-2`}>
               <div className={`${cell} ${pad}`}>
                 <p className={`${bodyText} text-[var(--brand-ink-muted)]`}>
@@ -144,8 +142,8 @@ export default function Contact({ content }: SectionProps) {
                 </div>
               </div>
             </div>
-          </Reveal>
-        </Sheet>
+          </Plate>
+        </Reveal>
       </div>
     </section>
   );

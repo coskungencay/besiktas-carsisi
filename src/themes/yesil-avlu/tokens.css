@@ -46,6 +46,19 @@ html[data-theme="yesil-avlu"] {
    */
   --ya-accent-base: var(--brand-accent);
 
+  /*
+   * Paragraf murekkebi.
+   *
+   * Tasarimda gövde paragraflari ne ana murekkep (#1F3A2C) ne de kucuk
+   * etiketlerin soluk yesili (#7A8B72): arada bir ton (#4A5C4F) kullaniliyor.
+   * Etiket rengiyle yazmak uzun paragraflari fazla soluk birakiyordu. Sabit hex
+   * yazmamak icin iki token'in karisimindan uretiliyor (~%55 murekkep).
+   *
+   * DIKKAT: color-mix bu ozelligin TANIMLANDIGI yerde cozulur; koyu zeminde
+   * (.ya-grove) --brand-ink degistigi icin orada YENIDEN tanimlanmali.
+   */
+  --ya-prose: color-mix(in srgb, var(--brand-ink) 55%, var(--brand-ink-muted));
+
   /* --- Kucuk etiketler (eyebrow, rozet) --- */
   /* Tasarimda bolum etiketleri .3em; nav, kunye seridi ve hero kickeri
      farkli ritimlerde, o yuzden ayri degiskenler. */
@@ -92,6 +105,21 @@ html[lang="ar"][data-theme="yesil-avlu"] {
   --ya-track-nav: 0;
   --ya-track-meta: 0;
   --ya-track-kicker: 0;
+}
+
+/* --------------------------------------------------------------------------
+ * Baglanti rengi
+ * Tasarimin <style> blogundaki global kural: a { color:#1F3A2C } ve
+ * a:hover { color:#7C8F5E }. Renk govdeden zaten miras aliniyordu, eksik olan
+ * HOVER'di: bizde bir kisim baglanti hicbir sey yapmiyordu. Tek yerde
+ * tanimlanmasi bilesenlerde tekrar eden hover siniflarini da gereksizlestirir.
+ *
+ * Hap dugmeler (.ya-pill) haric: onlarin zemini koyu, metni zemin rengi;
+ * accent'e donmesi kontrasti bozardi. aria-current tasiyan baglantilar da
+ * (dil secicideki aktif dil) kendi dolu zeminini korur.
+ * -------------------------------------------------------------------------- */
+html[data-theme="yesil-avlu"] a:not(.ya-pill):not([aria-current]):hover {
+  color: var(--brand-accent);
 }
 
 /* --------------------------------------------------------------------------
@@ -312,6 +340,10 @@ html[data-theme="yesil-avlu"] .ya-grove {
   --brand-ink-muted: color-mix(in srgb, var(--brand-primary-contrast) 66%, var(--brand-primary));
   --brand-border: color-mix(in srgb, var(--brand-primary-contrast) 22%, transparent);
   --brand-accent: color-mix(in srgb, var(--ya-accent-base) 55%, var(--brand-primary-contrast));
+  /* Paragraf murekkebi burada YENIDEN uretilmeli: yukaridaki tanim acik
+     zeminin degerini hesaplamis durumda ve miras yoluyla koyu zemine
+     tasinsaydi yazi zemine yapisirdi. */
+  --ya-prose: color-mix(in srgb, var(--brand-ink) 55%, var(--brand-ink-muted));
 }
 
 /* --------------------------------------------------------------------------

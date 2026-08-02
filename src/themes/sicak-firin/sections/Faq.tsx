@@ -10,8 +10,8 @@ import type { SectionProps } from "@/themes/types";
 /**
  * Tezgahtaki tabela: soru satirlari, aralarinda kesik cizgi.
  *
- * Izgara hakkimizda/iletisim ile AYNI (5 + 7 kolon): bu da bir "anlatim"
- * bolumu, satir basindan hizali baslik aliyor.
+ * Izgara ILETISIM ile AYNI (5 + 7 kolon): ikisi de "solda baslik, sagda uzun
+ * liste" duzeni. Hakkimizda artik uc esit kolon oldugu icin ona benzemiyor.
  *
  * Zemin BILEREK krem panel DEGIL, sayfanin kendi rengi: hemen ardindan gelen
  * konum ve iletisim bolumleri panel, uc panel arka arkaya sayfanin sonunu tek

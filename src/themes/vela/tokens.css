@@ -39,6 +39,21 @@ html[data-theme="vela"] {
    * degistiginde ayraclar da birlikte kayar.
    */
   --brand-rule-soft: color-mix(in srgb, var(--brand-ink) 12%, transparent);
+  /*
+   * Ust seritteki nav baglantilari.
+   *
+   * NEDEN --brand-ink-muted DEGIL: tasarimda nav, global altin `a` kuralini
+   * BILEREK eziyor ve murekkebin %80'ini kullaniyor (rgba(242,237,228,.8)) —
+   * cunku bu serit fotografin uzerinde duruyor ve soluk gri orada okunmuyor.
+   * Uzerine gelince altina donuyor.
+   */
+  --brand-ink-soft: color-mix(in srgb, var(--brand-ink) 80%, transparent);
+  /*
+   * Kunye satiri: tasarimda murekkebin yalnizca %38'i. Ayni satirda
+   * --brand-ink-muted (%62) kullanmak kunyeyi sayfanin en alt sirasindaki
+   * "fisilti" olmaktan cikarip normal bir metne cevirir.
+   */
+  --brand-ink-faint: color-mix(in srgb, var(--brand-ink) 38%, transparent);
   --brand-rule-on-accent: color-mix(in srgb, var(--brand-surface) 12%, transparent);
   --brand-frame-gold: color-mix(in srgb, var(--brand-primary) 20%, transparent);
   --brand-ink-on-accent-muted: color-mix(in srgb, var(--brand-surface) 55%, var(--brand-accent));

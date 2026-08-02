@@ -158,7 +158,10 @@ export default function Hero({ content }: SectionProps) {
             </div>
 
             {note ? (
-              <div className="sf-note mt-6 max-w-[14.5rem] rounded-[var(--brand-radius-sm)] border border-[var(--brand-hairline)] bg-[var(--brand-surface)] px-[1.375rem] py-[1.125rem] shadow-[var(--brand-note-shadow)] lg:absolute lg:bottom-11 lg:-start-6 lg:mt-0">
+              // Not kagidinin kenari tasarimda en SOLUK ayrac (%28); serit ve
+              // satir cizgileriyle ayni tonda olunca kagit yapistirilmis degil
+              // cizilmis gibi duruyordu.
+              <div className="sf-note mt-6 max-w-[14.5rem] rounded-[var(--brand-radius-sm)] border border-[var(--brand-hairline-soft)] bg-[var(--brand-surface)] px-[1.375rem] py-[1.125rem] shadow-[var(--brand-note-shadow)] lg:absolute lg:bottom-11 lg:-start-6 lg:mt-0">
                 <p className="brand-display text-[length:var(--brand-lead)] italic text-[var(--brand-primary)]">
                   {t.menu.featured}
                 </p>

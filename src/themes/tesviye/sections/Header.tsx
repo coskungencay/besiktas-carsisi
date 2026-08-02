@@ -1,16 +1,28 @@
 import { Fragment } from "react";
 
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
-import { hasMenu } from "@/themes/_shared/data";
-import { edgeBottom, shell } from "@/themes/tesviye/parts";
+import { hasMenu, hoursRange } from "@/themes/_shared/data";
+import {
+  edgeBottom,
+  edgeEnd,
+  meta,
+  padStrip,
+  shell,
+} from "@/themes/tesviye/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Kalin alt kenarlikli ust serit.
+ * Kalin alt kenarlikli ust serit — tasarimda TEK satir, dort hucre:
+ * marka / semt / calisma durumu / navigasyon. Hucreler 2px dikey cizgilerle
+ * ayrilir; serit sayfanin ilk cetvel satiridir.
  *
- * Tasarimda marka adi da buyuk bir logo degil, kunye seridindeki bir hucre:
- * 12px monospace, buyuk harf, dar harf araligi. Basliktaki agirlik hero'ya
- * birakiliyor; serit sadece bilgi tasiyor.
+ * NEDEN semt ve saat BURADA: tasarimda bu iki bilgi ust seritte duruyor,
+ * hero'da degil. Onceki turda ikisi hero'nun tepesine ikinci bir serit olarak
+ * konmustu; bu hem seridi ikiye katliyor hem de hero'nun dosya numarasiyla
+ * baslamasini engelliyordu.
+ *
+ * Marka adi header'da KALIR: bu tasarimda marka da bir kunye hucresi (12px
+ * monospace), hero'nun dev basligiyla yarismiyor.
  *
  * Bolumler icerik bosken kendini basmiyor (About, Menu, Gallery); nav de AYNI
  * kosullari kullaniyor. Yoksa musteri galeri yuklemeden yayina alinca link
@@ -21,7 +33,9 @@ import type { SectionProps } from "@/themes/types";
  * ust siniri. Yeni bolumler sayfa akisinda zaten sirayla geliyor.
  */
 export default function Header({ content }: SectionProps) {
-  const { name, t } = content;
+  const { name, contact, openingHours, t } = content;
+
+  const range = hoursRange(openingHours);
 
   const links = [
     (content.about || content.openingHours.length > 0) && {
@@ -40,19 +54,61 @@ export default function Header({ content }: SectionProps) {
     <header
       // ts-fade: tasarimda serit sayfa acilirken yumusakca beliriyor.
       className="ts-fade brand-body bg-[var(--brand-surface)]"
-      style={edgeBottom}
     >
       <div
-        className={`${shell} flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-[14px]`}
+        className={`${shell} flex flex-wrap items-stretch`}
+        style={edgeBottom}
       >
+        {/*
+          Marka hucresi: 12px / 600 / ls .06em — hero'dan yarim ton geride.
+
+          lg:flex-1: tasarimda serit dort hucre ve ilk uc hucre esit paylarda
+          (minmax(0,1fr) x3), nav ise icerigi kadar. Hucreleri iceriklerine
+          birakinca uc dikey cizgi soldaki ilk 300px'e sikisiyor, seridin geri
+          kalani bos bir alan olarak kaliyordu. Genisleme sadece lg ustunde:
+          altinda hucreler alt alta sariyor ve esitleme anlamsiz.
+        */}
         <a
           href="#hero"
-          className="text-[0.75rem] leading-[1.4] font-semibold tracking-[var(--ts-track-brand)] uppercase"
+          className={`${padStrip} flex items-center text-[length:var(--ts-meta)] leading-[1.5] font-semibold tracking-[var(--ts-track-brand)] uppercase transition-colors hover:text-[var(--brand-primary)] lg:flex-1`}
+          style={edgeEnd}
         >
           {name}
         </a>
 
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+        {contact.locality ? (
+          <p
+            className={`${meta} ${padStrip} flex items-center lg:flex-1`}
+            style={edgeEnd}
+          >
+            {contact.locality}
+          </p>
+        ) : null}
+
+        {range ? (
+          <p
+            className={`${meta} ${padStrip} flex items-center gap-2 lg:flex-1`}
+            style={edgeEnd}
+          >
+            {/* Tasarimdaki "acik" gostergesi: yaniyor-sonuyor kare. */}
+            <span
+              className="ts-blink size-2 shrink-0 bg-[var(--brand-primary)]"
+              aria-hidden="true"
+            />
+            <span>
+              {t.hours.label}
+              {" · "}
+              <span className="tabular-nums" dir="ltr">
+                {range}
+              </span>
+            </span>
+          </p>
+        ) : null}
+
+        {/* ms-auto: nav tasarimdaki gibi seridin sonuna yaslanir. */}
+        <div
+          className={`${padStrip} ms-auto flex flex-wrap items-center gap-x-5 gap-y-3`}
+        >
           <nav aria-label={name}>
             <ul className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[length:var(--ts-label-lg)] leading-[1.4] font-medium tracking-[var(--ts-track-nav)] uppercase">
               {links.map((link, index) => (

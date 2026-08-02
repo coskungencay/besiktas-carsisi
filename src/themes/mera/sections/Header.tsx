@@ -24,7 +24,10 @@ export default function Header({ content }: SectionProps) {
   const range = hoursRange(openingHours);
 
   const links = [
-    (content.about || content.openingHours.length > 0) && {
+    // Calisma saatleri artik kapanis bolumunde (tasarimdaki yeri orasi), bu
+    // yuzden hakkimizda yalnizca METIN varsa basiliyor — yoksa bolum de
+    // basilmiyor ve link kirik bir capa olurdu.
+    content.about && {
       href: "#hakkimizda",
       label: t.about.title,
     },
@@ -57,7 +60,9 @@ export default function Header({ content }: SectionProps) {
               className="h-5 w-auto self-center object-contain"
             />
           ) : null}
-          <span className="brand-display mera-mark text-[1.1875rem]">
+          {/* mera-regular: tasarimda marka adinda agirlik yazmiyor (=400);
+              300'de 19px'lik serif kunye adi silik kaliyordu. */}
+          <span className="brand-display mera-regular mera-mark text-[1.1875rem]">
             {name}
           </span>
         </a>

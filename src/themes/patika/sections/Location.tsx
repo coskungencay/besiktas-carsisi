@@ -1,9 +1,5 @@
 import { Reveal } from "@/components/motion/Reveal";
-import {
-  closedDayLabels,
-  coordinateLabel,
-  hoursRange,
-} from "@/themes/_shared/data";
+import { coordinateLabel } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   SectionHead,
@@ -13,8 +9,6 @@ import {
   surface,
 } from "@/themes/patika/parts";
 import type { SectionProps } from "@/themes/types";
-
-type HourRow = { term: string; value: string; accent: boolean };
 
 /**
  * "Bizi bul" bloku — GOMULU HARITA YOK.
@@ -28,14 +22,14 @@ type HourRow = { term: string; value: string; accent: boolean };
  * dolu renk olsaydi sayfa iki dev renk blogu ile ust uste kapanirdi; koyu blok
  * lime kapanisa dogru bir kademe hazirliyor.
  *
- * Saatler burada OZET: tam hafta cetveli zaten "hakkimizda" bolumunde gun
- * kartlari olarak var, ayni listeyi ikinci kez basmak tekrar olurdu.
+ * SAAT YOK: tasarimda saatler kapanis blogunun orta kolonunda. Adresin yaninda
+ * bir de cetvel olsaydi ayni bilgi iki bolumde ust uste cikardi.
  */
 export default function Location({ content }: SectionProps) {
   // Musteri panelden kapattiysa ya da adres/harita linki yoksa bolum basilmaz.
   if (!content.isVisible("konum")) return null;
 
-  const { contact, openingHours, t } = content;
+  const { contact, t } = content;
 
   const coords = coordinateLabel(contact.lat, contact.lng);
   const address = contact.address.trim();
@@ -53,99 +47,44 @@ export default function Location({ content }: SectionProps) {
         ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
         : "");
 
-  const range = hoursRange(openingHours);
-  const closed = closedDayLabels(openingHours);
-
-  const hourRows: HourRow[] = [
-    range && { term: t.hours.label, value: range, accent: false },
-    closed.length > 0 && {
-      term: t.hours.closed,
-      value: closed.join(", "),
-      accent: true,
-    },
-  ].filter((row): row is HourRow => Boolean(row));
-
   return (
     <section id="konum" aria-labelledby="location-title" className={surface}>
       <div className={`${shell} pk-section`}>
         <Reveal>
-          <SectionHead
-            eyebrow={t.location.eyebrow}
-            title={t.location.title}
-            titleId="location-title"
-          />
+          <SectionHead title={t.location.title} titleId="location-title" />
         </Reveal>
 
         <Reveal delay={0.08}>
-          <div className="brand-frame mt-10 grid gap-10 bg-[var(--brand-surface-alt)] p-6 sm:p-10 lg:grid-cols-[1.25fr_0.8fr] lg:gap-11">
-            <div>
-              {address ? (
-                <p className="pk-title max-w-[30rem] text-balance">{address}</p>
-              ) : null}
+          {/*
+            Tek satir, TAM GENISLIK: adres solda, harekete cagiran ogeler sagda
+            ve ayni taban cizgisinde (tasarimin butun satirlari boyle bitiyor).
+            Dar bir kutuya sikistirmak sayfanin iki yanini bos birakiyordu.
+          */}
+          <div className="brand-frame mt-10 flex flex-col gap-8 bg-[var(--brand-surface-alt)] p-6 sm:p-10 lg:flex-row lg:items-end lg:justify-between lg:gap-11">
+            {address ? (
+              <p className="pk-title max-w-[34rem] text-balance">{address}</p>
+            ) : null}
 
+            <div className="flex flex-wrap items-center gap-4">
               {coords ? (
                 /* Koordinat her zaman soldan saga okunur; Arapca'da da ters cevrilmez. */
-                <p className={`${pillLine} pk-meta mt-6`} dir="ltr">
+                <p className={`${pillLine} pk-meta`} dir="ltr">
                   {coords}
                 </p>
               ) : null}
 
               {directionsHref ? (
-                <p className="mt-8">
-                  <a
-                    href={directionsHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`${pillSolid} transition-colors hover:border-[var(--brand-accent)] hover:bg-[var(--brand-accent)]`}
-                  >
-                    <span>{t.location.directions}</span>
-                    <ArrowIcon className="size-4" />
-                  </a>
-                </p>
+                <a
+                  href={directionsHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${pillSolid} transition-colors hover:border-[var(--brand-accent)] hover:bg-[var(--brand-accent)]`}
+                >
+                  <span>{t.location.directions}</span>
+                  <ArrowIcon className="size-4" />
+                </a>
               ) : null}
             </div>
-
-            {hourRows.length > 0 ? (
-              <div>
-                <h3 className="pk-eyebrow text-[var(--brand-primary)]">
-                  {t.about.openingHours}
-                </h3>
-
-                {/*
-                  Tasarimdaki saat kolonu: her satir 9px ic bosluk ve 2px ayirici
-                  cizgi; sonuncuda cizgi yok ki blok kendi kenarligiyla bitsin.
-                */}
-                <dl className="mt-5">
-                  {hourRows.map((row) => (
-                    <div
-                      key={row.term}
-                      className="flex items-baseline justify-between gap-6 border-b-[length:var(--brand-border-width)] border-[var(--brand-border)] py-[0.5625rem] last:border-b-0"
-                    >
-                      <dt className="pk-caps text-[var(--brand-ink-muted)]">
-                        {row.term}
-                      </dt>
-                      <dd
-                        className={`brand-display text-base tabular-nums ${
-                          row.accent
-                            ? "text-[var(--brand-accent)]"
-                            : "text-[var(--brand-primary)]"
-                        }`}
-                      >
-                        {row.accent ? (
-                          row.value
-                        ) : (
-                          <span dir="ltr">{row.value}</span>
-                        )}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-
-                <p className="mt-5 text-xs leading-relaxed text-[var(--brand-ink-muted)]">
-                  {t.about.hoursNote}
-                </p>
-              </div>
-            ) : null}
           </div>
         </Reveal>
       </div>

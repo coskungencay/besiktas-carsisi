@@ -1,7 +1,13 @@
 import { Fragment } from "react";
 
 import { coordinateLabel } from "@/themes/_shared/data";
-import { edgeBottom, edgeTop, label, shell } from "@/themes/tesviye/parts";
+import {
+  edgeBottom,
+  edgeTop,
+  label,
+  padStrip,
+  shell,
+} from "@/themes/tesviye/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
@@ -18,7 +24,7 @@ export default function Footer({ content }: SectionProps) {
       {socialLinks.length > 0 ? (
         <div style={edgeBottom}>
           <div
-            className={`${shell} flex flex-wrap items-center gap-x-5 gap-y-2 py-[14px]`}
+            className={`${shell} ${padStrip} flex flex-wrap items-center gap-x-5 gap-y-2`}
           >
             <h2 className={`${label} text-[var(--brand-primary)]`}>
               {t.social.title}
@@ -55,8 +61,9 @@ export default function Footer({ content }: SectionProps) {
       ) : null}
 
       <div
-        // Tasarimdaki alt kunye: 11px, agirlik 400, ls .14em, soluk murekkep.
-        className={`${shell} brand-body flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-4 text-[length:var(--ts-label)] leading-[1.5] tracking-[var(--ts-track-table)] uppercase text-[var(--brand-ink-muted)]`}
+        // Tasarimdaki alt kunye: 11px, agirlik 400, ls .14em, soluk murekkep,
+        // dolgu 16px/30px ve uc oge esit araliklarla dagitilmis.
+        className={`${shell} brand-body flex flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-4 text-[length:var(--ts-label)] leading-[1.5] tracking-[var(--ts-track-table)] uppercase text-[var(--brand-ink-muted)] sm:px-[30px]`}
       >
         <p>
           © {year} {name}

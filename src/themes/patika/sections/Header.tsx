@@ -35,7 +35,8 @@ export default function Header({ content }: SectionProps) {
    * satir ve dolu; sekiz rozet dar ekranda ikinci satira tasip bandrolu bozardi.
    */
   const links = [
-    (content.about || content.openingHours.length > 0) && {
+    /* About artik yalnizca METIN varsa basiliyor (saatler iletisime tasindi). */
+    content.about && {
       href: "#hakkimizda",
       label: t.about.title,
     },

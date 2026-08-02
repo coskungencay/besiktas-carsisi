@@ -29,6 +29,45 @@ html[data-theme="patika"] {
   --brand-border: #2C2C24;
 
   /*
+   * --- Ara tonlar ---
+   * Tasarim tek bir kenarlik rengi kullanmiyor: kartlar #2C2C24, hero rozetleri
+   * #3A3A33 (belirgin daha acik), kunye satiri #6E6C63. Bunlar MARKA RENGI
+   * degil, mevcut renklerin birbirine karistirilmis halleri; sekiz token'a
+   * dokunmadan color-mix ile uretiliyorlar (panelden renk degisince birlikte
+   * kayarlar).
+   */
+  --brand-border-soft: color-mix(
+    in srgb,
+    var(--brand-ink) 19%,
+    var(--brand-surface)
+  );
+  --brand-ink-faint: color-mix(
+    in srgb,
+    var(--brand-ink-muted) 55%,
+    var(--brand-surface)
+  );
+  /* Yorum kartinin imza satiri: tasarimda #8C8A80 — govde metninden bir
+     kademe soluk ama kunye satirindan koyu. */
+  --brand-ink-dim: color-mix(
+    in srgb,
+    var(--brand-ink-muted) 74%,
+    var(--brand-surface)
+  );
+  /* Lime blogun icindeki ayraclar: tasarimda rgba(13,13,12,.15). */
+  --brand-rule-on-primary: color-mix(
+    in srgb,
+    var(--brand-primary-contrast) 15%,
+    transparent
+  );
+  /* Ayni blogun icindeki baglanti alti tasarimda IKI KAT belirgin:
+     rgba(13,13,12,.3). Renk degil, cizgi ayirt ettigi icin daha koyu. */
+  --brand-rule-on-primary-strong: color-mix(
+    in srgb,
+    var(--brand-primary-contrast) 30%,
+    transparent
+  );
+
+  /*
    * --- Tipografi ---
    * Tasarimin font cifti: Bricolage Grotesque 800 (baslik) + Space Grotesk
    * (govde). next/font degiskenleri <html> uzerinde tanimli (src/themes/fonts.ts).
@@ -54,6 +93,13 @@ html[data-theme="patika"] {
 
   --brand-h3-size: clamp(2rem, 4.6vw, 3.5rem); /* 56px */
   --brand-h3-leading: 1.05;
+
+  /*
+   * Sayfayi kapatan lime blogun basligi tasarimda 64px: bolum basliklarindan
+   * (56px) buyuk, hero'dan (168px) kucuk. Kendi kademesi var cunku o blok
+   * sayfanin ikinci en yuksek sesi.
+   */
+  --brand-block-title-size: clamp(2.25rem, 5.2vw, 4rem); /* 64px */
 
   --brand-title-size: clamp(1.625rem, 2.6vw, 2rem); /* kart basligi 32px */
   --brand-title-tracking: -0.03em;
@@ -89,6 +135,7 @@ html[data-theme="patika"] {
    *   .2em  → bolum ustu etiketi ve iletisim kolon basliklari (12px/700)
    *   .18em → menu kartinin numara satiri (11px/700)
    *   .16em → footer kunye satiri (11px/500)
+   *   .14em → yorum kartinin imza satiri (12px/400)
    *   .06em → nav linkleri ve hero'daki yuvarlak saat rozeti
    */
   --brand-label-tracking: 0.2em; /* bolum ustu etiketi */
@@ -96,6 +143,7 @@ html[data-theme="patika"] {
   --brand-eyebrow-transform: uppercase;
   --brand-nav-tracking: 0.06em; /* nav, rozet ve link etiketleri */
   --brand-meta-tracking: 0.16em; /* footer kunye satiri */
+  --brand-attr-tracking: 0.14em; /* yorum imzasi */
 
   /* --- Bicim --- */
   --brand-radius: 1.25rem; /* 20px — kart */
@@ -123,7 +171,6 @@ html[data-theme="patika"] {
   --brand-container: 2200px;
   --brand-section-py: 4rem; /* dar ekran: 64px */
   --brand-section-py-lg: 6rem; /* tasarimdaki 96px */
-  --brand-section-pb-end: 2.75rem; /* son bolumun alt boslugu: 44px */
 }
 
 /*
@@ -143,6 +190,7 @@ html[data-theme="patika"][lang="ar"] {
   --brand-label-tracking: 0;
   --brand-nav-tracking: 0;
   --brand-meta-tracking: 0;
+  --brand-attr-tracking: 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -181,6 +229,19 @@ html[data-theme="patika"] .pk-h3 {
   font-size: var(--brand-h3-size);
   line-height: var(--brand-h3-leading);
   letter-spacing: var(--brand-h2-tracking);
+  text-transform: uppercase;
+}
+
+/*
+ * Lime kapanis blogunun basligi — 64px, hero'nun sikilastirilmis araligiyla
+ * (-.045em) ve BUYUK HARF (tasarim).
+ */
+html[data-theme="patika"] .pk-block-title {
+  font-family: var(--brand-font-display);
+  font-weight: var(--brand-display-weight);
+  font-size: var(--brand-block-title-size);
+  line-height: 1.02;
+  letter-spacing: var(--brand-h1-tracking);
   text-transform: uppercase;
 }
 
@@ -280,6 +341,37 @@ html[data-theme="patika"] .pk-caps-sm {
   text-transform: var(--brand-eyebrow-transform);
 }
 
+/*
+ * Cıplak baglanti rengi.
+ *
+ * Tasarimin <style> blogunda global bir kural var: `a { color:#D9FF4D }` ve
+ * `a:hover { color:#FF6B3D }` — yani kendi rengini yazmayan HER baglanti neon,
+ * uzerine gelince turuncu. Inline style'larda gorunmedigi icin kolayca atlanir.
+ * Kendi rengini tasiyan ogeler (nav rozetleri, lime blogun icindekiler) bu
+ * sinifi kullanmaz; tasarimda da onlar kurali eziyor.
+ */
+html[data-theme="patika"] .pk-link {
+  color: var(--brand-primary);
+  transition: color 0.2s ease;
+}
+
+html[data-theme="patika"] .pk-link:hover {
+  color: var(--brand-accent);
+}
+
+/*
+ * Yorum kartinin imza satiri — 12px / 400 / .14em (tasarim).
+ * Kunye satirindan (11px/500/.16em) AYRI: tasarimda imza bir tik buyuk ve
+ * daha ince; ayni sinifa baglanirsa yorumlar footer gibi okunuyor.
+ */
+html[data-theme="patika"] .pk-attr {
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: var(--brand-attr-tracking);
+  text-transform: var(--brand-eyebrow-transform);
+}
+
 /* 11px / 500 — footer kunye satiri. */
 html[data-theme="patika"] .pk-meta {
   font-size: 0.6875rem;
@@ -307,10 +399,12 @@ html[data-theme="patika"] .pk-section {
   }
 }
 
-/* Son bolum (iletisim) sayfayi kapatir; tasarimda altinda 44px bosluk var. */
-html[data-theme="patika"] .pk-section-end {
-  padding-bottom: var(--brand-section-pb-end);
-}
+/*
+ * Sayfayi kapatan bosluk BURADA DEGIL, kunye satirinin altinda (Footer.tsx):
+ * tasarimda kunye son blogun 26px altinda duruyor, 44px'lik bosluk ise
+ * kunyeden SONRA geliyor. Iletisim bolumune alt bosluk verilirse kunye
+ * sayfadan kopup ayri bir kat gibi okunuyor.
+ */
 
 /* -------------------------------------------------------------------------- */
 /*                            SSS acilir kapanir satiri                        */

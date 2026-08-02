@@ -1,88 +1,94 @@
+import Image from "next/image";
+
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
-import { hoursFromMonday, paragraphs } from "@/themes/_shared/data";
+import {
+  HERO_FALLBACK,
+  imageOrFallback,
+  paragraphs,
+} from "@/themes/_shared/data";
 import {
   SectionHeading,
   bodyText,
-  column,
-  eyebrow,
   shell,
   surface,
 } from "@/themes/yesil-avlu/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Dar ve ortalanmis bir metin kolonu, altinda gunlerin kart izgarasi.
+ * Iki kolonlu hikaye: SOLDA kemerli fotograf, SAGDA etiket + baslik +
+ * paragraflar.
  *
- * Saatler tablo yerine kartlarda: bu tema yumusak ve yuvarlak: uzun bir
- * cizgi tablosu duzenin sakinligini bozuyordu. Ne metin ne saat varsa
- * bolum hic basilmaz (Header'daki nav linki de ayni kosulla gizli).
+ * NEDEN ORTALI DEGIL: tasarimda bu bolum .85fr / 1fr'lik asimetrik bir izgara
+ * ve 80px bosluk. DAR olan kolon (.85fr) fotograf, GENIS olan (1fr) metnin
+ * tamami — baslik da metinle ayni kolonda ve sola dayali. Basligi tek basina
+ * sol kolona koymak izgara oranini tutturur ama tasarimin agirlik dagilimini
+ * ters cevirirdi: bu bolum yarisi gorsel bir bolum.
+ *
+ * GORSEL: panelde ayri bir "hikaye gorseli" alani yok, kapak gorseli
+ * kullaniliyor (Kirk Yil'da da ayni cozum). Musteri gorsel yuklemediyse yer
+ * tutucu kemerde durur, kolon bos kalmaz.
+ *
+ * CALISMA SAATLERI BURADA DEGIL: tasarimda saatler "ziyaret" bolumunun
+ * kartinda. Yedi satirlik tablo hikayenin ortasindayken bu bolumu iki katina
+ * cikariyor ve okuma akisini kesiyordu; artik Iletisim bolumunde.
  */
 export default function About({ content }: SectionProps) {
-  const { about, name, openingHours, t } = content;
+  const { about, heroImageUrl, name, openingHours, t } = content;
+  /*
+   * Gorunurluk kosulu DEGISMEDI: saatler artik baska bolumde bassa da, hic
+   * icerik yokken bolum yine hic basilmaz (Header'daki nav linki ayni kosulu
+   * kullaniyor).
+   */
   if (!about && openingHours.length === 0) return null;
 
   const body = paragraphs(about);
-  const hours = hoursFromMonday(openingHours);
 
   return (
     <section id="hakkimizda" aria-labelledby="about-title" className={surface}>
       <div className={`${shell} brand-section`}>
-        <Reveal>
-          <SectionHeading
-            eyebrowText={t.about.eyebrow}
-            title={t.about.title}
-            titleId="about-title"
-          />
-        </Reveal>
-
-        <Reveal delay={0.06}>
-          {/* Tasarimda paragraf ritmi 16px / 1.8 ve paragraflar arasi 20px. */}
-          <div className={`${column} ${bodyText} mt-10 flex flex-col gap-5 text-center`}>
-            {body.length > 0 ? (
-              body.map((paragraph, index) => <p key={index}>{paragraph}</p>)
-            ) : (
-              <p>{fill(t.about.placeholder, { name })}</p>
-            )}
-          </div>
-        </Reveal>
-
-        {hours.length > 0 ? (
-          <Reveal delay={0.1}>
-            <div className="mt-16">
-              <h3 className={`${eyebrow} text-center`}>{t.about.openingHours}</h3>
-
-              <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-                {hours.map((hour) => (
-                  <div
-                    key={hour.dayOfWeek}
-                    className={`brand-frame flex flex-col items-center justify-center gap-2 px-4 py-6 text-center ${
-                      hour.isClosed
-                        ? "bg-[var(--brand-surface-alt)] opacity-70"
-                        : "bg-[var(--brand-surface)]"
-                    }`}
-                  >
-                    <dt className={eyebrow}>{hour.dayLabel}</dt>
-                    {/* Tasarimda sayilar serif ve govdeden bir tik iri. */}
-                    <dd className="brand-display ya-serif-book text-lg tabular-nums">
-                      {hour.isClosed ? (
-                        t.hours.closed
-                      ) : (
-                        <span dir="ltr">
-                          {hour.openTime} – {hour.closeTime}
-                        </span>
-                      )}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-
-              <p className="mt-6 text-center text-xs leading-relaxed text-[var(--brand-ink-muted)]">
-                {t.about.hoursNote}
-              </p>
+        <div className="grid gap-10 lg:grid-cols-[0.85fr_1fr] lg:items-center lg:gap-20">
+          <Reveal>
+            {/*
+              Tasarimda kutu 520px yuksekliginde ve kolon ~577px genisliginde:
+              yani hafif YATAY (10/9), dikey degil. Kemer yaricapi da bu orandan
+              geliyor (260px = yuksekligin yarisi), o yuzden galerinin kemeriyle
+              ayni sinif kullaniliyor.
+            */}
+            <div className="ya-arch-sm relative aspect-[4/5] w-full overflow-hidden bg-[var(--brand-surface-alt)] sm:aspect-[10/9]">
+              <Image
+                src={imageOrFallback(heroImageUrl, HERO_FALLBACK)}
+                alt={fill(t.hero.coverAlt, { name })}
+                fill
+                sizes="(min-width: 1024px) 45vw, 100vw"
+                loading="lazy"
+                className="object-cover"
+              />
             </div>
           </Reveal>
-        ) : null}
+
+          <Reveal delay={0.06}>
+            <SectionHeading
+              eyebrowText={t.about.eyebrow}
+              title={t.about.title}
+              titleId="about-title"
+              align="start"
+            />
+
+            {/*
+              Tasarimda paragraf kolonu 520px'i asmiyor ve ritmi 16px / 1.8,
+              paragraf arasi 20px. Genis ekranda satirlar bu siniri asinca
+              metin duvara donusuyordu.
+            */}
+            <div className={`${bodyText} mt-6 flex max-w-[32.5rem] flex-col gap-5`}>
+              {body.length > 0 ? (
+                body.map((paragraph, index) => <p key={index}>{paragraph}</p>)
+              ) : (
+                <p>{fill(t.about.placeholder, { name })}</p>
+              )}
+            </div>
+          </Reveal>
+        </div>
       </div>
     </section>
   );

@@ -1,10 +1,12 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import {
+  balancedColumns,
   Hairline,
   metaMuted,
   SectionHead,
   StarIcon,
+  sectionTop,
   shell,
   surface,
 } from "@/themes/vela/parts";
@@ -26,9 +28,16 @@ export default function Testimonials({ content }: SectionProps) {
 
   const { testimonials, t } = content;
 
+  /*
+   * Kolon sayisi yorum sayisina gore ("deneyim" bolumundeki kural ile ayni,
+   * bkz. balancedColumns): sabit uc kolon 1 ya da 2 yorumda satiri yarim
+   * birakiyordu.
+   */
+  const columns = balancedColumns(testimonials.length);
+
   return (
     <section id="yorumlar" aria-labelledby="testimonials-title" className={surface}>
-      <div className={`${shell} brand-section`}>
+      <div className={`${shell} ${sectionTop}`}>
         <Reveal>
           <SectionHead
             eyebrow={t.testimonials.eyebrow}
@@ -39,7 +48,9 @@ export default function Testimonials({ content }: SectionProps) {
 
         <Reveal delay={0.14}>
           {/* 58px ust bosluk, 52px kolon araligi — "deneyim" bolumuyle ayni. */}
-          <ul className="mt-[3.625rem] grid gap-x-[3.25rem] gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+          <ul
+            className={`mt-[3.625rem] grid gap-x-[3.25rem] gap-y-12 ${columns}`}
+          >
             {testimonials.map((item) => {
               /*
                * Puan panelden serbest sayi olarak gelebilir; cizim her zaman

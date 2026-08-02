@@ -47,23 +47,34 @@ export const chip =
 export const pillSolid =
   "inline-flex items-center gap-2 rounded-[var(--brand-radius-pill)] bg-[var(--brand-primary)] px-7 py-4 text-sm font-medium text-[var(--brand-primary-contrast)] transition-colors hover:bg-[var(--brand-accent)]";
 
-/** Hap buton — ince kenarlikli (ikincil eylem). */
+/** Hap buton — ince kenarlikli (ikincil eylem). Tasarimda kenar %40 opak. */
 export const pillGhost =
-  "inline-flex items-center gap-2 rounded-[var(--brand-radius-pill)] border border-[var(--brand-hairline)] px-7 py-4 text-sm font-medium text-[var(--brand-primary)] transition-colors hover:border-[var(--brand-primary)] hover:bg-[var(--brand-surface-alt)]";
+  "inline-flex items-center gap-2 rounded-[var(--brand-radius-pill)] border border-[var(--brand-hairline-strong)] px-7 py-4 text-sm font-medium text-[var(--brand-primary)] transition-colors hover:border-[var(--brand-primary)] hover:bg-[var(--brand-surface-alt)]";
 
 /** Govde paragrafi: 17px / 1.75, hafif agirlik — tasarimin okuma tonu. */
 export const lead =
   "text-[length:var(--brand-lead)] leading-[var(--brand-lead-leading)] font-light text-[var(--brand-ink-soft)]";
 
-/** Kesik cizgili ayrac; menu ve saat satirlarinin arasinda. */
+/** Kesik cizgili ayrac; menu ve saat satirlarinin arasinda (tasarimda %30). */
 export const dashedRow =
-  "border-b border-dashed border-[var(--brand-hairline-soft)] last:border-b-0";
+  "border-b border-dashed border-[var(--brand-hairline-row)] last:border-b-0";
+
+/**
+ * Ad ile fiyati birbirine baglayan noktali kilavuz cizgi.
+ *
+ * Tasarimda bu cizgi satir ayracindan KOYU (%40): tezgah tabelasinda gozun
+ * takip ettigi asil iz o. Ayni tonu kullanmak fiyati aditan kopariyordu.
+ */
+export const leaderLine =
+  "mb-1 hidden h-0 flex-1 border-b border-dotted border-[var(--brand-hairline-strong)] sm:block";
 
 /**
  * Bolum basligi: ustte harf araligi genis kucuk etiket, altinda slab baslik.
  *
- * `align` var cunku vitrin niteligindeki bolumler (menu, galeri) ortalanmis,
- * anlatim bolumleri (hakkimizda, iletisim) satir basindan hizali duruyor.
+ * ORTALAMA YOK: tasarimda tek bir ortalanmis metin bile yok — butun basliklar,
+ * paragraflar ve satirlar sol kenardan hizali. Vitrin bolumlerini (menu,
+ * galeri, yorumlar) ortalamak tasarimin "tezgah tabelasi" dilini bozup sayfayi
+ * genel gecer bir sablona benzetiyordu.
  *
  * `size` tasarimin iki basamakli baslik olcegini tasiyor: anlatim bolumleri
  * 46px ("lg"), vitrin bolumleri 38px ("md"). Tek olcek kullanmak sayfayi
@@ -74,7 +85,6 @@ export function SectionHead({
   title,
   titleId,
   intro,
-  align = "start",
   size = "lg",
   children,
 }: {
@@ -82,24 +92,16 @@ export function SectionHead({
   title: string;
   titleId: string;
   intro?: string;
-  align?: "start" | "center";
   size?: "lg" | "md";
   children?: ReactNode;
 }) {
-  const centered = align === "center";
   const titleScale =
     size === "md"
       ? "text-[length:var(--brand-h3)] tracking-[var(--brand-h3-tracking)]"
       : "text-[length:var(--brand-h2)] tracking-[var(--brand-h2-tracking)]";
 
   return (
-    <div
-      className={
-        centered
-          ? "flex flex-col items-center text-center"
-          : "flex flex-col items-start text-start"
-      }
-    >
+    <div className="flex flex-col items-start text-start">
       <p className={metaText}>{eyebrow}</p>
 
       <h2
@@ -110,11 +112,9 @@ export function SectionHead({
       </h2>
 
       {intro ? (
-        <p
-          className={`${lead} mt-6 max-w-[26rem] text-pretty`}
-        >
-          {intro}
-        </p>
+        // Tasarimda bolum girisleri 380px'te kesiliyor; daha uzun satir
+        // basligin yanindaki dengeyi bozuyordu.
+        <p className={`${lead} mt-6 max-w-[23.75rem] text-pretty`}>{intro}</p>
       ) : null}
 
       {children}

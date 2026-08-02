@@ -1,5 +1,6 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
+import { hoursFromMonday } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   SectionIndex,
@@ -10,16 +11,23 @@ import {
 import { ContactForm } from "@/themes/beyaz-oda/sections/ContactForm";
 import type { SectionProps } from "@/themes/types";
 
-type Row = { term: string; value: string; href: string; ltr: boolean };
+type Row = { term: string; value: string; href: string };
 
 /**
- * Tasarimda sayfanin ikinci buyuk tipografisi burada: solda 40px'lik kisa bir
- * cumle, (Konum bolumu kapaliysa) altinda adres ve harita baglantisi; sagda
- * 14px'lik iletisim satirlari. Form tasarimda yok ama urunun zorunlu parcasi,
- * sag kolonun altina ayni ritimle yerlesiyor.
+ * Tasarimin son bolumu ve sayfanin ikinci buyuk tipografisi burada.
+ *
+ * UC KOLON (12'li izgarada 3/4 · 7/3 · 11/2):
+ *   1. 40px'lik kisa cumle, (Konum kapaliysa) adres ve harita baglantisi
+ *   2. gun gun CALISMA SAATLERI tablosu — tasarimda saatlerin yeri BURASI
+ *   3. telefon / e-posta / Instagram satirlari
+ *
+ * Form tasarimda yok ama urunun zorunlu parcasi: kolonlarin altina, saatlerle
+ * ayni hizadan baslayan ayri bir satira yerlesiyor.
  */
 export default function Contact({ content }: SectionProps) {
-  const { contact, name, t } = content;
+  const { contact, name, openingHours, t } = content;
+
+  const hours = hoursFromMonday(openingHours);
 
   /*
    * Adres blogu yalnizca Konum bolumu KAPALIYKEN burada duruyor.
@@ -40,31 +48,32 @@ export default function Contact({ content }: SectionProps) {
       term: t.contact.phone,
       value: contact.phone,
       href: contact.phoneHref,
-      ltr: true,
     },
     contact.whatsapp && {
       term: t.contact.whatsapp,
       value: contact.whatsapp,
       href: contact.whatsappHref,
-      ltr: true,
     },
     contact.email && {
       term: t.contact.email,
       value: contact.email,
       href: `mailto:${contact.email}`,
-      ltr: true,
     },
     contact.instagram && {
       term: t.contact.instagram,
       value: `@${contact.instagram}`,
       href: contact.instagramHref,
-      ltr: true,
     },
   ].filter((row): row is Row => Boolean(row));
 
   return (
     <section id="iletisim" aria-labelledby="contact-title" className={surface}>
-      <div className={`${sectionTop} pb-[60px]`}>
+      {/*
+        Alt bosluk YOK: tasarimda bolumun 60px'lik alt boslugu kapanis
+        seridinden SONRA geliyor, seridi de Footer basiyor. Buraya da
+        konulsaydi serit sayfadan 60px fazla uzakta dururdu.
+      */}
+      <div className={sectionTop}>
         <div className={sectionGrid}>
           {/* Kisa etiket — gerekce Menu.tsx'te. */}
           {/* Indeks sayfadaki SIRAYI gosterir; iletisim artik son bolum. */}
@@ -99,53 +108,104 @@ export default function Contact({ content }: SectionProps) {
               </div>
 
               {/*
-                Tasarimda sag blok 12'li izgaranin 7. kolonunda basliyor; bu
-                ic izgara 3. kolondan basladigi icin karsiligi 5. kolon.
+                Orta kolon — CALISMA SAATLERI.
+                Tasarimda 12'li izgaranin 7. kolonunda 3 kolon genisliginde;
+                bu ic izgara 3. kolondan basladigi icin karsiligi 5. kolon.
               */}
-              <div className="flex flex-col gap-12 lg:col-span-6 lg:col-start-5">
-                {rows.length > 0 ? (
+              {hours.length > 0 ? (
+                <div className="lg:col-span-3 lg:col-start-5">
                   <Reveal delay={0.1}>
-                    <dl className="flex flex-col">
-                      {rows.map((row, index) => (
+                    {/* Tasarimda blok basliklari ("SAATLER") 10.5px mono. */}
+                    <h3 className="bo-index-sm brand-eyebrow">
+                      {t.about.openingHours}
+                    </h3>
+
+                    {/*
+                      Tasarimda 11px dikey boslukla akan bu tablo mono DEGIL:
+                      iki hucre de 14px grotesk, gun adi soluk, saat koyu.
+                      Mono/BUYUK harf bicimi tasarimda yalnizca 11.5px'lik
+                      kunye tablosunda kullaniliyor.
+                    */}
+                    <dl className="mt-4 flex flex-col text-[14px]">
+                      {hours.map((hour) => (
                         <div
-                          key={`${row.term}-${index}`}
-                          className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-[var(--brand-border)] py-[11px]"
+                          key={hour.dayOfWeek}
+                          className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-[var(--brand-border)] py-[11px] last:border-b-0"
                         >
-                          {/*
-                            Tasarimda 11px dikey boslukla akan bu tablo (saatler
-                            blogu) mono DEGIL: iki hucre de 14px grotesk, etiket
-                            soluk. Mono/BUYUK harf bicimi tasarimda yalnizca
-                            13px'lik kunye tablosunda kullaniliyor.
-                          */}
-                          <dt className="text-[14px] text-[var(--brand-ink-soft)]">
-                            {row.term}
+                          <dt className="text-[var(--brand-ink-soft)]">
+                            {hour.dayLabel}
                           </dt>
-                          <dd
-                            className="text-end text-[14px]"
-                            {...(row.ltr ? { dir: "ltr" as const } : {})}
-                          >
-                            {row.href ? (
-                              <a
-                                href={row.href}
-                                className="underline-offset-4 transition-colors hover:text-[var(--brand-accent)] hover:underline"
-                                {...(row.href.startsWith("http")
-                                  ? { target: "_blank", rel: "noopener noreferrer" }
-                                  : {})}
-                              >
-                                {row.value}
-                              </a>
+                          <dd className="text-end tabular-nums">
+                            {hour.isClosed ? (
+                              /* Kapali gun tasarimda en soluk tonda. */
+                              <span className="text-[var(--brand-ink-faint)]">
+                                {t.hours.closed}
+                              </span>
                             ) : (
-                              row.value
+                              <span dir="ltr">
+                                {hour.openTime} — {hour.closeTime}
+                              </span>
                             )}
                           </dd>
                         </div>
                       ))}
                     </dl>
-                  </Reveal>
-                ) : null}
 
-                <Reveal delay={0.16}>
-                  {/* Tasarimda blok basliklari ("SAATLER", "BAGLANTI") 10.5px. */}
+                    <p className="bo-index mt-5 leading-[1.8]">
+                      {t.about.hoursNote}
+                    </p>
+                  </Reveal>
+                </div>
+              ) : null}
+
+              {/*
+                Sag kolon — BAGLANTI. Tasarimda 11. kolondan baslayan 2
+                kolonluk dar serit; satirlar etiketsiz, sadece baglanti.
+              */}
+              {rows.length > 0 ? (
+                <div className="lg:col-span-2 lg:col-start-9">
+                  <Reveal delay={0.16}>
+                    <h3 className="bo-index-sm brand-eyebrow">
+                      {t.contact.title}
+                    </h3>
+
+                    <ul className="mt-4 text-[14px] leading-[2.1]">
+                      {rows.map((row, index) => (
+                        <li key={`${row.term}-${index}`}>
+                          {/*
+                            Etiket gorunmuyor ama erisilebilir ada giriyor:
+                            iki numara alt alta gelince ("Telefon" / "WhatsApp")
+                            ekran okuyucuda hangisi oldugu anlasilsin diye.
+                          */}
+                          <a
+                            href={row.href}
+                            aria-label={`${row.term}: ${row.value}`}
+                            className="underline-offset-4 transition-colors hover:text-[var(--brand-accent)] hover:underline"
+                            {...(row.href.startsWith("http")
+                              ? { target: "_blank", rel: "noopener noreferrer" }
+                              : {})}
+                          >
+                            {/* Numara/e-posta Arapca sayfada da soldan saga. */}
+                            <span dir="ltr" className="inline-block break-all">
+                              {row.value}
+                            </span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </Reveal>
+                </div>
+              ) : null}
+            </div>
+
+            {/*
+              Form tasarimda YOK; kolonlarin arasina sikistirmak yerine altta
+              kendi satirinda duruyor. Saatler kolonuyla ayni hizadan (5.)
+              baslar ki bolumun uclu ritmi bozulmasin.
+            */}
+            <div className="mt-16 grid lg:grid-cols-10 lg:gap-6">
+              <div className="lg:col-span-6 lg:col-start-5">
+                <Reveal delay={0.1}>
                   <h3 className="bo-index-sm brand-eyebrow">{t.contact.formTitle}</h3>
                   <div className="mt-6">
                     <ContactForm locale={content.locale} messages={t} />

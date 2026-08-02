@@ -2,22 +2,31 @@ import Image from "next/image";
 
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { fill } from "@/i18n";
-import { hasMenu } from "@/themes/_shared/data";
-import { CupIcon } from "@/themes/_shared/icons";
+import { hasMenu, hoursRange } from "@/themes/_shared/data";
 import { shell } from "@/themes/sicak-firin/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Ince ust serit.
+ * Ince ust serit — TEK satir, UC parca: marka · nav · acilis saati.
  *
  * Tasarimda serit sayfa zemininin uzerinde duruyor ve altinda TEK bir kesik
  * cizgi var — dolgulu bir bant degil. Kesik cizgi bu temanin tek ayrac turu;
  * duz cizgi kullanmak mahalle firininin el yapimi hissini soguturdu.
  *
+ * Marka adi tasarimda header'DA: hero'daki dev baslik isletme adi degil, bir
+ * cumle ("Mahallenin firini, bir de kahvesi"). Yani ad iki kez gorunmuyor.
+ *
+ * Seridin sag ucu tasarimda "Sabah 06:00'da firin yanar" — yani ne zaman acik
+ * oldugumuz. Bizde bunun karsiligi calisma saatlerinden uretilen aralik.
+ *
  * sf-fade: acilista serit sayfayla birlikte belirir (CSS, JS beklemez).
  */
 export default function Header({ content }: SectionProps) {
-  const { name, logoUrl, t } = content;
+  const { name, logoUrl, openingHours, t } = content;
+
+  // Saat girilmemisse sag uc hic basilmaz; bos bir sutun serit dengesini bozar.
+  const range = hoursRange(openingHours);
+  const showLocales = content.locales.length > 1;
 
   /*
    * Bolumler icerik bosken kendini basmiyor (About, Menu, Gallery). Nav de ayni
@@ -33,7 +42,9 @@ export default function Header({ content }: SectionProps) {
    * kalinlastirirdi.
    */
   const links = [
-    (content.about || content.openingHours.length > 0) && {
+    // Hakkimizda seridi hikaye ya da fotograf varsa basiliyor; ikisi de yoksa
+    // link hicbir yere gitmeyen kirik bir capa olurdu.
+    (content.about || content.isVisible("galeri")) && {
       href: "#hakkimizda",
       label: t.about.title,
     },
@@ -52,6 +63,11 @@ export default function Header({ content }: SectionProps) {
       <div
         className={`${shell} flex flex-wrap items-center justify-between gap-x-8 gap-y-4 py-5`}
       >
+        {/*
+          Marka blogu tasarimda YALIN yazi: 20px slab, sonunda vurgu noktasi.
+          Logo yuklenmediginde ikona dusmuyoruz — tasarimda hicbir ikon yok ve
+          fincan rozeti seridi kalinlastirip yaziyi ikinci plana atiyordu.
+        */}
         <a href="#hero" className="flex items-center gap-3">
           {logoUrl ? (
             <Image
@@ -61,9 +77,7 @@ export default function Header({ content }: SectionProps) {
               height={44}
               className="brand-rounded size-11 object-cover"
             />
-          ) : (
-            <CupIcon className="size-8 text-[var(--brand-primary)]" />
-          )}
+          ) : null}
           <span className="brand-display text-xl font-semibold tracking-[-0.01em]">
             {name}
             {/* Tasarimin imzasi: marka adinin sonundaki vurgu noktasi. Icerik
@@ -74,25 +88,44 @@ export default function Header({ content }: SectionProps) {
           </span>
         </a>
 
-        <div className="flex flex-wrap items-center gap-x-7 gap-y-3">
-          <nav aria-label={name}>
-            <ul className="flex flex-wrap items-center gap-x-7 gap-y-2 text-[length:var(--brand-text-nav)]">
-              {links.map((link) => (
-                <li key={link.href}>
-                  <a
-                    href={link.href}
-                    className="block text-[var(--brand-nav-ink)] transition-colors hover:text-[var(--brand-accent)]"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+        {/* Tasarimda nav seridin ORTASINDA, iki ucun arasinda duruyor. */}
+        <nav aria-label={name}>
+          <ul className="flex flex-wrap items-center gap-x-7 gap-y-2 text-[length:var(--brand-text-nav)]">
+            {links.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  className="block text-[var(--brand-nav-ink)] transition-colors hover:text-[var(--brand-accent)]"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-          {/* Tek dil aciksa secici hic basilmaz. */}
-          {content.locales.length > 1 ? <LocaleSwitcher content={content} /> : null}
-        </div>
+        {/*
+          Sag uc. Ikisi de yoksa bu kutu hic basilmaz: bos bir esnek kutu
+          nav'i seridin sagina yapistiriyordu.
+        */}
+        {range || showLocales ? (
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            {/* Dar ekranda gizli: serit zaten marka + nav ile iki satira
+                cikiyor, ucuncu bilgi onu tasarimdaki ince cizgi olmaktan
+                cikarip bir blogu cevirirdi. */}
+            {range ? (
+              <p className="hidden text-[length:var(--brand-text-nav)] text-[var(--brand-ink-muted)] md:block">
+                {t.hours.label}{" "}
+                <span dir="ltr" className="tabular-nums">
+                  {range}
+                </span>
+              </p>
+            ) : null}
+
+            {/* Tek dil aciksa secici hic basilmaz. */}
+            {showLocales ? <LocaleSwitcher content={content} /> : null}
+          </div>
+        ) : null}
       </div>
     </header>
   );

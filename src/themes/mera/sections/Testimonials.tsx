@@ -51,7 +51,7 @@ export default function Testimonials({ content }: SectionProps) {
                   key={item.id}
                   as="li"
                   delay={index < 2 ? 0.08 : 0.16}
-                  className="border-t border-[var(--brand-border)] pt-6"
+                  className="border-t border-[var(--mera-rule)] pt-6"
                 >
                   <figure>
                     {item.rating !== null ? (
@@ -79,7 +79,10 @@ export default function Testimonials({ content }: SectionProps) {
                       </p>
                     ) : null}
 
-                    <blockquote className="brand-display text-[1.1875rem] leading-[1.55] text-pretty italic text-[var(--brand-ink-body)] rtl:not-italic">
+                    {/* mera-regular: bu tasarimda 300 agirlik yalnizca dev
+                        basliklara ait; bagimsiz duran italik serif metinler
+                        (menu kategorileri, mekan notu) 400. */}
+                    <blockquote className="brand-display mera-regular text-[1.1875rem] leading-[1.55] text-pretty italic text-[var(--brand-ink-body)] rtl:not-italic">
                       {item.text}
                     </blockquote>
 

@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import { HERO_FALLBACK_DARK, imageOrFallback } from "@/themes/_shared/data";
-import { SectionHead, shell, surface } from "@/themes/vela/parts";
+import { SectionHead, sectionTop, shell, surface } from "@/themes/vela/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
@@ -23,7 +23,7 @@ export default function Gallery({ content }: SectionProps) {
 
   return (
     <section id="galeri" aria-labelledby="gallery-title" className={surface}>
-      <div className={`${shell} brand-section`}>
+      <div className={`${shell} ${sectionTop}`}>
         <Reveal>
           <SectionHead
             eyebrow={t.gallery.eyebrow}
@@ -38,6 +38,13 @@ export default function Gallery({ content }: SectionProps) {
             {gallery.map((image, index) => (
               <li
                 key={image.id}
+                /*
+                 * Ilk gorsel IKI KOLON + IKI SATIR kapliyor (sm:col-span-2
+                 * lg'de de gecerli). Tasarimdaki buyuk kare 1.6fr genislik x
+                 * 520px yukseklik, yani YATAY (~1.55:1); iki kolon x iki satir
+                 * ayni orani veriyor. Tek kolon x iki satir olsaydi ayni kutu
+                 * dikey bir dikdortgene donerdi.
+                 */
                 className={`relative aspect-[4/3] w-full overflow-hidden bg-[var(--brand-surface-alt)] lg:aspect-auto ${
                   index === 0 ? "sm:col-span-2 lg:row-span-2" : ""
                 }`}
@@ -49,7 +56,12 @@ export default function Gallery({ content }: SectionProps) {
                     fill(t.gallery.imageAlt, { name, index: String(index + 1) })
                   }
                   fill
-                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  // Buyuk kare izgaranin ucte ikisi, digerleri ucte biri.
+                  sizes={
+                    index === 0
+                      ? "(min-width: 1024px) 66vw, 100vw"
+                      : "(min-width: 1024px) 33vw, 50vw"
+                  }
                   loading="lazy"
                   className="object-cover"
                 />

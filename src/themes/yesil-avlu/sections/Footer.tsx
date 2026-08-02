@@ -19,8 +19,13 @@ export default function Footer({ content }: SectionProps) {
       >
         <Sprig />
 
-        {/* Tasarimin kapanis satiri: italik serif, 19px. */}
-        <p className="brand-display ya-serif-book text-[1.1875rem] italic">{name}</p>
+        {/*
+          Tasarimin kapanis satiri: italik serif, 19px ve SOLUK (murekkep degil
+          etiket tonu). Kapanis burada bir vurgu degil, fisilti.
+        */}
+        <p className="brand-display ya-serif-book text-[1.1875rem] text-[var(--brand-ink-muted)] italic">
+          {name}
+        </p>
 
         {contact.locality ? <p className={eyebrow}>{contact.locality}</p> : null}
 
@@ -53,7 +58,8 @@ export default function Footer({ content }: SectionProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={link.label}
-                    className="ya-nav brand-body transition-colors hover:text-[var(--brand-accent)]"
+                    /* Hover rengi tema genelinde tanimli (tokens.css). */
+                    className="ya-nav brand-body transition-colors"
                   >
                     {link.label}
                   </a>

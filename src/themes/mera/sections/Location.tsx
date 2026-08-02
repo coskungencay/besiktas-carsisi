@@ -1,16 +1,12 @@
 import { Reveal } from "@/components/motion/Reveal";
-import {
-  closedDayLabels,
-  coordinateLabel,
-  hoursRange,
-} from "@/themes/_shared/data";
+import { coordinateLabel } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
-  RuleRow,
   SectionHead,
   bodyText,
   label,
   labelBase,
+  link,
   page,
   sectionPad,
   surface,
@@ -26,8 +22,9 @@ import type { SectionProps } from "@/themes/types";
  * sayfasinin ortasinda yamalik dururdu. Tasarimin kendi cozumu kullaniliyor:
  * iki capraz cizgi ve tek bir damga (bkz. tokens.css .mera-map / .mera-pin).
  *
- * Saatler burada TAM LISTE degil ozet: gunluk dokum zaten hakkimizda
- * bolumunde: burada yalnizca aralik ve kapali gunler var.
+ * SAAT YOK: tasarimda saatler kapanis bolumunun orta kolonunda, tek bir yerde
+ * duruyor. Burada bir de ozet vermek, hemen altindaki tam dokumu tekrar etmek
+ * olurdu.
  */
 export default function Location({ content }: SectionProps) {
   if (!content.isVisible("konum")) return null;
@@ -35,8 +32,6 @@ export default function Location({ content }: SectionProps) {
   const { contact, t } = content;
 
   const coords = coordinateLabel(contact.lat, contact.lng);
-  const range = hoursRange(content.openingHours);
-  const closed = closedDayLabels(content.openingHours);
 
   /*
    * Yol tarifi hedefi, elde ne varsa ona duser: musterinin girdigi harita
@@ -77,29 +72,16 @@ export default function Location({ content }: SectionProps) {
                   </p>
                 ) : null}
 
-                {range || closed.length > 0 ? (
-                  <dl className="mt-8 flex max-w-[420px] flex-col gap-3.5">
-                    {range ? (
-                      <RuleRow term={t.hours.label}>
-                        <span dir="ltr">{range}</span>
-                      </RuleRow>
-                    ) : null}
-                    {closed.length > 0 ? (
-                      <RuleRow term={t.hours.closed}>
-                        {closed.join(", ")}
-                      </RuleRow>
-                    ) : null}
-                  </dl>
-                ) : null}
-
                 {directionsHref ? (
-                  /* Hero'daki "Menuyu incele" baglantisiyla ayni el:
-                     kucuk kunye punto, marka renginde alt cizgi, ok. */
+                  /* Tasarimdaki "Yol tarifi al →": 12px kunye punto, .18em
+                     aralik, marka renginde alt cizgi. Rengi de MARKA RENGI —
+                     tasarimin global `a` kurali; ustune gelince mureekkebe
+                     doner. */
                   <a
                     href={directionsHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`${labelBase} mera-caption mt-9 inline-flex items-center gap-3 border-b border-[var(--brand-primary)] pb-1 text-[0.75rem] text-[var(--brand-ink)] transition-colors hover:text-[var(--brand-primary)]`}
+                    className={`${labelBase} ${link} mera-caption mt-9 inline-flex items-center gap-3 border-b border-[var(--brand-primary)] pb-1 text-[0.75rem]`}
                   >
                     <span>{t.location.directions}</span>
                     <ArrowIcon className="size-3.5" />

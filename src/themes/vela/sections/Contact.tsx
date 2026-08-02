@@ -1,11 +1,13 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
-import { coordinateLabel } from "@/themes/_shared/data";
+import { coordinateLabel, hoursFromMonday } from "@/themes/_shared/data";
 import {
+  goldLink,
   Hairline,
   label,
   metaMuted,
   proseSm,
+  sectionTop,
   shell,
   surface,
 } from "@/themes/vela/parts";
@@ -16,14 +18,20 @@ type Row = { term: string; value: string; href: string; ltr: boolean };
 
 /**
  * Tasarimin kapanis bolumu: en ustte altin bir cizgi, altinda 56px'lik dolgu
- * ve 1.15 / .8 / 1 oranli uc kolon. Solda buyuk serif cagri, ortada iletisim
- * satirlari (terim solda, deger sagda, aralarinda ince ayrac), sagda form.
+ * ve 1.15 / .8 / .8 oranli UC KOLON.
  *
- * Kolonlar arasinda cizgi yok — sadece 60px bosluk ayiriyor.
+ *   1. kolon — buyuk serif cagri, kisa metin, koordinat
+ *   2. kolon — CALISMA SAATLERI (tasarimda "Saatler" burada; bizde eskiden
+ *      hakkimizdanin ortasindaydi ve o bolumu iki katina cikariyordu)
+ *   3. kolon — iletisim satirlari, altinda mesaj formu
+ *
+ * Kolonlar arasinda cizgi yok — sadece 60px bosluk ayiriyor. Satir ayraclari
+ * murekkebin %12'si (--brand-rule-soft), tasarimdaki rgba(242,237,228,.1).
  */
 export default function Contact({ content }: SectionProps) {
-  const { contact, name, t } = content;
+  const { contact, name, openingHours, t } = content;
   const coords = coordinateLabel(contact.lat, contact.lng);
+  const hours = hoursFromMonday(openingHours);
 
   const rows: Row[] = [
     contact.address && {
@@ -58,12 +66,25 @@ export default function Contact({ content }: SectionProps) {
     },
   ].filter((row): row is Row => Boolean(row));
 
+  /* Tasarimda satir dolgusu 11px, son satirda ayrac yok. */
+  const rowBase = "flex items-baseline justify-between gap-6 py-[0.6875rem]";
+
+  /*
+   * Orta kolon (saatler) icerik yoksa hic basilmiyor. Izgara yine uc kolonlu
+   * kalirsa iletisim kolonu ortaya kayar ve sagda bos bir .8fr kolon kalir —
+   * checklist'in "kolon dengesi" maddesi. Kolon sayisi bu yuzden icerige bagli.
+   */
+  const columns =
+    hours.length > 0
+      ? "lg:grid-cols-[1.15fr_0.8fr_0.8fr]"
+      : "lg:grid-cols-[1.15fr_0.8fr]";
+
   return (
     <section id="iletisim" aria-labelledby="contact-title" className={surface}>
-      <div className={`${shell} brand-section`}>
+      <div className={`${shell} ${sectionTop} pb-14`}>
         <Hairline tone="gold" />
 
-        <div className="grid gap-14 pt-14 lg:grid-cols-[1.15fr_0.8fr_1fr] lg:gap-[3.75rem]">
+        <div className={`grid gap-14 pt-14 ${columns} lg:gap-[3.75rem]`}>
           <Reveal>
             {/* Tasarimda 56px / 1.06 — sayfanin en buyuk ikinci tipografisi. */}
             <h2
@@ -84,46 +105,100 @@ export default function Contact({ content }: SectionProps) {
             ) : null}
           </Reveal>
 
-          {rows.length > 0 ? (
+          {hours.length > 0 ? (
             <Reveal delay={0.08}>
-              <h3 className={label}>{t.contact.eyebrow}</h3>
+              <h3 className={label}>{t.about.openingHours}</h3>
+
+              {/*
+               * Tasarimdaki saat satiri: solda gun adi sonuk, sagda saat tam
+               * murekkep renginde. Bu yuzden gun adi kucuk-uppercase DEGIL —
+               * saatle ayni 14.5px olcude, sadece daha soluk.
+               */}
               <dl className="mt-[1.125rem]">
-                {rows.map((row, index) => (
+                {hours.map((hour, index) => (
                   <div
-                    key={`${row.term}-${index}`}
-                    className={`flex items-baseline justify-between gap-6 py-[0.6875rem] ${
-                      index === rows.length - 1
+                    key={hour.dayOfWeek}
+                    className={`${rowBase} ${
+                      index === hours.length - 1
                         ? ""
                         : "border-b border-[var(--brand-rule-soft)]"
                     }`}
                   >
-                    <dt className={`${metaMuted} shrink-0`}>{row.term}</dt>
-                    <dd
-                      className="text-[0.90625rem] leading-[1.6] text-pretty text-end"
-                      {...(row.ltr ? { dir: "ltr" as const } : {})}
-                    >
-                      {row.href ? (
-                        <a
-                          href={row.href}
-                          className="underline-offset-8 transition-colors hover:text-[var(--brand-primary)] hover:underline"
-                          {...(row.href.startsWith("http")
-                            ? { target: "_blank", rel: "noopener noreferrer" }
-                            : {})}
-                        >
-                          {row.value}
-                        </a>
+                    <dt className="text-[0.90625rem] leading-[1.6] text-[var(--brand-ink-muted)]">
+                      {hour.dayLabel}
+                    </dt>
+                    <dd className="text-[0.90625rem] leading-[1.6] tabular-nums">
+                      {hour.isClosed ? (
+                        <span className="text-[var(--brand-ink-muted)]">
+                          {t.hours.closed}
+                        </span>
                       ) : (
-                        row.value
+                        <span dir="ltr">
+                          {hour.openTime} — {hour.closeTime}
+                        </span>
                       )}
                     </dd>
                   </div>
                 ))}
               </dl>
+
+              <p className="mt-6 text-[0.8125rem] leading-[1.75] text-pretty text-[var(--brand-ink-muted)]">
+                {t.about.hoursNote}
+              </p>
             </Reveal>
           ) : null}
 
           <Reveal delay={0.14}>
-            <h3 className={label}>{t.contact.formTitle}</h3>
+            {rows.length > 0 ? (
+              <>
+                <h3 className={label}>{t.contact.eyebrow}</h3>
+                <dl className="mt-[1.125rem]">
+                  {rows.map((row, index) => (
+                    <div
+                      key={`${row.term}-${index}`}
+                      className={`${rowBase} ${
+                        index === rows.length - 1
+                          ? ""
+                          : "border-b border-[var(--brand-rule-soft)]"
+                      }`}
+                    >
+                      <dt className={`${metaMuted} shrink-0`}>{row.term}</dt>
+                      <dd
+                        className="text-[0.90625rem] leading-[1.6] text-pretty text-end"
+                        {...(row.ltr ? { dir: "ltr" as const } : {})}
+                      >
+                        {/*
+                         * Baglantilar ALTIN: tasarimin global kurali
+                         * `a { color:#C4A265 }`, uzerine gelince krem.
+                         */}
+                        {row.href ? (
+                          <a
+                            href={row.href}
+                            className={`${goldLink} underline-offset-8 hover:underline`}
+                            {...(row.href.startsWith("http")
+                              ? { target: "_blank", rel: "noopener noreferrer" }
+                              : {})}
+                          >
+                            {row.value}
+                          </a>
+                        ) : (
+                          row.value
+                        )}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </>
+            ) : null}
+
+            {/*
+             * Form tasarimda yok; bizim eklememiz. Tasarimin ucuncu kolonu
+             * "iletisim + kucuk bir blok" duzeninde oldugu icin form da ayni
+             * kolonda, iletisim satirlarinin altinda duruyor.
+             */}
+            <h3 className={`${label} ${rows.length > 0 ? "mt-12" : ""}`}>
+              {t.contact.formTitle}
+            </h3>
             <div className="mt-[1.125rem]">
               <ContactForm locale={content.locale} messages={t} />
             </div>

@@ -28,9 +28,26 @@ export const surface = "bg-[var(--brand-surface)] text-[var(--brand-ink)]";
 export const sectionPad =
   "pt-[var(--brand-section-py)] lg:pt-[var(--brand-section-py-lg)]";
 
-/** Ayirici cizgi + altindaki 40px'lik nefes. */
-export const ruled =
-  "border-t border-[var(--brand-border)] pt-[var(--mera-rule-gap)]";
+/**
+ * Ayirici cizgi + altindaki 40px'lik nefes.
+ *
+ * Cizgi rengi --brand-border DEGIL --mera-rule: tasarim cizgileri murekkebin
+ * %16 opakligiyla ciziyor, kenarlik token'i bunun yaninda gorunmeyecek kadar
+ * soluk kaliyordu (bkz. tokens.css).
+ */
+export const ruled = "border-t border-[var(--mera-rule)] pt-[var(--mera-rule-gap)]";
+
+/**
+ * Baglanti rengi.
+ *
+ * Tasarimin global stili `a { color:#A9502F } a:hover { color:#1A1714 }` —
+ * yani sayfadaki TUM baglantilar marka renginde, ustune gelince mureekkebe
+ * doner. Tek istisna ust cubuk navigasyonu: orada renk inline olarak soluk
+ * griye eziliyor. Inline style'larda gorunmedigi icin kolayca atlanan bir
+ * kural oldugundan tek yerde toplandi.
+ */
+export const link =
+  "text-[var(--brand-primary)] transition-colors hover:text-[var(--brand-ink)]";
 
 /**
  * Kunye etiketi: 11.5px, genis harf araligi (token'dan gelir).
@@ -43,12 +60,24 @@ export const labelBase = "brand-body brand-eyebrow text-[0.72rem] leading-none";
 export const label = `${labelBase} text-[var(--brand-ink-muted)]`;
 /** Bolum isaretcisi — tasarimda daima marka rengi. */
 export const labelAccent = `${labelBase} text-[var(--brand-primary)]`;
+/**
+ * Kolon basligi (tasarimda "Saatler" / "Ulasin"): ayni olcek ve aralik, ama
+ * bolum isaretcisiyle karismasin diye en soluk tonda — kapanis bolumunde
+ * marka rengi yalnizca basligin kendisine ait.
+ */
+export const labelSoft = `${labelBase} text-[var(--brand-ink-faint)]`;
 /** Fotograf altyazisi: en soluk ton, 11px, tasarimda .18em aralik. */
 export const labelFaint =
   "brand-body mera-caption text-[0.6875rem] leading-none text-[var(--brand-ink-faint)]";
-/** Kapanis seridi: ayni olcek, marka adiyla ayni .16em aralik. */
-export const labelStrip =
-  "brand-body mera-mark text-[0.6875rem] leading-none text-[var(--brand-ink-faint)]";
+/**
+ * Kapanis seridi: ayni olcek, marka adiyla ayni .16em aralik.
+ * Renksiz surum, rengi kendi veren ogeler (baglantilar) icin ayri duruyor —
+ * iki `text-[var(--…)]` sinifi ayni elemanda bulusursa hangisinin kazandigi
+ * uretilen CSS sirasina kalirdi.
+ */
+export const labelStripBase =
+  "brand-body mera-mark text-[0.6875rem] leading-none";
+export const labelStrip = `${labelStripBase} text-[var(--brand-ink-faint)]`;
 
 /** Govde metni olcegi: tasarimda 15px / 1.7. */
 export const bodyText =
@@ -57,9 +86,7 @@ export const bodyText =
 /** Dergi sayfasini bolen sac teli cizgi. */
 export function Hairline({ className = "" }: { className?: string }) {
   return (
-    <hr
-      className={`border-0 border-t border-[var(--brand-border)] ${className}`}
-    />
+    <hr className={`border-0 border-t border-[var(--mera-rule)] ${className}`} />
   );
 }
 
@@ -78,18 +105,13 @@ export function SectionHead({
   eyebrow,
   title,
   titleId,
-  lead,
   aside,
-  large = false,
   children,
 }: {
   eyebrow: string;
   title: string;
   titleId: string;
-  lead?: string;
   aside?: ReactNode;
-  /** Kapanis bolumu icin tasarimdaki 52px'lik iri baslik. */
-  large?: boolean;
   children?: ReactNode;
 }) {
   return (
@@ -103,20 +125,14 @@ export function SectionHead({
       </div>
 
       <div className="min-w-0">
+        {/* Bolum girisi tasarimda 36px, 300 agirlikta ve govde kolonunun
+            900px'lik olcusunde kalir. */}
         <h2
           id={titleId}
-          className={
-            large
-              ? "brand-display max-w-[900px] text-[clamp(2.25rem,4.6vw,3.25rem)] leading-[1.05] tracking-[-0.02em] text-balance"
-              : "brand-display max-w-[900px] text-[clamp(1.6rem,3.2vw,2.25rem)] leading-[1.34] tracking-[-0.01em] text-pretty"
-          }
+          className="brand-display max-w-[900px] text-[clamp(1.6rem,3.2vw,2.25rem)] leading-[1.34] tracking-[-0.01em] text-pretty"
         >
           {title}
         </h2>
-
-        {lead ? (
-          <p className={`${bodyText} mt-7 max-w-[620px]`}>{lead}</p>
-        ) : null}
 
         {/* Tasarimda giris cumlesi ile govde arasi 30px. */}
         {children ? <div className="mt-[1.875rem]">{children}</div> : null}
@@ -144,9 +160,10 @@ export function SectionHeadRow({
       className={`${ruled} flex flex-wrap items-baseline justify-between gap-x-12 gap-y-3`}
     >
       <p className={labelAccent}>{eyebrow}</p>
+      {/* mera-regular: tasarimda bu italik notta agirlik yazmiyor, yani 400. */}
       <h2
         id={titleId}
-        className="brand-display text-[clamp(1.15rem,2.4vw,1.375rem)] italic text-pretty text-[var(--brand-ink-body)] rtl:not-italic"
+        className="brand-display mera-regular text-[clamp(1.15rem,2.4vw,1.375rem)] italic text-pretty text-[var(--brand-ink-body)] rtl:not-italic"
       >
         {title}
       </h2>
@@ -167,7 +184,7 @@ export function RuleRow({
   children: ReactNode;
 }) {
   return (
-    <div className="mera-row flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 border-b border-[var(--brand-border)] pb-2.5 text-[0.8125rem] last:border-0 last:pb-0">
+    <div className="mera-row flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 border-b border-[var(--mera-hair)] pb-2.5 text-[0.8125rem] last:border-0 last:pb-0">
       <dt className="text-[var(--brand-ink-muted)]">{term}</dt>
       <dd className="text-end text-[var(--brand-ink)]">{children}</dd>
     </div>

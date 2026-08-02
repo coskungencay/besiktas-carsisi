@@ -119,6 +119,24 @@ html[data-theme="sicak-firin"] {
     var(--brand-primary) 28%,
     transparent
   );
+  /*
+   * Tasarimda ayraclarin uc ayri opakligi var ve hepsi --brand-border yerine
+   * MURekkebin/primary'nin saydamligindan uretiliyor:
+   *   .35 ust serit, .30 satir arasi kesik cizgi, .28 not kagidi kenarligi,
+   *   .40 fiyat kilavuzu (noktali) ve ince butonun kenari.
+   * Tek bir token kullanmak satir cizgilerini soluk, kilavuz cizgiyi ise
+   * gorunmez yapiyordu.
+   */
+  --brand-hairline-row: color-mix(
+    in srgb,
+    var(--brand-primary) 30%,
+    transparent
+  );
+  --brand-hairline-strong: color-mix(
+    in srgb,
+    var(--brand-primary) 40%,
+    transparent
+  );
   /* Paragraf tonu: ink'ten acik, ink-muted'dan koyu (tasarimda #5C4634). */
   --brand-ink-soft: #5c4634;
   /* Ust seritteki nav linkleri (tasarimda #6B4A2E). */

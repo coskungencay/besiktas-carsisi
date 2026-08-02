@@ -1,18 +1,13 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
-import {
-  closedDayLabels,
-  coordinateLabel,
-  hoursFromMonday,
-  hoursRange,
-} from "@/themes/_shared/data";
+import { coordinateLabel, hoursFromMonday } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
-  Sheet,
-  SheetHead,
+  Plate,
   bodyText,
   bodyTextSm,
   cell,
+  edgeBottom,
   hair,
   label,
   meta,
@@ -24,8 +19,12 @@ import {
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Tasarimin konum bolmesi: solda adres ve "yol tarifi" dugmesi, ortada
- * calisma saati ozeti, sagda sematik plan kutusu.
+ * Tasarimin konum bolmesi UC SUTUN (1.2 / 0.9 / 0.9): solda adres ve
+ * "haritada ac" dugmesi, ORTADA gun gun calisma saatleri, sagda sematik plan.
+ *
+ * NEDEN SAATLER BURADA: tasarimda gun gun tablo bu bolumun orta sutununda.
+ * Hakkimizda bolumunde durdugunda hem orayi iki katina cikariyor hem de
+ * ziyaretcinin "ne zaman acik, nerede" sorusunu iki ayri yere dagitiyordu.
  *
  * NEDEN GOMULU HARITA YOK: Google/OSM iframe'i her ziyaretcide ucuncu tarafa
  * istek atar (KVKK) ve sayfanin en agir kaynagi olur. Tasarimda da gercek bir
@@ -38,8 +37,7 @@ export default function Location({ content }: SectionProps) {
   const { contact, name, openingHours, t } = content;
 
   const coords = coordinateLabel(contact.lat, contact.lng);
-  const range = hoursRange(openingHours);
-  const closed = closedDayLabels(hoursFromMonday(openingHours));
+  const hours = hoursFromMonday(openingHours);
 
   /*
    * Yol tarifi hedefi, elde olan en kesin veriden secilir:
@@ -56,7 +54,7 @@ export default function Location({ content }: SectionProps) {
         : "");
 
   // Bos hucre koyu bir blok birakir; sutun sayisi dolu bolme sayisiyla ayni.
-  const hasHours = Boolean(range) || closed.length > 0;
+  const hasHours = hours.length > 0;
 
   return (
     <section
@@ -64,25 +62,19 @@ export default function Location({ content }: SectionProps) {
       aria-labelledby="location-title"
       className="bg-[var(--brand-surface)]"
     >
-      <div
-        className={`${shell} pb-[var(--brand-section-py)] sm:pb-[var(--brand-section-py-lg)]`}
-      >
-        <Sheet>
-          <Reveal>
-            <SheetHead
-              code="06"
-              eyebrow={t.location.eyebrow}
-              title={t.location.title}
-              titleId="location-title"
-            />
-          </Reveal>
-
-          <Reveal delay={0.08}>
+      <div className={shell} style={edgeBottom}>
+        <Reveal>
+          <Plate
+            code="06"
+            eyebrow={t.location.eyebrow}
+            title={t.location.title}
+            titleId="location-title"
+          >
             <div
               className={`${splitGrid} ${
                 hasHours
-                  ? "lg:grid-cols-[1.2fr_0.9fr_0.9fr]"
-                  : "lg:grid-cols-[1.2fr_0.9fr]"
+                  ? "lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,0.9fr)]"
+                  : "lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)]"
               }`}
             >
               <div className={`${cell} ${pad}`}>
@@ -91,7 +83,9 @@ export default function Location({ content }: SectionProps) {
                 </h3>
 
                 {contact.address ? (
-                  <p className={`${bodyText} mt-[18px] text-[var(--brand-ink)]`}>
+                  <p
+                    className={`${bodyText} mt-[18px] text-[var(--brand-ink)]`}
+                  >
                     {contact.address}
                   </p>
                 ) : null}
@@ -125,32 +119,30 @@ export default function Location({ content }: SectionProps) {
                     {t.about.openingHours}
                   </h3>
 
-                  {range ? (
-                    /*
-                     * Gunluk tablo Hakkimizda paftasinda zaten var; burada
-                     * yalnizca ozet aralik, tasarimin buyuk rakam dilinde.
-                     */
-                    <p
-                      className="brand-display mt-[18px] text-[length:var(--ts-title)] leading-[var(--ts-title-leading)] tabular-nums"
-                      dir="ltr"
-                    >
-                      {range}
-                    </p>
-                  ) : null}
-
-                  {closed.length > 0 ? (
-                    <dl className="mt-5">
-                      {closed.map((dayLabel) => (
-                        <div
-                          key={dayLabel}
-                          className={`${hair} ${bodyTextSm} flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-[10px]`}
-                        >
-                          <dt>{dayLabel}</dt>
-                          <dd className="font-medium">{t.hours.closed}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                  ) : null}
+                  {/* Tasarimda etiketle tablo arasi 18px. */}
+                  <dl className="mt-[18px]">
+                    {hours.map((hour, index) => (
+                      /*
+                       * Ayrac SATIRLAR ARASINDA: ilk satirin ustunde cizgi yok,
+                       * cetvel asagi dogru bolunuyor.
+                       */
+                      <div
+                        key={hour.dayOfWeek}
+                        className={`${index > 0 ? hair : ""} ${bodyTextSm} flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-[10px]`}
+                      >
+                        <dt>{hour.dayLabel}</dt>
+                        <dd className="font-medium tabular-nums">
+                          {hour.isClosed ? (
+                            t.hours.closed
+                          ) : (
+                            <span dir="ltr">
+                              {hour.openTime}–{hour.closeTime}
+                            </span>
+                          )}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
 
                   <p className="mt-5 text-[length:var(--ts-label)] leading-[1.8] font-light text-[var(--brand-ink-muted)]">
                     {t.about.hoursNote}
@@ -191,8 +183,8 @@ export default function Location({ content }: SectionProps) {
                 ) : null}
               </div>
             </div>
-          </Reveal>
-        </Sheet>
+          </Plate>
+        </Reveal>
       </div>
     </section>
   );

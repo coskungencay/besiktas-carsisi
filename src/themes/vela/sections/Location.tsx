@@ -8,6 +8,7 @@ import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   metaMuted,
   SectionHead,
+  sectionTop,
   shell,
   surface,
 } from "@/themes/vela/parts";
@@ -59,7 +60,7 @@ export default function Location({ content }: SectionProps) {
 
   return (
     <section id="konum" aria-labelledby="location-title" className={surface}>
-      <div className={`${shell} brand-section`}>
+      <div className={`${shell} ${sectionTop}`}>
         <Reveal>
           <SectionHead
             eyebrow={t.location.eyebrow}

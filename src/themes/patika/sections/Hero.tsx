@@ -36,8 +36,14 @@ export default function Hero({ content }: SectionProps) {
     content;
 
   const highlights = highlightsOrDerived(content);
-  /* Sol kolonun metni: hakkimizda'nin ilk paragrafi, yoksa slogan. */
-  const intro = paragraphs(content.about)[0] ?? tagline;
+  /*
+   * Sol kolonun metni: once SLOGAN, yoksa hakkimizdanin ilk paragrafi.
+   *
+   * Sira bilerek boyle: hakkimizda paragrafi hemen alttaki bolumde zaten
+   * bastan basiliyor; onu once burada gostermek ayni cumleyi iki ekran arayla
+   * tekrar ettiriyordu. Slogan ise sayfada baska hicbir yerde yok.
+   */
+  const intro = tagline || (paragraphs(content.about)[0] ?? "");
 
   /*
    * Basligin ikinci parcasindaki son noktalama isareti ayriliyor: tasarimda o
@@ -82,7 +88,7 @@ export default function Hero({ content }: SectionProps) {
            * uzerine binerdi. inset-inline-end kullaniliyor ki Arapca'da sola gecsin.
            */
           <div
-            className="pk-pop pk-badge absolute end-10 top-10 hidden size-[8.25rem] flex-col items-center justify-center rounded-full bg-[var(--brand-accent)] text-center text-[var(--brand-primary-contrast)] lg:flex"
+            className="pk-pop pk-badge absolute end-[3.75rem] top-10 hidden size-[8.25rem] flex-col items-center justify-center rounded-full bg-[var(--brand-accent)] text-center text-[var(--brand-primary-contrast)] lg:flex"
             aria-hidden="true"
           >
             <span>{t.hours.label}</span>
@@ -94,11 +100,12 @@ export default function Hero({ content }: SectionProps) {
           Tasarimda bu satir KONUM ("Kadikoy · Yeldegirmeni") — kisa ve neon.
           Slogan burada degil: uzun bir cumle bu 12px'lik genis harf arali
           satirda iki satira boluniyor ve devasa basligin ustundeki gerilimi
-          bozuyor. Semt yoksa slogana duseriz.
+          bozuyor. Ayrica slogan asagida taban satirinin metni; ikisinde birden
+          cikarsa ayni cumle iki kez okunur. Semt yoksa satir hic basilmaz.
         */}
-        {contact.locality || tagline ? (
+        {contact.locality ? (
           <p className="pk-up pk-eyebrow text-[var(--brand-primary)]">
-            {contact.locality || tagline}
+            {contact.locality}
           </p>
         ) : null}
 

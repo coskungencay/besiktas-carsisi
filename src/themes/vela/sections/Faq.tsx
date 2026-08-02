@@ -1,5 +1,12 @@
 import { Reveal } from "@/components/motion/Reveal";
-import { Hairline, label, proseSm, shell, surface } from "@/themes/vela/parts";
+import {
+  Hairline,
+  label,
+  proseSm,
+  sectionTop,
+  shell,
+  surface,
+} from "@/themes/vela/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
@@ -22,7 +29,7 @@ export default function Faq({ content }: SectionProps) {
 
   return (
     <section id="sss" aria-labelledby="faq-title" className={surface}>
-      <div className={`${shell} brand-section`}>
+      <div className={`${shell} ${sectionTop}`}>
         <div className="grid gap-10 lg:grid-cols-[17.5rem_1fr] lg:gap-[4.375rem]">
           <Reveal>
             <p className={label}>{t.faq.eyebrow}</p>
