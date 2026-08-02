@@ -151,6 +151,27 @@ export const siteSettings = sqliteTable("site_settings", {
     .notNull()
     .$type<string[]>()
     .default([]),
+  /** Sayfanin en ustunde gecen tek satirlik duyuru. Bos = serit hic basilmaz. */
+  announcement: text("announcement").notNull().default(""),
+  /**
+   * JSON dizisi: [{ platform: "instagram", url: "https://..." }]
+   * Sira panelde belirlenir; bos url'ler kaydedilmez.
+   */
+  socialLinks: text("social_links", { mode: "json" })
+    .notNull()
+    .$type<{ platform: string; url: string }[]>()
+    .default([]),
+  /**
+   * Musterinin KAPATTIGI bolumlerin anahtarlari, orn. ["yorumlar","sss"].
+   *
+   * NEDEN "gizlenenler" listesi (acilanlar degil): yeni bir bolum eklendiginde
+   * mevcut kurulumlarda otomatik ACIK gelir; kimse paneli acip isaretlemek
+   * zorunda kalmaz.
+   */
+  hiddenSections: text("hidden_sections", { mode: "json" })
+    .notNull()
+    .$type<string[]>()
+    .default([]),
   updatedAt: integer("updated_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
@@ -250,6 +271,39 @@ export const galleryImages = sqliteTable(
   (t) => [index("gallery_images_sort_idx").on(t.sortOrder)],
 );
 
+/**
+ * Musteri yorumlari.
+ *
+ * Elle girilir; ileride Google yorumlarini otomatik cekmenin de hedef tablosu
+ * budur (kaynak ayrimi gerekirse `source` kolonu eklenir).
+ */
+export const testimonials = sqliteTable(
+  "testimonials",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    author: text("author").notNull(),
+    text: text("text").notNull(),
+    /** 1-5 yildiz. null = yildiz gosterilmesin. */
+    rating: integer("rating"),
+    sortOrder: integer("sort_order").notNull().default(0),
+    isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
+  },
+  (t) => [index("testimonials_sort_idx").on(t.sortOrder)],
+);
+
+/** Sikca sorulan sorular. */
+export const faqs = sqliteTable(
+  "faqs",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    question: text("question").notNull(),
+    answer: text("answer").notNull(),
+    sortOrder: integer("sort_order").notNull().default(0),
+    isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
+  },
+  (t) => [index("faqs_sort_idx").on(t.sortOrder)],
+);
+
 export const contactMessages = sqliteTable(
   "contact_messages",
   {
@@ -289,6 +343,8 @@ export type MenuCategoryRow = typeof menuCategories.$inferSelect;
 export type MenuItemRow = typeof menuItems.$inferSelect;
 export type GalleryImageRow = typeof galleryImages.$inferSelect;
 export type ContactMessageRow = typeof contactMessages.$inferSelect;
+export type TestimonialRow = typeof testimonials.$inferSelect;
+export type FaqRow = typeof faqs.$inferSelect;
 export type TranslationRow = typeof translations.$inferSelect;
 
 // Namespace listesi istemci tarafinda da gerektigi icin ayri dosyada durur.

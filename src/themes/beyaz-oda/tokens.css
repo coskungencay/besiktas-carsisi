@@ -1,5 +1,5 @@
 /*
- * Beyaz Oda — minimal, monospace
+ * Beyaz Oda — minimal, editoryal izgara
  *
  * Bu dosya temanin TEK gorsel kaynagidir. Bilesenlerde sabit renk, radius,
  * font veya harf araligi YOKTUR; hepsi buradaki degiskenlerden okunur.
@@ -24,35 +24,244 @@ html[data-theme="beyaz-oda"] {
   --brand-ink-muted: #6E7479;
   --brand-border: #E4E5E7;
 
-  /* --- Tipografi (harici font yok; sistem yigini) --- */
-  --brand-font-display: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --brand-font-body: ui-monospace, 'SFMono-Regular', Consolas, monospace;
-  --brand-display-weight: 300;
+  /*
+   * Tasarimda uc kademe gri var: govde (#4C5257), kunye (#6E7479) ve
+   * cok soluk indeks/etiket (#A2A7AC). Ikisini sabit yazmak yerine
+   * ink-muted'dan turetiyoruz; boylece admin panelinden renk degistirilince
+   * ara tonlar da birlikte kayiyor, tema tutarli kaliyor.
+   */
+  --brand-ink-soft: color-mix(in srgb, var(--brand-ink-muted) 70%, var(--brand-ink));
+  --brand-ink-faint: color-mix(in srgb, var(--brand-ink-muted) 62%, var(--brand-surface));
 
-  /* --- Kucuk etiketler (eyebrow, rozet) --- */
-  --brand-eyebrow-tracking: 0.16em;
+  /* --- Tipografi ---
+   * Tasarimin font cifti: Schibsted Grotesk (300/400/500) + JetBrains Mono
+   * (300/400). Mono yalnizca kunye/etiket/fiyat satirlarinda kullanilir,
+   * govde metni grotesk'tir. Yiginin sonundaki sistem yedegi ZORUNLU:
+   * bu iki fontta Arapca glif yok, Arapca sayfa yedege duser.
+   */
+  --brand-font-display: var(--font-schibsted), system-ui, -apple-system, sans-serif;
+  --brand-font-body: var(--font-schibsted), system-ui, -apple-system, sans-serif;
+  --brand-font-mono:
+    var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", Consolas, monospace;
+  /*
+   * Tasarim dosyasi 300 istiyor ama Schibsted Grotesk degisken fontunun
+   * agirlik araligi 400-900; 300 tarayicida zaten 400'e kirpilir. Yanlis
+   * beklenti yaratmamak icin gercek deger yaziliyor.
+   */
+  --brand-display-weight: 400;
+
+  /* --- Kucuk etiketler (eyebrow, rozet) ---
+   * Tasarimda mono etiketlerin harf araligi .04em–.06em araliginda. */
+  --brand-eyebrow-tracking: 0.06em;
   --brand-eyebrow-transform: uppercase;
 
   /* --- Bicim --- */
   --brand-radius: 0rem;
   --brand-border-width: 1px;
 
-  /* --- Olcek --- */
-  --brand-container: 1280px;
-  --brand-section-py: 4rem;
-  --brand-section-py-lg: 6rem;
+  /* --- Olcek ---
+   * Tasarim 1440px genisliginde, 48px yan bosluklu, 12 kolon / 24px gap.
+   * Bolumler arasi ritim: 118px ust bosluk + ince cizgi + 34px.
+   */
+  --brand-container: 1440px;
+  --brand-section-py: 4.5rem; /* 72px — dar ekran */
+  --brand-section-py-lg: 7.375rem; /* 118px — tasarimdaki gercek deger */
 }
 
 /*
  * Arapca istisnasi.
  *
- * Bu tema govde metninde monospace kullaniyor. Monospace yiginlar Arapca'da
- * her harfi sabit genislikte bir hucreye oturtur ve BITISIK YAZIYI KOPARIR.
- * Bu yuzden yalnizca Arapca'da orantili bir yigina geciyoruz.
+ * Monospace yiginlar Arapca'da her harfi sabit genislikte bir hucreye oturtur
+ * ve BITISIK YAZIYI KOPARIR. Bu yuzden yalnizca Arapca'da mono yigini da
+ * orantili bir yigina cekiyoruz (govde zaten grotesk).
  *
  * Secici ozgullugu (0,2,1) — hem tema blogunu hem :root'u gecer.
- * Monospace kullanan her yeni tema ayni blogu eklemeli (bkz. THEMING.md).
  */
 html[lang="ar"][data-theme="beyaz-oda"] {
   --brand-font-body: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+  --brand-font-display: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+  --brand-font-mono: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+}
+
+/* --------------------------------------------------------------------------
+ * Yardimci siniflar
+ * Tasarimda tekrar eden mono kunye/etiket bicimleri. Bilesenlerde sabit font
+ * yazmamak icin burada tanimli.
+ * -------------------------------------------------------------------------- */
+
+/*
+ * DIKKAT: bu siniflar BILEREK harf araligi tanimlamiyor. Secici ozgullugu
+ * (0,2,1) oldugu icin, yaninda kullanilan brand-eyebrow (0,1,0) utility'sinin
+ * letter-spacing'ini ezerlerdi. Ayni nedenle font-size/renk veren siniflari
+ * Tailwind'in text-* siniflariyla birlikte kullanmayin.
+ */
+
+/* Kunye metni: mono, ince. Punto cagiran tarafta belirlenir. */
+html[data-theme="beyaz-oda"] .bo-mono {
+  font-family: var(--brand-font-mono);
+  font-weight: 300;
+}
+
+/* Bolum indeksi / cok soluk etiket — tasarimda 11px, #A2A7AC. */
+html[data-theme="beyaz-oda"] .bo-index {
+  font-family: var(--brand-font-mono);
+  font-weight: 300;
+  font-size: 11px;
+  color: var(--brand-ink-faint);
+}
+
+/* Ayni etiketin kucuk hali — tasarimda galeri kunyesi ve alt serit 10.5px. */
+html[data-theme="beyaz-oda"] .bo-index-sm {
+  font-family: var(--brand-font-mono);
+  font-weight: 300;
+  font-size: 10.5px;
+  color: var(--brand-ink-faint);
+}
+
+/* --------------------------------------------------------------------------
+ * SSS: <details> isareti
+ * Tasarimda ikon yok, her sey 1px cizgi. Bu yuzden ac/kapa isareti de iki
+ * hairline'dan cizilir: kapaliyken "+", acikken "—". Tarayicinin varsayilan
+ * uggen marker'i gizlenir; aksi halde tasarimin disinda bir glif kalirdi.
+ * -------------------------------------------------------------------------- */
+
+html[data-theme="beyaz-oda"] .bo-summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+html[data-theme="beyaz-oda"] .bo-summary::-webkit-details-marker {
+  display: none;
+}
+
+html[data-theme="beyaz-oda"] .bo-plus {
+  position: relative;
+  display: block;
+  inline-size: 11px;
+  block-size: 11px;
+}
+
+/*
+ * Iki cizgi de ayni kutuda; ikincisi 90 derece donuk. Konum mantiksal
+ * (inset-inline-start) yazildi ki Arapca'da da hucreye oturması bozulmasin.
+ */
+html[data-theme="beyaz-oda"] .bo-plus::before,
+html[data-theme="beyaz-oda"] .bo-plus::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 5px;
+  inline-size: 11px;
+  block-size: 1px;
+  /* currentColor: soru uzerine gelinince baslikla birlikte vurgu rengine gecer. */
+  background: currentColor;
+  transition: transform 0.35s cubic-bezier(0.2, 0.75, 0.2, 1);
+}
+
+html[data-theme="beyaz-oda"] .bo-plus::after {
+  transform: rotate(90deg);
+}
+
+/* Acikken dikey cizgi ortadan buzulur: "+" -> "—". */
+html[data-theme="beyaz-oda"] details[open] .bo-plus::after {
+  transform: rotate(90deg) scaleX(0);
+}
+
+/* --------------------------------------------------------------------------
+ * Konum: plan dokusu
+ * Gomulu harita YOK (harici istek + KVKK). Yerine temanin kendi dilinden bir
+ * doku: 28px'lik hairline izgara — sayfanin 12 kolonlu ritmiyle ayni aileden.
+ * -------------------------------------------------------------------------- */
+
+html[data-theme="beyaz-oda"] .bo-plot {
+  background-color: var(--brand-surface-alt);
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--brand-border) 0 1px,
+      transparent 1px 28px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      var(--brand-border) 0 1px,
+      transparent 1px 28px
+    );
+}
+
+/* --------------------------------------------------------------------------
+ * Acilis animasyonlari
+ * Tasarimin <style> blogundan birebir tasindi. Sadece opacity/transform
+ * degistigi icin layout kaymasi olusmaz; prefers-reduced-motion globals.css'te
+ * zaten tum animasyonlari durduruyor.
+ * -------------------------------------------------------------------------- */
+
+@keyframes boFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes boUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes boRule {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Ust serit: gecikmesiz yumusak belirme. */
+html[data-theme="beyaz-oda"] .bo-fade {
+  animation: boFade 0.8s both;
+}
+
+/*
+ * SSS cevabi acilirken: Reveal (scroll gozlemcisi) burada ise yaramaz, cunku
+ * cevap zaten ekrandayken aciliyor. Ayni yumusak belirme mevcut keyframe ile.
+ */
+html[data-theme="beyaz-oda"] details[open] .bo-answer {
+  animation: boFade 0.45s both;
+}
+
+/* Hero indeksi ("— 00"). */
+html[data-theme="beyaz-oda"] .bo-fade-2 {
+  animation: boFade 1s 0.2s both;
+}
+
+/* Hero basligi. */
+html[data-theme="beyaz-oda"] .bo-up {
+  animation: boUp 1s 0.15s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+/* Hero'nun cizgi altindaki uclu satiri. */
+html[data-theme="beyaz-oda"] .bo-up-2 {
+  animation: boUp 1s 0.7s both;
+}
+
+/*
+ * Hero ayraci: soldan saga cizilir.
+ * transform-origin mantiksal deger kabul etmiyor; RTL'de yon ters cevriliyor
+ * ki cizgi Arapca'da da metnin basladigi kenardan buyusun.
+ */
+html[data-theme="beyaz-oda"] .bo-rule {
+  transform-origin: 0 50%;
+  animation: boRule 1.1s 0.6s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+html[dir="rtl"][data-theme="beyaz-oda"] .bo-rule {
+  transform-origin: 100% 50%;
 }

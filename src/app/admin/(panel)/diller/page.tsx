@@ -6,10 +6,12 @@ import { translations } from "@/db/schema";
 import { DEFAULT_LOCALE, LOCALES, LOCALE_META, isLocale } from "@/i18n/config";
 import {
   getEnabledLocales,
+  getFaqs,
   getGalleryImages,
   getMenuCategories,
   getMenuItems,
   getSettings,
+  getTestimonials,
 } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +28,8 @@ export default async function LocalesPage({
   const categories = getMenuCategories();
   const items = getMenuItems();
   const gallery = getGalleryImages();
+  const reviews = getTestimonials();
+  const questions = getFaqs();
 
   // Duzenlenecek dil: varsayilan dil disindaki ilk acik dil.
   const editable = enabled.filter((l) => l !== DEFAULT_LOCALE);
@@ -80,7 +84,18 @@ export default async function LocalesPage({
             heroSubline: settings.heroSubline,
             about: settings.about,
             address: settings.address,
+            announcement: settings.announcement,
           },
+          testimonials: reviews.map((r) => ({
+            id: r.id,
+            author: r.author,
+            text: r.text,
+          })),
+          faq: questions.map((f) => ({
+            id: f.id,
+            question: f.question,
+            answer: f.answer,
+          })),
           // Yalnizca gercekten girilmis kunye satirlari cevrilebilir.
           highlights: (Array.isArray(settings.highlights)
             ? settings.highlights

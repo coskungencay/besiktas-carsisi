@@ -43,6 +43,27 @@ const ar: Messages = {
     email: "البريد الإلكتروني",
     instagram: "إنستغرام",
   },
+  testimonials: {
+    eyebrow: "التقييمات",
+    title: "ماذا يقول ضيوفنا",
+    ratingLabel: "{rating} من 5 نجوم",
+  },
+  faq: {
+    eyebrow: "الأسئلة الشائعة",
+    title: "الأسئلة المتكررة",
+  },
+  location: {
+    eyebrow: "الموقع",
+    title: "أين تجدنا",
+    directions: "احصل على الاتجاهات",
+    mapAlt: "خريطة تُظهر موقع {name}",
+  },
+  social: {
+    title: "تابعنا",
+  },
+  whatsapp: {
+    label: "راسلنا عبر واتساب",
+  },
   form: {
     name: "الاسم الكامل",
     namePlaceholder: "اسمك الأول واسم العائلة",

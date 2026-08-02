@@ -2,11 +2,14 @@ import type { ThemeDefinition } from "@/themes/types";
 
 import About from "@/themes/kirk-yil/sections/About";
 import Contact from "@/themes/kirk-yil/sections/Contact";
+import Faq from "@/themes/kirk-yil/sections/Faq";
 import Footer from "@/themes/kirk-yil/sections/Footer";
 import Gallery from "@/themes/kirk-yil/sections/Gallery";
 import Header from "@/themes/kirk-yil/sections/Header";
 import Hero from "@/themes/kirk-yil/sections/Hero";
+import Location from "@/themes/kirk-yil/sections/Location";
 import Menu from "@/themes/kirk-yil/sections/Menu";
+import Testimonials from "@/themes/kirk-yil/sections/Testimonials";
 
 /**
  * Kırk Yıl
@@ -25,6 +28,15 @@ const theme: ThemeDefinition = {
     { id: "hakkimizda", Component: About },
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },
+    /*
+     * Yorumlar ve SSS menuden SONRA: once ne ikram ettigimiz, sonra baskalari
+     * ne demis, sonra merak edilenler. Konum iletisimin hemen ustunde duruyor
+     * ki adres ile kartvizit yan yana okunsun.
+     * Zemin ritmi: menu ve SSS koyu bant, aralarindaki bolumler acik.
+     */
+    { id: "yorumlar", Component: Testimonials },
+    { id: "sss", Component: Faq },
+    { id: "konum", Component: Location },
     { id: "iletisim", Component: Contact },
   ],
   Footer,

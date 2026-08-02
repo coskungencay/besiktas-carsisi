@@ -1,38 +1,65 @@
 import { coordinateLabel } from "@/themes/_shared/data";
-import { label, page, surface } from "@/themes/mera/parts";
+import { labelStrip, page, surface } from "@/themes/mera/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Dergi kunyesi gibi ince kapanis: ortada serif marka adi, altinda adres,
- * en altta telif ve koordinat. Ortalanmis olmasi bilinçli — sayfanin geri
- * kalani baslangic kenarina yasliyken kapanis simetriyle biter.
+ * Dergi kunye seridi gibi kapanis: ortalanmis bir masthead degil, sayfanin
+ * iki ucuna dagilmis tek satirlik ince bir bant (tasarimda 11px, .16em harf
+ * araligi, cizginin 20px altinda). Adres burada TEKRARLANMAZ — hemen ustteki
+ * iletisim bolumunde zaten tam haliyle duruyor.
+ *
+ * Sosyal baglantilar ayni seridin ikinci satirinda, ikonsuz: bu tasarimda
+ * marka isaretleri yok, her sey ayni kucuk kunye yazisi. Baglanti yoksa satir
+ * hic basilmaz.
  */
 export default function Footer({ content }: SectionProps) {
-  const { name, contact } = content;
+  const { name, tagline, contact, socialLinks, t } = content;
   const year = new Date().getFullYear();
   const coords = coordinateLabel(contact.lat, contact.lng);
 
+  const mark = contact.locality ? `${name} · ${contact.locality}` : name;
+
   return (
-    <footer
-      className={`${surface} border-t border-[var(--brand-border)] brand-body`}
-    >
-      <div className={`${page} py-12 text-center`}>
-        <p className="brand-display text-2xl leading-none">{name}</p>
+    <footer className={`${surface} brand-body`}>
+      <div className={`${page} pb-16`}>
+        <div className="flex flex-wrap items-baseline justify-between gap-x-10 gap-y-3 border-t border-[var(--brand-border)] pt-5">
+          <p className={labelStrip}>{mark}</p>
 
-        {contact.address ? (
-          <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
-            {contact.address}
-          </p>
-        ) : null}
+          {tagline ? (
+            <p className={`${labelStrip} max-w-md`}>{tagline}</p>
+          ) : null}
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-[var(--brand-border)] pt-6">
-          <p className={label}>
-            © {year} {name}
+          <p className={labelStrip} dir="ltr">
+            © {year}
           </p>
+
           {coords ? (
-            <p className={label} dir="ltr">
+            <p className={`${labelStrip} w-full`} dir="ltr">
               {coords}
             </p>
+          ) : null}
+
+          {socialLinks.length > 0 ? (
+            /* Baslik gorunur degil, nav'in adi olarak veriliyor: serit tek
+               satirlik kalmali, ustune bir baslik satiri eklemek dergi
+               kunyesinin ritmini bozardi. */
+            <nav aria-label={t.social.title} className="w-full">
+              <ul className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
+                {socialLinks.map((link) => (
+                  <li key={`${link.platform}-${link.url}`}>
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={link.label}
+                      className={`${labelStrip} underline-offset-[6px] transition-colors hover:text-[var(--brand-primary)] hover:underline`}
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           ) : null}
         </div>
       </div>

@@ -3,7 +3,7 @@
 import type { Messages } from "@/i18n";
 import type { Locale } from "@/i18n/config";
 import { useContactForm } from "@/themes/_shared/useContactForm";
-import { meta } from "@/themes/kirk-yil/parts";
+import { metaMuted } from "@/themes/kirk-yil/parts";
 
 /**
  * Kırk Yıl'in formu: alanlar tek kolonda alt alta, hepsi cerceveli kutular,
@@ -13,8 +13,10 @@ import { meta } from "@/themes/kirk-yil/parts";
  * bu tasarima ait isaretleme var.
  */
 
+// Crimson Pro optik olarak kucuk bir serif; alanlar 16px'in altina inerse
+// hem okunmuyor hem de iOS'ta odakta sayfayi zumluyor.
 const field =
-  "brand-frame mt-2 w-full bg-[var(--brand-surface)] px-4 py-3 text-sm outline-none transition-colors placeholder:text-[var(--brand-ink-muted)] focus:border-[var(--brand-primary)]";
+  "brand-frame mt-2 w-full bg-[var(--brand-surface)] px-4 py-3 text-base outline-none transition-colors placeholder:text-[var(--brand-ink-muted)] focus:border-[var(--brand-primary)]";
 
 const errorText = "mt-2 text-xs text-[var(--brand-primary)]";
 
@@ -38,7 +40,7 @@ export function ContactForm({
 
       <div className="flex flex-col gap-6">
         <div>
-          <label htmlFor="contact-name" className={meta}>
+          <label htmlFor="contact-name" className={metaMuted}>
             {messages.form.name} <span aria-hidden="true">*</span>
           </label>
           <input
@@ -61,7 +63,7 @@ export function ContactForm({
 
         <div className="grid gap-6 sm:grid-cols-2">
           <div>
-            <label htmlFor="contact-phone" className={meta}>
+            <label htmlFor="contact-phone" className={metaMuted}>
               {messages.form.phone}
             </label>
             <input
@@ -79,7 +81,7 @@ export function ContactForm({
           </div>
 
           <div>
-            <label htmlFor="contact-email" className={meta}>
+            <label htmlFor="contact-email" className={metaMuted}>
               {messages.form.email}
             </label>
             <input
@@ -99,7 +101,7 @@ export function ContactForm({
         </div>
 
         <div>
-          <label htmlFor="contact-message" className={meta}>
+          <label htmlFor="contact-message" className={metaMuted}>
             {messages.form.message} <span aria-hidden="true">*</span>
           </label>
           <textarea
@@ -137,7 +139,7 @@ export function ContactForm({
       <button
         type="submit"
         disabled={form.pending}
-        className="brand-eyebrow brand-rounded mt-8 w-full bg-[var(--brand-primary)] px-6 py-4 text-xs text-[var(--brand-primary-contrast)] transition-opacity hover:opacity-85 disabled:opacity-60"
+        className="ky-btn-label brand-rounded mt-8 w-full bg-[var(--brand-primary)] px-6 py-4 text-[var(--brand-primary-contrast)] transition-opacity hover:opacity-85 disabled:opacity-60"
       >
         {form.pending ? messages.form.submitting : messages.form.submit}
       </button>

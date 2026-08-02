@@ -77,6 +77,30 @@ export type Highlight = {
   value: string;
 };
 
+/** Musteri yorumu. */
+export type Testimonial = {
+  id: number;
+  author: string;
+  text: string;
+  /** 1-5 yildiz; null ise yildiz gosterilmez. */
+  rating: number | null;
+};
+
+/** Sikca sorulan soru. */
+export type FaqItem = {
+  id: number;
+  question: string;
+  answer: string;
+};
+
+/** Sosyal medya baglantisi. `platform` bilinen bir anahtar (instagram, tiktok...). */
+export type SocialLink = {
+  platform: string;
+  /** Panelde gosterilen okunabilir ad, orn. "Instagram". */
+  label: string;
+  url: string;
+};
+
 export type LocaleOption = {
   locale: Locale;
   /** Dilin kendi adi, orn. "Español" */
@@ -117,6 +141,17 @@ export type SiteContent = {
   openingHours: OpeningHour[];
   menu: MenuCategory[];
   gallery: GalleryImage[];
+  testimonials: Testimonial[];
+  faq: FaqItem[];
+  socialLinks: SocialLink[];
+  /** Sayfanin en ustundeki duyuru; bos olabilir. */
+  announcement: string;
+  /**
+   * Bir bolumun basilip basilmayacagi. Hem musterinin panelden kapatmasini
+   * hem "icerik yoksa gizle" kuralini TEK yerde birlestirir; tema yalnizca
+   * bunu sorar:  if (!content.isVisible("yorumlar")) return null;
+   */
+  isVisible: (key: string) => boolean;
   /** CSS degisken adi -> renk. Root'a inline style olarak basilir. */
   brandColors: Record<string, string>;
   themeSlug: string;

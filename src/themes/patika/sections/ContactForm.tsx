@@ -25,7 +25,7 @@ const errorText = "mt-2 text-sm text-[var(--brand-accent)]";
  * emanet edilmemeli.
  */
 const submitButton =
-  "inline-flex items-center gap-2 brand-rounded brand-eyebrow bg-[var(--brand-primary)] px-6 py-3 text-sm text-[var(--brand-primary-contrast)] transition-opacity hover:opacity-85 disabled:opacity-60";
+  "inline-flex items-center gap-2 rounded-[var(--brand-radius-pill)] brand-eyebrow bg-[var(--brand-primary)] px-[1.625rem] py-[0.875rem] text-[0.8125rem] font-bold text-[var(--brand-primary-contrast)] transition-colors hover:bg-[var(--brand-accent)] disabled:opacity-60";
 
 export function ContactForm({
   locale,
@@ -57,7 +57,9 @@ export function ContactForm({
             required
             placeholder={messages.form.namePlaceholder}
             aria-invalid={Boolean(form.errors.name)}
-            aria-describedby={form.errors.name ? "contact-name-error" : undefined}
+            aria-describedby={
+              form.errors.name ? "contact-name-error" : undefined
+            }
             className={`${field} mt-2`}
             {...form.register("name")}
           />
@@ -142,11 +144,7 @@ export function ContactForm({
       </div>
 
       <div className="mt-8 flex flex-wrap items-center gap-4">
-        <button
-          type="submit"
-          disabled={form.pending}
-          className={submitButton}
-        >
+        <button type="submit" disabled={form.pending} className={submitButton}>
           <span>
             {form.pending ? messages.form.submitting : messages.form.submit}
           </span>

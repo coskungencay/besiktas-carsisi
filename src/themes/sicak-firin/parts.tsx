@@ -4,32 +4,70 @@ import type { ReactNode } from "react";
  * Sicak Firin'a OZEL kucuk parcalar.
  *
  * Bu tasarimin imzasi "yumusak kart": kenarlik yerine sicak tonlu ikincil zemin
- * ve tema yaricapi. Cizgi/ayrac neredeyse hic yok — mahalle firininin davetkar
- * hissi keskin kenarlardan degil, dolgulu yuzeylerden geliyor.
+ * ve tema yaricapi. Tek cizgi turu var, o da kesik/noktali ayrac — tezgahtaki
+ * el yazisi tabela hissi. Butun olculer tokens.css'ten okunur.
  */
 
-/** Tasarimin ic kenar boslugu — tum bolumlerde ayni. */
-export const shell = "mx-auto w-full max-w-[var(--brand-container)] px-5 sm:px-8";
+/** Tasarimin ic kenar boslugu — tum bolumlerde ayni (genis ekranda 48px). */
+export const shell = "mx-auto w-full max-w-[var(--brand-container)] px-5 sm:px-12";
 
 /** Bolum kabugu: ana zemin + govde rengi. */
 export const surface = "bg-[var(--brand-surface)] text-[var(--brand-ink)]";
 
-/** Yumusak kart yuzeyi: kenarliksiz, dolgulu, yuvarlak. */
+/** Yumusak kart yuzeyi: kenarliksiz, dolgulu, yuvarlak (20px). */
 export const soft = "brand-rounded bg-[var(--brand-surface-alt)]";
 
-/** Kucuk kunye yazisi (SAAT, Menu, One cikan gibi). */
-export const metaText =
-  "brand-body brand-eyebrow text-xs text-[var(--brand-ink-muted)]";
-
-/** Yuvarlak rozet kabugu; hero kunyeleri ve bolum etiketleri bunu kullanir. */
-export const chip =
-  "inline-flex items-center gap-2 brand-rounded bg-[var(--brand-surface-alt)] px-4 py-2";
+/** Buyuk bolum paneli: ayni yuzey, daha genis yaricap (26px). */
+export const panel =
+  "rounded-[var(--brand-radius-panel)] bg-[var(--brand-surface-alt)]";
 
 /**
- * Bolum basligi: ustte yuvarlak rozet icinde etiket, altinda serif baslik.
+ * Kucuk kunye yazisi (eyebrow).
+ *
+ * Tasarimda bu etiketler kutu icinde DEGIL: 12.5px, genis harf aralikli,
+ * bal tonunda duz metin. Rozet gorunumu yalnizca hero'daki tek bir satirda var.
+ */
+export const metaText =
+  "brand-body brand-eyebrow text-[length:var(--brand-text-meta)] font-medium text-[var(--brand-eyebrow-color)]";
+
+/**
+ * Form alani etiketi.
+ *
+ * Eyebrow ile ayni bicim ama marka renginde: etiketler krem PANELIN uzerinde
+ * duruyor ve bal tonu orada 12.5px icin yeterli kontrast vermiyor.
+ */
+export const fieldLabel =
+  "brand-body brand-eyebrow text-[length:var(--brand-text-meta)] font-medium text-[var(--brand-primary)]";
+
+/** Hero'daki hap rozet: ikincil zemin + tam yuvarlak kenar. */
+export const chip =
+  "inline-flex items-center gap-2.5 rounded-[var(--brand-radius-pill)] bg-[var(--brand-surface-alt)] px-4 py-2 text-[length:var(--brand-text-meta)] font-medium text-[var(--brand-primary)]";
+
+/** Hap buton — dolu (birincil eylem). */
+export const pillSolid =
+  "inline-flex items-center gap-2 rounded-[var(--brand-radius-pill)] bg-[var(--brand-primary)] px-7 py-4 text-sm font-medium text-[var(--brand-primary-contrast)] transition-colors hover:bg-[var(--brand-accent)]";
+
+/** Hap buton — ince kenarlikli (ikincil eylem). */
+export const pillGhost =
+  "inline-flex items-center gap-2 rounded-[var(--brand-radius-pill)] border border-[var(--brand-hairline)] px-7 py-4 text-sm font-medium text-[var(--brand-primary)] transition-colors hover:border-[var(--brand-primary)] hover:bg-[var(--brand-surface-alt)]";
+
+/** Govde paragrafi: 17px / 1.75, hafif agirlik — tasarimin okuma tonu. */
+export const lead =
+  "text-[length:var(--brand-lead)] leading-[var(--brand-lead-leading)] font-light text-[var(--brand-ink-soft)]";
+
+/** Kesik cizgili ayrac; menu ve saat satirlarinin arasinda. */
+export const dashedRow =
+  "border-b border-dashed border-[var(--brand-hairline-soft)] last:border-b-0";
+
+/**
+ * Bolum basligi: ustte harf araligi genis kucuk etiket, altinda slab baslik.
  *
  * `align` var cunku vitrin niteligindeki bolumler (menu, galeri) ortalanmis,
  * anlatim bolumleri (hakkimizda, iletisim) satir basindan hizali duruyor.
+ *
+ * `size` tasarimin iki basamakli baslik olcegini tasiyor: anlatim bolumleri
+ * 46px ("lg"), vitrin bolumleri 38px ("md"). Tek olcek kullanmak sayfayi
+ * duzlestiriyordu.
  */
 export function SectionHead({
   eyebrow,
@@ -37,6 +75,7 @@ export function SectionHead({
   titleId,
   intro,
   align = "start",
+  size = "lg",
   children,
 }: {
   eyebrow: string;
@@ -44,9 +83,14 @@ export function SectionHead({
   titleId: string;
   intro?: string;
   align?: "start" | "center";
+  size?: "lg" | "md";
   children?: ReactNode;
 }) {
   const centered = align === "center";
+  const titleScale =
+    size === "md"
+      ? "text-[length:var(--brand-h3)] tracking-[var(--brand-h3-tracking)]"
+      : "text-[length:var(--brand-h2)] tracking-[var(--brand-h2-tracking)]";
 
   return (
     <div
@@ -56,17 +100,19 @@ export function SectionHead({
           : "flex flex-col items-start text-start"
       }
     >
-      <p className={`${chip} ${metaText}`}>{eyebrow}</p>
+      <p className={metaText}>{eyebrow}</p>
 
       <h2
         id={titleId}
-        className="brand-display mt-5 text-3xl leading-[1.15] text-balance sm:text-4xl"
+        className={`brand-display mt-3 leading-[var(--brand-h2-leading)] text-balance ${titleScale}`}
       >
         {title}
       </h2>
 
       {intro ? (
-        <p className="mt-4 max-w-xl text-base leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
+        <p
+          className={`${lead} mt-6 max-w-[26rem] text-pretty`}
+        >
           {intro}
         </p>
       ) : null}

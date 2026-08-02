@@ -8,10 +8,13 @@ import { shell } from "@/themes/sicak-firin/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Yumusak ust serit.
+ * Ince ust serit.
  *
- * Alt kenarlik YOK: serit ikincil zemine oturuyor, sayfanin ustunde sicak bir
- * bant birakiyor. Cizgi eklemek bu temanin "kenarliksiz" hissini bozar.
+ * Tasarimda serit sayfa zemininin uzerinde duruyor ve altinda TEK bir kesik
+ * cizgi var — dolgulu bir bant degil. Kesik cizgi bu temanin tek ayrac turu;
+ * duz cizgi kullanmak mahalle firininin el yapimi hissini soguturdu.
+ *
+ * sf-fade: acilista serit sayfayla birlikte belirir (CSS, JS beklemez).
  */
 export default function Header({ content }: SectionProps) {
   const { name, logoUrl, t } = content;
@@ -20,6 +23,14 @@ export default function Header({ content }: SectionProps) {
    * Bolumler icerik bosken kendini basmiyor (About, Menu, Gallery). Nav de ayni
    * kosullari kullanmali; yoksa musteri galeri yuklemeden yayina alinca "Galeri"
    * linki hicbir yere gitmeyen kirik bir capa olur.
+   *
+   * Galeri icin gallery.length yerine isVisible("galeri") soruluyor: musteri
+   * bolumu panelden kapattiginda gorseller dururken bolum basilmiyor, link de
+   * onunla birlikte gitmeli.
+   *
+   * Yeni bolumler (yorumlar, sss, konum) nav'a EKLENMEDI: serit tasarimda dort
+   * baglantiyla dengede duruyor, yedi baglantı ikinci satira tasip ust seridi
+   * kalinlastirirdi.
    */
   const links = [
     (content.about || content.openingHours.length > 0) && {
@@ -27,12 +38,17 @@ export default function Header({ content }: SectionProps) {
       label: t.about.title,
     },
     hasMenu(content) && { href: "#menu", label: t.menu.eyebrow },
-    content.gallery.length > 0 && { href: "#galeri", label: t.gallery.eyebrow },
+    content.isVisible("galeri") && {
+      href: "#galeri",
+      label: t.gallery.eyebrow,
+    },
     { href: "#iletisim", label: t.contact.eyebrow },
   ].filter((link): link is { href: string; label: string } => Boolean(link));
 
   return (
-    <header className="brand-body bg-[var(--brand-surface-alt)] text-[var(--brand-ink)]">
+    <header
+      className="sf-fade brand-body border-b border-dashed border-[var(--brand-hairline)] bg-[var(--brand-surface)] text-[var(--brand-ink)]"
+    >
       <div
         className={`${shell} flex flex-wrap items-center justify-between gap-x-8 gap-y-4 py-5`}
       >
@@ -46,19 +62,26 @@ export default function Header({ content }: SectionProps) {
               className="brand-rounded size-11 object-cover"
             />
           ) : (
-            <CupIcon className="size-9 text-[var(--brand-primary)]" />
+            <CupIcon className="size-8 text-[var(--brand-primary)]" />
           )}
-          <span className="brand-display text-lg sm:text-xl">{name}</span>
+          <span className="brand-display text-xl font-semibold tracking-[-0.01em]">
+            {name}
+            {/* Tasarimin imzasi: marka adinin sonundaki vurgu noktasi. Icerik
+                degil susleme oldugu icin ekran okuyucudan gizli. */}
+            <span aria-hidden="true" className="text-[var(--brand-accent)]">
+              .
+            </span>
+          </span>
         </a>
 
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+        <div className="flex flex-wrap items-center gap-x-7 gap-y-3">
           <nav aria-label={name}>
-            <ul className="flex flex-wrap items-center gap-x-1 gap-y-1 text-sm">
+            <ul className="flex flex-wrap items-center gap-x-7 gap-y-2 text-[length:var(--brand-text-nav)]">
               {links.map((link) => (
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className="brand-rounded block px-3 py-2 text-[var(--brand-ink-muted)] transition-colors hover:bg-[var(--brand-surface)] hover:text-[var(--brand-ink)]"
+                    className="block text-[var(--brand-nav-ink)] transition-colors hover:text-[var(--brand-accent)]"
                   >
                     {link.label}
                   </a>

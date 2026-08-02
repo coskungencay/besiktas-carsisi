@@ -51,6 +51,27 @@ const tr = {
     email: "E-posta",
     instagram: "Instagram",
   },
+  testimonials: {
+    eyebrow: "Yorumlar",
+    title: "Müşterilerimiz ne diyor?",
+    ratingLabel: "{rating} / 5 yıldız",
+  },
+  faq: {
+    eyebrow: "Sıkça sorulanlar",
+    title: "Merak edilenler",
+  },
+  location: {
+    eyebrow: "Konum",
+    title: "Bizi burada bulabilirsiniz",
+    directions: "Yol tarifi al",
+    mapAlt: "{name} konumunu gösteren harita",
+  },
+  social: {
+    title: "Bizi takip edin",
+  },
+  whatsapp: {
+    label: "WhatsApp'tan yazın",
+  },
   form: {
     name: "Ad Soyad",
     namePlaceholder: "Adınız ve soyadınız",

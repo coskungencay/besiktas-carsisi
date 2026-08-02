@@ -10,8 +10,11 @@ import {
 import type { SectionProps } from "@/themes/types";
 
 export default function Gallery({ content }: SectionProps) {
+  // Musteri galeriyi panelden kapatabilir; "gorsel var mi" kontrolu de
+  // isVisible icinde, tek yerde.
+  if (!content.isVisible("galeri")) return null;
+
   const images = content.gallery;
-  if (images.length === 0) return null;
 
   const { t } = content;
 

@@ -24,21 +24,234 @@ html[data-theme="vela"] {
   --brand-ink-muted: #9A958C;
   --brand-border: #26242A;
 
-  /* --- Tipografi (harici font yok; sistem yigini) --- */
-  --brand-font-display: Georgia, 'Times New Roman', serif;
-  --brand-font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /*
+   * Acik zeminli (krem) panelde kullanilan koyu altin.
+   *
+   * NEDEN TUREV: tasarimda bu renk #9A7B3E; sabit yazsaydik musteri panelden
+   * altin tonunu degistirdiginde panel icindeki etiketler eski tonda kalirdi.
+   * color-mix ile primary'den turetiliyor, yani otomatik takip ediyor.
+   */
+  --brand-primary-deep: color-mix(in srgb, var(--brand-primary) 74%, var(--brand-surface) 26%);
+
+  /*
+   * Tasarimdaki saydam ayraclar ve panel cercevesi.
+   * Hepsi marka renklerinden turetildi; boylece renk paleti panelden
+   * degistiginde ayraclar da birlikte kayar.
+   */
+  --brand-rule-soft: color-mix(in srgb, var(--brand-ink) 12%, transparent);
+  --brand-rule-on-accent: color-mix(in srgb, var(--brand-surface) 12%, transparent);
+  --brand-frame-gold: color-mix(in srgb, var(--brand-primary) 20%, transparent);
+  --brand-ink-on-accent-muted: color-mix(in srgb, var(--brand-surface) 55%, var(--brand-accent));
+
+  /*
+   * Konum bolumundeki SOYUT harita dokusu.
+   *
+   * NEDEN GOMULU HARITA YOK: Google/OSM iframe'i her ziyaretcide harici bir
+   * istek (KVKK) ve agir bir yuk demek. Tasarimin iletisim kosesindeki kucuk
+   * "cizgi kesisimi" dokusu buyutulup kullanildi: birbirini kesen ince
+   * cizgiler bir sokak semasini ima eder, veri iddiasi tasimaz.
+   *
+   * Renkler marka degiskenlerinden turetildi; palet panelden degisince doku
+   * da birlikte kayar.
+   */
+  --brand-map-texture:
+    linear-gradient(
+      112deg,
+      transparent 45%,
+      color-mix(in srgb, var(--brand-primary) 22%, transparent) 45.4%,
+      color-mix(in srgb, var(--brand-primary) 22%, transparent) 46.2%,
+      transparent 46.6%
+    ),
+    linear-gradient(
+      18deg,
+      transparent 63%,
+      color-mix(in srgb, var(--brand-ink) 12%, transparent) 63.3%,
+      color-mix(in srgb, var(--brand-ink) 12%, transparent) 64.1%,
+      transparent 64.4%
+    ),
+    linear-gradient(
+      74deg,
+      transparent 26%,
+      color-mix(in srgb, var(--brand-ink) 8%, transparent) 26.3%,
+      color-mix(in srgb, var(--brand-ink) 8%, transparent) 27%,
+      transparent 27.3%
+    ),
+    linear-gradient(
+      158deg,
+      transparent 71%,
+      color-mix(in srgb, var(--brand-primary) 12%, transparent) 71.3%,
+      color-mix(in srgb, var(--brand-primary) 12%, transparent) 72%,
+      transparent 72.3%
+    );
+
+  /*
+   * --- Tipografi ---
+   * Tasarimin font cifti: Bodoni Moda (baslik, serif — italik vurgular da
+   * buradan) + Manrope (govde). Ikisi de next/font ile paketleniyor
+   * (src/themes/fonts.ts); yiginin sonundaki sistem yedegi Arapca icin sart,
+   * cunku bu ailelerde Arapca glif yok.
+   */
+  --brand-font-display: var(--font-bodoni), "Bodoni Moda", Georgia, "Times New Roman", serif;
+  --brand-font-body: var(--font-manrope), system-ui, -apple-system, "Segoe UI", sans-serif;
   --brand-display-weight: 400;
 
   /* --- Kucuk etiketler (eyebrow, rozet) --- */
   --brand-eyebrow-tracking: 0.3em;
   --brand-eyebrow-transform: uppercase;
 
+  /*
+   * Tasarimda uc ayri harf araligi var; hepsi "eyebrow" degil:
+   *  - nav / kucuk meta satirlari .22em
+   *  - buton ve kunye .24em
+   *  - marka adi (wordmark) .44em
+   */
+  --brand-nav-tracking: 0.22em;
+  --brand-meta-tracking: 0.24em;
+  --brand-wordmark-tracking: 0.44em;
+
   /* --- Bicim --- */
   --brand-radius: 0rem;
   --brand-border-width: 1px;
 
-  /* --- Olcek --- */
-  --brand-container: 1280px;
-  --brand-section-py: 4rem;
-  --brand-section-py-lg: 6rem;
+  /*
+   * --- Olcek ---
+   * Tasarim 1440px genisliginde, saglı sollu 60px bosluk ve max-width YOK.
+   * Container'i 1560'a cekince 1440'ta pratikte kenardan kenara aciliyor,
+   * cok genis ekranlarda ise satir uzunlugu kontrolde kaliyor.
+   * Bolum bosluklari tasarimdaki 104-118px'e karsilik geliyor.
+   */
+  --brand-container: 1560px;
+  --brand-section-py: 4.5rem;
+  --brand-section-py-lg: 7.375rem;
+}
+
+/*
+ * Govde yazisi tasarimda 300 (Light) agirlikta; Manrope degisken font oldugu
+ * icin ek dosya indirilmiyor. Bu incelik "butik" hissin yarisi.
+ */
+html[data-theme="vela"] body {
+  font-weight: 300;
+}
+
+/*
+ * Arapca istisnasi.
+ *
+ * globals.css yalnizca --brand-eyebrow-tracking'i sifirliyor; Vela'nin kendi
+ * uc harf araligi token'i (nav / meta / wordmark) o kuralin disinda kaliyordu.
+ * Arapca bitisik yazilan bir alfabe: 0.44em'lik marka adi ya da 0.22em'lik
+ * nav, harfleri birbirinden koparip metni okunamaz hale getiriyordu.
+ * Secici globals'takinden daha ozgul oldugu icin dosya sirasindan bagimsiz
+ * kazanir.
+ */
+html[data-theme="vela"][lang="ar"] {
+  --brand-nav-tracking: 0;
+  --brand-meta-tracking: 0;
+  --brand-wordmark-tracking: 0;
+}
+
+/* --------------------------------------------------------------------------
+ * Acilis animasyonlari
+ *
+ * Tasarimdaki @keyframes tanimlarinin birebir kopyasi. Saf CSS olduklari icin
+ * SSR ile ilk boyamada calisirlar; JS beklemezler. Yalnizca opacity/transform
+ * degistirirler, yani layout kaymasi (CLS) uretmezler.
+ * prefers-reduced-motion globals.css'te tum animasyonlari kapatiyor.
+ * -------------------------------------------------------------------------- */
+
+@keyframes vlUp {
+  from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes vlFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes vlRule {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes vlZoom {
+  from { opacity: 0; transform: scale(1.06); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Ust serit: sadece opaklik — kaydirmak menuyu titretirdi. */
+html[data-theme="vela"] .vl-fade {
+  animation: vlFade 1.2s 0.2s both;
+}
+
+/* Basligin altindaki kucuk etiket; cizgiden hemen once girer. */
+html[data-theme="vela"] .vl-up-early {
+  animation: vlUp 1.2s 0.35s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+/* Ana baslik. */
+html[data-theme="vela"] .vl-up {
+  animation: vlUp 1.2s 0.5s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+/* Basligin yanindaki dar kolon; baslik yerine oturduktan sonra gelir. */
+html[data-theme="vela"] .vl-up-late {
+  animation: vlUp 1.2s 0.8s both;
+}
+
+/*
+ * Cizilen altin cizgi. transform-origin mantiksal bir ozellik degil, bu yuzden
+ * RTL (Arapca) icin ayrica cevriliyor; yoksa cizgi ters yonden cizilirdi.
+ */
+html[data-theme="vela"] .vl-rule {
+  transform-origin: left center;
+  animation: vlRule 1.4s 0.6s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+html[data-theme="vela"][dir="rtl"] .vl-rule {
+  transform-origin: right center;
+}
+
+/* Hero gorseli: hafif ic zoom. overflow-hidden bir sarmalayici sart. */
+html[data-theme="vela"] .vl-zoom {
+  animation: vlZoom 1.8s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+/* --------------------------------------------------------------------------
+ * SSS (details/summary)
+ *
+ * Tarayicinin varsayilan ucgen isareti temanin diline hic uymuyor; yerine
+ * bilesende altin bir arti isareti ciziliyor. Marker'i gizlemek icin iki
+ * kural gerekli: modern tarayicilar `list-style`, WebKit ise kendi
+ * sozde-elemani.
+ * -------------------------------------------------------------------------- */
+
+html[data-theme="vela"] .vl-summary {
+  list-style: none;
+}
+
+html[data-theme="vela"] .vl-summary::-webkit-details-marker {
+  display: none;
+}
+
+/*
+ * Acilan cevap: yalnizca opaklik. details kapaliyken icerik display:none
+ * oldugu icin animasyon her acilista bastan calisir; kaydirma efekti
+ * verseydik altindaki sorular zipladigi hissi verirdi.
+ */
+html[data-theme="vela"] .vl-answer {
+  animation: vlFade 0.45s ease both;
+}
+
+/*
+ * Konum panelindeki soyut harita dokusu ve uzerindeki altin nokta.
+ * Nokta halkasi box-shadow ile; boylece yer kaplamaz ve dokuyu kaydirmaz.
+ */
+html[data-theme="vela"] .vl-map {
+  background-image: var(--brand-map-texture);
+}
+
+html[data-theme="vela"] .vl-pin {
+  border-radius: 50%;
+  box-shadow: 0 0 0 0.375rem
+    color-mix(in srgb, var(--brand-primary) 20%, transparent);
 }

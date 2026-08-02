@@ -1,6 +1,5 @@
 import Image from "next/image";
 
-import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import {
   HERO_FALLBACK,
@@ -13,7 +12,7 @@ import {
   Ornament,
   Passepartout,
   column,
-  meta,
+  metaMuted,
   shell,
   surface,
 } from "@/themes/kirk-yil/parts";
@@ -25,6 +24,11 @@ import type { SectionProps } from "@/themes/types";
  *
  * Baslik `heroHeadline`ten gelir; musteri panelde bos biraktiysa icerik katmani
  * isletme adini koyar, yani burada asla bos olmaz.
+ *
+ * ANIMASYON: hero'da <Reveal> YOK. Acilis hareketi tokens.css'teki ky-*
+ * siniflarindan geliyor (kyWide/kyUp/kyFade/kyStamp); boylece ilk ekran
+ * JavaScript beklemeden, SSR'dan gelen boyamayla birlikte oynar. Reveal
+ * sayfanin asagisindaki bolumlerde kaliyor.
  */
 export default function Hero({ content }: SectionProps) {
   const { heroHeadline, heroSubline, contact, heroImageUrl, name, tagline, t } =
@@ -33,79 +37,90 @@ export default function Hero({ content }: SectionProps) {
   const highlights = highlightsOrDerived(content);
   /*
    * Baslik ustundeki "est." satiri: once semt/sehir. Slogan zaten hemen
-   * yukarida tabelanin altinda basiliyor; ayni satiri iki kez ust uste
+   * yukarida tabelanin altinda basiliyor; ayni satiri iki kez ust ust
    * gostermek tabela hissini bozuyordu. Slogan sadece semt yoksa devreye girer.
    */
   const eyebrow = contact.locality || tagline;
 
+  /*
+   * Yuvarlak muhur (tasarimdaki "40 / yildir" rozeti) yalnizca KISA bir
+   * kunyeyle calisir; "07:00 — 23:00" gibi uzun degerler daireyi patlatir.
+   * Sigmayacaksa rozet hic basilmaz — icerik DB'den geldigi icin uzunluga
+   * guvenemeyiz.
+   */
+  const stamp = highlights.find(
+    (highlight) => highlight.value.length <= 8 && highlight.label.length <= 14,
+  );
+
   return (
     <section id="hero" aria-labelledby="hero-title" className={surface}>
-      <div className={`${shell} pt-14 pb-16 sm:pt-20 sm:pb-24`}>
-        <Reveal>
-          <div className={`${column} text-center`}>
-            {eyebrow ? <p className={meta}>{eyebrow}</p> : null}
+      {/*
+        Alt bosluk yok: tasarimda gorsel bolumun kenarinda bitiyor, dikey
+        araligi bir sonraki bolumun kendi ust boslugu veriyor.
+      */}
+      <div className={`${shell} pt-12 pb-0 sm:pt-16`}>
+        <div className={`${column} text-center`}>
+          {eyebrow ? (
+            /* Tasarim: 12.5px / .28em — bolum kunyelerinden bir tik buyuk. */
+            <p className="brand-body ky-hero-eyebrow ky-wide text-[var(--brand-primary)]">
+              {eyebrow}
+            </p>
+          ) : null}
 
-            <h1
-              id="hero-title"
-              className="brand-display mt-6 text-[clamp(2.5rem,7vw,4.75rem)] leading-[1.05] text-balance"
-            >
-              {heroHeadline}
-            </h1>
+          <h1
+            id="hero-title"
+            className="brand-display ky-h1 ky-up mt-[22px] text-balance"
+          >
+            {heroHeadline}
+          </h1>
 
-            {heroSubline ? (
-              <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
-                {heroSubline}
-              </p>
-            ) : null}
+          <Ornament wide className="ky-fade-slow mt-6" />
 
-            <Ornament className="mt-8" />
-          </div>
-        </Reveal>
+          {heroSubline ? (
+            <p className="ky-lead ky-up-2 mx-auto mt-[26px] max-w-[40rem] text-pretty text-[var(--brand-ink-muted)]">
+              {heroSubline}
+            </p>
+          ) : null}
+        </div>
 
         {highlights.length > 0 ? (
-          <Reveal delay={0.08}>
-            {/*
-              Kunyeler tek satirda ve aralarinda dikey ayrac; dar ekranda alta
-              sariyor. Ayraclar ilk ogeden sonra basildigi icin RTL'de de dogru
-              tarafta kalir.
-            */}
-            <dl
-              className={`${column} mt-8 flex flex-wrap items-baseline justify-center gap-x-4 gap-y-3`}
-            >
-              {highlights.map((highlight, index) => (
-                <div key={index} className="flex items-baseline gap-3">
-                  {index > 0 ? (
-                    <span
-                      aria-hidden="true"
-                      className="text-[var(--brand-accent)]"
-                    >
-                      |
-                    </span>
-                  ) : null}
-                  <dt className={meta}>{highlight.label}</dt>
-                  <dd className="text-sm">{highlight.value}</dd>
-                </div>
-              ))}
-            </dl>
-          </Reveal>
+          /*
+            Kunyeler tek satirda ve aralarinda dikey ayrac; dar ekranda alta
+            sariyor. Ayraclar ilk ogeden sonra basildigi icin RTL'de de dogru
+            tarafta kalir.
+          */
+          <dl
+            className={`${column} ky-up-3 mt-8 flex flex-wrap items-baseline justify-center gap-x-4 gap-y-3`}
+          >
+            {highlights.map((highlight, index) => (
+              <div key={index} className="flex items-baseline gap-3">
+                {index > 0 ? (
+                  <span aria-hidden="true" className="text-[var(--brand-accent)]">
+                    |
+                  </span>
+                ) : null}
+                <dt className={metaMuted}>{highlight.label}</dt>
+                <dd className="text-sm">{highlight.value}</dd>
+              </div>
+            ))}
+          </dl>
         ) : null}
 
         {hasMenu(content) ? (
-          <Reveal delay={0.1}>
-            <p className="mt-10 text-center">
-              <a
-                href="#menu"
-                className="brand-frame brand-eyebrow inline-flex items-center gap-3 border-[var(--brand-primary)] px-7 py-3 text-xs text-[var(--brand-primary)] transition-colors hover:bg-[var(--brand-primary)] hover:text-[var(--brand-primary-contrast)]"
-              >
-                <span>{t.hero.viewMenu}</span>
-                <ArrowIcon className="size-3.5" />
-              </a>
-            </p>
-          </Reveal>
+          <p className="ky-up-4 mt-[34px] text-center">
+            <a
+              href="#menu"
+              className="brand-frame ky-btn-label inline-flex items-center gap-3 border-[var(--brand-primary)] px-8 py-[15px] text-[var(--brand-primary)] transition-colors hover:bg-[var(--brand-primary)] hover:text-[var(--brand-primary-contrast)]"
+            >
+              <span>{t.hero.viewMenu}</span>
+              <ArrowIcon className="size-3.5" />
+            </a>
+          </p>
         ) : null}
 
-        <Reveal delay={0.12}>
-          <Passepartout className="mx-auto mt-14 max-w-5xl">
+        {/* Muhur mutlak konumlandigi icin cerceve goreli bir kutuya sarildi. */}
+        <div className="relative mx-auto mt-[62px] max-w-5xl">
+          <Passepartout className="ky-fade-frame">
             <div className="relative aspect-[4/3] sm:aspect-[16/9]">
               <Image
                 src={imageOrFallback(heroImageUrl, HERO_FALLBACK)}
@@ -117,7 +132,18 @@ export default function Hero({ content }: SectionProps) {
               />
             </div>
           </Passepartout>
-        </Reveal>
+
+          {stamp ? (
+            /*
+              Dar ekranda gizli: 150px'lik daire gorselin ustune tasip
+              basligi kapatiyordu. end-* kullanildigi icin RTL'de sola gecer.
+            */
+            <div className="ky-stamp absolute -top-9 end-[-8px] hidden size-[150px] flex-col items-center justify-center rounded-full border-2 border-[var(--brand-primary)] bg-[var(--brand-surface)] px-4 text-center text-[var(--brand-primary)] sm:flex">
+              <span className="brand-display ky-stat">{stamp.value}</span>
+              <span className="ky-stamp-label mt-2">{stamp.label}</span>
+            </div>
+          ) : null}
+        </div>
       </div>
     </section>
   );

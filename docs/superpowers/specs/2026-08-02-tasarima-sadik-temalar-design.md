@@ -203,6 +203,31 @@ Elle yakalanan ve düzeltilen üç sorun:
   kuyruklarının alt satıra girmesine yol açıyordu.
 - `placeholder`'ın hero CTA'sı menü boşken bile `#menu`'ye gidiyordu (kırık çapa).
 
+## Ucuncu tur: tasarima hizalama + yeni bolumler (2026-08-02)
+
+Kullanici orijinal tasarim dosyalarini (`.dc.html`) ulastirinca iki tur daha yapildi.
+
+**Hizalama.** 8 tema kendi tasarim dosyasiyla karsilastirilarak revize edildi.
+En buyuk fark tipografiydi: her tasarimin kendi Google Font cifti var, kod ise
+sistem fontuna dusuyordu. `src/themes/fonts.ts` eklendi (16 font, `next/font`
+ile self-host, `preload: false`). Tasarimlarin acilis animasyonlari (`boFade`,
+`meraUp`, `pkPop`…) temalarin `tokens.css`'ine tasindi — CSS oldugu icin SSR
+ciktisiyla birlikte basliyor, `Reveal` gibi JS beklemiyor. Yer tutucu gorseller
+notr griye cevrildi.
+
+**Yeni bolumler.** Musteriye "hazir websiten" diye gidilecegi icin 5 bolum ince
+kaliyordu. 9 temaya eklendi: **Yorumlar** (sosyal kanit), **S.S.S.**
+(`details/summary`, JS gerektirmez), **Konum** (gomulu harita YOK — harici
+istek/KVKK; adres + koordinat + yol tarifi baglantisi). Footer'a sosyal medya
+baglantilari, sayfaya sabit WhatsApp butonu ve duyuru seridi geldi.
+
+**Gorunurluk.** `site_settings.hiddenSections` KAPALI bolumleri tutar; tema
+`content.isVisible(key)` sorar. Tek cagri hem "musteri kapatti mi" hem "icerik
+var mi" sorusunu yanitlar, ve yeni bolum eklendiginde mevcut kurulumlarda
+otomatik acik gelir.
+
+`pnpm new:customer` artik `fonts.ts`'i de tek temaya indiriyor (16 font -> 2).
+
 ## Kapsam dışı
 
 - Kalan 7 temanın tasarıma sadık yeniden yazımı (ayrı turlar).

@@ -2,7 +2,8 @@
  * Yeşil Avlu — botanik, yumuşak
  *
  * Bu dosya temanin TEK gorsel kaynagidir. Bilesenlerde sabit renk, radius,
- * font veya harf araligi YOKTUR; hepsi buradaki degiskenlerden okunur.
+ * font veya harf araligi YOKTUR; hepsi buradaki degiskenlerden ya da
+ * buradaki .ya-* siniflarindan okunur.
  *
  * DIKKAT: secici html[data-theme] olmali — :root fallback ile ayni
  * ozgullukte olmasi durumunda dosya sirasi yuzunden tema uygulanmaz.
@@ -24,21 +25,302 @@ html[data-theme="yesil-avlu"] {
   --brand-ink-muted: #7A8B72;
   --brand-border: #DDE2D2;
 
-  /* --- Tipografi (harici font yok; sistem yigini) --- */
-  --brand-font-display: Georgia, 'Times New Roman', serif;
-  --brand-font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /*
+   * --- Tipografi ---
+   * Tasarimin font cifti: Cormorant Garamond (baslik, 300 + italik) ve
+   * Jost (govde, 300/400). Ikisi de next/font ile self-host ediliyor
+   * (src/themes/fonts.ts); burada yalnizca degiskenleri baglaniyor.
+   *
+   * Yigin sonundaki sistem yedegi ZORUNLU: bu iki fontta Arapca glif yok,
+   * Arapca sayfa kendiliginden yedege duser.
+   */
+  --brand-font-display: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  --brand-font-body: var(--font-jost), system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Tasarimdaki tum Cormorant basliklari 300 (light) agirlikta. */
   --brand-display-weight: 300;
 
+  /*
+   * Accent'in koyu zemindeki (.ya-grove) turevini hesaplayabilmek icin
+   * sabit bir kopya. Dogrudan --brand-accent uzerinden color-mix yapmak
+   * ayni ozellige geri referans olurdu (dongusel, gecersiz).
+   */
+  --ya-accent-base: var(--brand-accent);
+
   /* --- Kucuk etiketler (eyebrow, rozet) --- */
-  --brand-eyebrow-tracking: 0.28em;
+  /* Tasarimda bolum etiketleri .3em; nav, kunye seridi ve hero kickeri
+     farkli ritimlerde, o yuzden ayri degiskenler. */
+  --brand-eyebrow-tracking: 0.3em;
   --brand-eyebrow-transform: uppercase;
+  --ya-track-nav: 0.14em;
+  --ya-track-meta: 0.16em;
+  --ya-track-kicker: 0.34em;
 
   /* --- Bicim --- */
-  --brand-radius: 1.5rem;
+  --brand-radius: 1.25rem; /* tasarimdaki kart/kutu yaricapi: 20-22px */
   --brand-border-width: 1px;
 
   /* --- Olcek --- */
-  --brand-container: 1280px;
-  --brand-section-py: 4rem;
-  --brand-section-py-lg: 6rem;
+  /*
+   * Tasarim 1440px tuvalde tam genislikte akiyor, yanlarda 52px bosluk var;
+   * yani icerik seridi 1336px. Kapsayici padding'i de icerdigi icin sinir
+   * 1440px yaziliyor — 1280px'te hero kemeri ve galeri tasarimdakinden
+   * 160px dar kaliyordu.
+   */
+  --brand-container: 1440px;
+  --brand-gutter: 3.25rem; /* tasarimdaki 52px yan bosluk */
+  /* Tasarimda bolumler arasi bosluk 130px. Komsu iki bolum de kendi
+     padding'ini koydugu icin degerin YARISI yaziliyor. */
+  --brand-section-py: 3.25rem;
+  --brand-section-py-lg: 4.0625rem;
+}
+
+/*
+ * Arapca: letter-spacing bitisik harfleri ayirdigi icin kucuk etiket
+ * ritimleri sifirlanir (globals.css --brand-eyebrow-tracking icin ayni seyi
+ * yapiyor; buradakiler tema-ozel degiskenler oldugu icin ayrica gerekiyor).
+ */
+html[lang="ar"][data-theme="yesil-avlu"] {
+  --ya-track-nav: 0;
+  --ya-track-meta: 0;
+  --ya-track-kicker: 0;
+}
+
+/* --------------------------------------------------------------------------
+ * Kucuk etiket receteleri
+ * Tasarimdaki uc ayri kucuk-metin olcusu. Sinif olarak veriliyor ki
+ * bilesende sabit px/tracking yazmak zorunda kalmayalim.
+ * -------------------------------------------------------------------------- */
+
+/* Ust serit navigasyonu: 12.5px / .14em */
+html[data-theme="yesil-avlu"] .ya-nav {
+  font-size: 0.78125rem;
+  font-weight: 400;
+  letter-spacing: var(--ya-track-nav);
+  text-transform: uppercase;
+}
+
+/* Hero altindaki kunye seridi: 12px / .16em */
+html[data-theme="yesil-avlu"] .ya-meta {
+  font-size: 0.75rem;
+  letter-spacing: var(--ya-track-meta);
+  text-transform: uppercase;
+}
+
+/* Hero'nun tepesindeki yer/yil satiri: 11.5px / .34em */
+html[data-theme="yesil-avlu"] .ya-kicker {
+  font-size: 0.71875rem;
+  letter-spacing: var(--ya-track-kicker);
+  text-transform: uppercase;
+}
+
+/*
+ * Serif aksanlar icin normal agirlik.
+ * Tasarimda 300 (light) SADECE buyuk basliklarda (h1 92px, h2 56-62px);
+ * kucuk serif ogeler (marka adi 17px, menu kategorisi 26px, sayilar 38px,
+ * kapanis satiri 19px) govdenin varsayilan 400'unu kullaniyor. Light agirlik
+ * bu olculerde soluk kaliyordu.
+ *
+ * Sinif olarak veriliyor cunku brand-display utility'si
+ * --brand-display-weight (300) basiyor; html[data-theme] ... .sinif secicisi
+ * ondan daha ozgul oldugu icin siralamadan bagimsiz kazanir.
+ */
+html[data-theme="yesil-avlu"] .ya-serif-book {
+  font-weight: 400;
+}
+
+/* Marka adi (ust serit): Cormorant 17px / .34em */
+html[data-theme="yesil-avlu"] .ya-wordmark {
+  letter-spacing: var(--ya-track-kicker);
+  text-transform: uppercase;
+}
+
+/*
+ * Butonlar. Tasarimda dugmeler 100px yaricapli hap seklinde; bu tek yer
+ * --brand-radius'tan bagimsiz, o yuzden ayri bir sinif.
+ */
+html[data-theme="yesil-avlu"] .ya-pill {
+  border-radius: 100px;
+}
+
+/* --------------------------------------------------------------------------
+ * Kemer (avlu) bicimi
+ * Tasarimin imzasi: ust kenari yarim daireye yakin, alt kenari hafif
+ * yuvarlatilmis gorsel cercevesi. Piksel yerine YUZDE yaricap kullaniliyor;
+ * boylece kemer her ekran genisliginde ayni oranda kaliyor.
+ * -------------------------------------------------------------------------- */
+
+/* Genis hero gorseli: tasarimda 340px / 1336x640 kutu. */
+html[data-theme="yesil-avlu"] .ya-arch {
+  border-radius: 25% 25% var(--brand-radius) var(--brand-radius) /
+    52% 52% var(--brand-radius) var(--brand-radius);
+}
+
+/* Galeri karesi: tasarimda 170px / 430x340 kutu (tam yarim daire). */
+html[data-theme="yesil-avlu"] .ya-arch-sm {
+  border-radius: 40% 40% var(--brand-radius) var(--brand-radius) /
+    50% 50% var(--brand-radius) var(--brand-radius);
+}
+
+/* --------------------------------------------------------------------------
+ * Soru-cevap acilir satiri (SSS)
+ * <details> JavaScript istemeyen tek erisilebilir acilir-kapanir oge; ama
+ * tarayicinin varsayilan ucgeni bu tasarimin diline ait degil. Ucgen gizlenip
+ * yerine iki ince cizgiden olusan arti isareti konuyor: acikken dikey cizgi
+ * kayboluyor, geriye eksi kaliyor. Cizgiler --brand-accent'ten okundugu icin
+ * marka rengi degisince isaret de degisiyor.
+ * -------------------------------------------------------------------------- */
+html[data-theme="yesil-avlu"] .ya-faq > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+/* Safari ucgeni ::marker'i degil bu eski sozde-ogeyi kullaniyor. */
+html[data-theme="yesil-avlu"] .ya-faq > summary::-webkit-details-marker {
+  display: none;
+}
+
+html[data-theme="yesil-avlu"] .ya-faq-mark {
+  position: relative;
+  display: block;
+  /* flex satirinda uzun sorular isareti ezmesin. */
+  flex: none;
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+html[data-theme="yesil-avlu"] .ya-faq-mark::before,
+html[data-theme="yesil-avlu"] .ya-faq-mark::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  /* 1px cizgiyi tam ortalamak icin yariminin kadar yukari. */
+  top: calc(50% - 0.5px);
+  width: 100%;
+  height: 1px;
+  background: var(--brand-accent);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+html[data-theme="yesil-avlu"] .ya-faq-mark::after {
+  transform: rotate(90deg);
+}
+
+html[data-theme="yesil-avlu"] .ya-faq[open] .ya-faq-mark::after {
+  transform: rotate(0deg);
+  opacity: 0;
+}
+
+/* --------------------------------------------------------------------------
+ * Avlu krokisi (konum bolumu)
+ * Gomulu harita yerine tasarimdaki soyut plan dokusu: iki egik yol cizgisi ve
+ * bir yesillik lekesi. Renkler color-mix ile marka renklerinden turetiliyor,
+ * boylece panelden renk degistiginde kroki de uyum saglar. Tamamen dekoratif
+ * oldugu icin bilesende aria-hidden ile isaretleniyor.
+ * -------------------------------------------------------------------------- */
+html[data-theme="yesil-avlu"] .ya-plot {
+  --ya-plot-line: color-mix(in srgb, var(--brand-primary) 13%, transparent);
+  --ya-plot-line-soft: color-mix(in srgb, var(--brand-primary) 10%, transparent);
+  --ya-plot-leaf: color-mix(in srgb, var(--ya-accent-base) 26%, transparent);
+
+  background-color: var(--brand-surface-alt);
+  background-image:
+    linear-gradient(
+      122deg,
+      transparent 40%,
+      var(--ya-plot-line) 40.4%,
+      var(--ya-plot-line) 41.2%,
+      transparent 41.6%
+    ),
+    linear-gradient(
+      12deg,
+      transparent 66%,
+      var(--ya-plot-line-soft) 66.3%,
+      var(--ya-plot-line-soft) 67.1%,
+      transparent 67.4%
+    ),
+    radial-gradient(
+      circle at 22% 74%,
+      var(--ya-plot-leaf) 0 16%,
+      transparent 17%
+    );
+}
+
+/* --------------------------------------------------------------------------
+ * Koyu koru bolumu (tasarimda menu)
+ * Zemin koyulasinca ikincil metin ve cizgiler de tersine donmeli. Renkleri
+ * SABIT yazmak yerine token'lari bu kapsam icinde yeniden tanimliyoruz;
+ * boylece admin panelinden marka rengi degisse bile kontrast korunuyor ve
+ * bilesenler yine sadece var(--brand-*) okuyor.
+ * -------------------------------------------------------------------------- */
+html[data-theme="yesil-avlu"] .ya-grove {
+  background: var(--brand-primary);
+  color: var(--brand-primary-contrast);
+  --brand-surface: var(--brand-primary);
+  --brand-surface-alt: color-mix(in srgb, var(--brand-primary-contrast) 8%, var(--brand-primary));
+  --brand-ink: var(--brand-primary-contrast);
+  --brand-ink-muted: color-mix(in srgb, var(--brand-primary-contrast) 66%, var(--brand-primary));
+  --brand-border: color-mix(in srgb, var(--brand-primary-contrast) 22%, transparent);
+  --brand-accent: color-mix(in srgb, var(--ya-accent-base) 55%, var(--brand-primary-contrast));
+}
+
+/* --------------------------------------------------------------------------
+ * Acilis animasyonlari
+ * Tasarimdaki @keyframes tanimlari birebir tasindi. Hepsi yalnizca
+ * opacity/transform oynatir (layout shift yok) ve saf CSS oldugu icin
+ * SSR ile ilk boyamada calisir — JavaScript beklemez.
+ *
+ * prefers-reduced-motion globals.css'te tum animasyonlari kapatiyor.
+ * -------------------------------------------------------------------------- */
+@keyframes yaRise {
+  from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes yaFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes yaArch {
+  from { opacity: 0; transform: translateY(40px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes yaSway {
+  0%, 100% { transform: rotate(-1.6deg); }
+  50% { transform: rotate(1.6deg); }
+}
+
+/* Ust serit: sayfa acilir acilmaz belirir. */
+html[data-theme="yesil-avlu"] .ya-fade {
+  animation: yaFade 1s both;
+}
+
+/*
+ * Hero merdiveni. Tasarimdaki gecikmeler (.5s / .6s / .8s / 1s) ilk ekran
+ * icin fazla uzundu; sira korunarak sikistirildi.
+ */
+html[data-theme="yesil-avlu"] .ya-fade-1 {
+  animation: yaFade 1.4s 0.15s both;
+}
+
+html[data-theme="yesil-avlu"] .ya-fade-2 {
+  animation: yaFade 1.6s 0.45s both;
+}
+
+html[data-theme="yesil-avlu"] .ya-fade-3 {
+  animation: yaFade 1.6s 0.65s both;
+}
+
+html[data-theme="yesil-avlu"] .ya-rise {
+  animation: yaRise 1.2s 0.25s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+html[data-theme="yesil-avlu"] .ya-arch-in {
+  animation: yaArch 1.3s 0.3s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+/* Tasarimdaki asili rozetin salinimi; burada ayracin yapragini tasiyor. */
+html[data-theme="yesil-avlu"] .ya-sway {
+  animation: yaSway 7s ease-in-out infinite;
 }

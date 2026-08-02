@@ -1,20 +1,18 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { menuWithItems } from "@/themes/_shared/data";
-import {
-  SectionHead,
-  card,
-  pillAccent,
-  shell,
-  surface,
-} from "@/themes/patika/parts";
+import { SectionHead, shell, surface } from "@/themes/patika/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Fiyat listesi degil, KART IZGARASI.
+ * Fiyat listesi degil, KART IZGARASI (tasarimda 4 kolon, 16px aralik).
  *
- * Fiyat kartin ust kosesine yapistirilmis bir "sticker" gibi cerceveyi keser
- * (-top-3). Bu yuzden izgaranin dikey araligi yataydan buyuk: rozetler ustteki
- * kartin kenarina degmesin.
+ * Kart tasarimda su ritimde: ustte kucuk numara etiketi, uzun bir bosluk,
+ * sonra 32px urun adi, aciklama ve en altta 26px fiyat. Bosluk bilincli —
+ * kartlari afis boyuna cikarip izgaraya nefes veriyor.
+ *
+ * Aciklama rengi `opacity` ile veriliyor, sabit muted renkle DEGIL: fare
+ * ustundeyken kart neon zemine donuyor ve devralinan renk kendiliginden
+ * okunur kaliyor.
  */
 export default function Menu({ content }: SectionProps) {
   const categories = menuWithItems(content);
@@ -24,55 +22,53 @@ export default function Menu({ content }: SectionProps) {
 
   return (
     <section id="menu" aria-labelledby="menu-title" className={surface}>
-      <div className={`${shell} brand-section`}>
+      <div className={`${shell} pk-section`}>
         <Reveal>
           <SectionHead
             eyebrow={t.menu.eyebrow}
             title={t.menu.title}
             titleId="menu-title"
-            centered
           />
         </Reveal>
 
-        <div className="mt-14 flex flex-col gap-16">
-          {categories.map((category, index) => (
+        <div className="mt-10 flex flex-col gap-16">
+          {categories.map((category, categoryIndex) => (
             <div key={category.id}>
-              <Reveal delay={index === 0 ? 0 : 0.06}>
-                <h3 className="brand-display text-[clamp(1.75rem,5vw,3rem)] leading-[0.95] text-balance text-[var(--brand-primary)]">
+              <Reveal delay={categoryIndex === 0 ? 0 : 0.06}>
+                <h3 className="pk-h3 text-balance text-[var(--brand-primary)]">
                   {category.name}
                 </h3>
               </Reveal>
 
               <Reveal delay={0.1}>
-                <ul className="mt-10 grid gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-                  {category.items.map((item) => (
-                    <li key={item.id} className={`${card} relative flex flex-col`}>
-                      {item.price ? (
-                        <p
-                          className="brand-display brand-rounded absolute -top-3 end-4 bg-[var(--brand-primary)] px-3 py-1 text-sm tabular-nums text-[var(--brand-primary-contrast)]"
-                          dir="ltr"
-                        >
-                          {item.price}
-                        </p>
-                      ) : null}
+                <ul className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  {category.items.map((item, index) => (
+                    <li
+                      key={item.id}
+                      className="brand-frame flex flex-col bg-[var(--brand-surface-alt)] px-6 pt-6 pb-[1.375rem] transition-colors hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary)] hover:text-[var(--brand-primary-contrast)]"
+                    >
+                      <p className="pk-caps opacity-55">
+                        {String(index + 1).padStart(2, "0")}
+                        {item.isFeatured ? ` · ${t.menu.featured}` : ""}
+                      </p>
 
-                      {item.isFeatured ? (
-                        <p className={`${pillAccent} mb-3 self-start`}>
-                          {t.menu.featured}
-                        </p>
-                      ) : null}
-
-                      <h4
-                        className={`brand-display text-xl leading-tight text-balance ${
-                          item.price ? "pe-20" : ""
-                        }`}
-                      >
+                      {/* Tasarimdaki 60px'lik bosluk: kart ustu ile ad arasi. */}
+                      <h4 className="pk-title mt-15 text-balance">
                         {item.name}
                       </h4>
 
                       {item.description ? (
-                        <p className="mt-2 text-sm leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
+                        <p className="mt-2 text-sm leading-[1.5] text-pretty opacity-70">
                           {item.description}
+                        </p>
+                      ) : null}
+
+                      {item.price ? (
+                        <p
+                          className="pk-price mt-[1.125rem] tabular-nums"
+                          dir="ltr"
+                        >
+                          {item.price}
                         </p>
                       ) : null}
                     </li>

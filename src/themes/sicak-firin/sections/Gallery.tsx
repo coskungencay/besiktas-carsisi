@@ -7,14 +7,18 @@ import { SectionHead, shell, surface } from "@/themes/sicak-firin/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Yuvarlak koseli kareler, aralarinda genis bosluk.
+ * Yuvarlak koseli yatay kareler, aralarinda 20px bosluk.
  *
- * Bosluk bilerek genis: kareler birbirine degdiginde izgara "duvar" gibi
- * gorunuyor, bu tema ise havadar ve sicak duracak. Galeri bossa bolum basilmaz.
+ * Olculer tasarimdan: uc kolon, 4:3 oran (tasarimda 320px yukseklik), 20px
+ * aralik. Kare yerine yatay oran, vitrin fotografini daha genis gosteriyor.
+ *
+ * Gorunurluk tek yerden soruluyor: isVisible("galeri") hem "gorsel yok" halini
+ * hem musterinin panelden kapatmasini kapsiyor.
  */
 export default function Gallery({ content }: SectionProps) {
+  if (!content.isVisible("galeri")) return null;
+
   const { gallery, name, t } = content;
-  if (gallery.length === 0) return null;
 
   return (
     <section id="galeri" aria-labelledby="gallery-title" className={surface}>
@@ -25,15 +29,16 @@ export default function Gallery({ content }: SectionProps) {
             title={t.gallery.title}
             titleId="gallery-title"
             align="center"
+            size="md"
           />
         </Reveal>
 
         <Reveal delay={0.08}>
-          <ul className="mt-12 grid grid-cols-2 gap-5 sm:grid-cols-3 sm:gap-8">
+          <ul className="mt-12 grid grid-cols-2 gap-5 sm:grid-cols-3">
             {gallery.map((image, index) => (
               <li
                 key={image.id}
-                className="brand-rounded relative aspect-square overflow-hidden bg-[var(--brand-surface-alt)]"
+                className="brand-rounded relative aspect-[4/3] overflow-hidden bg-[var(--brand-surface-alt)]"
               >
                 <Image
                   src={imageOrFallback(image.thumbUrl || image.url, SQUARE_FALLBACK)}

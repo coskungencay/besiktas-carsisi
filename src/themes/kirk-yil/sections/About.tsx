@@ -36,7 +36,7 @@ export default function About({ content }: SectionProps) {
 
         <Reveal delay={0.08}>
           <div
-            className={`${column} mt-10 flex flex-col gap-6 text-center text-base leading-relaxed text-pretty`}
+            className={`${column} ky-prose mt-10 flex flex-col gap-5 text-center text-pretty text-[var(--brand-ink-muted)]`}
           >
             {body.length > 0 ? (
               body.map((paragraph, index) => <p key={index}>{paragraph}</p>)
@@ -59,10 +59,10 @@ export default function About({ content }: SectionProps) {
                 {hours.map((hour) => (
                   <div
                     key={hour.dayOfWeek}
-                    className="flex items-baseline justify-between gap-6 border-b border-[var(--brand-border)] py-3"
+                    className="ky-detail flex items-baseline justify-between gap-6 border-b border-[var(--brand-border)] py-2.5"
                   >
-                    <dt className="text-sm">{hour.dayLabel}</dt>
-                    <dd className="text-sm tabular-nums text-[var(--brand-ink-muted)]">
+                    <dt>{hour.dayLabel}</dt>
+                    <dd className="tabular-nums text-[var(--brand-ink-muted)]">
                       {hour.isClosed ? (
                         t.hours.closed
                       ) : (
@@ -75,7 +75,8 @@ export default function About({ content }: SectionProps) {
                 ))}
               </dl>
 
-              <p className="mt-5 text-xs leading-relaxed text-[var(--brand-ink-muted)]">
+              {/* Not satiri tasarimda italik serif — arsiv altyazisi tonu. */}
+              <p className="ky-note mt-5 text-[var(--brand-ink-muted)]">
                 {t.about.hoursNote}
               </p>
             </div>

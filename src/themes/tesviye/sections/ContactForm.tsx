@@ -18,7 +18,7 @@ import { mono } from "@/themes/tesviye/parts";
  */
 
 const field =
-  "brand-frame w-full bg-[var(--brand-surface)] px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-[var(--brand-ink-muted)] focus:border-[var(--brand-primary)]";
+  "brand-frame w-full bg-[var(--brand-surface)] px-3 py-2.5 text-[var(--ts-body-sm)] font-light outline-none transition-colors placeholder:text-[var(--brand-ink-muted)] focus:border-[var(--brand-primary)]";
 
 const label = `${mono} flex flex-wrap items-baseline gap-x-2 text-[var(--brand-ink-muted)]`;
 
@@ -63,7 +63,9 @@ export function ContactForm({
             required
             placeholder={messages.form.namePlaceholder}
             aria-invalid={Boolean(form.errors.name)}
-            aria-describedby={form.errors.name ? "contact-name-error" : undefined}
+            aria-describedby={
+              form.errors.name ? "contact-name-error" : undefined
+            }
             className={`${field} mt-1.5`}
             {...form.register("name")}
           />
@@ -172,7 +174,7 @@ export function ContactForm({
       <button
         type="submit"
         disabled={form.pending}
-        className={`${mono} mt-6 inline-flex w-full items-center justify-center gap-2 bg-[var(--brand-primary)] px-5 py-3.5 text-[var(--brand-primary-contrast)] transition-opacity hover:opacity-85 disabled:opacity-60`}
+        className={`${mono} mt-6 inline-flex w-full items-center justify-center gap-2 bg-[var(--brand-primary)] px-5 py-4 text-[var(--brand-primary-contrast)] transition-colors hover:bg-[var(--brand-accent)] disabled:opacity-60`}
       >
         <span>
           {form.pending ? messages.form.submitting : messages.form.submit}

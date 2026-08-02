@@ -1,15 +1,25 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import { coordinateLabel } from "@/themes/_shared/data";
-import { label, labelMuted, prose, shell, surface } from "@/themes/vela/parts";
+import {
+  Hairline,
+  label,
+  metaMuted,
+  proseSm,
+  shell,
+  surface,
+} from "@/themes/vela/parts";
 import { ContactForm } from "@/themes/vela/sections/ContactForm";
 import type { SectionProps } from "@/themes/types";
 
 type Row = { term: string; value: string; href: string; ltr: boolean };
 
 /**
- * Iki kolon: solda iletisim bilgileri (etiket ustte, deger altinda serif),
- * sagda kutusuz form. Kolonlar arasinda cizgi yok — sadece bosluk ayiriyor.
+ * Tasarimin kapanis bolumu: en ustte altin bir cizgi, altinda 56px'lik dolgu
+ * ve 1.15 / .8 / 1 oranli uc kolon. Solda buyuk serif cagri, ortada iletisim
+ * satirlari (terim solda, deger sagda, aralarinda ince ayrac), sagda form.
+ *
+ * Kolonlar arasinda cizgi yok — sadece 60px bosluk ayiriyor.
  */
 export default function Contact({ content }: SectionProps) {
   const { contact, name, t } = content;
@@ -51,26 +61,45 @@ export default function Contact({ content }: SectionProps) {
   return (
     <section id="iletisim" aria-labelledby="contact-title" className={surface}>
       <div className={`${shell} brand-section`}>
-        <div className="grid gap-16 lg:grid-cols-2 lg:gap-24">
+        <Hairline tone="gold" />
+
+        <div className="grid gap-14 pt-14 lg:grid-cols-[1.15fr_0.8fr_1fr] lg:gap-[3.75rem]">
           <Reveal>
-            <p className={label}>{t.contact.eyebrow}</p>
+            {/* Tasarimda 56px / 1.06 — sayfanin en buyuk ikinci tipografisi. */}
             <h2
               id="contact-title"
-              className="brand-display mt-6 text-[clamp(1.75rem,4vw,2.75rem)] leading-[1.2] text-balance"
+              className="brand-display text-[clamp(2rem,5vw,3.5rem)] leading-[1.06] tracking-[-0.01em] text-balance"
             >
               {t.contact.title}
             </h2>
-            <p className={`mt-8 max-w-md ${prose}`}>
+            <p className={`mt-[1.625rem] max-w-md ${proseSm}`}>
               {fill(t.contact.intro, { name })}
             </p>
 
-            {rows.length > 0 ? (
-              <dl className="mt-14 flex flex-col gap-8">
+            {/* Koordinat ayri bir DB alani degil; enlem/boylamdan turetiliyor. */}
+            {coords ? (
+              <p className={`${metaMuted} mt-8`} dir="ltr">
+                {coords}
+              </p>
+            ) : null}
+          </Reveal>
+
+          {rows.length > 0 ? (
+            <Reveal delay={0.08}>
+              <h3 className={label}>{t.contact.eyebrow}</h3>
+              <dl className="mt-[1.125rem]">
                 {rows.map((row, index) => (
-                  <div key={`${row.term}-${index}`} className="flex flex-col gap-2">
-                    <dt className={labelMuted}>{row.term}</dt>
+                  <div
+                    key={`${row.term}-${index}`}
+                    className={`flex items-baseline justify-between gap-6 py-[0.6875rem] ${
+                      index === rows.length - 1
+                        ? ""
+                        : "border-b border-[var(--brand-rule-soft)]"
+                    }`}
+                  >
+                    <dt className={`${metaMuted} shrink-0`}>{row.term}</dt>
                     <dd
-                      className="brand-display text-lg leading-[1.45] text-pretty"
+                      className="text-[0.90625rem] leading-[1.6] text-pretty text-end"
                       {...(row.ltr ? { dir: "ltr" as const } : {})}
                     >
                       {row.href ? (
@@ -90,19 +119,12 @@ export default function Contact({ content }: SectionProps) {
                   </div>
                 ))}
               </dl>
-            ) : null}
+            </Reveal>
+          ) : null}
 
-            {/* Koordinat ayri bir DB alani degil; enlem/boylamdan turetiliyor. */}
-            {coords ? (
-              <p className={`${labelMuted} mt-14`} dir="ltr">
-                {coords}
-              </p>
-            ) : null}
-          </Reveal>
-
-          <Reveal delay={0.08}>
+          <Reveal delay={0.14}>
             <h3 className={label}>{t.contact.formTitle}</h3>
-            <div className="mt-10">
+            <div className="mt-[1.125rem]">
               <ContactForm locale={content.locale} messages={t} />
             </div>
           </Reveal>

@@ -46,10 +46,10 @@ export default function Menu({ content }: SectionProps) {
                   {category.items.map((item) => (
                     <li
                       key={item.id}
-                      className="border-b border-[var(--brand-border)] py-4 last:border-b-0"
+                      className="border-b border-[var(--brand-border)] py-3.5 last:border-b-0"
                     >
-                      <div className="flex items-baseline justify-between gap-6">
-                        <p className="text-base">
+                      <div className="ky-prose flex items-baseline gap-3">
+                        <p>
                           {item.name}
                           {item.isFeatured ? (
                             <span className="brand-eyebrow ms-3 text-xs text-[var(--brand-accent)]">
@@ -58,9 +58,21 @@ export default function Menu({ content }: SectionProps) {
                           ) : null}
                         </p>
 
+                        {/*
+                          Noktali dolgu cizgisi: eski fiyat listelerinin imzasi.
+                          flex-1 oldugu icin ad ile fiyat arasindaki bosluk ne
+                          olursa olsun doluyor, RTL'de de dogru yonde uzuyor.
+                        */}
+                        {item.price ? (
+                          <span
+                            aria-hidden="true"
+                            className="mb-1.5 flex-1 border-b border-dotted border-[var(--brand-border)]"
+                          />
+                        ) : null}
+
                         {item.price ? (
                           <p
-                            className="shrink-0 text-base tabular-nums text-[var(--brand-primary)]"
+                            className="shrink-0 tabular-nums text-[var(--brand-primary)]"
                             dir="ltr"
                           >
                             {item.price}
@@ -69,7 +81,7 @@ export default function Menu({ content }: SectionProps) {
                       </div>
 
                       {item.description ? (
-                        <p className="mt-1 text-sm leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
+                        <p className="ky-note mt-1 text-pretty text-[var(--brand-ink-muted)]">
                           {item.description}
                         </p>
                       ) : null}

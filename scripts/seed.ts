@@ -12,11 +12,13 @@ import { eq } from "drizzle-orm";
 import { SINGLETON_ID, db, resolveDatabasePath } from "../src/db";
 import {
   account,
+  faqs,
   galleryImages,
   menuCategories,
   menuItems,
   openingHours,
   siteSettings,
+  testimonials,
   user,
 } from "../src/db/schema";
 import { auth } from "../src/lib/auth";
@@ -244,6 +246,82 @@ function seedMenu() {
   console.log("[seed] Ornek menu olusturuldu.");
 }
 
+/**
+ * Ornek yorum ve sorular.
+ *
+ * NEDEN VAR: yeni bolumler bos bir kurulumda hic gorunmuyor; musteriye
+ * sunum yaparken sayfanin dolu durmasi icin birer ornek gerekiyor. Gercek
+ * icerik panelden (ya da ilerideki scraping isinden) gelecek.
+ */
+function seedTestimonials() {
+  if (db.select().from(testimonials).all().length > 0) {
+    console.log("[seed] Yorumlar zaten dolu, atlandi.");
+    return;
+  }
+
+  const rows = [
+    {
+      author: "Ayşe K.",
+      text: "Mahallenin en iyi filtre kahvesi. Sabahları kitabımla oturup saatlerce kalabiliyorum.",
+      rating: 5,
+    },
+    {
+      author: "Mert D.",
+      text: "Cheesecake'i için bile ayrıca gelinir. Personel çok ilgili.",
+      rating: 5,
+    },
+    {
+      author: "Elif T.",
+      text: "Laptopla çalışmak için ideal: priz bol, wifi hızlı, müzik sesi tam kıvamında.",
+      rating: 4,
+    },
+  ];
+
+  rows.forEach((row, index) => {
+    db.insert(testimonials)
+      .values({ ...row, sortOrder: index, isActive: true })
+      .run();
+  });
+
+  console.log("[seed] Ornek yorumlar olusturuldu.");
+}
+
+function seedFaqs() {
+  if (db.select().from(faqs).all().length > 0) {
+    console.log("[seed] SSS zaten dolu, atlandi.");
+    return;
+  }
+
+  const rows = [
+    {
+      question: "Wi-Fi var mı?",
+      answer: "Evet, ücretsiz Wi-Fi mevcut. Şifreyi kasadan öğrenebilirsiniz.",
+    },
+    {
+      question: "Laptopla çalışılabiliyor mu?",
+      answer:
+        "Tabii. Hafta içi gündüzleri daha sakin oluyoruz; priz bulunan masalarımız pencere tarafında.",
+    },
+    {
+      question: "Rezervasyon alıyor musunuz?",
+      answer:
+        "Kalabalık gruplar için alıyoruz. Telefon veya WhatsApp üzerinden yazmanız yeterli.",
+    },
+    {
+      question: "Evcil hayvan kabul ediyor musunuz?",
+      answer: "Evet, dostlarınızla birlikte gelebilirsiniz.",
+    },
+  ];
+
+  rows.forEach((row, index) => {
+    db.insert(faqs)
+      .values({ ...row, sortOrder: index, isActive: true })
+      .run();
+  });
+
+  console.log("[seed] Ornek SSS olusturuldu.");
+}
+
 function reportGallery() {
   const count = db.select().from(galleryImages).all().length;
   console.log(
@@ -256,6 +334,8 @@ async function main() {
   seedSettings();
   seedHours();
   seedMenu();
+  seedTestimonials();
+  seedFaqs();
   reportGallery();
   await seedAdmin();
   console.log("[seed] Tamamlandi.");

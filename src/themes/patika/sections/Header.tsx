@@ -3,14 +3,21 @@ import Image from "next/image";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { fill } from "@/i18n";
 import { hasMenu, imageOrFallback } from "@/themes/_shared/data";
-import { edgeBottom, pillLine, shell, surface } from "@/themes/patika/parts";
+import {
+  edgeBottom,
+  navCta,
+  navLink,
+  shell,
+  surface,
+} from "@/themes/patika/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Yapisik (sticky degil) ust serit: solda marka bloku, sagda rozet nav.
+ * Ust serit: solda marka bloku, sagda rozet nav.
  *
- * Sticky OLMAMASI bilincli: afis tasariminda ust serit sayfanin bandrolu gibi
- * davranir, kaydirirken icerigin ustunu kapatmaz.
+ * Yapiskan (sticky) ve kendi zeminini tasiyor — tasarimda serit sayfanin
+ * bandrolu gibi hep tepede duruyor; koyu zemin olmadan altindan gecen icerik
+ * linklerin arasindan gorunurdu.
  */
 export default function Header({ content }: SectionProps) {
   const { name, logoUrl, t } = content;
@@ -19,6 +26,13 @@ export default function Header({ content }: SectionProps) {
    * Bolumler icerik bosken kendini basmiyor (About, Menu, Gallery). Nav ayni
    * kosullari kullanmali; yoksa musteri galeri yuklemeden yayina alinca
    * "Galeri" linki hicbir yere gitmeyen kirik bir capa olurdu.
+   *
+   * Galeri icin `gallery.length` DEGIL isVisible("galeri") soruluyor: musteri
+   * galeriyi panelden kapattiginda gorseller duruyor ama bolum basilmiyor;
+   * eski kosul o durumda yine kirik bir link birakirdi.
+   *
+   * Yeni bolumlere (yorumlar, sss, konum) BILEREK link yok: tasarimda serit tek
+   * satir ve dolu; sekiz rozet dar ekranda ikinci satira tasip bandrolu bozardi.
    */
   const links = [
     (content.about || content.openingHours.length > 0) && {
@@ -26,14 +40,16 @@ export default function Header({ content }: SectionProps) {
       label: t.about.title,
     },
     hasMenu(content) && { href: "#menu", label: t.menu.eyebrow },
-    content.gallery.length > 0 && { href: "#galeri", label: t.gallery.eyebrow },
-    { href: "#iletisim", label: t.contact.eyebrow },
+    content.isVisible("galeri") && {
+      href: "#galeri",
+      label: t.gallery.eyebrow,
+    },
   ].filter((link): link is { href: string; label: string } => Boolean(link));
 
   return (
-    <header className={`${surface} ${edgeBottom} brand-body`}>
+    <header className={`${surface} ${edgeBottom} brand-body sticky top-0 z-20`}>
       <div
-        className={`${shell} flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-4`}
+        className={`${shell} flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5`}
       >
         <a href="#hero" className="flex items-center gap-3">
           {logoUrl ? (
@@ -43,12 +59,20 @@ export default function Header({ content }: SectionProps) {
                 alt={fill(t.hero.logoAlt, { name })}
                 fill
                 sizes="40px"
-                className="brand-rounded object-contain"
+                className="rounded-[var(--brand-radius-media)] object-contain"
               />
             </span>
           ) : null}
-          <span className="brand-display text-xl leading-none sm:text-2xl">
+
+          {/*
+            Marka adi 22px, sikilastirilmis aralikla ve buyuk harf — tasarimdaki
+            logotip. Sonundaki neon nokta dekoratif: ekran okuyucu okumasin.
+          */}
+          <span className="brand-display text-[1.375rem] leading-none tracking-[var(--brand-title-tracking)] uppercase">
             {name}
+            <span aria-hidden="true" className="text-[var(--brand-primary)]">
+              .
+            </span>
           </span>
         </a>
 
@@ -57,19 +81,25 @@ export default function Header({ content }: SectionProps) {
             <ul className="flex flex-wrap items-center gap-2">
               {links.map((link) => (
                 <li key={link.href}>
-                  <a
-                    href={link.href}
-                    className={`${pillLine} transition-colors hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)]`}
-                  >
+                  <a href={link.href} className={navLink}>
                     {link.label}
                   </a>
                 </li>
               ))}
+
+              {/* Iletisim her zaman var ve tasarimda dolu (neon) cagri butonu. */}
+              <li>
+                <a href="#iletisim" className={navCta}>
+                  {t.contact.eyebrow}
+                </a>
+              </li>
             </ul>
           </nav>
 
           {/* Tek dil aciksa secici hic basilmaz. */}
-          {content.locales.length > 1 ? <LocaleSwitcher content={content} /> : null}
+          {content.locales.length > 1 ? (
+            <LocaleSwitcher content={content} />
+          ) : null}
         </div>
       </div>
     </header>

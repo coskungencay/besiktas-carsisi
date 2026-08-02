@@ -1,6 +1,6 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { menuWithItems } from "@/themes/_shared/data";
-import { SectionHeading, shell, surface } from "@/themes/yesil-avlu/parts";
+import { SectionHeading, shell } from "@/themes/yesil-avlu/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
@@ -8,6 +8,10 @@ import type { SectionProps } from "@/themes/types";
  *
  * Kart YOK: bu tasarimda kutu sadece hero gorseli, galeri ve saat kartlarinda
  * var. Menude urunleri ayiran tek sey ince bir cizgi ve bosluk.
+ *
+ * ZEMIN: tasarimda menu tam genislikte KOYU bir serit — sayfanin tek nefes
+ * kesen yeri orasi. Renkler .ya-grove kapsaminda token'lar yeniden
+ * tanimlanarak veriliyor, boylece burada sabit renk yazmiyoruz.
  */
 export default function Menu({ content }: SectionProps) {
   const categories = menuWithItems(content);
@@ -16,7 +20,7 @@ export default function Menu({ content }: SectionProps) {
   const { t } = content;
 
   return (
-    <section id="menu" aria-labelledby="menu-title" className={surface}>
+    <section id="menu" aria-labelledby="menu-title" className="ya-grove">
       <div className={`${shell} brand-section`}>
         <Reveal>
           <SectionHeading
@@ -29,7 +33,8 @@ export default function Menu({ content }: SectionProps) {
         <div className="mt-12 flex flex-col gap-16">
           {categories.map((category, index) => (
             <Reveal key={category.id} delay={index === 0 ? 0 : 0.06}>
-              <h3 className="brand-display text-center text-2xl sm:text-3xl">
+              {/* Tasarimda kategori adi italik serif, 26px. */}
+              <h3 className="brand-display ya-serif-book text-center text-[1.625rem] italic sm:text-[1.75rem]">
                 {category.name}
               </h3>
 
@@ -37,10 +42,11 @@ export default function Menu({ content }: SectionProps) {
                 {category.items.map((item) => (
                   <li
                     key={item.id}
-                    className="border-t border-[var(--brand-border)] py-5"
+                    /* Tasarimdaki satir ritmi: 13px alt-ust, ince ayrac. */
+                    className="border-t border-[var(--brand-border)] py-[0.8125rem]"
                   >
                     <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-                      <h4 className="brand-display text-lg">
+                      <h4 className="brand-body text-[0.9375rem] font-light">
                         {item.name}
                         {item.isFeatured ? (
                           <span className="brand-body brand-eyebrow ms-3 text-[0.6rem] text-[var(--brand-accent)]">
@@ -51,7 +57,7 @@ export default function Menu({ content }: SectionProps) {
 
                       {item.price ? (
                         <p
-                          className="text-sm tabular-nums text-[var(--brand-ink-muted)]"
+                          className="text-[0.9375rem] font-light tabular-nums text-[var(--brand-accent)]"
                           dir="ltr"
                         >
                           {item.price}
@@ -60,7 +66,7 @@ export default function Menu({ content }: SectionProps) {
                     </div>
 
                     {item.description ? (
-                      <p className="mt-2 text-sm leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
+                      <p className="mt-1.5 text-sm leading-relaxed font-light text-pretty text-[var(--brand-ink-muted)]">
                         {item.description}
                       </p>
                     ) : null}

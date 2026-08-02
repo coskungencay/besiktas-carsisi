@@ -11,6 +11,8 @@ const LINKS = [
   { href: "/admin/saatler", label: "Çalışma Saatleri" },
   { href: "/admin/menu", label: "Menü" },
   { href: "/admin/galeri", label: "Galeri" },
+  { href: "/admin/yorumlar", label: "Yorumlar" },
+  { href: "/admin/sss", label: "S.S.S." },
   { href: "/admin/mesajlar", label: "Mesajlar" },
   { href: "/admin/diller", label: "Diller & Çeviriler" },
   { href: "/admin/tema", label: "Tema & Renkler" },

@@ -4,6 +4,7 @@ import type { CSSProperties, ReactNode } from "react";
 
 import { DEFAULT_LOCALE, LOCALE_META, isLocale } from "@/i18n/config";
 import { getSettings } from "@/lib/content";
+import { themeFontClassNames } from "@/themes/fonts";
 import { getTheme, resolveThemeSlug } from "@/themes/registry";
 
 import "./globals.css";
@@ -56,6 +57,9 @@ export default async function RootLayout({
       lang={locale}
       dir={dir}
       data-theme={resolveThemeSlug(settings.themeSlug)}
+      // Font degiskenleri burada tanimlanir; hangisinin kullanilacagini
+      // temanin tokens.css'i secer (bkz. src/themes/fonts.ts).
+      className={themeFontClassNames}
       style={brandStyle}
     >
       <body>

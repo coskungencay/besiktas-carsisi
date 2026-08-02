@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 import { TRANSLATION_NAMESPACES } from "@/db/namespaces";
+import { TOGGLEABLE_SECTION_KEYS } from "@/lib/sections";
+import { SOCIAL_PLATFORM_KEYS } from "@/lib/social";
 import type { Messages } from "@/i18n";
 import { LOCALES } from "@/i18n/config";
 
@@ -80,9 +82,56 @@ export const siteSettingsSchema = z.object({
   instagram: optionalText(80),
   logoUrl: optionalText(400),
   heroImageUrl: optionalText(400),
+  announcement: optionalText(200),
 });
 
 export type SiteSettingsInput = z.infer<typeof siteSettingsSchema>;
+
+/* ------------------------------ Sosyal medya ------------------------------ */
+
+/**
+ * Bos url'ler cagiran tarafta ayiklanir; buraya yalnizca dolu satirlar gelir.
+ * Platform listesi sabit (bkz. lib/social.ts) — serbest metin kabul edilmez.
+ */
+export const socialLinksSchema = z
+  .array(
+    z.object({
+      platform: z.enum(SOCIAL_PLATFORM_KEYS as [string, ...string[]]),
+      url: z.string().trim().url("Geçerli bir bağlantı girin").max(400),
+    }),
+  )
+  .max(SOCIAL_PLATFORM_KEYS.length);
+
+/* ---------------------------- Bolum gorunurlugu --------------------------- */
+
+export const hiddenSectionsSchema = z.object({
+  hidden: z
+    .array(z.enum(TOGGLEABLE_SECTION_KEYS as [string, ...string[]]))
+    .max(TOGGLEABLE_SECTION_KEYS.length),
+});
+
+/* -------------------------------- Yorumlar -------------------------------- */
+
+export const testimonialSchema = z.object({
+  id: z.coerce.number().int().positive().optional(),
+  author: trimmed(80).min(1, "İsim zorunlu"),
+  text: trimmed(600).min(1, "Yorum metni zorunlu"),
+  /** Bos birakilabilir: yildiz gosterilmez. */
+  rating: z
+    .union([z.literal(""), z.coerce.number().int().min(1).max(5)])
+    .optional()
+    .transform((v) => (v === "" || v === undefined ? null : Number(v))),
+  isActive: checkbox,
+});
+
+/* ---------------------------------- SSS ----------------------------------- */
+
+export const faqSchema = z.object({
+  id: z.coerce.number().int().positive().optional(),
+  question: trimmed(200).min(1, "Soru zorunlu"),
+  answer: trimmed(1500).min(1, "Cevap zorunlu"),
+  isActive: checkbox,
+});
 
 /* ---------------------------- Calisma saatleri ---------------------------- */
 

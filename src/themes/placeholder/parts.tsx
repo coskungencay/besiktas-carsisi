@@ -46,6 +46,49 @@ export function PhoneIcon() {
   );
 }
 
+/**
+ * Yorum yildizi. `filled` false ise yalnizca cerceve cizilir, boylece 5'lik
+ * olcek her zaman ayni genislikte durur.
+ *
+ * NOT: Ekran okuyucuya yildizlar okutulmaz (aria-hidden); puan metni yaninda
+ * sr-only olarak verilir.
+ */
+export function StarIcon({ filled }: { filled: boolean }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill={filled ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth="1.4"
+      className="size-4 shrink-0"
+    >
+      <path
+        d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/**
+ * Aci/kapa isareti. Ok yerine arti kullanilir: yon barindirmadigi icin RTL'de
+ * cevrilmesi gerekmez, acikken 45 derece donup carpiya donusur.
+ */
+export function PlusIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      className={`size-4 shrink-0 ${className}`}
+    >
+      <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 /* -------------------------------------------------------------------------- */
 /*                                Marka isareti                                */

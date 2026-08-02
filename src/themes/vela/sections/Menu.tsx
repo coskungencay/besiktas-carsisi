@@ -1,20 +1,16 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { menuWithItems } from "@/themes/_shared/data";
-import {
-  CenteredHeading,
-  Hairline,
-  label,
-  labelMuted,
-  prose,
-  shell,
-  surface,
-} from "@/themes/vela/parts";
+import { SectionHead, shell, surface } from "@/themes/vela/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Tek kolon, ortalanmis ve dar. Urunler SATIR degil BLOK: ad ustte, aciklama
- * ve fiyat altinda. Nokta nokta uzayan fiyat satirlari bu temada yok, cunku
- * bakilan sey urunun adi — fiyat sessizce altinda duruyor.
+ * Tasarimin menusu iki PANEL: biri koyu ve altin cerceveli, digeri krem
+ * zeminli. Kategoriler sirayla bu iki panel arasinda donuyor; boylece kac
+ * kategori olursa olsun kontrast korunuyor.
+ *
+ * Urunler satir halinde: solda ad ve aciklama, sagda fiyat, ayni taban
+ * cizgisinde ve aralarinda sac teli ayraclar. Olculer tasarimdan: panel
+ * dolgusu 64/60px, satir dolgusu 19px, ad 21px, fiyat 19px, aciklama 13px.
  *
  * Urun gorselleri bilerek gosterilmiyor; bosluk bu tasarimin malzemesi.
  */
@@ -28,48 +24,94 @@ export default function Menu({ content }: SectionProps) {
     <section id="menu" aria-labelledby="menu-title" className={surface}>
       <div className={`${shell} brand-section`}>
         <Reveal>
-          <CenteredHeading
+          <SectionHead
             eyebrow={t.menu.eyebrow}
             title={t.menu.title}
             titleId="menu-title"
           />
         </Reveal>
 
-        <div className="mx-auto mt-20 flex max-w-3xl flex-col gap-24">
-          {categories.map((category, index) => (
-            <Reveal key={category.id} delay={index === 0 ? 0 : 0.06}>
-              <div className="flex flex-col items-center text-center">
-                <h3 className="brand-display text-2xl leading-[1.3]">
-                  {category.name}
-                </h3>
-                <Hairline className="mt-8" />
+        {/*
+         * gap YOK: paneller tasarimda birbirine yapisik duruyor, aradaki
+         * ayrim renk kontrastindan geliyor.
+         */}
+        <div
+          className={`mt-16 grid ${categories.length > 1 ? "lg:grid-cols-2" : ""}`}
+        >
+          {categories.map((category, index) => {
+            // Tek sayili kategoriler krem panele dusuyor (tasarimdaki sag blok).
+            const isLight = index % 2 === 1;
 
-                <ul className="mt-12 flex w-full flex-col gap-12">
-                  {category.items.map((item) => (
-                    <li key={item.id} className="flex flex-col items-center gap-3">
-                      <p className="brand-display text-xl leading-[1.35] text-balance">
-                        {item.name}
-                      </p>
+            const panel = isLight
+              ? "bg-[var(--brand-accent)] text-[var(--brand-surface)]"
+              : "bg-[var(--brand-surface-alt)] text-[var(--brand-ink)] border border-[var(--brand-frame-gold)]";
+            const eyebrowTone = isLight
+              ? "text-[var(--brand-primary-deep)]"
+              : "text-[var(--brand-primary)]";
+            const priceTone = eyebrowTone;
+            const ruleTone = isLight
+              ? "border-[var(--brand-rule-on-accent)]"
+              : "border-[var(--brand-rule-soft)]";
+            const descTone = isLight
+              ? "text-[var(--brand-ink-on-accent-muted)]"
+              : "text-[var(--brand-ink-muted)]";
 
-                      {item.isFeatured ? (
-                        <p className={label}>{t.menu.featured}</p>
-                      ) : null}
+            return (
+              <Reveal key={category.id} delay={index === 0 ? 0 : 0.12}>
+                <div className={`${panel} h-full px-8 py-12 sm:px-[3.75rem] sm:py-16`}>
+                  <h3
+                    className={`brand-body brand-eyebrow text-[0.6875rem] leading-[1.6] ${eyebrowTone}`}
+                  >
+                    {category.name}
+                  </h3>
 
-                      {item.description ? (
-                        <p className={`max-w-xl ${prose}`}>{item.description}</p>
-                      ) : null}
+                  <ul className="mt-[1.625rem]">
+                    {category.items.map((item, itemIndex) => (
+                      <li
+                        key={item.id}
+                        className={`flex items-baseline justify-between gap-8 py-[1.1875rem] ${
+                          itemIndex === category.items.length - 1
+                            ? ""
+                            : `border-b ${ruleTone}`
+                        }`}
+                      >
+                        <div className="min-w-0">
+                          <p className="brand-display text-[1.3125rem] leading-[1.3] text-pretty">
+                            {item.name}
+                          </p>
 
-                      {item.price ? (
-                        <p className={`${labelMuted} tabular-nums`} dir="ltr">
-                          {item.price}
-                        </p>
-                      ) : null}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-          ))}
+                          {item.isFeatured ? (
+                            <p
+                              className={`brand-body brand-eyebrow mt-[0.3125rem] text-[0.6875rem] leading-[1.6] ${eyebrowTone}`}
+                            >
+                              {t.menu.featured}
+                            </p>
+                          ) : null}
+
+                          {item.description ? (
+                            <p
+                              className={`mt-[0.3125rem] text-[0.8125rem] leading-[1.6] text-pretty ${descTone}`}
+                            >
+                              {item.description}
+                            </p>
+                          ) : null}
+                        </div>
+
+                        {item.price ? (
+                          <p
+                            className={`brand-display shrink-0 text-[1.1875rem] leading-[1.3] tabular-nums ${priceTone}`}
+                            dir="ltr"
+                          >
+                            {item.price}
+                          </p>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Reveal>
+            );
+          })}
         </div>
       </div>
     </section>

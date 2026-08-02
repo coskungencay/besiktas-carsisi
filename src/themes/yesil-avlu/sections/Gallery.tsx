@@ -7,13 +7,17 @@ import { SectionHeading, shell, surface } from "@/themes/yesil-avlu/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Uclu izgara, ama kare degil: siralar donusumlu olarak dikey (4/5) ve kare
- * oranda. Boylece izgara sabit bir tugla duvari gibi degil, sekmeli bir avlu
- * dosemesi gibi okunuyor. Galeri bossa bolum hic basilmaz.
+ * Uclu izgara. Tasarimdaki ritim kolon bazli: kenar kolonlar KEMERLI (ust
+ * kenari yarim daire), ortadaki duz koseli ve 44px asagi kaydirilmis. Boylece
+ * izgara duz bir tugla duvari degil, sekmeli bir avlu dosemesi gibi okunuyor.
+ *
+ * Gorunurluk tek yerden: isVisible("galeri") hem "gorsel yok" halini hem de
+ * musterinin panelden kapatmasini kapsiyor (Header'daki link ayni kosulda).
  */
 export default function Gallery({ content }: SectionProps) {
+  if (!content.isVisible("galeri")) return null;
+
   const { gallery, name, t } = content;
-  if (gallery.length === 0) return null;
 
   return (
     <section id="galeri" aria-labelledby="gallery-title" className={surface}>
@@ -27,15 +31,19 @@ export default function Gallery({ content }: SectionProps) {
         </Reveal>
 
         <Reveal delay={0.08}>
-          <ul className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5">
+          {/* items-start: ortadaki kolonun kaydirmasi satir yuksekligini bozmasin. */}
+          <ul className="mt-12 grid grid-cols-2 items-start gap-4 sm:grid-cols-3 sm:gap-[1.375rem]">
             {gallery.map((image, index) => {
-              const isTallRow = Math.floor(index / 3) % 2 === 0;
+              // Tasarimda orta kolon duz koseli ve asagi kaydirilmis.
+              const isMiddleColumn = index % 3 === 1;
 
               return (
                 <li
                   key={image.id}
-                  className={`brand-rounded relative overflow-hidden bg-[var(--brand-surface-alt)] ${
-                    isTallRow ? "aspect-[4/5]" : "aspect-square"
+                  className={`relative aspect-[4/5] overflow-hidden bg-[var(--brand-surface-alt)] sm:aspect-[5/4] ${
+                    isMiddleColumn
+                      ? "brand-rounded sm:mt-11"
+                      : "ya-arch-sm"
                   }`}
                 >
                   <Image

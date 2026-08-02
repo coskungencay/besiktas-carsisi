@@ -3,6 +3,7 @@ import { fill } from "@/i18n";
 import { hoursFromMonday, paragraphs } from "@/themes/_shared/data";
 import {
   SectionHeading,
+  bodyText,
   column,
   eyebrow,
   shell,
@@ -36,9 +37,8 @@ export default function About({ content }: SectionProps) {
         </Reveal>
 
         <Reveal delay={0.06}>
-          <div
-            className={`${column} mt-10 flex flex-col gap-6 text-center text-base leading-loose text-pretty text-[var(--brand-ink-muted)]`}
-          >
+          {/* Tasarimda paragraf ritmi 16px / 1.8 ve paragraflar arasi 20px. */}
+          <div className={`${column} ${bodyText} mt-10 flex flex-col gap-5 text-center`}>
             {body.length > 0 ? (
               body.map((paragraph, index) => <p key={index}>{paragraph}</p>)
             ) : (
@@ -63,7 +63,8 @@ export default function About({ content }: SectionProps) {
                     }`}
                   >
                     <dt className={eyebrow}>{hour.dayLabel}</dt>
-                    <dd className="brand-display text-base tabular-nums">
+                    {/* Tasarimda sayilar serif ve govdeden bir tik iri. */}
+                    <dd className="brand-display ya-serif-book text-lg tabular-nums">
                       {hour.isClosed ? (
                         t.hours.closed
                       ) : (

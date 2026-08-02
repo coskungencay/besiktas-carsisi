@@ -11,6 +11,7 @@
  *   2. src/themes/registry.ts dosyasini tek temaya gore yeniden yazar
  *   3. src/app/globals.css icindeki tema import satirlarini gunceller
  *   4. .env.example icine NEXT_PUBLIC_THEME=<slug> yazar (tema pinlenir)
+ *   5. fonts.ts'i yalnizca kalan temanin fontlariyla birakir
  *   5. Kalan tema legacy ortak bilesenleri kullanmiyorsa onlari da siler
  *   6. design-input/designs icerigini temizler
  *
@@ -24,6 +25,7 @@ import { join } from "node:path";
 const THEMES_DIR = "src/themes";
 const REGISTRY_PATH = join(THEMES_DIR, "registry.ts");
 const GLOBALS_PATH = "src/app/globals.css";
+const FONTS_PATH = join(THEMES_DIR, "fonts.ts");
 const ENV_EXAMPLE_PATH = ".env.example";
 const DESIGN_INPUT_DIR = "design-input/designs";
 
@@ -136,6 +138,69 @@ function rewriteGlobals(slug: string): string {
   return out.join("\n");
 }
 
+/**
+ * fonts.ts'i tek temaya indirir.
+ *
+ * NEDEN: sablonda 16 font tanimli (8 tasarim x 2). Musteri repo'sunda tek tema
+ * kaldigi halde hepsi build sirasinda indirilip pakete girerdi — bos yere
+ * build suresi ve imaj boyutu. Kalan temanin tokens.css'inde GERCEKTEN gecen
+ * --font-* degiskenleri disindaki tanimlar siliniyor.
+ */
+function rewriteFonts(slug: string): string | null {
+  if (!existsSync(FONTS_PATH)) return null;
+
+  const tokens = readFileSync(join(THEMES_DIR, slug, "tokens.css"), "utf8");
+  const used = new Set(
+    [...tokens.matchAll(/var\((--font-[a-z0-9-]+)\)/g)].map((m) => m[1]!),
+  );
+
+  const source = readFileSync(FONTS_PATH, "utf8");
+
+  // Her font tanimi "const x = Font({ ... });" bloklarindan olusuyor.
+  const kept: string[] = [];
+  const blocks = [...source.matchAll(/const (\w+) = (\w+)\(\{[\s\S]*?\n\}\);/g)];
+
+  let out = source;
+  for (const block of blocks) {
+    const text = block[0]!;
+    const variable = /variable:\s*"(--font-[a-z0-9-]+)"/.exec(text)?.[1];
+    if (variable && used.has(variable)) {
+      kept.push(block[1]!);
+      continue;
+    }
+    out = out.replace(text, "");
+  }
+
+  // Kullanilmayan import'lari ve className dizisini temizle.
+  out = out.replace(
+    /export const themeFontClassNames = \[[\s\S]*?\]\.join\(" "\);/,
+    kept.length > 0
+      ? `export const themeFontClassNames = [\n${kept
+          .map((name) => `  ${name}.variable,`)
+          .join("\n")}\n].join(" ");`
+      : `export const themeFontClassNames = "";`,
+  );
+
+  const importMatch = /import \{[\s\S]*?\} from "next\/font\/google";/.exec(out);
+  if (importMatch) {
+    const usedImports = [...out.matchAll(/const \w+ = (\w+)\(\{/g)].map(
+      (m) => m[1]!,
+    );
+    out = out.replace(
+      importMatch[0],
+      usedImports.length > 0
+        ? `import {\n${[...new Set(usedImports)]
+            .sort()
+            .map((name) => `  ${name},`)
+            .join("\n")}\n} from "next/font/google";`
+        : "",
+    );
+  }
+
+  // Ust uste binen bos satirlari sadelestir.
+  return out.replace(/\n{3,}/g, "\n\n");
+}
+
 function setEnvExampleTheme(slug: string): string {
   const env = readFileSync(ENV_EXAMPLE_PATH, "utf8");
   if (/^NEXT_PUBLIC_THEME=.*$/m.test(env)) {
@@ -176,7 +241,9 @@ async function main() {
   } else {
     console.log("Silinecek tema yok — repo zaten tek temali.");
   }
-  console.log(`Guncellenecek: ${REGISTRY_PATH}, ${GLOBALS_PATH}, ${ENV_EXAMPLE_PATH}`);
+  console.log(
+    `Guncellenecek: ${REGISTRY_PATH}, ${GLOBALS_PATH}, ${FONTS_PATH}, ${ENV_EXAMPLE_PATH}`,
+  );
   if (existsSync(DESIGN_INPUT_DIR)) {
     console.log(`Temizlenecek: ${DESIGN_INPUT_DIR}`);
   }
@@ -203,6 +270,9 @@ async function main() {
 
   writeFileSync(REGISTRY_PATH, renderRegistry(theme), "utf8");
   writeFileSync(GLOBALS_PATH, rewriteGlobals(theme), "utf8");
+
+  const fonts = rewriteFonts(theme);
+  if (fonts !== null) writeFileSync(FONTS_PATH, fonts, "utf8");
   writeFileSync(ENV_EXAMPLE_PATH, setEnvExampleTheme(theme), "utf8");
 
   if (existsSync(DESIGN_INPUT_DIR)) {

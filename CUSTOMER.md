@@ -29,7 +29,7 @@ Sol menüde **Şifre değiştir** bağlantısı her zaman durur.
 
 ## Panelde neler var?
 
-Sol taraftaki menüden 7 bölüme ulaşırsınız:
+Sol taraftaki menüden şu bölümlere ulaşırsınız:
 
 | Bölüm | Ne için |
 |---|---|
@@ -38,6 +38,8 @@ Sol taraftaki menüden 7 bölüme ulaşırsınız:
 | **Çalışma Saatleri** | Haftanın 7 günü için açılış/kapanış |
 | **Menü** | Kategoriler ve ürünler |
 | **Galeri** | Mekân fotoğrafları |
+| **Yorumlar** | Müşteri yorumları (isim, yorum, yıldız) |
+| **S.S.S.** | Sıkça sorulan sorular ve cevapları |
 | **Mesajlar** | Siteden size gelen iletişim formu mesajları |
 | **Diller & Çeviriler** | Sitenizin hangi dillerde yayınlanacağı ve metin çevirileri |
 | **Tema & Renkler** | Sitenin renkleri |
@@ -89,6 +91,27 @@ Google'ın işletmenizi tanıması için kullanılır.
 > çevrilir. Telefonla çektiğiniz büyük fotoğrafları doğrudan yükleyebilirsiniz.
 
 Bir görseli kaldırmak için sayfanın altındaki **"Görsel kaldırma"** bölümünü kullanın.
+
+---
+
+### Duyuru şeridi
+
+Sayfanın en üstünde tek satır olarak görünür: "Pazar günleri 10:00–14:00
+brunch" gibi. Boş bırakırsanız hiç görünmez.
+
+### Sosyal medya
+
+Instagram, TikTok, Facebook ve diğer hesaplarınızın bağlantısını girin;
+sitenin altında görünürler. Yalnızca doldurduklarınız gösterilir.
+
+### Sitede görünecek bölümler
+
+Sayfanın en altındaki bu liste ile bölümleri açıp kapatabilirsiniz: Yorumlar,
+S.S.S., Konum, Galeri, WhatsApp butonu ve duyuru şeridi. İşareti kaldırdığınız
+bölüm sitede görünmez ama **içeriği silinmez** — istediğinizde geri açarsınız.
+
+> İçeriği olmayan bölümler zaten kendiliğinden gizlenir. Örneğin hiç yorum
+> eklemediyseniz Yorumlar bölümü görünmez.
 
 ---
 
@@ -174,7 +197,33 @@ Menüdeki gibi sürükleyerek veya ↑ ↓ ile sıralayın. **Sil** kalıcıdır
 
 ---
 
-## 5. Mesajlar
+## 5. Yorumlar
+
+Müşterilerinizin yorumları sitenizde ayrı bir bölümde görünür. Yeni siteyi
+ziyaret eden birinin en çok baktığı yer burasıdır.
+
+- **Yorumu yazan**: müşterinin adı (ör. "Ayşe K.")
+- **Puan**: 1-5 yıldız. Boş bırakırsanız yıldız hiç görünmez.
+- **Yorum**: kısa tutun, 2-3 cümle en iyisi.
+- **Sitede göster**: işareti kaldırırsanız yorum silinmez, yalnızca gizlenir.
+
+Sıralamayı sürükleyerek değiştirebilirsiniz; sitede bu sırayla görünürler.
+
+> Yorumları müşterilerinizden izin alarak ekleyin.
+
+---
+
+## 6. Sıkça Sorulan Sorular
+
+Müşterilerin en çok sorduğu şeyleri buraya yazın: Wi-Fi, çalışma ortamı,
+rezervasyon, evcil hayvan, otopark. Arama motorları da bu bölümü okur, yani
+"kadıköy kafe wifi" gibi aramalarda bulunmanıza yardımcı olur.
+
+Sorular sitede açılır-kapanır bir liste olarak görünür.
+
+---
+
+## 7. Mesajlar
 
 Sitenizdeki iletişim formundan gelen mesajlar burada birikir.
 
@@ -194,7 +243,7 @@ neredeyse hiç spam düşmez.
 
 ---
 
-## 6. Diller & Çeviriler
+## 8. Diller & Çeviriler
 
 Siteniz 5 dilde yayınlanabilir: **Türkçe, İngilizce, İspanyolca, Almanca, Arapça**.
 Turistik bir bölgedeyseniz bu, doğrudan müşteri kazandırır.
@@ -247,7 +296,7 @@ dil seçiciden istediği zaman değiştirebilir.
 
 ---
 
-## 7. Tema & Renkler
+## 9. Tema & Renkler
 
 Sitenizin renklerini buradan değiştirirsiniz.
 

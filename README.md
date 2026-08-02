@@ -13,7 +13,10 @@ müdahalesine ihtiyaç kalmaz.
 | Katman | Özet |
 |---|---|
 | **Public site** | Tek sayfa landing: Hero → Hakkımızda → Menü → Galeri → İletişim |
-| **Tema sistemi** | **9 hazır tema** (placeholder + 8 tasarım). Her tema kendi bölümlerini ve sırasını tanımlar; renk/tipografi `tokens.css`'te. Müşteri repo'sunda tema pinlenir (`pnpm new:customer`) |
+| **Tema sistemi** | **9 hazır tema** (placeholder + 8 tasarım). Her tema kendi bölümlerini, sırasını, fontunu ve açılış animasyonlarını tanımlar. Müşteri repo'sunda tema pinlenir (`pnpm new:customer`) |
+| **Tipografi** | Tasarım başına Google Font çifti, `next/font` ile **self-host** — çalışma anında harici istek yok |
+| **Bölümler** | Hero, Hakkımızda + Saatler, Menü, Galeri, **Yorumlar**, **S.S.S.**, **Konum**, İletişim; panelden tek tek açılıp kapatılabilir |
+| **Dönüşüm** | Sabit WhatsApp butonu, üstte duyuru şeridi, footer'da sosyal medya bağlantıları (hepsi panelden yönetilir) |
 | **Admin panel** | `/admin`, arayüz tamamen Türkçe. İçerik, menü, galeri, saatler, mesajlar, renkler |
 | **Veritabanı** | SQLite tek dosya (`/data/app.db`), Drizzle ORM |
 | **Görseller** | `/data/uploads` altında; sharp ile 1920px WebP + 400px thumbnail + orijinal |

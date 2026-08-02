@@ -18,6 +18,9 @@ export default function Header({ content }: SectionProps) {
    * Bolumler icerik bosken kendini basmiyor (About, Menu, Gallery). Nav de ayni
    * kosullari kullanmali; yoksa musteri galeri yuklemeden yayina alinca
    * "Galeri" linki hicbir yere gitmeyen kirik bir capa olurdu.
+   *
+   * Galeri icin gallery.length DEGIL isVisible("galeri") soruluyor: musteri
+   * galeriyi panelden kapatinca bolum gidiyor, link de onunla birlikte gitmeli.
    */
   const links = [
     (content.about || content.openingHours.length > 0) && {
@@ -25,14 +28,18 @@ export default function Header({ content }: SectionProps) {
       label: t.about.title,
     },
     hasMenu(content) && { href: "#menu", label: t.menu.eyebrow },
-    content.gallery.length > 0 && { href: "#galeri", label: t.gallery.eyebrow },
+    content.isVisible("galeri") && {
+      href: "#galeri",
+      label: t.gallery.eyebrow,
+    },
     { href: "#iletisim", label: t.contact.eyebrow },
   ].filter((link): link is { href: string; label: string } => Boolean(link));
 
   return (
-    <header className={`${surface} brand-body`}>
+    // ya-fade: tasarimda ust serit sayfa acilir acilmaz yerinde beliriyor.
+    <header className={`${surface} brand-body ya-fade`}>
       <div
-        className={`${shell} flex flex-col items-center gap-6 py-8 text-center sm:py-10`}
+        className={`${shell} flex flex-col items-center gap-5 py-6 text-center sm:gap-6 sm:py-7`}
       >
         <a href="#hero" className="flex flex-col items-center gap-3">
           {/* trim(): sadece bosluk iceren bir logo alani next/image'i patlatirdi. */}
@@ -45,19 +52,24 @@ export default function Header({ content }: SectionProps) {
               className="size-12 object-contain"
             />
           ) : null}
-          <span className="brand-display text-xl leading-none sm:text-2xl">
+          {/*
+            Tasarimda marka adi serif ama BUYUK ve cok genis harf arali
+            (17px / .34em); boyutunu degil araligini tasiyor.
+          */}
+          <span className="brand-display ya-serif-book ya-wordmark text-[1.0625rem] leading-none sm:text-xl">
             {name}
           </span>
           {tagline ? <span className={eyebrow}>{tagline}</span> : null}
         </a>
 
         <nav aria-label={name}>
-          <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+          {/* Tasarimdaki nav ritmi: 30px bosluk, 12.5px, .14em. */}
+          <ul className="flex flex-wrap items-center justify-center gap-x-[1.875rem] gap-y-3">
             {links.map((link) => (
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className={`${eyebrow} transition-colors hover:text-[var(--brand-ink)]`}
+                  className="ya-nav transition-colors hover:text-[var(--brand-accent)]"
                 >
                   {link.label}
                 </a>

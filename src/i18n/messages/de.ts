@@ -44,6 +44,27 @@ const de: Messages = {
     email: "E-Mail",
     instagram: "Instagram",
   },
+  testimonials: {
+    eyebrow: "Bewertungen",
+    title: "Was unsere Gäste sagen",
+    ratingLabel: "{rating} von 5 Sternen",
+  },
+  faq: {
+    eyebrow: "Häufige Fragen",
+    title: "Häufig gestellte Fragen",
+  },
+  location: {
+    eyebrow: "Standort",
+    title: "So finden Sie uns",
+    directions: "Route planen",
+    mapAlt: "Karte mit dem Standort von {name}",
+  },
+  social: {
+    title: "Folgen Sie uns",
+  },
+  whatsapp: {
+    label: "Per WhatsApp schreiben",
+  },
   form: {
     name: "Vor- und Nachname",
     namePlaceholder: "Ihr Vor- und Nachname",
