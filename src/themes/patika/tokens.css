@@ -520,7 +520,20 @@ html[data-theme="patika"] .pk-marquee {
  * Ust serit yapiskan oldugu icin capa linkleri (#menu, #galeri...) bolum
  * basligini seridin ALTINDA birakirdi. Kaydirma payi bolum yuksekligini
  * degistirmez, yalnizca duracagi noktayi yukari alir.
+ *
+ * Pay IKI KADEMELI, cunku seridin yuksekligi sabit degil: dar ekranda logotip
+ * ile nav rozetleri alt alta dusuyor ve serit 74px yerine ~116px oluyor.
+ * Olculen degerler: 360-700px arasi 112-116px, 768px ve ustu 78px. Tek bir
+ * 5.5rem (88px) pay verilince menu sayfasinda kategori rozetine basan kisi
+ * kategori basligini seridin ALTINDA buluyordu (basligin 24px'i gizli
+ * kaliyordu). Alt kademe 8rem = 128px: en kalin serit + bir tutam nefes.
  */
 html[data-theme="patika"] :is(section, footer)[id] {
-  scroll-margin-top: 5.5rem;
+  scroll-margin-top: 8rem;
+}
+
+@media (min-width: 768px) {
+  html[data-theme="patika"] :is(section, footer)[id] {
+    scroll-margin-top: 5.5rem;
+  }
 }

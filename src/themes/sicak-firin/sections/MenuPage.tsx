@@ -16,7 +16,6 @@ import {
   leaderLine,
   metaText,
   pillGhost,
-  shell,
   surface,
 } from "@/themes/sicak-firin/parts";
 import type { MenuCategory, SectionProps } from "@/themes/types";
@@ -25,16 +24,26 @@ import type { MenuCategory, SectionProps } from "@/themes/types";
  * TAM MENU SAYFASI — /{dil}/menu.
  *
  * Ana sayfadaki bolum artik yalnizca vitrin (uc urun + baglanti); butun
- * kategoriler ve fiyatlar burada. Tasarim dili AYNI: kart yok, satirlar
- * dogrudan krem zeminde akiyor, aralarinda kesik cizgi, ad ile fiyat arasinda
- * noktali kilavuz, fiyat slab fontla marka renginde.
+ * kategoriler ve fiyatlar burada. Satir dili AYNI: satirlar arasinda kesik
+ * cizgi, ad ile fiyat arasinda noktali kilavuz, fiyat slab fontla marka
+ * renginde.
  *
- * SAYFA ILE BOLUMUN FARKI uc yerde:
- *  1. Ust bosluk daha genis (48/80px) — ustunde hero yok, baslik dogrudan
- *     seridin altina yapismasin.
- *  2. Baslik bir kademe buyuk (SectionHead "lg" = 46px): burada bu metin
+ * BURADA TEK BUYUK FARK: liste artik sayfa genisliginde AKMIYOR, elde tutulan
+ * bir MENU KARTININ icinde duruyor. 2200px'lik govdede otuz urunluk bir liste
+ * okunmuyordu — goz urun adindan fiyata varamiyor, kategoriler birbirine
+ * karisiyordu. Kart tasarimin kendi kagit dilinden geliyor (hero'daki not
+ * kagidinin buyugu): bal tonunda passe-partout + krem sayfa + ince kenarlik +
+ * ayni not golgesi. Yeni bir bicim icat etmiyoruz, var olani buyutuyoruz.
+ *
+ * NEDEN metin krem sayfada kaliyor (bal zeminde degil): butun ton secimleri
+ * (eyebrow bali, aciklamanin ink-muted'i) krem zemine gore kontrast
+ * dogrulanmisti; govdeyi bal zemine tasimak bu iki ton icin kontrasti
+ * 4.5:1'in altina dusuruyordu. Bal ton bu yuzden yalnizca cerceve.
+ *
+ * SAYFA ILE BOLUMUN DIGER FARKLARI:
+ *  1. Baslik bir kademe buyuk (SectionHead "lg" = 46px): burada bu metin
  *     sayfanin adi, bir bolumun etiketi degil.
- *  3. Kategoriler arasi gezinme seridi var — otuz urunluk bir listede
+ *  2. Kategoriler arasi gezinme seridi var — otuz urunluk bir listede
  *     "kahveler nerede" sorusunun cevabi tek tiklik olmali. Serit tasarimin
  *     hap rozet dilini kullaniyor (hero'daki chip ile ayni bicim).
  *
@@ -53,154 +62,196 @@ export default function MenuPage({ content }: SectionProps) {
   /*
    * Sag kolon yalnizca tek kategorili menude bos kalir (splitColumns ikinci
    * kategoriyi her zaman saga tasir). O durumda iki kolonlu izgarayi kurmak
-   * 2200px'lik kabin SAG YARISINI bombos birakiyordu. Tek kolona dusup
-   * genisligi iki kolonlu duzendeki bir kolonun olcusune sabitliyoruz: satir
-   * ritmi, noktali kilavuzun uzunlugu ve fiyat hizasi kategori sayisindan
-   * bagimsiz olarak ayni kaliyor.
+   * kartin SAG YARISINI bombos birakiyordu; tek kolona duseriz.
+   *
+   * Kartin genisligi de buna bagli: iki kolonlu menude 1040px (iki kolonun
+   * yan yana rahat durdugu olcu), tek kolonluda 900px. Tek kolonu 1040px'te
+   * birakmak noktali kilavuzu gereksiz uzatiyor, gozu adin sonundan fiyata
+   * kadar bos bir sahada yuruttuyordu.
    */
   const twoColumns = rightColumn.length > 0;
 
   return (
     <section id="menu" aria-labelledby="menu-page-title" className={surface}>
       {/*
+        Sayfa kenar boslugu. Bolumlerin `shell` kabugu (20/48px) burada
+        KULLANILMIYOR: kartin kendi max genisligi zaten var, ustune bir de
+        48px kenar boslugu koymak 390px'te karti gereksiz daraltiyordu.
+        Mobilde 16px birakilir, karti neredeyse ekran genisliginde tutar.
+
         Ust bosluk bolum ritminden (44/52px) BILEREK genis: sayfanin ustunde
-        hero yok, baslik ince ust seridin hemen altina yapisinca sayfa
-        kesilmis gibi basliyordu. Alt bosluk ise bolum ritmiyle ayni kalir —
-        altta footer var.
+        hero yok, kart ince ust seridin hemen altina yapisinca sayfa kesilmis
+        gibi basliyordu.
       */}
-      <div
-        className={`${shell} pt-12 pb-[var(--brand-section-py)] sm:pt-20 sm:pb-[var(--brand-section-py-lg)]`}
-      >
-        <SectionHead
-          eyebrow={t.menu.eyebrow}
-          title={t.menu.title}
-          titleId="menu-page-title"
-          intro={t.menu.pageIntro}
-          size="lg"
-          as="h1"
-        />
-
-        {showJumpLinks ? (
-          // Sayfa ici capa listesi. <nav> cunku bu bir gezinme araci, susleme
-          // degil; ekran okuyucu listeyi baslik olarak duyurabilsin.
-          <nav aria-label={t.menu.eyebrow} className="mt-8">
-            <ul className="flex flex-wrap gap-2.5">
-              {categories.map((category) => (
-                <li key={category.id}>
-                  <a
-                    href={`#kategori-${category.id}`}
-                    className={`${chip} transition-colors hover:bg-[var(--brand-primary)] hover:text-[var(--brand-primary-contrast)]`}
-                  >
-                    {category.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        ) : null}
-
-        {/*
-          Iki BAGIMSIZ yigin; grid hucresi degil. Kategorileri tek izgaraya
-          sirayla dizmek tek sayilarda sag kolonu yarim birakiyordu (bkz.
-          splitColumns). Dar ekranda tek kolona iner.
-        */}
+      <div className="px-4 pt-10 pb-[var(--brand-section-py)] sm:px-6 sm:pt-16 sm:pb-[var(--brand-section-py-lg)]">
         <div
-          className={`mt-12 grid gap-12 ${
-            twoColumns ? "lg:grid-cols-2 lg:gap-16" : "max-w-[64rem]"
-          }`}
+          className={`mx-auto w-full ${twoColumns ? "max-w-[65rem]" : "max-w-[56.25rem]"}`}
         >
-          {[leftColumn, rightColumn].map((column, columnIndex) =>
-            column.length > 0 ? (
-              <div key={columnIndex} className="flex flex-col gap-12">
-                {column.map((category, index) => (
-                  <Reveal
-                    key={category.id}
-                    delay={columnIndex === 0 && index === 0 ? 0 : 0.06}
-                  >
-                    {/* scroll-mt: capadan gelindiginde baslik ekranin en ust
-                        kenarina yapismasin. */}
-                    <h2
-                      id={`kategori-${category.id}`}
-                      className="brand-display scroll-mt-8 text-[length:var(--brand-h4)] leading-[var(--brand-h4-leading)] tracking-[var(--brand-h3-tracking)]"
-                    >
-                      {category.name}
-                    </h2>
+          {/*
+            PASSE-PARTOUT: bal tonunda ince bir cerceve, icinde krem sayfa.
+            Golge hero'daki not kagidinin golgesiyle AYNI token — kart sayfadan
+            bir tik yukarida, elde tutulan bir sey gibi dursun. Mobilde cerceve
+            6px'e iner (10px kenar payi 358px'lik bir kartta kalinlik yapiyor).
+          */}
+          <div className="rounded-[var(--brand-radius-panel)] bg-[var(--brand-surface-alt)] p-1.5 shadow-[var(--brand-note-shadow)] sm:p-2.5">
+            {/* Kagit. Ince kenarlik yine not kagidindan: bal cerceve ile krem
+                sayfanin arasindaki gecisi keskinlestiriyor. */}
+            <div className="brand-rounded border border-[var(--brand-hairline-soft)] bg-[var(--brand-surface)] px-5 py-9 sm:px-10 sm:py-12 lg:px-14">
+              <SectionHead
+                eyebrow={t.menu.eyebrow}
+                title={t.menu.title}
+                titleId="menu-page-title"
+                intro={t.menu.pageIntro}
+                size="lg"
+                as="h1"
+              />
 
-                    <ul className="mt-6 flex flex-col">
-                      {category.items.map((item) => (
-                        <li
-                          key={item.id}
-                          className={`${dashedRow} flex items-start gap-4 py-4`}
+              {showJumpLinks ? (
+                // Sayfa ici capa listesi. <nav> cunku bu bir gezinme araci,
+                // susleme degil; ekran okuyucu listeyi baslik olarak
+                // duyurabilsin. flex-wrap: dar ekranda alt alta sarar,
+                // yatay kaydirma cubugu birakmaz.
+                <nav aria-label={t.menu.eyebrow} className="mt-8">
+                  <ul className="flex flex-wrap gap-2.5">
+                    {categories.map((category) => (
+                      <li key={category.id}>
+                        <a
+                          href={`#kategori-${category.id}`}
+                          className={`${chip} transition-colors hover:bg-[var(--brand-primary)] hover:text-[var(--brand-primary-contrast)]`}
                         >
-                          {item.thumbUrl ? (
-                            <Image
-                              src={imageOrFallback(item.thumbUrl, SQUARE_FALLBACK)}
-                              alt={item.name}
-                              width={64}
-                              height={64}
-                              loading="lazy"
-                              className="brand-rounded size-16 shrink-0 bg-[var(--brand-surface-alt)] object-cover"
-                            />
-                          ) : null}
+                          {category.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              ) : null}
 
-                          {/* min-w-0: uzun urun adi kolonu tasirip fiyati
-                              disari itmesin (390px'te kritik). */}
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-baseline gap-3">
-                              <p className="min-w-0 text-[length:var(--brand-lead)]">
-                                {item.name}
-                                {item.isFeatured ? (
-                                  <span
-                                    className={`${metaText} ms-3 whitespace-nowrap`}
-                                  >
-                                    {t.menu.featured}
-                                  </span>
+              {/*
+                Kunye ile listeyi ayiran kesik cizgi — basili menu kartinda
+                baslik bloguyla urunlerin arasindaki ayrac. Tasarimin tek
+                cizgi turu.
+
+                Icinde: iki BAGIMSIZ yigin; grid hucresi degil. Kategorileri
+                tek izgaraya sirayla dizmek tek sayilarda sag kolonu yarim
+                birakiyordu (bkz. splitColumns). Dar ekranda tek kolona iner.
+              */}
+              <div
+                className={`mt-10 grid gap-12 border-t border-dashed border-[var(--brand-hairline)] pt-10 ${
+                  twoColumns ? "lg:grid-cols-2 lg:gap-12" : ""
+                }`}
+              >
+                {[leftColumn, rightColumn].map((column, columnIndex) =>
+                  column.length > 0 ? (
+                    <div key={columnIndex} className="flex flex-col gap-12">
+                      {column.map((category, index) => (
+                        <Reveal
+                          key={category.id}
+                          delay={columnIndex === 0 && index === 0 ? 0 : 0.06}
+                        >
+                          {/* scroll-mt: capadan gelindiginde baslik ekranin en
+                              ust kenarina yapismasin. */}
+                          <h2
+                            id={`kategori-${category.id}`}
+                            className="brand-display scroll-mt-8 text-[length:var(--brand-h4)] leading-[var(--brand-h4-leading)] tracking-[var(--brand-h3-tracking)]"
+                          >
+                            {category.name}
+                          </h2>
+
+                          <ul className="mt-6 flex flex-col">
+                            {category.items.map((item) => (
+                              <li
+                                key={item.id}
+                                className={`${dashedRow} flex items-start gap-4 py-4`}
+                              >
+                                {item.thumbUrl ? (
+                                  <Image
+                                    src={imageOrFallback(
+                                      item.thumbUrl,
+                                      SQUARE_FALLBACK,
+                                    )}
+                                    alt={item.name}
+                                    width={64}
+                                    height={64}
+                                    loading="lazy"
+                                    className="brand-rounded size-14 shrink-0 bg-[var(--brand-surface-alt)] object-cover sm:size-16"
+                                  />
                                 ) : null}
-                              </p>
 
-                              <span aria-hidden="true" className={leaderLine} />
+                                {/* min-w-0: uzun urun adi kolonu tasirip fiyati
+                                    disari itmesin (390px'te kritik). */}
+                                <div className="min-w-0 flex-1">
+                                  {/*
+                                    flex-wrap: dar kartta cok uzun bir urun adi
+                                    fiyati sikistirmak yerine fiyati alt satira
+                                    indirir — ad ile fiyat ust uste binmez.
+                                  */}
+                                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
+                                    <p className="min-w-0 text-[length:var(--brand-lead)]">
+                                      {item.name}
+                                      {item.isFeatured ? (
+                                        <span
+                                          className={`${metaText} ms-3 whitespace-nowrap`}
+                                        >
+                                          {t.menu.featured}
+                                        </span>
+                                      ) : null}
+                                    </p>
 
-                              {item.price ? (
-                                <p
-                                  className="brand-display shrink-0 text-[length:var(--brand-lead)] font-semibold tabular-nums text-[var(--brand-primary)]"
-                                  dir="ltr"
-                                >
-                                  {item.price}
-                                </p>
-                              ) : null}
-                            </div>
+                                    <span
+                                      aria-hidden="true"
+                                      className={leaderLine}
+                                    />
 
-                            {/* Aciklama sayfada TAM basilir; kirpma yalnizca
-                                ana sayfadaki vitrinde var. */}
-                            {item.description ? (
-                              <p className="mt-1.5 text-sm leading-relaxed font-light text-pretty text-[var(--brand-ink-muted)]">
-                                {item.description}
-                              </p>
-                            ) : null}
-                          </div>
-                        </li>
+                                    {item.price ? (
+                                      <p
+                                        className="brand-display ms-auto shrink-0 text-[length:var(--brand-lead)] font-semibold tabular-nums text-[var(--brand-primary)]"
+                                        dir="ltr"
+                                      >
+                                        {item.price}
+                                      </p>
+                                    ) : null}
+                                  </div>
+
+                                  {/* Aciklama sayfada TAM basilir; kirpma
+                                      yalnizca ana sayfadaki vitrinde var. */}
+                                  {item.description ? (
+                                    <p className="mt-1.5 text-sm leading-relaxed font-light text-pretty text-[var(--brand-ink-muted)]">
+                                      {item.description}
+                                    </p>
+                                  ) : null}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </Reveal>
                       ))}
-                    </ul>
-                  </Reveal>
-                ))}
+                    </div>
+                  ) : null,
+                )}
               </div>
-            ) : null,
-          )}
-        </div>
+            </div>
+          </div>
 
-        {/*
-          Donus. Sozlukte "ana sayfa" anahtari yok; tasarimin ust seridinde de
-          marka adi zaten eve goturen baglanti, o yuzden burada da isletme adi
-          kullaniliyor. Ustundeki kesik cizgi temanin tek ayrac turu.
+          {/*
+            Donus. Sozlukte "ana sayfa" anahtari yok; tasarimin ust seridinde
+            de marka adi zaten eve goturen baglanti, o yuzden burada da isletme
+            adi kullaniliyor.
 
-          Ok BASTA ve 180 derece donuk: ileri degil geri gidiyoruz. RTL'de
-          ikonun kendi -scale-x kurali ile birleserek dogru yone bakar.
-        */}
-        <div className="mt-14 border-t border-dashed border-[var(--brand-hairline)] pt-8">
-          <Link href={`/${locale}`} className={pillGhost}>
-            <ArrowIcon className="size-4 rotate-180" />
-            <span>{name}</span>
-          </Link>
+            Kartin DISINDA ve ustunde AYRAC YOK: kartin kendi kenari sayfayi
+            zaten kapatiyor (kunye seridindeki ile ayni ilke), araya bir kesik
+            cizgi daha koymak kapanisa ikinci bir kat cikariyordu. Baglanti
+            kartla ayni kolonda, yani onun bas kenarina hizali.
+
+            Ok BASTA ve 180 derece donuk: ileri degil geri gidiyoruz. RTL'de
+            ikonun kendi -scale-x kurali ile birleserek dogru yone bakar.
+          */}
+          <div className="mt-8">
+            <Link href={`/${locale}`} className={pillGhost}>
+              <ArrowIcon className="size-4 rotate-180" />
+              <span>{name}</span>
+            </Link>
+          </div>
         </div>
       </div>
     </section>

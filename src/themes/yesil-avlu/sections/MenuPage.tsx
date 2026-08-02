@@ -2,12 +2,7 @@ import Link from "next/link";
 
 import { Reveal } from "@/components/motion/Reveal";
 import { hasMenu, menuWithItems } from "@/themes/_shared/data";
-import {
-  Sprig,
-  bodyText,
-  sectionEyebrow,
-  shell,
-} from "@/themes/yesil-avlu/parts";
+import { Sprig, bodyText, sectionEyebrow } from "@/themes/yesil-avlu/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
@@ -15,18 +10,28 @@ import type { SectionProps } from "@/themes/types";
  *
  * ZEMIN: tasarimda menu koyu bir serit (.ya-grove). Sayfanin TAMAMI o serit;
  * boylece ana sayfadaki vitrinden buraya gecis kesintisiz duruyor ve menu
- * sitenin geri kalanindan ayri bir "yer" gibi okunuyor. Header ve Footer krem
- * kaldigi icin koyu govde tasarimdaki gibi iki acik serit arasinda duruyor.
+ * sitenin geri kalanindan ayri bir "yer" gibi okunuyor.
  *
- * DUZEN: ana sayfada her kategori bir KOLON'du. Burada urun aciklamalari da
- * basildigi ve liste uzun oldugu icin kategoriler alt alta tam genislikte
- * BLOK; urunler blogun icinde iki kolona akiyor (columns, izgara degil):
- * boylece komsu kolonlarin satirlari birbirine kilitlenmiyor, uzun ve kisa
- * aciklamalar kolonlarda bosluk birakmiyor.
+ * KAP: liste artik bu koyu zemine kenardan kenara akmiyor, koyu korunun
+ * uzerine BIRAKILMIS krem bir MENU KARTI'nin (.ya-leaflet) icinde duruyor.
+ * Nedeni okunurluk: 2200px genisliginde akan bir satirda goz urun adindan
+ * fiyatina varamiyordu. Kart 1040px'te duruyor — uzun bir urun adi, aciklamasi
+ * ve fiyatinin bir arada okundugu aralik. Kartin ust kenari temanin kemeri,
+ * icinde tasarimin kutularindaki ince passe-partout cizgisi var; boylece kap
+ * jenerik bir "beyaz kart" degil, bu avlunun menu karti.
+ *
+ * Baslik blogu kartin ICINDE, kemerin altinda: kemer boylece bos bir kubbe
+ * degil, basligi tasiyan tabela oluyor.
+ *
+ * DUZEN: kategoriler alt alta tam genislikte BLOK; urunler blogun icinde iki
+ * kolona akiyor (columns, izgara degil): komsu kolonlarin satirlari birbirine
+ * kilitlenmiyor, uzun ve kisa aciklamalar kolonlarda bosluk birakmiyor. Kart
+ * 1040px oldugu icin iki kolon ancak lg'de aciliyor; altinda tek kolonluk
+ * kitapcik sayfasi kaliyor.
  *
  * Kategori basligi YAPISKAN: 30+ urunluk bir listede kaydirirken hangi
- * kategoride oldugunuz gorunur kalmali. Zemini --brand-surface (koyu zeminde
- * bu --brand-primary'dir) oldugu icin altindan gecen satirlar okunmuyor.
+ * kategoride oldugunuz gorunur kalmali. Zemini --brand-surface (kart icinde bu
+ * krem kagit) oldugu icin altindan gecen satirlar okunmuyor.
  *
  * Cizgi YOK: bu tasarimda urunleri ayiran sey bosluk; tek ince cizgi kategori
  * basliginin altinda ve sayfayi kapatan satirin ustunde.
@@ -40,142 +45,151 @@ export default function MenuPage({ content }: SectionProps) {
   return (
     <section aria-labelledby="menu-page-title" className="ya-grove">
       {/*
-        Ust bosluk ana sayfadaki bolumden GENIS: burada ustte hero yok, sayfa
-        dogrudan basligiyla basliyor ve baslik seride yapismamali.
+        Zemin seridi. Yan bosluk 390px'te 14px'e kadar iner (kart tam genisligi
+        kullanmali), genis ekranda kart kendi 1040px'inde kalir ve iki yanda
+        koru zemini gorunur. Ust/alt bosluk kartin "birakilmis" durmasini
+        saglayacak kadar ferah.
       */}
-      <div className={`${shell} pt-16 pb-20 sm:pt-32 sm:pb-28`}>
-        {/*
-          Baslik blogu SectionHeading'in ayni ritmi, ama h2 degil h1: bu bir
-          bolum degil sayfa ve sayfanin tek birinci duzey basligi bu.
-        */}
-        <div className="text-center">
-          <p className={sectionEyebrow}>{t.menu.eyebrow}</p>
+      <div className="px-3.5 py-12 sm:px-8 sm:py-20 lg:py-28">
+        <div className="ya-leaflet mx-auto w-full max-w-[65rem] px-6 pt-14 pb-12 sm:px-12 sm:pt-24 sm:pb-16 lg:px-16">
+          {/*
+            Baslik blogu SectionHeading'in ayni ritmi, ama h2 degil h1: bu bir
+            bolum degil sayfa ve sayfanin tek birinci duzey basligi bu.
+            Kemerin altinda kaldigi icin ortali.
+          */}
+          <div className="text-center">
+            <p className={sectionEyebrow}>{t.menu.eyebrow}</p>
 
-          <h1
-            id="menu-page-title"
-            className="brand-display mx-auto mt-4 max-w-3xl text-[clamp(2.4rem,6vw,4.25rem)] leading-[1.1] tracking-[-0.01em] text-balance"
-          >
-            {t.menu.title}
-          </h1>
-
-          <p className={`${bodyText} mx-auto mt-6 max-w-xl`}>
-            {t.menu.pageIntro}
-          </p>
-
-          <Sprig className="mt-8" />
-        </div>
-
-        {/*
-          Sayfa ici capa listesi: tasarimin ust serit navigasyonuyla ayni recete
-          (.ya-nav, 30px yatay bosluk). Tek kategori varken gezinilecek bir sey
-          olmadigi icin basilmaz.
-        */}
-        {categories.length > 1 ? (
-          <nav
-            aria-label={t.menu.eyebrow}
-            className="mx-auto mt-10 flex max-w-[73.75rem] flex-wrap justify-center gap-x-[1.875rem] gap-y-3"
-          >
-            {categories.map((category) => (
-              <a
-                key={category.id}
-                href={`#menu-kategori-${category.id}`}
-                /* Hover rengi tema genelinde tanimli (tokens.css). */
-                className="ya-nav brand-body text-[var(--brand-ink-muted)] transition-colors"
-              >
-                {category.name}
-              </a>
-            ))}
-          </nav>
-        ) : null}
-
-        {/*
-          1180px tasarimdan geliyor: sayfanin geri kalani kenardan kenara aksa
-          da menu ortada bu genislikte duruyor.
-        */}
-        <div className="mx-auto mt-16 max-w-[73.75rem]">
-          {categories.map((category) => (
-            <section
-              key={category.id}
-              id={`menu-kategori-${category.id}`}
-              aria-labelledby={`menu-kategori-${category.id}-title`}
-              /* Capa ile gelindiginde baslik ekranin tam tepesine yapismasin. */
-              className="scroll-mt-6 pt-14 first:pt-0"
+            <h1
+              id="menu-page-title"
+              /*
+                Olcek ana sayfadakinden bir tik kucuk: baslik artik 1040px'lik
+                bir kagidin icinde, sayfa genisliginde degil.
+              */
+              className="brand-display mx-auto mt-4 max-w-2xl text-[clamp(2.2rem,5.5vw,3.75rem)] leading-[1.1] tracking-[-0.01em] text-balance"
             >
-              {/*
-                Yapiskan baslik Reveal'in DISINDA: Reveal bir transform
-                uyguluyor ve transform, position:sticky icin yeni bir
-                kapsayici blok yaratip yapiskanligi iptal ederdi.
-              */}
-              <h2
-                id={`menu-kategori-${category.id}-title`}
-                className="brand-display ya-serif-book sticky top-0 z-10 border-b border-[var(--brand-border)] bg-[var(--brand-surface)] pt-5 pb-3.5 text-[1.625rem] italic sm:text-[1.75rem]"
+              {t.menu.title}
+            </h1>
+
+            <p className={`${bodyText} mx-auto mt-6 max-w-xl`}>
+              {t.menu.pageIntro}
+            </p>
+
+            <Sprig className="mt-8" />
+          </div>
+
+          {/*
+            Sayfa ici capa listesi: tasarimin ust serit navigasyonuyla ayni
+            recete (.ya-nav, 30px yatay bosluk). flex-wrap sayesinde dar ekranda
+            alt satira sarar. Tek kategori varken gezinilecek bir sey olmadigi
+            icin basilmaz.
+          */}
+          {categories.length > 1 ? (
+            <nav
+              aria-label={t.menu.eyebrow}
+              className="mt-10 flex flex-wrap justify-center gap-x-8 gap-y-3 sm:gap-x-[1.875rem]"
+            >
+              {categories.map((category) => (
+                <a
+                  key={category.id}
+                  href={`#menu-kategori-${category.id}`}
+                  /* Hover rengi tema genelinde tanimli (tokens.css). */
+                  className="ya-nav brand-body text-[var(--brand-ink-muted)] transition-colors"
+                >
+                  {category.name}
+                </a>
+              ))}
+            </nav>
+          ) : null}
+
+          <div className="mt-14">
+            {categories.map((category) => (
+              <section
+                key={category.id}
+                id={`menu-kategori-${category.id}`}
+                aria-labelledby={`menu-kategori-${category.id}-title`}
+                /* Capa ile gelindiginde baslik ekranin tam tepesine yapismasin. */
+                className="scroll-mt-6 pt-12 first:pt-0 sm:pt-14"
               >
-                {category.name}
-              </h2>
-
-              <Reveal>
                 {/*
-                  columns: urunler once soldaki kolonu doldurup saga geciyor.
-                  Izgara yerine bunun secilmesinin nedeni ustte anlatildi.
-                  390px'te tek kolona duser.
+                  Yapiskan baslik Reveal'in DISINDA: Reveal bir transform
+                  uyguluyor ve transform, position:sticky icin yeni bir
+                  kapsayici blok yaratip yapiskanligi iptal ederdi.
                 */}
-                <ul className="mt-2 sm:columns-2 sm:gap-x-16">
-                  {category.items.map((item) => (
-                    /* Tasarimdaki satir ritmi: 13px alt-ust. */
-                    <li
-                      key={item.id}
-                      className="break-inside-avoid py-[0.8125rem]"
-                    >
-                      {/*
-                        flex-wrap + min-w-0: uzun urun adi fiyatin uzerine
-                        binmez, sigmayinca fiyat alt satira duser.
-                      */}
-                      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-                        <h3 className="brand-body min-w-0 text-[0.9375rem] font-light">
-                          {item.name}
-                          {item.isFeatured ? (
-                            <span className="brand-body brand-eyebrow ms-3 text-[0.6rem] text-[var(--brand-accent)]">
-                              {t.menu.featured}
-                            </span>
-                          ) : null}
-                        </h3>
+                <h2
+                  id={`menu-kategori-${category.id}-title`}
+                  className="brand-display ya-serif-book sticky top-0 z-10 border-b border-[var(--brand-border)] bg-[var(--brand-surface)] pt-5 pb-3.5 text-[1.625rem] italic sm:text-[1.75rem]"
+                >
+                  {category.name}
+                </h2>
 
-                        {item.price ? (
-                          <p
-                            className="shrink-0 text-[0.9375rem] font-light tabular-nums text-[var(--brand-accent)]"
-                            dir="ltr"
-                          >
-                            {item.price}
+                <Reveal>
+                  {/*
+                    columns: urunler once soldaki kolonu doldurup saga geciyor.
+                    Izgara yerine bunun secilmesinin nedeni ustte anlatildi.
+                    Ikinci kolon ancak lg'de acilir: 1040px'lik kagidin altinda
+                    iki kolon urun adi ile fiyat arasinda yeterli acikligi
+                    birakmiyordu.
+                  */}
+                  <ul className="mt-2 lg:columns-2 lg:gap-x-14">
+                    {category.items.map((item) => (
+                      /* Tasarimdaki satir ritmi: 13px alt-ust. */
+                      <li
+                        key={item.id}
+                        className="break-inside-avoid py-[0.8125rem]"
+                      >
+                        {/*
+                          flex-wrap + min-w-0: uzun urun adi fiyatin uzerine
+                          binmez, sigmayinca fiyat alt satira duser.
+                        */}
+                        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+                          <h3 className="brand-body min-w-0 text-[0.9375rem] font-light">
+                            {item.name}
+                            {item.isFeatured ? (
+                              <span className="brand-body brand-eyebrow ms-3 text-[0.6rem] text-[var(--brand-accent)]">
+                                {t.menu.featured}
+                              </span>
+                            ) : null}
+                          </h3>
+
+                          {item.price ? (
+                            <p
+                              className="shrink-0 text-[0.9375rem] font-light tabular-nums text-[var(--brand-accent)]"
+                              dir="ltr"
+                            >
+                              {item.price}
+                            </p>
+                          ) : null}
+                        </div>
+
+                        {item.description ? (
+                          <p className="mt-1.5 max-w-[46ch] text-sm leading-relaxed font-light text-pretty text-[var(--brand-ink-muted)]">
+                            {item.description}
                           </p>
                         ) : null}
-                      </div>
+                      </li>
+                    ))}
+                  </ul>
+                </Reveal>
+              </section>
+            ))}
+          </div>
 
-                      {item.description ? (
-                        <p className="mt-1.5 max-w-[46ch] text-sm leading-relaxed font-light text-pretty text-[var(--brand-ink-muted)]">
-                          {item.description}
-                        </p>
-                      ) : null}
-                    </li>
-                  ))}
-                </ul>
-              </Reveal>
-            </section>
-          ))}
-        </div>
-
-        {/*
-          Ana sayfaya donus. Tasarimin kapanis satiri tam olarak bu: ustte ince
-          cizgi, altinda ortalanmis italik serif 19px ve SOLUK bir isletme adi.
-          Sozlukte "ana sayfaya don" anahtari olmadigi icin metin isletme adi;
-          hover'da accent'e donmesi (tokens.css) tiklanabilirligini gosteriyor.
-        */}
-        <div className="mx-auto mt-20 max-w-[73.75rem] border-t border-[var(--brand-border)] pt-7 text-center">
-          <Link
-            href={`/${content.locale}`}
-            className="brand-display ya-serif-book text-[1.1875rem] text-[var(--brand-ink-muted)] italic transition-colors"
-          >
-            {content.name}
-          </Link>
+          {/*
+            Ana sayfaya donus. Tasarimin kapanis satiri tam olarak bu: ustte
+            ince cizgi, altinda ortalanmis italik serif 19px ve SOLUK bir
+            isletme adi. Kagidin icinde kaliyor ki kart kendi kendini kapatsin.
+            Sozlukte "ana sayfaya don" anahtari olmadigi icin metin isletme adi;
+            hover'da accent'e donmesi (tokens.css) tiklanabilirligini gosteriyor.
+          */}
+          <div className="mt-16 border-t border-[var(--brand-border)] pt-7 text-center">
+            <Link
+              href={`/${content.locale}`}
+              className="brand-display ya-serif-book text-[1.1875rem] text-[var(--brand-ink-muted)] italic transition-colors"
+            >
+              {content.name}
+            </Link>
+          </div>
         </div>
       </div>
     </section>

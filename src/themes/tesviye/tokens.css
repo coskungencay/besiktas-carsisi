@@ -193,6 +193,35 @@ html[data-theme="tesviye"] {
   /* Yan ray genisligi — tasarimda her bolumun basindaki kunye sutunu. */
   --ts-rail: 200px;
 
+  /*
+   * --- Ayri menu sayfasinin kitapcik kabi (/tr/menu) ---
+   *
+   * NEDEN KAP: o sayfa 30+ satirlik bir cetvel. Kenardan kenara akan
+   * 2200px'lik paftada goz urun adindan fiyatina varamiyor, satirlar
+   * birbirine kariyor. Cetvel burada teknik cizim paftasinin kendisi gibi
+   * CERCEVELENIR: okunabilir genislikte tek bir yaprak, altinda sayfa zemini
+   * (surface-alt) gorunur. Tasarimda zaten her kutu 2px cizgiyle cevrili;
+   * kap yeni bir dil degil, ayni cizginin sayfa olcusunde tekrari.
+   *
+   * Olcu: dis sinir 1040px; passe-partout ve cerceveler dusunce cetvelin
+   * kendisi ~1000px kalir. Bu, uzun bir urun adi + not + fiyat ucusunun tek
+   * bakista okundugu aralik.
+   */
+  --ts-sheet-max: 1040px;
+
+  /*
+   * Yaprak cercevesi ve passe-partout (dis cerceve + araligi).
+   *
+   * Dar ekranda passe-partout KAPANIR ve cerceve tema kalinligina (2px)
+   * iner: 390px'te 4px'lik cift cerceve + 12px aralik satirdan 30px'ten
+   * fazlasini yiyor, cetvelin fiyat sutunu sikisiyordu. Genis ekranda
+   * cerceve kalinlasir ve disina ikinci bir cizgi gelir — yaprak paspartuya
+   * oturmus bir pafta gibi durur.
+   */
+  --ts-sheet-edge: var(--brand-border-width);
+  --ts-sheet-mat: 0px;
+  --ts-sheet-mat-edge: 0px;
+
   /* Tasarimin acilis egrisi. */
   --ts-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 
@@ -235,6 +264,30 @@ html[data-theme="tesviye"] {
       var(--ts-plan-grid) 0 1px,
       transparent 1px 22px
     );
+}
+
+/*
+ * Menu kitapciginin kirilim noktalari.
+ *
+ * NEDEN CSS media query (Tailwind sm:/lg: degil): bu degerler kenarlik
+ * KALINLIGI ve dolgu; Tailwind'de `border-[var(...)]` yaziminda tarayici
+ * degerin renk mi kalinlik mi oldugunu tahmin etmek zorunda kaliyor ve yanlis
+ * tahminde cizgi sessizce kayboluyor (bkz. parts.tsx edgeTop notu). Olculer
+ * token olarak burada durunca bilesen tarafinda tek bir style yeterli oluyor.
+ * Kirilimlar Tailwind varsayilanlariyla ayni: sm 40rem, lg 64rem.
+ */
+@media (min-width: 40rem) {
+  html[data-theme="tesviye"] {
+    --ts-sheet-edge: 4px;
+    --ts-sheet-mat: 0.75rem;
+    --ts-sheet-mat-edge: var(--brand-border-width);
+  }
+}
+
+@media (min-width: 64rem) {
+  html[data-theme="tesviye"] {
+    --ts-sheet-mat: 1rem;
+  }
 }
 
 /* --------------------------------------------------------------------------

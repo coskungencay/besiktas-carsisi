@@ -227,9 +227,13 @@ export function MenuLine({
               aria-hidden="true"
               className="mb-[5px] hidden min-w-6 flex-1 border-b border-dotted border-[var(--mera-dot)] sm:block"
             />
-            {/* dir=ltr: para birimi ve rakam sirasi Arapca'da da bozulmasin. */}
+            {/* dir=ltr: para birimi ve rakam sirasi Arapca'da da bozulmasin.
+                shrink-0 + break-normal: fiyat satirin sabit ucudur — ad cok
+                uzun oldugunda once ad sarar, fiyat ne daralir ne de rakamin
+                ortasindan boluner (menu sayfasinda kagit `break-words`
+                mirasini tum icerige veriyor, fiyat bunun disinda kalmali). */}
             <span
-              className="ms-auto text-[0.875rem] tabular-nums text-[var(--brand-ink-body)]"
+              className="ms-auto shrink-0 text-[0.875rem] tabular-nums break-normal text-[var(--brand-ink-body)]"
               dir="ltr"
             >
               {item.price}

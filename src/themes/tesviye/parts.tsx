@@ -26,6 +26,42 @@ import type { CSSProperties, ReactNode } from "react";
 export const shell = "mx-auto w-full max-w-[var(--brand-container)]";
 
 /**
+ * Menu sayfasinin kitapcik kabi (yaprak).
+ *
+ * shell'den AYRI ve bilerek dar: shell bir ust sinir, bu ise okuma olcusudur.
+ * Ayri menu sayfasinda cetvel 30+ satira ciktigi icin satirin BASINDAN
+ * FIYATINA ulasabilen bir genislik gerekiyor (bkz. --ts-sheet-max).
+ * Kap sayfada ortalanir; 2000px ekranda genislemez, iki yanda sayfa zemini
+ * gorunur kalir.
+ */
+export const sheet = "mx-auto w-full max-w-[var(--ts-sheet-max)]";
+
+/**
+ * Yapragin kendi cercevesi. Kalinlik --ts-sheet-edge: dar ekranda 2px,
+ * sm ustunde 4px (tokens.css).
+ *
+ * NEDEN inline style: kalinlik token'dan geliyor; Tailwind'in
+ * `border-[var(...)]` yaziminda cizginin sessizce kaybolma riski var
+ * (bkz. edgeTop notu). Bu tasarimda cizgi duzenin kendisi.
+ */
+export const sheetEdge: CSSProperties = {
+  borderWidth: "var(--ts-sheet-edge)",
+  borderStyle: "solid",
+  borderColor: "var(--brand-border)",
+};
+
+/**
+ * Passe-partout: yapragin disindaki ikinci cizgi ve arasindaki aralik.
+ * Dar ekranda ikisi de 0'dir — kap tum genisligi kullansin diye.
+ */
+export const sheetMat: CSSProperties = {
+  padding: "var(--ts-sheet-mat)",
+  borderWidth: "var(--ts-sheet-mat-edge)",
+  borderStyle: "solid",
+  borderColor: "var(--brand-border)",
+};
+
+/**
  * Monospace teknik etiket: kunye, kategori adi, alan basligi.
  * Tasarim olcusu 11.5px / agirlik 600 / ls .16em (brand-eyebrow'dan gelir).
  */
