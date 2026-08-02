@@ -1,25 +1,27 @@
 import type { ThemeDefinition } from "@/themes/types";
 
-import OverlayHero from "@/themes/shared/heroes/OverlayHero";
-import About from "@/themes/shared/sections/About";
-import Contact from "@/themes/shared/sections/Contact";
-import Gallery from "@/themes/shared/sections/Gallery";
-import Footer from "@/themes/shared/Footer";
-import Menu from "@/themes/shared/sections/Menu";
+import About from "@/themes/vela/sections/About";
+import Contact from "@/themes/vela/sections/Contact";
+import Footer from "@/themes/vela/sections/Footer";
+import Gallery from "@/themes/vela/sections/Gallery";
+import Header from "@/themes/vela/sections/Header";
+import Hero from "@/themes/vela/sections/Hero";
+import Menu from "@/themes/vela/sections/Menu";
 
 /**
- * Vela
+ * Vela — bir butik otelin restoran sayfasi.
  *
- * Gorsel kimligin tamami src/themes/vela/tokens.css icindedir.
- * Bolumler paylasilan uygulamalardan gelir; bu temaya ozel bir duzen
- * gerekirse ilgili bolumu bu klasorde yazip asagida degistirin.
+ * Duzen kimligi: dikey ritim, cok bosluk, ortadan baslayan dar kolonlar,
+ * kenardan kenara yatay bantlar ve altin sac teli cizgiler.
+ * Renk/olcu kararlari src/themes/vela/tokens.css icinde.
  */
 const theme: ThemeDefinition = {
   name: "Vela",
   description: "Koyu butik atmosfer, altın vurgu, geniş harf aralıkları.",
   scheme: "dark",
+  Header,
   sections: [
-    { id: "hero", Component: OverlayHero },
+    { id: "hero", Component: Hero },
     { id: "hakkimizda", Component: About },
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },

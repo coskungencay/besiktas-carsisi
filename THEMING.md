@@ -54,11 +54,14 @@ const theme: ThemeDefinition = {
 | Katman | İçerik | Kural |
 |---|---|---|
 | `src/themes/_shared/` | Menü gruplama, saat aralığı, koordinat biçimi, görsel fallback, `useContactForm` hook'u, ikonlar | **Sadece mantık.** Renk, ızgara, boşluk, sınıf adı buraya giremez |
-| `src/themes/<slug>/` | Header, bölümler, footer, `tokens.css` | Görsel kararların tamamı |
-| `src/themes/shared/` | **LEGACY** — henüz tasarımına göre yeniden yazılmamış temaların ortak iskeleti | Yeni tema burayı kullanmaz |
+| `src/themes/<slug>/` | Header, bölümler, footer, `parts.tsx`, `tokens.css` | Görsel kararların tamamı |
 
-Örnek alınacak yapı: **`src/themes/beyaz-oda/`** — tasarımına göre yeniden
-yazılmış ilk tema.
+**Dokuz temanın dokuzu da kendi bölümlerini yazar.** Ortak bir bölüm bileşeni
+(eski `src/themes/shared/`) artık yok — 9 temanın aynı görünmesinin sebebi oydu,
+kaldırıldı. Aralarında paylaşılan tek şey mantık.
+
+Örnek alınacak yapı: **`src/themes/beyaz-oda/`**. En sade iskelet:
+**`src/themes/placeholder/`**.
 
 ```
 src/themes/
@@ -68,23 +71,33 @@ src/themes/
 │   ├── data.ts                  #   menuWithItems, hoursRange, coordinateLabel…
 │   ├── icons.tsx                #   currentColor ile çizilmiş ikonlar
 │   └── useContactForm.ts        #   form mantığı — işaretleme yok
-├── beyaz-oda/                   # YENİ YAPI: kendi bölümleri
-│   ├── index.ts
-│   ├── tokens.css
-│   ├── parts.tsx                #   temaya özel küçük parçalar
-│   └── sections/                #   Header, Hero, About, Menu, Gallery, Contact, Footer
-├── shared/                      # LEGACY (aşağıdaki temalar hâlâ kullanıyor)
-└── placeholder/ mera/ patika/ yesil-avlu/ kirk-yil/ vela/ tesviye/ sicak-firin/
+└── <slug>/                      # 9 temanın her biri aynı yapıda
+    ├── index.ts                 #   ThemeDefinition
+    ├── tokens.css               #   görsel kimliğin TAMAMI
+    ├── parts.tsx                #   temaya özel küçük parçalar (opsiyonel)
+    └── sections/                #   Header, Hero, About, Menu, Gallery, Contact,
+                                 #   ContactForm, Footer
 ```
 
-### Bir temayı tasarımına göre yeniden yazmak
+### Temaların düzen kimlikleri
 
-1. `src/themes/<slug>/sections/` klasörünü açın.
-2. Bölümleri tek tek yazın; veri `SiteContent`ten, görsel `tokens.css`ten gelir.
-3. `index.ts` içinde `sections` dizisini kendi bileşenlerinize çevirin, gerekiyorsa
-   `Header`/`Footer` ekleyin.
-4. Artık `@/themes/shared/*` import etmediğinizden emin olun — o tema legacy
-   katmandan kurtulmuş olur.
+| Tema | Düzen |
+|---|---|
+| `beyaz-oda` | Editoryal ızgara, monospace künye, bölüm indeksleri (— 00) |
+| `mera` | Dergi editoryali: ortalanmış masthead, asimetrik hero, iki kolonlu menü ilanı |
+| `patika` | Poster: dev kalın başlık, pill rozetler, kart ızgarası, kaydırılabilir galeri |
+| `yesil-avlu` | Botanik avlu: tam ortalanmış, çok yuvarlak, değişken yükseklikli galeri |
+| `kirk-yil` | Nostaljik tabela: simetrik, çift çizgi, klasik fiyat listesi, passe-partout |
+| `vela` | Koyu butik: dikey ritim, tek kolon ortalanmış menü, tam genişlik yatay bantlar |
+| `tesviye` | Brutalist blueprint: kalın çerçeveli hücreler, tablo menü, [köşeli] etiketler |
+| `sicak-firin` | Mahalle fırını: yuvarlak formlar, "öne çıkanlar" vitrini, yumuşak kartlar |
+| `placeholder` | Nötr başlangıç — karaktersiz olması kasıtlı |
+
+### Bir temanın düzenini değiştirmek
+
+Tema klasörü tamamen size aittir: `sections/` altındaki dosyaları değiştirin,
+bölüm ekleyin/çıkarın, `index.ts`'teki `sections` dizisini yeniden sıralayın.
+Başka hiçbir temayı etkilemez — bu ayrım bilinçlidir.
 
 ---
 
@@ -245,8 +258,7 @@ pnpm new:customer --theme=beyaz-oda             # onay sorar, sonra uygular
 
 Komut şunları yapar: diğer tema klasörlerini siler, `registry.ts` ve
 `globals.css` import'larını tek temaya indirir, `.env.example` içine
-`NEXT_PUBLIC_THEME=<slug>` yazar, kalan tema legacy ortak kodu kullanmıyorsa
-`src/themes/shared/` klasörünü de kaldırır.
+`NEXT_PUBLIC_THEME=<slug>` yazar ve `design-input/` çalışma alanını temizler.
 
 `NEXT_PUBLIC_THEME` dolu olduğunda panelde tema seçici **hiç görünmez** ve sunucu
 tarafı tema değişikliğini reddeder — müşteri yalnızca renkleri değiştirebilir.
@@ -309,7 +321,7 @@ if (images.length === 0) return null;
       TypeScript diğer 4 dilin eksik olduğunu derleme anında söyler.
 - [ ] Doğrulayın:
       ```bash
-      grep -rnE '>[^<>{}]*[çğıöşüÇĞİÖŞÜ][^<>{}]*<' src/themes/shared/
+      grep -rnE '>[^<>{}]*[çğıöşüÇĞİÖŞÜ][^<>{}]*<' src/themes/<slug>/sections/
       ```
 
 ### D. Token'a çevirme
@@ -323,7 +335,7 @@ if (images.length === 0) return null;
       `bg-[color-mix(in_srgb,var(--brand-surface)_78%,transparent)]`
 - [ ] Doğrulayın — hiç hex kalmamalı:
       ```bash
-      grep -rn "#[0-9a-fA-F]\{3,6\}" src/themes/shared/
+      grep -rn "#[0-9a-fA-F]\{3,6\}" src/themes/<slug>/
       ```
 
 ### E. Görseller

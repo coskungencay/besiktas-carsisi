@@ -1,25 +1,27 @@
 import type { ThemeDefinition } from "@/themes/types";
 
-import CenteredHero from "@/themes/shared/heroes/CenteredHero";
-import About from "@/themes/shared/sections/About";
-import Contact from "@/themes/shared/sections/Contact";
-import Gallery from "@/themes/shared/sections/Gallery";
-import Footer from "@/themes/shared/Footer";
-import Menu from "@/themes/shared/sections/Menu";
+import About from "@/themes/kirk-yil/sections/About";
+import Contact from "@/themes/kirk-yil/sections/Contact";
+import Footer from "@/themes/kirk-yil/sections/Footer";
+import Gallery from "@/themes/kirk-yil/sections/Gallery";
+import Header from "@/themes/kirk-yil/sections/Header";
+import Hero from "@/themes/kirk-yil/sections/Hero";
+import Menu from "@/themes/kirk-yil/sections/Menu";
 
 /**
  * Kırk Yıl
  *
- * Gorsel kimligin tamami src/themes/kirk-yil/tokens.css icindedir.
- * Bolumler paylasilan uygulamalardan gelir; bu temaya ozel bir duzen
- * gerekirse ilgili bolumu bu klasorde yazip asagida degistirin.
+ * Gorsel kimligin tamami src/themes/kirk-yil/tokens.css icindedir; duzen
+ * kimligi (cift cizgi, tam simetri, passe-partout cerceveler) bu klasordeki
+ * sections/ ve parts.tsx icinde. Ortak katmandan yalnizca MANTIK alinir.
  */
 const theme: ThemeDefinition = {
   name: "Kırk Yıl",
   description: "Nostaljik bordo ve altın, baştan sona serif, ortalanmış klasik düzen.",
   scheme: "light",
+  Header,
   sections: [
-    { id: "hero", Component: CenteredHero },
+    { id: "hero", Component: Hero },
     { id: "hakkimizda", Component: About },
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },

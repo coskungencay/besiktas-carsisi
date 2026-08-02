@@ -25,8 +25,6 @@ const THEMES_DIR = "src/themes";
 const REGISTRY_PATH = join(THEMES_DIR, "registry.ts");
 const GLOBALS_PATH = "src/app/globals.css";
 const ENV_EXAMPLE_PATH = ".env.example";
-const LEGACY_SHARED_DIR = join(THEMES_DIR, "shared");
-const LEGACY_CONTACT_FORM = "src/components/site/ContactForm.tsx";
 const DESIGN_INPUT_DIR = "design-input/designs";
 
 /** Tema klasoru olmayan alt klasorler. */
@@ -146,26 +144,6 @@ function setEnvExampleTheme(slug: string): string {
   return `${env.trimEnd()}\n\nNEXT_PUBLIC_THEME=${slug}\n`;
 }
 
-/** Kalan tema legacy ortak bilesenleri import ediyor mu? */
-function usesLegacyShared(slug: string): boolean {
-  const dir = join(THEMES_DIR, slug);
-  const stack = [dir];
-  while (stack.length > 0) {
-    const current = stack.pop()!;
-    for (const entry of readdirSync(current, { withFileTypes: true })) {
-      const path = join(current, entry.name);
-      if (entry.isDirectory()) {
-        stack.push(path);
-        continue;
-      }
-      if (!/\.(ts|tsx)$/.test(entry.name)) continue;
-      const source = readFileSync(path, "utf8");
-      if (source.includes("@/themes/shared/")) return true;
-    }
-  }
-  return false;
-}
-
 async function confirm(question: string): Promise<boolean> {
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   const answer = await rl.question(`${question} [e/H] `);
@@ -192,23 +170,11 @@ async function main() {
   }
 
   const removable = available.filter((slug) => slug !== theme);
-  const legacyStillNeeded = usesLegacyShared(theme);
-  const dropLegacy = !legacyStillNeeded && existsSync(LEGACY_SHARED_DIR);
-
   console.log(`\nSecilen tema: ${theme}`);
   if (removable.length > 0) {
     console.log(`Silinecek temalar: ${removable.join(", ")}`);
   } else {
     console.log("Silinecek tema yok — repo zaten tek temali.");
-  }
-  if (dropLegacy) {
-    console.log(
-      `Silinecek legacy ortak kod: ${LEGACY_SHARED_DIR}, ${LEGACY_CONTACT_FORM}`,
-    );
-  } else if (legacyStillNeeded) {
-    console.log(
-      `Legacy ortak kod KALIYOR: "${theme}" temasi henuz @/themes/shared kullaniyor.`,
-    );
   }
   console.log(`Guncellenecek: ${REGISTRY_PATH}, ${GLOBALS_PATH}, ${ENV_EXAMPLE_PATH}`);
   if (existsSync(DESIGN_INPUT_DIR)) {
@@ -238,11 +204,6 @@ async function main() {
   writeFileSync(REGISTRY_PATH, renderRegistry(theme), "utf8");
   writeFileSync(GLOBALS_PATH, rewriteGlobals(theme), "utf8");
   writeFileSync(ENV_EXAMPLE_PATH, setEnvExampleTheme(theme), "utf8");
-
-  if (dropLegacy) {
-    rmSync(LEGACY_SHARED_DIR, { recursive: true, force: true });
-    rmSync(LEGACY_CONTACT_FORM, { force: true });
-  }
 
   if (existsSync(DESIGN_INPUT_DIR)) {
     rmSync(DESIGN_INPUT_DIR, { recursive: true, force: true });

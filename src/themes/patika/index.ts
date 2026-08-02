@@ -1,25 +1,27 @@
 import type { ThemeDefinition } from "@/themes/types";
 
-import OverlayHero from "@/themes/shared/heroes/OverlayHero";
-import About from "@/themes/shared/sections/About";
-import Contact from "@/themes/shared/sections/Contact";
-import Gallery from "@/themes/shared/sections/Gallery";
-import Footer from "@/themes/shared/Footer";
-import Menu from "@/themes/shared/sections/Menu";
+import About from "@/themes/patika/sections/About";
+import Contact from "@/themes/patika/sections/Contact";
+import Footer from "@/themes/patika/sections/Footer";
+import Gallery from "@/themes/patika/sections/Gallery";
+import Header from "@/themes/patika/sections/Header";
+import Hero from "@/themes/patika/sections/Hero";
+import Menu from "@/themes/patika/sections/Menu";
 
 /**
- * Patika
+ * Patika — "konser afisi" duzeni.
  *
- * Gorsel kimligin tamami src/themes/patika/tokens.css icindedir.
- * Bolumler paylasilan uygulamalardan gelir; bu temaya ozel bir duzen
- * gerekirse ilgili bolumu bu klasorde yazip asagida degistirin.
+ * Tema paylasilan bir bolum kullanmaz: butun bolumler sections/ altinda,
+ * gorsel kimlik tokens.css icinde. Ortak katmandan yalnizca MANTIK alinir
+ * (@/themes/_shared).
  */
 const theme: ThemeDefinition = {
   name: "Patika",
   description: "Koyu zemin, neon sarı vurgu, kalın tipografi ve yuvarlak köşeler.",
   scheme: "dark",
+  Header,
   sections: [
-    { id: "hero", Component: OverlayHero },
+    { id: "hero", Component: Hero },
     { id: "hakkimizda", Component: About },
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },
