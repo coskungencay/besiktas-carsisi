@@ -1,21 +1,20 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { menuWithItems } from "@/themes/_shared/data";
-import {
-  CategoryHeading,
-  SectionTitle,
-  column,
-  shell,
-  surfaceAlt,
-} from "@/themes/kirk-yil/parts";
+import { shell } from "@/themes/kirk-yil/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Eski fiyat listesi: tek kolon, kategori basligi iki yaninda cizgiyle ortada,
- * urun adi basta fiyat sonda, satirlar ince cizgiyle ayrilir.
+ * Fiyat listesi — TASARIMIN EN CARPICI BOLUMU.
  *
- * Urun gorseli YOK: bu tema bir menu KARTI taklit ediyor, katalog degil;
- * panelden yuklenen urun gorselleri burada gosterilmez.
- * Zemin bolum boyunca degisiyor ki kart sayfadan ayrilsin.
+ * Tasarimda bu bolum sayfanin tek KOYU alani: kahve zemin (--brand-ink) uzerine
+ * kagit rengi yazi (--brand-surface). Sayfa boyunca akan acik krem ritmi burada
+ * kesiliyor ve menu bir "tabela" gibi one cikiyor. Onceki hali acik zeminde bir
+ * kart icindeydi; bolum sayfadan ayrilmiyordu.
+ *
+ * Olculer tasarimdan: bolum 84px/92px dikey dolgu, ic kap 1000px, iki kolon
+ * 70px araliki, urun satiri 19px/300 agirlik ve 14px dikey dolgu.
+ *
+ * Urun gorseli YOK: burasi bir menu KARTI, katalog degil.
  */
 export default function Menu({ content }: SectionProps) {
   const categories = menuWithItems(content);
@@ -24,73 +23,96 @@ export default function Menu({ content }: SectionProps) {
   const { t } = content;
 
   return (
-    <section id="menu" aria-labelledby="menu-title" className={surfaceAlt}>
-      <div className={`${shell} brand-section`}>
+    <section
+      id="menu"
+      aria-labelledby="menu-title"
+      className="bg-[var(--brand-ink)] text-[var(--brand-surface)]"
+    >
+      <div className={`${shell} py-[84px] sm:py-[92px]`}>
+        {/*
+          Bolum basligi ortada. SectionTitle kullanilmiyor: o bilesen acik
+          zemin icin yazildi (ink rengi baslik, muted eyebrow); burada zemin
+          ters oldugu icin renkler de ters.
+        */}
         <Reveal>
-          <SectionTitle
-            eyebrow={t.menu.eyebrow}
-            title={t.menu.title}
-            titleId="menu-title"
-          />
+          <div className="mx-auto max-w-[1000px] text-center">
+            <p className="ky-eyebrow text-[var(--brand-accent)]">
+              {t.menu.eyebrow}
+            </p>
+            <h2
+              id="menu-title"
+              className="brand-display mt-3.5 text-[clamp(2rem,4vw,3.5rem)] leading-[1.06] text-balance"
+            >
+              {t.menu.title}
+            </h2>
+
+            {/* Elmas ayrac: acik zemindeki surumun kagit rengi karsiligi. */}
+            <div
+              className="mt-[18px] flex items-center justify-center gap-4"
+              aria-hidden="true"
+            >
+              <span className="h-px w-20 bg-[var(--brand-surface)]/30" />
+              <span className="text-[13px] text-[var(--brand-accent)]">✦</span>
+              <span className="h-px w-20 bg-[var(--brand-surface)]/30" />
+            </div>
+          </div>
         </Reveal>
 
-        <div
-          className={`${column} brand-frame mt-12 bg-[var(--brand-surface)] px-6 py-10 sm:px-12 sm:py-14`}
-        >
-          <div className="flex flex-col gap-12">
-            {categories.map((category, index) => (
-              <Reveal key={category.id} delay={index === 0 ? 0 : 0.06}>
-                <CategoryHeading>{category.name}</CategoryHeading>
+        {/*
+          Iki kolon: tasarimda kategoriler yan yana duruyor (KAHVELER |
+          FIRIN & TATLI). Tek kolon liste sayfayi gereksiz uzatiyordu.
+          Kategori sayisi tekse ikinci kolon bos kalmasin diye tek kolona
+          duser; ikiden fazlaysa siraya dizilir.
+        */}
+        <div className="mx-auto mt-[52px] grid max-w-[1000px] gap-x-[70px] gap-y-12 md:grid-cols-2">
+          {categories.map((category, index) => (
+            <Reveal key={category.id} delay={Math.min(index, 3) * 0.06}>
+              <h3 className="ky-eyebrow border-b border-[var(--brand-surface)]/25 pb-3 text-[var(--brand-accent)]">
+                {category.name}
+              </h3>
 
-                <ul className="mt-6 flex flex-col">
-                  {category.items.map((item) => (
-                    <li
-                      key={item.id}
-                      className="border-b border-[var(--brand-border)] py-3.5 last:border-b-0"
-                    >
-                      <div className="ky-prose flex items-baseline gap-3">
-                        <p>
-                          {item.name}
-                          {item.isFeatured ? (
-                            <span className="brand-eyebrow ms-3 text-xs text-[var(--brand-accent)]">
-                              {t.menu.featured}
-                            </span>
-                          ) : null}
-                        </p>
-
-                        {/*
-                          Noktali dolgu cizgisi: eski fiyat listelerinin imzasi.
-                          flex-1 oldugu icin ad ile fiyat arasindaki bosluk ne
-                          olursa olsun doluyor, RTL'de de dogru yonde uzuyor.
-                        */}
-                        {item.price ? (
-                          <span
-                            aria-hidden="true"
-                            className="mb-1.5 flex-1 border-b border-dotted border-[var(--brand-border)]"
-                          />
+              <ul className="mt-1.5 flex flex-col">
+                {category.items.map((item) => (
+                  <li key={item.id} className="py-3.5">
+                    <div className="flex items-baseline gap-2.5 text-[19px] font-light">
+                      <p>
+                        {item.name}
+                        {item.isFeatured ? (
+                          <span className="ky-eyebrow ms-3 text-[var(--brand-accent)]">
+                            {t.menu.featured}
+                          </span>
                         ) : null}
+                      </p>
 
-                        {item.price ? (
-                          <p
-                            className="shrink-0 tabular-nums text-[var(--brand-primary)]"
-                            dir="ltr"
-                          >
-                            {item.price}
-                          </p>
-                        ) : null}
-                      </div>
+                      {/*
+                        Noktali dolgu: eski fiyat listelerinin imzasi. flex-1
+                        oldugu icin ad ile fiyat arasi ne olursa olsun doluyor,
+                        RTL'de de dogru yonde uzuyor.
+                      */}
+                      {item.price ? (
+                        <span
+                          aria-hidden="true"
+                          className="mb-1.5 flex-1 border-b border-dotted border-[var(--brand-surface)]/30"
+                        />
+                      ) : null}
 
-                      {item.description ? (
-                        <p className="ky-note mt-1 text-pretty text-[var(--brand-ink-muted)]">
-                          {item.description}
+                      {item.price ? (
+                        <p className="shrink-0 tabular-nums" dir="ltr">
+                          {item.price}
                         </p>
                       ) : null}
-                    </li>
-                  ))}
-                </ul>
-              </Reveal>
-            ))}
-          </div>
+                    </div>
+
+                    {item.description ? (
+                      <p className="ky-note mt-1 text-pretty text-[var(--brand-surface)]/65">
+                        {item.description}
+                      </p>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          ))}
         </div>
       </div>
     </section>

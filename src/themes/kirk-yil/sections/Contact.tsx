@@ -1,5 +1,6 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
+import { hoursFromMonday } from "@/themes/_shared/data";
 import {
   Ornament,
   SectionTitle,
@@ -54,6 +55,13 @@ export default function Contact({ content }: SectionProps) {
     },
   ].filter((row): row is Row => Boolean(row));
 
+  /*
+   * Calisma saatleri tasarimda TAM BURADA ("Acilis" sutunu), hikaye bolumunde
+   * degil. Yedi satirlik tablo hikayenin ortasindayken o bolumu iki katina
+   * cikariyor ve sayfayi gereksiz uzatiyordu.
+   */
+  const hours = hoursFromMonday(content.openingHours);
+
   return (
     <section id="iletisim" aria-labelledby="contact-title" className={surface}>
       <div className={`${shell} brand-section`}>
@@ -101,6 +109,40 @@ export default function Contact({ content }: SectionProps) {
                 </div>
               ))}
             </dl>
+          </Reveal>
+        ) : null}
+
+        {hours.length > 0 ? (
+          <Reveal delay={0.1}>
+            <div className="mx-auto mt-14 w-full max-w-2xl">
+              <h3 className={`${meta} text-center text-[var(--brand-primary)]`}>
+                {t.about.openingHours}
+              </h3>
+
+              <dl className="mt-5 flex flex-col">
+                {hours.map((hour) => (
+                  <div
+                    key={hour.dayOfWeek}
+                    className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-[var(--brand-border)] py-2.5 last:border-b-0"
+                  >
+                    <dt className="ky-detail">{hour.dayLabel}</dt>
+                    <dd className="ky-detail tabular-nums text-[var(--brand-ink-muted)]">
+                      {hour.isClosed ? (
+                        t.hours.closed
+                      ) : (
+                        <span dir="ltr">
+                          {hour.openTime} — {hour.closeTime}
+                        </span>
+                      )}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+
+              <p className="ky-note mt-4 text-center text-[var(--brand-ink-muted)]">
+                {t.about.hoursNote}
+              </p>
+            </div>
           </Reveal>
         ) : null}
 

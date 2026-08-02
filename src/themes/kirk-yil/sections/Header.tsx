@@ -1,16 +1,20 @@
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { hasMenu } from "@/themes/_shared/data";
-import { DoubleRule, metaMuted, shell, surface } from "@/themes/kirk-yil/parts";
+import { shell, surface } from "@/themes/kirk-yil/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Tabela serit: ustte cift cizgi, ortada marka adi, altta ortalanmis nav.
+ * TEK ince serit: solda kurulus/semt, ortada nav, sagda telefon.
  *
- * Her sey ortada; bu temada hiclbir ust seviye ogesi kenara yaslanmaz — eski
- * kahvehane tabelalarinin simetrisi tasarimin ilk izlenimi.
+ * NEDEN MARKA ADI YOK: tasarimda isletme adi hero'nun kendisi — 132px'lik dev
+ * baslik. Adi bir de header'a koymak ayni kelimeyi 100px arayla iki kez
+ * gosteriyor ve tabelanin etkisini dagitiyordu. Onceki hali uc kat yuksekti
+ * (marka + slogan + nav); tasarimda serit 16px dolgulu tek satir.
+ *
+ * Alt kenarlik cift cizgi (3px double) — tasarimin imzasi.
  */
 export default function Header({ content }: SectionProps) {
-  const { name, tagline, t } = content;
+  const { name, contact, t } = content;
 
   /*
    * Bolumler icerik bosken kendini basmiyor; nav de AYNI kosullari kullanmali,
@@ -23,8 +27,6 @@ export default function Header({ content }: SectionProps) {
       label: t.about.title,
     },
     hasMenu(content) && { href: "#menu", label: t.menu.eyebrow },
-    // isVisible: galeri panelden kapatildiginda link de gitmeli; "gorsel var mi"
-    // tek basina yetmiyor.
     content.isVisible("galeri") && {
       href: "#galeri",
       label: t.gallery.eyebrow,
@@ -33,49 +35,54 @@ export default function Header({ content }: SectionProps) {
   ].filter((link): link is { href: string; label: string } => Boolean(link));
 
   return (
-    // ky-fade: tasarimda tabela serit sayfayla birlikte usulca beliriyor.
-    <header className={`${surface} brand-body ky-fade`}>
-      <div className={shell}>
-        <DoubleRule className="mt-4" />
+    // ky-fade: tasarimda serit sayfayla birlikte usulca beliriyor.
+    <header
+      className={`${surface} brand-body ky-fade border-b-[3px] border-double border-[var(--brand-border)]`}
+    >
+      <div
+        className={`${shell} flex flex-wrap items-center justify-between gap-x-8 gap-y-3 py-4`}
+      >
+        {/*
+          Sol uc: tasarimda "Est. 1986 · Beyoglu". Bizde kurulus yili diye bir
+          alan yok; semt/sehir ayni islevi goruyor (nerede oldugumuz), yoksa
+          slogana duseriz.
+        */}
+        <span className="ky-strip text-[var(--brand-ink-muted)]">
+          {contact.locality || content.tagline}
+        </span>
 
-        <div className="py-7 text-center sm:py-9">
-          <a
-            href="#hero"
-            className="brand-display ky-brand inline-block text-[var(--brand-primary)] transition-opacity hover:opacity-75"
-          >
-            {name}
-          </a>
+        <nav aria-label={name}>
+          <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
+            {links.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  className="ky-strip text-[var(--brand-ink-muted)] underline-offset-[6px] transition-colors hover:text-[var(--brand-primary)] hover:underline"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-          {tagline ? <p className={`${metaMuted} mt-3`}>{tagline}</p> : null}
-        </div>
-
-        {/* Nav yazisi tasarimdaki kunye serit olcusunde: 13px / .18em. */}
-        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 border-t border-[var(--brand-border)] py-4">
-          <nav aria-label={name}>
-            <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
-              {links.map((link) => (
-                <li key={link.href}>
-                  <a
-                    href={link.href}
-                    className="ky-strip text-[var(--brand-ink-muted)] underline-offset-[6px] transition-colors hover:text-[var(--brand-primary)] hover:underline"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          {/* Sag uc: tasarimda telefon numarasi. Girilmemisse hic basilmaz. */}
+          {contact.phone ? (
+            <a
+              href={contact.phoneHref}
+              dir="ltr"
+              className="ky-strip text-[var(--brand-ink-muted)] transition-colors hover:text-[var(--brand-primary)]"
+            >
+              {contact.phone}
+            </a>
+          ) : null}
 
           {/* Tek dil aciksa secici hic basilmaz. */}
           {content.locales.length > 1 ? (
             <LocaleSwitcher content={content} />
           ) : null}
         </div>
-
-        <div
-          aria-hidden="true"
-          className="border-t border-[var(--brand-border)]"
-        />
       </div>
     </header>
   );
