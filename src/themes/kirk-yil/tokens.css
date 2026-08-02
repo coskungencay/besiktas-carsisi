@@ -262,6 +262,17 @@ html[data-theme="kirk-yil"] .ky-hero-eyebrow {
   text-transform: var(--brand-eyebrow-transform);
 }
 
+/*
+ * Muhur rakami: tasarimda 34px. .ky-stat'tan AYRI olmasinin nedeni alt sinir:
+ * daire dar ekranda 110px'e iniyor ve icine yalnizca ~24px'lik bir rakam
+ * yatay olarak siger. Deger DB'den geldigi icin ("07–23" gibi) uzunluguna
+ * guvenemeyiz; punto daireyle birlikte kuculmeli.
+ */
+html[data-theme="kirk-yil"] .ky-stamp-value {
+  font-size: clamp(1.5rem, 5vw, 2.125rem);
+  line-height: 1;
+}
+
 /* Muhur alt yazisi: 11px / .16em / 1.7 — dairenin icinde iki satira siger */
 html[data-theme="kirk-yil"] .ky-stamp-label {
   font-size: 0.6875rem;
@@ -362,16 +373,9 @@ html[data-theme="kirk-yil"] .ky-up {
 html[data-theme="kirk-yil"] .ky-up-2 {
   animation: kyUp 1s 0.6s both;
 }
+/* Butonlar: tasarimdaki son kademe (.75s), muhurden hemen once. */
 html[data-theme="kirk-yil"] .ky-up-3 {
   animation: kyUp 1s 0.75s both;
-}
-/*
- * .9s: tasarimin kademesi ~.15s araliklarla ilerliyor (.2 -> .6 -> .75).
- * Bizde hero'da tasarimda olmayan bir kunye satiri (highlights) var, bu yuzden
- * zincir bir basamak uzuyor ve butonlar .9s'e kayiyor — muhurle ayni an.
- */
-html[data-theme="kirk-yil"] .ky-up-4 {
-  animation: kyUp 1s 0.9s both;
 }
 html[data-theme="kirk-yil"] .ky-wide {
   animation: kyWide 1.4s 0.1s ease both;

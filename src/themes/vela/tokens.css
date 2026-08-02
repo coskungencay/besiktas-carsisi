@@ -44,6 +44,32 @@ html[data-theme="vela"] {
   --brand-ink-on-accent-muted: color-mix(in srgb, var(--brand-surface) 55%, var(--brand-accent));
 
   /*
+   * Hero fotografinin uzerindeki perde.
+   *
+   * Tasarimdaki uc durak birebir (%72 / %28 / %88): ust kenar koyu ki ust
+   * seritle birlessin, orta acilir ki fotograf gorunsun, alt kenar en koyu ki
+   * baslik hangi fotograf yuklenirse yuklensin okunur kalsin.
+   * Zemin renginden turetildi; palet panelden degisince perde de kayar.
+   */
+  --brand-hero-veil:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--brand-surface) 72%, transparent) 0%,
+      color-mix(in srgb, var(--brand-surface) 28%, transparent) 40%,
+      color-mix(in srgb, var(--brand-surface) 88%, transparent) 100%
+    );
+
+  /*
+   * Hero'da fotografin uzerine dusen govde metninin rengi.
+   *
+   * NEDEN --brand-ink-muted DEGIL: tasarimda bolum ici paragraflar murekkebin
+   * %62'si, hero'daki paragraf %72'si — fotograf uzerinde okunurluk daha zor
+   * oldugu icin bilerek daha parlak. Sabit gri yerine murekkebin saydami
+   * kullanildi; palet panelden degisince bu ton da birlikte kayar.
+   */
+  --brand-ink-on-photo: color-mix(in srgb, var(--brand-ink) 72%, transparent);
+
+  /*
    * Konum bolumundeki SOYUT harita dokusu.
    *
    * NEDEN GOMULU HARITA YOK: Google/OSM iframe'i her ziyaretcide harici bir
@@ -183,11 +209,6 @@ html[data-theme="vela"] .vl-fade {
   animation: vlFade 1.2s 0.2s both;
 }
 
-/* Basligin altindaki kucuk etiket; cizgiden hemen once girer. */
-html[data-theme="vela"] .vl-up-early {
-  animation: vlUp 1.2s 0.35s cubic-bezier(0.2, 0.75, 0.2, 1) both;
-}
-
 /* Ana baslik. */
 html[data-theme="vela"] .vl-up {
   animation: vlUp 1.2s 0.5s cubic-bezier(0.2, 0.75, 0.2, 1) both;
@@ -214,6 +235,15 @@ html[data-theme="vela"][dir="rtl"] .vl-rule {
 /* Hero gorseli: hafif ic zoom. overflow-hidden bir sarmalayici sart. */
 html[data-theme="vela"] .vl-zoom {
   animation: vlZoom 1.8s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+/*
+ * Hero fotografi uzerindeki karartma perdesi.
+ * Yalnizca gorsel; tiklamalari yutmamasi icin isaretcilere saydam.
+ */
+html[data-theme="vela"] .vl-veil {
+  background-image: var(--brand-hero-veil);
+  pointer-events: none;
 }
 
 /* --------------------------------------------------------------------------

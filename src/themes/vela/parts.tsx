@@ -53,6 +53,17 @@ export const metaInk = `${metaBase} text-[var(--brand-ink)]`;
 export const prose =
   "text-[0.9375rem] leading-[1.8] text-pretty text-[var(--brand-ink-muted)]";
 
+/**
+ * Hero'da FOTOGRAFIN UZERINDEKI govde metni: olcu `prose` ile ayni, rengi
+ * daha parlak (bkz. --brand-ink-on-photo).
+ *
+ * NEDEN AYRI SINIF: rengi cagiran tarafta ikinci bir `text-*` ile ezmek
+ * guvenilir degil — ayni utility'nin iki ornegi arasinda uretilen stil
+ * dosyasindaki sira kazanir, sinif dizisindeki sira degil.
+ */
+export const proseOnPhoto =
+  "text-[0.9375rem] leading-[1.8] text-pretty text-[var(--brand-ink-on-photo)]";
+
 /** Kart ici govde: tasarimda 14.5px / 1.85. */
 export const proseSm =
   "text-[0.90625rem] leading-[1.85] text-pretty text-[var(--brand-ink-muted)]";

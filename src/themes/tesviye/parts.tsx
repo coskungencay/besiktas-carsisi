@@ -7,6 +7,11 @@ import type { CSSProperties, ReactNode } from "react";
  * kutu, kutunun basinda numarali kunye seridi, ic bolmeler yine kalin
  * cizgilerle ayrilmis. Bu kabuk bes bolumde tekrar ettigi icin tek yerde
  * duruyor; boylece cizgi kalinligi ve kunye duzeni bolumler arasinda kaymaz.
+ *
+ * DIKKAT — punto yazarken `text-[length:var(--ts-...)]` KULLANIN.
+ * `text-[var(...)]` yazildiginda Tailwind degerin renk mi olcu mu oldugunu
+ * bilemez ve RENK varsayar: kural font-size uretmez, butun puntolar sessizce
+ * 16px'e duser. Bu temada dev Anton basliklarin 16px cikmasinin sebebi buydu.
  */
 
 /** Sayfa ic kenar boslugu — paftalar kenara yakin dursun diye dar tutuldu. */
@@ -18,14 +23,14 @@ export const shell =
  * Tasarim olcusu 11.5px / agirlik 600 / ls .16em (brand-eyebrow'dan gelir).
  */
 export const mono =
-  "brand-body brand-eyebrow text-[var(--ts-label-lg)] leading-[1.4] font-semibold";
+  "brand-body brand-eyebrow text-[length:var(--ts-label-lg)] leading-[1.4] font-semibold";
 
 /**
  * Kutu ici alan basligi: tasarimda 11px / 600 / ls .18em ve altinda 14px
  * bosluk. mono'dan ayri durmasinin sebebi harf araliginin farkli olmasi.
  */
 export const label =
-  "brand-body text-[var(--ts-label)] leading-[1.4] font-semibold uppercase tracking-[var(--ts-track-label)]";
+  "brand-body text-[length:var(--ts-label)] leading-[1.4] font-semibold uppercase tracking-[var(--ts-track-label)]";
 
 /**
  * Koyu zeminli tablo basligi seridi: tasarimda 11px / 600 / ls .14em.
@@ -33,14 +38,14 @@ export const label =
  * dagitip okunmaz hale getiriyordu.
  */
 export const tableHead =
-  "brand-body text-[var(--ts-label)] leading-[1.4] font-semibold uppercase tracking-[var(--ts-track-table)]";
+  "brand-body text-[length:var(--ts-label)] leading-[1.4] font-semibold uppercase tracking-[var(--ts-track-table)]";
 
 /**
  * Serit/kunye satiri: ust bilgi seridi. Tasarimda 12px / agirlik 300 /
  * ls .04em — etiketten daha sakin durur, bilgi tasir vurgu yapmaz.
  */
 export const meta =
-  "brand-body text-[var(--ts-meta)] leading-[1.5] font-light uppercase tracking-[var(--ts-track-meta)]";
+  "brand-body text-[length:var(--ts-meta)] leading-[1.5] font-light uppercase tracking-[var(--ts-track-meta)]";
 
 /**
  * Teknik ozet tablosu (hero'daki kunye satirlari).
@@ -51,15 +56,15 @@ export const meta =
  * olurdu (font-light vs font-normal), bu yuzden kendi sinifi var.
  */
 export const specList =
-  "brand-body text-[var(--ts-meta)] leading-[1.9] uppercase tracking-[var(--ts-track-meta)]";
+  "brand-body text-[length:var(--ts-meta)] leading-[1.9] uppercase tracking-[var(--ts-track-meta)]";
 
 /** Govde metni: tasarimda 14px / 1.75 / agirlik 300. */
 export const bodyText =
-  "text-[var(--ts-body)] leading-[var(--ts-body-leading)] font-light text-pretty";
+  "text-[length:var(--ts-body)] leading-[var(--ts-body-leading)] font-light text-pretty";
 
 /** Kutu icindeki kisa govde: 13.5px / 1.8 / agirlik 300. */
 export const bodyTextSm =
-  "text-[var(--ts-body-sm)] leading-[var(--ts-body-sm-leading)] font-light text-pretty";
+  "text-[length:var(--ts-body-sm)] leading-[var(--ts-body-sm-leading)] font-light text-pretty";
 
 /**
  * Kalin ayrac stilleri.
@@ -101,8 +106,19 @@ export const splitGrid =
 /** splitGrid icindeki hucre: zemini geri kazanir. */
 export const cell = "bg-[var(--brand-surface)]";
 
-/** Kutu icindeki ince veri satiri ayraci (kalin cizgilerden ayrilsin diye 1px). */
-export const hair = "border-t border-[var(--brand-ink-muted)]";
+/**
+ * Kutu icindeki ince veri satiri ayraci (kalin cizgilerden ayrilsin diye 1px).
+ * Renk --ts-hair: tasarimda bu cizgiler saydam murekkep, duz gri degil.
+ */
+export const hair = "border-t border-[var(--ts-hair)]";
+
+/**
+ * Eylem hucresi metni (hero'nun altindaki serit): tasarimda 12px / 600 /
+ * ls .16em. `mono` DEGIL cunku o 11.5px'lik kunye olcusu; burada hucre 96px
+ * yuksekliginde ve metin tek basina duruyor, yarim punto fark goze carpiyor.
+ */
+export const actionLabel =
+  "brand-body brand-eyebrow text-[length:var(--ts-meta)] leading-[1.4] font-semibold";
 
 /**
  * Kutu ic dolgusu — metin bolmelerinde ayni kalsin diye.
@@ -172,7 +188,7 @@ export function SheetHead({
          * deger (0.95) Turkce buyuk Ç/Ş kuyrugunu satir kutusunun disina
          * tasirip alttaki satira sokuyordu.
          */
-        className="brand-display px-4 py-6 text-[var(--ts-title)] leading-[var(--ts-title-leading)] text-balance uppercase sm:px-[var(--ts-pad)] sm:py-[var(--ts-pad)]"
+        className="brand-display px-4 py-6 text-[length:var(--ts-title)] leading-[var(--ts-title-leading)] text-balance uppercase sm:px-[var(--ts-pad)] sm:py-[var(--ts-pad)]"
       >
         {title}
       </h2>

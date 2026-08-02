@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
-import { HERO_FALLBACK, imageOrFallback } from "@/themes/_shared/data";
+import { HERO_FALLBACK_DARK, imageOrFallback } from "@/themes/_shared/data";
 import { SectionHead, shell, surface } from "@/themes/vela/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -43,7 +43,7 @@ export default function Gallery({ content }: SectionProps) {
                 }`}
               >
                 <Image
-                  src={imageOrFallback(image.url || image.thumbUrl, HERO_FALLBACK)}
+                  src={imageOrFallback(image.url || image.thumbUrl, HERO_FALLBACK_DARK)}
                   alt={
                     image.alt ||
                     fill(t.gallery.imageAlt, { name, index: String(index + 1) })

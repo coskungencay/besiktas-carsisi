@@ -106,8 +106,10 @@ function seedSettings() {
       name: "Kahve Durağı",
       tagline: "Her fincanda taze çekilmiş kahve, her tabakta ev yapımı tat.",
       // Hero basligi: musteri panelden degistirir. Bos birakilirsa `name` kullanilir.
-      heroHeadline: "Küçük bir dükkân,",
-      heroSubline: "büyük bir fincan.",
+      // Kisa tutuldu: hero basligi temalarda 100-168px punto ile basiliyor,
+      // uzun bir cumle ilk ekrani tek basina dolduruyor.
+      heroHeadline: "Günaydın,",
+      heroSubline: "kahven hazır.",
       highlights: [
         { label: "Saat", value: "08–22" },
         { label: "Kapalı", value: "Pazar" },

@@ -253,6 +253,15 @@ html[data-theme="beyaz-oda"] .bo-up-2 {
 }
 
 /*
+ * Hero'nun altindaki kenardan kenara gorsel bandi.
+ * Tasarimda 1.3s'lik SADECE opaklik gecisi var — dikey kayma YOK; kayma olsaydi
+ * bant asagi inerken hero ile arasinda beyaz bir aciklik gorunurdu.
+ */
+html[data-theme="beyaz-oda"] .bo-fade-band {
+  animation: boFade 1.3s both;
+}
+
+/*
  * Hero ayraci: soldan saga cizilir.
  * transform-origin mantiksal deger kabul etmiyor; RTL'de yon ters cevriliyor
  * ki cizgi Arapca'da da metnin basladigi kenardan buyusun.

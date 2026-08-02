@@ -69,9 +69,14 @@ export function buildMetadata(content: SiteContent): Metadata {
 }
 
 /**
- * schema.org CafeOrCoffeeShop JSON-LD.
- * Adres, telefon, acilis saatleri ve koordinatlar site_settings'ten uretilir;
- * metinler aktif dilin cevirilerinden gelir.
+ * schema.org yapilandirilmis veri.
+ *
+ * Cikti bir @graph: isletmenin kendisi (CafeOrCoffeeShop) ve varsa SSS bolumu
+ * (FAQPage) ayri dugumler olarak yan yana durur.
+ *
+ * TEMEL KURAL: yalnizca SAYFADA GORUNEN icerik isaretlenir. Musteri bir bolumu
+ * panelden kapattiysa (content.isVisible) o bolumun semasi da uretilmez —
+ * gorunmeyen icerigi isaretlemek arama motorlari icin politika ihlalidir.
  */
 export function buildJsonLd(content: SiteContent): Record<string, unknown> {
   const base = appUrl();
@@ -86,10 +91,24 @@ export function buildJsonLd(content: SiteContent): Record<string, unknown> {
       closes: h.closeTime,
     }));
 
-  const sameAs = [contact.instagramHref].filter(Boolean);
+  /*
+   * sameAs: Instagram alanina ek olarak panelden girilen tum sosyal hesaplar.
+   * Ayni adres iki kez girilmis olabilir; Set ile tekillestiriliyor.
+   */
+  const sameAs = [
+    ...new Set(
+      [contact.instagramHref, ...content.socialLinks.map((l) => l.url)].filter(
+        Boolean,
+      ),
+    ),
+  ];
 
+  /*
+   * @context bilerek YOK: birden fazla dugum olustugunda hepsi tek bir
+   * @graph'in altina giriyor ve baglam disarida tek kez tanimlaniyor.
+   * Tek dugum kaldiginda asagida geri ekleniyor.
+   */
   const jsonLd: Record<string, unknown> = {
-    "@context": "https://schema.org",
     "@type": "CafeOrCoffeeShop",
     "@id": `${base}/#business`,
     name: content.name,
@@ -155,5 +174,75 @@ export function buildJsonLd(content: SiteContent): Record<string, unknown> {
     };
   }
 
-  return jsonLd;
+  /* ---------------------------- Yorumlar --------------------------------- */
+
+  /*
+   * DIKKAT — beklentiyi dogru kurmak icin: Google, isletmenin KENDI sitesinde
+   * topladigi yorumlari "self-serving" sayar ve bunlar icin arama sonucunda
+   * yildiz (rich result) GOSTERMEZ. Yine de bu isaretleme degerli: yapay zeka
+   * ozetleri ve Google disindaki motorlar icerigi buradan okuyabiliyor.
+   * Yildizli sonuc isteniyorsa Google Business Profile uzerinden toplanan
+   * yorumlar gerekir; onlar bu alandan bagimsizdir.
+   */
+  const reviews = content.isVisible("yorumlar") ? content.testimonials : [];
+  const rated = reviews.filter((review) => review.rating !== null);
+
+  if (reviews.length > 0) {
+    jsonLd.review = reviews.map((review) => ({
+      "@type": "Review",
+      author: { "@type": "Person", name: review.author },
+      reviewBody: review.text,
+      inLanguage: content.locale,
+      ...(review.rating !== null
+        ? {
+            reviewRating: {
+              "@type": "Rating",
+              ratingValue: review.rating,
+              bestRating: 5,
+              worstRating: 1,
+            },
+          }
+        : {}),
+    }));
+  }
+
+  if (rated.length > 0) {
+    const total = rated.reduce((sum, review) => sum + (review.rating ?? 0), 0);
+    jsonLd.aggregateRating = {
+      "@type": "AggregateRating",
+      // Bir ondalik yeter; 4.6666… gibi degerler hem cirkin hem gereksiz.
+      ratingValue: Number((total / rated.length).toFixed(1)),
+      reviewCount: rated.length,
+      bestRating: 5,
+      worstRating: 1,
+    };
+  }
+
+  /* ------------------------------- Graf ---------------------------------- */
+
+  const graph: Record<string, unknown>[] = [jsonLd];
+
+  /*
+   * SSS ayri bir dugum: FAQPage isletmenin bir ozelligi degil, sayfanin bir
+   * bolumu. mainEntity sirasi sayfadaki sirayla ayni tutuluyor.
+   */
+  const faq = content.isVisible("sss") ? content.faq : [];
+  if (faq.length > 0) {
+    graph.push({
+      "@type": "FAQPage",
+      "@id": `${base}/${content.locale}#sss`,
+      inLanguage: content.locale,
+      mainEntity: faq.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: { "@type": "Answer", text: item.answer },
+      })),
+    });
+  }
+
+  if (graph.length === 1) {
+    return { "@context": "https://schema.org", ...jsonLd };
+  }
+
+  return { "@context": "https://schema.org", "@graph": graph };
 }

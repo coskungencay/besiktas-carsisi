@@ -88,7 +88,7 @@ export default function About({ content }: SectionProps) {
                     ))}
                   </dl>
 
-                  <p className="mt-5 text-[var(--ts-label)] leading-[1.8] font-light text-[var(--brand-ink-muted)]">
+                  <p className="mt-5 text-[length:var(--ts-label)] leading-[1.8] font-light text-[var(--brand-ink-muted)]">
                     {t.about.hoursNote}
                   </p>
                 </div>

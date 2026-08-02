@@ -1,11 +1,11 @@
 import Image from "next/image";
 
-import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import {
   HERO_FALLBACK,
   highlightsOrDerived,
   imageOrFallback,
+  paragraphs,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import { meta, shell, surface } from "@/themes/beyaz-oda/parts";
@@ -30,8 +30,12 @@ export default function Hero({ content }: SectionProps) {
     content;
 
   const highlights = highlightsOrDerived(content);
-  // Hero'daki kisa tanitim: "hakkimizda"nin ilk paragrafi, yoksa slogan.
-  const intro = about.split(/\n{2,}/)[0]?.trim() || content.tagline;
+  /*
+   * Hero'nun sol alt kolonu: tasarimda mekani anlatan kisa bir paragraf var,
+   * slogan degil. "Hakkimizda"nin ilk paragrafini kullaniyoruz. paragraphs()
+   * bos satirlari da eliyor; ham split bastaki bos paragrafi geri verirdi.
+   */
+  const intro = paragraphs(about)[0] ?? content.tagline;
 
   return (
     <section id="hero" aria-labelledby="hero-title" className={surface}>
@@ -66,35 +70,56 @@ export default function Hero({ content }: SectionProps) {
             {/* Tasarimda bu cizgi koyu (ink) ve soldan saga cizilir. */}
             <div className="bo-rule mt-10 mb-[30px] h-px bg-[var(--brand-ink)] sm:mt-16" />
 
-            <div className="bo-up-2 grid gap-6 sm:grid-cols-8">
+            {/*
+              Taban satiri. Tasarimdaki 8 kolonluk alt izgara YALNIZCA genis
+              ekranda acilir (ust izgara da lg'de aciliyor). sm'de acilsaydi
+              640-1024 arasi paragraf 3/8'lik ~230px'lik bir seride sikisir,
+              mono kunye satirlari ("SAAT · 08—18") ikiye bolunurdu.
+
+              Kolon baslangiclari (col-start) acikca yazili: musteri panelde
+              tanitim yazisini ya da kunyeleri bos birakirsa adres kolonu sola
+              kayar ve tasarimin sag kenara dayali dengesi bozulurdu.
+            */}
+            <div className="bo-up-2 grid gap-6 lg:grid-cols-8">
               {intro ? (
-                <p className="text-[15px] leading-[1.72] text-pretty text-[var(--brand-ink-soft)] sm:col-span-3">
+                <p className="text-[15px] leading-[1.72] text-pretty text-[var(--brand-ink-soft)] lg:col-span-3">
                   {intro}
                 </p>
               ) : null}
 
               {highlights.length > 0 ? (
-                <dl className={`${meta} leading-[2] sm:col-span-2`}>
+                <dl className={`${meta} leading-[2] lg:col-span-2 lg:col-start-4`}>
                   {highlights.map((highlight, index) => (
                     <div key={index} className="flex items-baseline gap-2">
                       <dt className="brand-eyebrow">{highlight.label}</dt>
                       {highlight.label && highlight.value ? (
                         <span aria-hidden="true">·</span>
                       ) : null}
-                      <dd className="text-[var(--brand-ink)]">{highlight.value}</dd>
+                      {/*
+                        Deger de etiketle ayni sonuk tonda: tasarimda hero'nun
+                        kunye blogu bastan sona tek renk. Koyu (ink) deger
+                        "hakkimizda" bolumundeki tablo bicimidir, burasi degil.
+                      */}
+                      <dd>{highlight.value}</dd>
                     </div>
                   ))}
                 </dl>
               ) : null}
 
               {contact.address ? (
-                <div className="flex items-end justify-start sm:col-span-3 sm:justify-end">
+                /*
+                  Adres kolonu tasarimda sag alta yaslidir. lg:text-end EK olarak
+                  gerekli: tasarimdaki adres tek satir oldugu icin hizalama orada
+                  gorunmez, ama panelden gelen uzun adresler bu 3/8'lik kolonda
+                  iki satira duser ve ikinci satir sola kacardi.
+                */
+                <div className="flex items-end justify-start lg:col-span-3 lg:col-start-6 lg:justify-end">
                   <a
                     href={contact.mapsUrl || "#iletisim"}
                     {...(contact.mapsUrl
                       ? { target: "_blank", rel: "noopener noreferrer" }
                       : {})}
-                    className="inline-flex items-center gap-2 border-b border-[var(--brand-ink)] pb-[3px] text-[13px] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
+                    className="inline-flex items-center gap-2 border-b border-[var(--brand-ink)] pb-[3px] text-[13px] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)] lg:text-end"
                   >
                     <span className="text-pretty">{contact.address}</span>
                     <ArrowIcon className="size-3.5" />
@@ -106,19 +131,27 @@ export default function Hero({ content }: SectionProps) {
         </div>
       </div>
 
-      {/* Gorsel bandi kenardan kenara: tasarimda sayfanin alt sinirini o cizer. */}
-      <Reveal>
-        <div className="relative h-[320px] w-full bg-[var(--brand-surface-alt)] sm:h-[520px]">
-          <Image
-            src={imageOrFallback(heroImageUrl, HERO_FALLBACK)}
-            alt={fill(t.hero.coverAlt, { name })}
-            fill
-            sizes="100vw"
-            priority
-            className="object-cover"
-          />
-        </div>
-      </Reveal>
+      {/*
+        Gorsel bandi kenardan kenara: tasarimda sayfanin alt sinirini o cizer.
+
+        Paylasilan Reveal BILEREK kullanilmiyor: o, opacity yaninda 16px dikey
+        kayma da uyguluyor ve bant asagidan gelirken hero ile arasinda anlik
+        beyaz bir aciklik olusuyordu. Tasarimda bant YALNIZCA opaklikla beliriyor
+        (transition:opacity 1.3s). Ayrica bant ilk ekranin alt sinirinda duruyor,
+        yani scroll gozlemcisi zaten aninda tetikleniyordu; hero'nun geri kalani
+        gibi CSS keyframe'i kullanmak hem tasarima hem bolumun kendi ritmine
+        sadik kaliyor.
+      */}
+      <div className="bo-fade-band relative h-[320px] w-full bg-[var(--brand-surface-alt)] sm:h-[520px]">
+        <Image
+          src={imageOrFallback(heroImageUrl, HERO_FALLBACK)}
+          alt={fill(t.hero.coverAlt, { name })}
+          fill
+          sizes="100vw"
+          priority
+          className="object-cover"
+        />
+      </div>
     </section>
   );
 }

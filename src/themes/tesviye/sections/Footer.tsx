@@ -28,7 +28,7 @@ export default function Footer({ content }: SectionProps) {
              * Ikon YOK: bu temada baglantilar da kunye hucresi gibi metin.
              * Ayrac olarak ust seritteki egik cizgi tekrar ediliyor.
              */}
-            <ul className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[var(--ts-label-lg)] leading-[1.4] font-medium tracking-[var(--ts-track-nav)] uppercase">
+            <ul className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[length:var(--ts-label-lg)] leading-[1.4] font-medium tracking-[var(--ts-track-nav)] uppercase">
               {socialLinks.map((link, index) => (
                 <Fragment key={`${link.platform}-${index}`}>
                   {index > 0 ? (
@@ -56,7 +56,7 @@ export default function Footer({ content }: SectionProps) {
 
       <div
         // Tasarimdaki alt kunye: 11px, agirlik 400, ls .14em, soluk murekkep.
-        className={`${shell} brand-body flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-4 text-[var(--ts-label)] leading-[1.5] tracking-[var(--ts-track-table)] uppercase text-[var(--brand-ink-muted)]`}
+        className={`${shell} brand-body flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-4 text-[length:var(--ts-label)] leading-[1.5] tracking-[var(--ts-track-table)] uppercase text-[var(--brand-ink-muted)]`}
       >
         <p>
           © {year} {name}

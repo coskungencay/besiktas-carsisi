@@ -54,7 +54,7 @@ export default function Header({ content }: SectionProps) {
 
         <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
           <nav aria-label={name}>
-            <ul className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[var(--ts-label-lg)] leading-[1.4] font-medium tracking-[var(--ts-track-nav)] uppercase">
+            <ul className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[length:var(--ts-label-lg)] leading-[1.4] font-medium tracking-[var(--ts-track-nav)] uppercase">
               {links.map((link, index) => (
                 <Fragment key={link.href}>
                   {/* Tasarimdaki egik cizgi ayraci; sadece gorsel. */}

@@ -6,21 +6,22 @@ import {
   hasMenu,
   highlightsOrDerived,
   imageOrFallback,
+  paragraphs,
 } from "@/themes/_shared/data";
-import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   Ornament,
   Passepartout,
-  column,
-  metaMuted,
+  buttonGhost,
+  buttonSolid,
   shell,
   surface,
 } from "@/themes/kirk-yil/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * TAM SIMETRIK afis duzeni: kunye satiri, dev serif baslik, kisa ayrac,
- * tek satirda kunyeler ve en altta cerceveli gorsel.
+ * TAM SIMETRIK afis duzeni. Tasarimdaki siralama birebir:
+ * kunye -> dev serif baslik -> ayrac -> kisa paragraf -> iki buton ->
+ * cerceveli genis gorsel + kosesinde yuvarlak muhur.
  *
  * Baslik `heroHeadline`ten gelir; musteri panelde bos biraktiysa icerik katmani
  * isletme adini koyar, yani burada asla bos olmaz.
@@ -28,7 +29,8 @@ import type { SectionProps } from "@/themes/types";
  * ANIMASYON: hero'da <Reveal> YOK. Acilis hareketi tokens.css'teki ky-*
  * siniflarindan geliyor (kyWide/kyUp/kyFade/kyStamp); boylece ilk ekran
  * JavaScript beklemeden, SSR'dan gelen boyamayla birlikte oynar. Reveal
- * sayfanin asagisindaki bolumlerde kaliyor.
+ * sayfanin asagisindaki bolumlerde kaliyor. Gecikmeler tasarimdaki kademe:
+ * .1 kunye, .2 baslik, .5 ayrac/cerceve, .6 paragraf, .75 butonlar, .9 muhur.
  */
 export default function Hero({ content }: SectionProps) {
   const { heroHeadline, heroSubline, contact, heroImageUrl, name, tagline, t } =
@@ -38,18 +40,34 @@ export default function Hero({ content }: SectionProps) {
   /*
    * Baslik ustundeki "est." satiri: once semt/sehir. Slogan zaten hemen
    * yukarida tabelanin altinda basiliyor; ayni satiri iki kez ust ust
-   * gostermek tabela hissini bozuyordu. Slogan sadece semt yoksa devreye girer.
+   * gostermek tabela hissini bozuyor. Slogan sadece semt yoksa devreye girer.
    */
   const eyebrow = contact.locality || tagline;
+
+  /*
+   * Tasarimda basligin altindaki paragraf mekani anlatiyor (slogan degil).
+   * Kaynagi "hakkimizda"nin ilk paragrafi; o da yoksa slogana duseriz.
+   */
+  const intro = paragraphs(content.about)[0] ?? tagline;
+
+  /*
+   * Yol tarifi butonu yalnizca konum bolumu sayfada varken basilir; yoksa
+   * hicbir yere gitmeyen kirik bir capa olurdu.
+   */
+  const showDirections = content.isVisible("konum");
+  const showMenu = hasMenu(content);
 
   /*
    * Yuvarlak muhur (tasarimdaki "40 / yildir" rozeti) yalnizca KISA bir
    * kunyeyle calisir; "07:00 — 23:00" gibi uzun degerler daireyi patlatir.
    * Sigmayacaksa rozet hic basilmaz — icerik DB'den geldigi icin uzunluga
    * guvenemeyiz.
+   *
+   * 6 karakter siniri dar ekrandaki 110px'lik daireden geliyor: icine yatay
+   * olarak ancak bu kadar rakam siger, fazlasi cemberi tasardi.
    */
   const stamp = highlights.find(
-    (highlight) => highlight.value.length <= 8 && highlight.label.length <= 14,
+    (highlight) => highlight.value.length <= 6 && highlight.label.length <= 14,
   );
 
   return (
@@ -59,7 +77,11 @@ export default function Hero({ content }: SectionProps) {
         araligi bir sonraki bolumun kendi ust boslugu veriyor.
       */}
       <div className={`${shell} pt-12 pb-0 sm:pt-16`}>
-        <div className={`${column} text-center`}>
+        {/*
+          Metin kolonu tasarimda 1000px — bolum metinlerinin kullandigi dar
+          kolondan (768px) genis, cunku 132px'lik baslik orada nefes aliyor.
+        */}
+        <div className="mx-auto w-full max-w-[62.5rem] text-center">
           {eyebrow ? (
             /* Tasarim: 12.5px / .28em — bolum kunyelerinden bir tik buyuk. */
             <p className="brand-body ky-hero-eyebrow ky-wide text-[var(--brand-primary)]">
@@ -69,64 +91,66 @@ export default function Hero({ content }: SectionProps) {
 
           <h1
             id="hero-title"
-            className="brand-display ky-h1 ky-up mt-[22px] text-balance"
+            /*
+              break-words: 132px'lik puntoda TEK kelimelik uzun bir isletme
+              adi (icerik DB'den geliyor, uzunluguna guvenemeyiz) 390px'te
+              kolonu tasirdi; text-balance kelime BOLMEZ, sadece dagitir.
+            */
+            className="brand-display ky-h1 ky-up mt-[22px] break-words text-balance"
           >
             {heroHeadline}
+            {/*
+              "Baslik devami" alani basligin ICINDE, AYNI puntoda ikinci satir
+              olarak basilir: tasarimdaki dev tabela yazisi tek renk ve cok
+              satirli (line-height .92 tam bunun icin). Kucuk punto ile ayri
+              bir yere basmak afis hissini bozuyordu.
+            */}
+            {heroSubline ? <span className="block">{heroSubline}</span> : null}
           </h1>
 
           <Ornament wide className="ky-fade-slow mt-6" />
 
-          {heroSubline ? (
+          {intro ? (
             <p className="ky-lead ky-up-2 mx-auto mt-[26px] max-w-[40rem] text-pretty text-[var(--brand-ink-muted)]">
-              {heroSubline}
+              {intro}
             </p>
+          ) : null}
+
+          {showMenu || showDirections ? (
+            /*
+              Tasarimda yan yana IKI buton var: dolu bordo "menu" ve cerceveli
+              "nasil gelinir". Ikisi de kosullu oldugu icin biri dusunce digeri
+              ortada tek basina kalir (justify-center).
+            */
+            <div className="ky-up-3 mt-[34px] flex flex-wrap items-center justify-center gap-4">
+              {showMenu ? (
+                <a href="#menu" className={buttonSolid}>
+                  {t.hero.viewMenu}
+                </a>
+              ) : null}
+
+              {showDirections ? (
+                <a href="#konum" className={buttonGhost}>
+                  {t.location.directions}
+                </a>
+              ) : null}
+            </div>
           ) : null}
         </div>
 
-        {highlights.length > 0 ? (
-          /*
-            Kunyeler tek satirda ve aralarinda dikey ayrac; dar ekranda alta
-            sariyor. Ayraclar ilk ogeden sonra basildigi icin RTL'de de dogru
-            tarafta kalir.
-          */
-          <dl
-            className={`${column} ky-up-3 mt-8 flex flex-wrap items-baseline justify-center gap-x-4 gap-y-3`}
-          >
-            {highlights.map((highlight, index) => (
-              <div key={index} className="flex items-baseline gap-3">
-                {index > 0 ? (
-                  <span aria-hidden="true" className="text-[var(--brand-accent)]">
-                    |
-                  </span>
-                ) : null}
-                <dt className={metaMuted}>{highlight.label}</dt>
-                <dd className="text-sm">{highlight.value}</dd>
-              </div>
-            ))}
-          </dl>
-        ) : null}
-
-        {hasMenu(content) ? (
-          <p className="ky-up-4 mt-[34px] text-center">
-            <a
-              href="#menu"
-              className="brand-frame ky-btn-label inline-flex items-center gap-3 border-[var(--brand-primary)] px-8 py-[15px] text-[var(--brand-primary)] transition-colors hover:bg-[var(--brand-primary)] hover:text-[var(--brand-primary-contrast)]"
-            >
-              <span>{t.hero.viewMenu}</span>
-              <ArrowIcon className="size-3.5" />
-            </a>
-          </p>
-        ) : null}
-
-        {/* Muhur mutlak konumlandigi icin cerceve goreli bir kutuya sarildi. */}
-        <div className="relative mx-auto mt-[62px] max-w-5xl">
+        {/*
+          Gorsel tasarimda kolonun degil, sayfa kabugunun tam genisliginde
+          (1240px) ve BASIK: 1240x430. Muhur mutlak konumlandigi icin cerceve
+          goreli bir kutuya sarildi.
+        */}
+        <div className="relative mt-[62px]">
           <Passepartout className="ky-fade-frame">
-            <div className="relative aspect-[4/3] sm:aspect-[16/9]">
+            <div className="relative aspect-[4/3] sm:aspect-[2/1] lg:aspect-[124/43]">
               <Image
                 src={imageOrFallback(heroImageUrl, HERO_FALLBACK)}
                 alt={fill(t.hero.coverAlt, { name })}
                 fill
-                sizes="(min-width: 1024px) 1024px, 100vw"
+                sizes="(min-width: 1320px) 1240px, 100vw"
                 priority
                 className="object-cover"
               />
@@ -135,12 +159,22 @@ export default function Hero({ content }: SectionProps) {
 
           {stamp ? (
             /*
-              Dar ekranda gizli: 150px'lik daire gorselin ustune tasip
-              basligi kapatiyordu. end-* kullanildigi icin RTL'de sola gecer.
+              Tasarimin imza ogesi; dar ekranda GIZLENMEZ, kucululur
+              (150 -> 110px). Cerceveden 8px disari tasar ama kabugun 24px'lik
+              kenar boslugu icinde kalir, yani 390px'te yatay tasma olmaz;
+              dikeyde de gorselin 62px'lik ust boslugunun icinde durdugu icin
+              basligin uzerine binmez. end-* kullanildigi icin RTL'de sola gecer.
             */
-            <div className="ky-stamp absolute -top-9 end-[-8px] hidden size-[150px] flex-col items-center justify-center rounded-full border-2 border-[var(--brand-primary)] bg-[var(--brand-surface)] px-4 text-center text-[var(--brand-primary)] sm:flex">
-              <span className="brand-display ky-stat">{stamp.value}</span>
-              <span className="ky-stamp-label mt-2">{stamp.label}</span>
+            /*
+             * Damga dar ekranda ekranin sagindan tasip sabit WhatsApp butonuyla
+             * cakisiyordu. Mobilde iceri alindi (end-2), genis ekranda tasarimdaki
+             * gibi cerceveden hafifce disari cikmaya devam ediyor.
+             */
+            <div className="ky-stamp absolute -top-7 end-2 flex size-[110px] flex-col items-center justify-center rounded-full border-2 border-[var(--brand-primary)] bg-[var(--brand-surface)] px-3 text-center text-[var(--brand-primary)] sm:end-[-8px] sm:-top-9 sm:size-[150px] sm:px-4">
+              <span className="brand-display ky-stamp-value">{stamp.value}</span>
+              <span className="ky-stamp-label mt-1.5 sm:mt-2">
+                {stamp.label}
+              </span>
             </div>
           ) : null}
         </div>

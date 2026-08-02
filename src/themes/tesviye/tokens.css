@@ -102,6 +102,17 @@ html[data-theme="tesviye"] {
   /* Bolme ic dolgusu — tasarimda 34px. */
   --ts-pad: 2.125rem;
 
+  /*
+   * Veri satirlari arasindaki INCE ayrac.
+   *
+   * Tasarimda bu cizgiler murekkebin kendisi degil, %20-25 saydam hali
+   * (rgba(22,23,26,.22)); kalin 2px pafta cizgilerinden bilerek geri duruyorlar.
+   * Duz --brand-ink-muted kullanmak cetvel satirlarini pafta cizgileri kadar
+   * kuvvetli gosterip hiyerarsiyi duzlestiriyordu. color-mix ile murekkepten
+   * turetiliyor ki musteri paletini degistirdiginde ayrac da onunla gelsin.
+   */
+  --ts-hair: color-mix(in srgb, var(--brand-ink) 22%, transparent);
+
   /* --- Olcek (ortak) --- */
 
   /*

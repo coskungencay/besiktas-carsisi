@@ -211,6 +211,13 @@ Sıralamayı sürükleyerek değiştirebilirsiniz; sitede bu sırayla görünür
 
 > Yorumları müşterilerinizden izin alarak ekleyin.
 
+> **Not:** Buraya girdiğiniz yorumlar sitenizin kodunda puan bilgisiyle birlikte
+> işaretlenir. Ancak Google, işletmenin kendi sitesinde topladığı yorumlar için
+> arama sonucunda yıldız göstermez — arama sonucunda yıldız çıkması için Google
+> işletme profilinizdeki yorumlar gerekir. Buradaki yorumlar sitenizi ziyaret
+> edenleri ikna etmek ve yapay zekâ asistanlarının işletmenizi doğru anlatması
+> için değerlidir.
+
 ---
 
 ## 6. Sıkça Sorulan Sorular
@@ -220,6 +227,11 @@ rezervasyon, evcil hayvan, otopark. Arama motorları da bu bölümü okur, yani
 "kadıköy kafe wifi" gibi aramalarda bulunmanıza yardımcı olur.
 
 Sorular sitede açılır-kapanır bir liste olarak görünür.
+
+> **Arama motorları için:** Girdiğiniz soru-cevaplar sitenizin koduna arama
+> motorlarının anladığı biçimde de yazılır; Google bunları arama sonucunda
+> açılır soru listesi olarak gösterebilir. Yapay zekâ asistanları da bu
+> bölümü okuyup işletmeniz hakkındaki sorulara yanıt verirken kullanır.
 
 ---
 

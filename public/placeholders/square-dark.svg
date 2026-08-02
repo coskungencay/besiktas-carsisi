@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="Görsel yer tutucusu">
+  <!-- Koyu tema surumu; gerekcesi hero-dark.svg ile ayni. -->
+  <rect width="600" height="600" fill="#171717"/>
+  <g fill="none" stroke="#3F3F3F" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="120" y="150" width="360" height="300" rx="24"/>
+    <path d="M150 400l90-95 75 70 65-55 70 80"/>
+    <circle cx="380" cy="235" r="28"/>
+  </g>
+</svg>

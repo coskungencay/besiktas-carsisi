@@ -18,10 +18,17 @@ import type {
 /*                                  Gorseller                                  */
 /* -------------------------------------------------------------------------- */
 
-/** Hero gorseli yoksa kullanilan yerel SVG. */
+/**
+ * Yer tutucu gorseller.
+ *
+ * DIKKAT: Koyu temalar (scheme: "dark") *_DARK surumlerini kullanmali. Acik gri
+ * yer tutucu koyu zeminde parlayan bir dikdortgene donusuyor ve musteri gorsel
+ * yuklemeden once sayfanin en dikkat ceken ogesi oluyor.
+ */
 export const HERO_FALLBACK = "/placeholders/hero.svg";
-/** Kare gorsel (urun, galeri) yoksa kullanilan yerel SVG. */
+export const HERO_FALLBACK_DARK = "/placeholders/hero-dark.svg";
 export const SQUARE_FALLBACK = "/placeholders/square.svg";
+export const SQUARE_FALLBACK_DARK = "/placeholders/square-dark.svg";
 
 /** Bos URL'i yerel placeholder'a dusurur; `next/image` bos src ile patlar. */
 export function imageOrFallback(url: string, fallback = HERO_FALLBACK): string {

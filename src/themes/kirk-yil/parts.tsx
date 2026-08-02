@@ -42,6 +42,24 @@ export const eyebrow =
   "brand-body brand-eyebrow text-xs text-[var(--brand-accent)]";
 
 /**
+ * Cagri butonlari.
+ *
+ * NEDEN BURADA: tasarimda hero'da YAN YANA iki buton var — dolu bordo ve
+ * cerceveli — ve ikisinin de olcusu ayni (15px 32px, 12.5px / .2em yazi).
+ * Ikisi ayni yerde tanimli olmazsa zamanla birbirinden ayrisiyorlar.
+ * `whitespace-nowrap`: uppercase + genis harf araligi ile kisa etiketler bile
+ * dar ekranda ortadan boluniyor.
+ */
+const button =
+  "ky-btn-label inline-flex items-center justify-center whitespace-nowrap px-8 py-[15px] transition-colors";
+
+/** Birincil: dolu bordo, hover'da murekkep tonuna koyulasir (tasarimdaki gibi). */
+export const buttonSolid = `${button} bg-[var(--brand-primary)] text-[var(--brand-primary-contrast)] hover:bg-[var(--brand-ink)]`;
+
+/** Ikincil: yalniz cerceve; hover'da cerceve ve yazi bordoya doner. */
+export const buttonGhost = `${button} brand-frame text-[var(--brand-ink)] hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)]`;
+
+/**
  * Cift cizgi: tabelalarin ust/alt kenari.
  * Tasarimdaki deger birebir 3px double; tarayici bunu 1px cizgi + 1px bosluk +
  * 1px cizgi olarak cizer, yani tek elemanla iki cizgi elde ederiz.

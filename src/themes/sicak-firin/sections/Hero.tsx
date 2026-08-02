@@ -1,24 +1,21 @@
 import Image from "next/image";
 
-import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import {
   HERO_FALLBACK,
-  SQUARE_FALLBACK,
   featuredItems,
   hasMenu,
   highlightsOrDerived,
   imageOrFallback,
+  paragraphs,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   chip,
   lead,
-  metaText,
   pillGhost,
   pillSolid,
   shell,
-  soft,
   surface,
 } from "@/themes/sicak-firin/parts";
 import type { SectionProps } from "@/themes/types";
@@ -27,25 +24,40 @@ import type { SectionProps } from "@/themes/types";
  * Sicak karsilama: solda rozet + slab baslik + hap butonlar, sagda genis gorsel.
  *
  * Gorselin kosesine "not kagidi" yapisiyor: one cikan ilk urun, tezgaha
- * birakilmis egik bir kartla duyuruluyor. Kalan one cikan urunler asagidaki
- * vitrinde; boylece ayni urun iki kez yazilmiyor.
+ * birakilmis egik bir kartla duyuruluyor. One cikan DIGER urunler burada
+ * DEGIL, menu bolumunde "one cikan" etiketiyle duruyor — tasarimda hero iki
+ * kolondan ibaret, altina bir kart vitrini eklemek ilk ekrani uzatiyordu.
  *
  * ANIMASYON: bu bolumde <Reveal> (scroll ile beliren, istemci tarafi) YOK.
  * Ilk ekran zaten goruntude oldugu icin acilis animasyonu CSS ile calisiyor
  * (sf-badge / sf-up-* / sf-media / sf-note) — sunucudan gelen HTML ile ayni
- * anda basliyor, JS beklemiyor. Vitrin sayfa asagisinda kaldigi icin orada
- * Reveal kaliyor.
+ * anda basliyor, JS beklemiyor.
  */
 export default function Hero({ content }: SectionProps) {
-  const { heroHeadline, heroSubline, heroImageUrl, contact, name, t } = content;
+  const { heroHeadline, heroSubline, tagline, heroImageUrl, contact, name, t } =
+    content;
 
   const highlights = highlightsOrDerived(content);
   const showMenuCta = hasMenu(content);
 
-  // Ilk one cikan urun not kagidina, kalanlar vitrine gider (tekrar olmasin).
-  const featured = featuredItems(content, 4);
-  const note = featured[0];
-  const showcase = featured.slice(1);
+  /*
+   * Basligin altindaki metin tasarimda mekani anlatan kisa bir paragraf
+   * ("Otuz yildir ayni tas firin...") — slogan degil. Hakkimizda'nin ilk
+   * paragrafi bu isi goruyor; hic yazilmadiysa slogana duseriz.
+   */
+  const intro = paragraphs(content.about)[0] ?? tagline;
+
+  /*
+   * Tasarimda hero'da HER ZAMAN iki buton var; ikincisi ("Nerede? →") sayfa
+   * icindeki "gel" bolumune gidiyor — disari acilan bir harita linki degil.
+   * Karsiligi konum bolumu; o kapaliysa iletisim bolumu (ust seritteki nav de
+   * ayni varsayimla her zaman #iletisim'e baglaniyor), yani hedef hep gecerli.
+   * Yol tarifi baglantisi zaten konum bolumunun kendi butonunda duruyor.
+   */
+  const whereHref = content.isVisible("konum") ? "#konum" : "#iletisim";
+
+  // Not kagidindaki tek urun: one cikanlarin ilki.
+  const note = featuredItems(content, 1)[0];
 
   return (
     <section id="hero" aria-labelledby="hero-title" className={surface}>
@@ -74,52 +86,62 @@ export default function Hero({ content }: SectionProps) {
                         <span className="sf-steam absolute start-px bottom-2 block h-3.5 w-1.5 rounded-full bg-[var(--brand-accent)]" />
                       </span>
                     ) : null}
-                    <dt className="brand-eyebrow">{highlight.label}</dt>
-                    <dd>{highlight.value}</dd>
+                    {/* Tasarimdaki rozet duz bir cumle: BUYUK HARF ve genis
+                        harf araligi YOK. Etiket ile deger arasindaki farki
+                        tasarimin her yerinde oldugu gibi agirlik tasiyor. */}
+                    <dt className="font-medium">{highlight.label}</dt>
+                    <dd className="font-light">{highlight.value}</dd>
                   </div>
                 ))}
               </dl>
             ) : null}
 
+            {/*
+              Tasarimda baslik TEK renk degil: ikinci satiri italik ve vurgu
+              renginde ("bir de"). Ikinci parcayi heroSubline tasiyor ve basligin
+              ICINDE, AYNI puntoda basiliyor — kucuk punto ile asagi almak
+              tasarimin en belirgin hamlesini siliyordu.
+
+              mt-6 tasarimdaki rozet-baslik araligi (24px); rozet hic
+              basilmadiysa (first:) bu bosluk hero'nun ust dolgusuna eklenip
+              basligi asagi itiyordu, o yuzden sifirlaniyor.
+            */}
             <h1
               id="hero-title"
-              className="sf-up-1 brand-display mt-6 text-[length:var(--brand-h1)] leading-[var(--brand-h1-leading)] tracking-[var(--brand-h1-tracking)] text-balance"
+              className="sf-up-1 brand-display mt-6 first:mt-0 text-[length:var(--brand-h1)] leading-[var(--brand-h1-leading)] tracking-[var(--brand-h1-tracking)] text-balance"
             >
               {heroHeadline}
+              {heroSubline ? (
+                <span className="block italic text-[var(--brand-accent)]">
+                  {heroSubline}
+                </span>
+              ) : null}
             </h1>
 
-            {heroSubline ? (
+            {intro ? (
               <p className={`${lead} sf-up-2 mt-6 max-w-[29.375rem] text-pretty`}>
-                {heroSubline}
+                {intro}
               </p>
             ) : null}
 
             {/*
-              Menu de semt de yoksa bu satir hic basilmaz; bos bir flex kutusu
-              mt-8 kadar olu bosluk birakip basligi vitrinden kopariyordu.
+              Menu bolumu yoksa dolu buton hic basilmaz — hicbir yere gitmeyen
+              bir capa birakmak istemiyoruz. Ikinci buton her zaman var.
             */}
-            {showMenuCta || contact.locality ? (
-              <div className="sf-up-3 mt-8 flex flex-wrap items-center gap-3">
-                {showMenuCta ? (
-                  <a href="#menu" className={pillSolid}>
-                    {t.hero.viewMenu}
-                  </a>
-                ) : null}
+            <div className="sf-up-3 mt-8 flex flex-wrap items-center gap-3">
+              {showMenuCta ? (
+                <a href="#menu" className={pillSolid}>
+                  {t.hero.viewMenu}
+                </a>
+              ) : null}
 
-                {contact.locality ? (
-                  <a
-                    href={contact.mapsUrl || "#iletisim"}
-                    {...(contact.mapsUrl
-                      ? { target: "_blank", rel: "noopener noreferrer" }
-                      : {})}
-                    className={pillGhost}
-                  >
-                    <span>{contact.locality}</span>
-                    <ArrowIcon />
-                  </a>
-                ) : null}
-              </div>
-            ) : null}
+              {/* Semt yazildiysa buton onu soyler ("Kadikoy →"), yoksa
+                  sozlukteki genel konum etiketine duser. */}
+              <a href={whereHref} className={pillGhost}>
+                <span>{contact.locality || t.location.eyebrow}</span>
+                <ArrowIcon />
+              </a>
+            </div>
           </div>
 
           {/* Genis, yumusak koseli vitrin gorseli + kosesindeki not kagidi. */}
@@ -136,7 +158,7 @@ export default function Hero({ content }: SectionProps) {
             </div>
 
             {note ? (
-              <div className="sf-note mt-6 max-w-[14.5rem] rounded-[var(--brand-radius-sm)] border border-[var(--brand-hairline)] bg-[var(--brand-surface)] px-6 py-5 shadow-[var(--brand-note-shadow)] lg:absolute lg:bottom-11 lg:-start-6 lg:mt-0">
+              <div className="sf-note mt-6 max-w-[14.5rem] rounded-[var(--brand-radius-sm)] border border-[var(--brand-hairline)] bg-[var(--brand-surface)] px-[1.375rem] py-[1.125rem] shadow-[var(--brand-note-shadow)] lg:absolute lg:bottom-11 lg:-start-6 lg:mt-0">
                 <p className="brand-display text-[length:var(--brand-lead)] italic text-[var(--brand-primary)]">
                   {t.menu.featured}
                 </p>
@@ -148,54 +170,6 @@ export default function Hero({ content }: SectionProps) {
             ) : null}
           </div>
         </div>
-
-        {showcase.length > 0 ? (
-          <Reveal delay={0.12}>
-            <div className="mt-20 sm:mt-24">
-              <h2 className={metaText}>{t.menu.featured}</h2>
-
-              <ul className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {showcase.map((item) => (
-                  <li key={item.id} className={`${soft} p-6`}>
-                    <div className="brand-rounded relative aspect-[4/3] w-full overflow-hidden bg-[var(--brand-surface)]">
-                      <Image
-                        src={imageOrFallback(
-                          item.thumbUrl || item.imageUrl,
-                          SQUARE_FALLBACK,
-                        )}
-                        alt={item.name}
-                        fill
-                        sizes="(min-width: 1024px) 28vw, (min-width: 640px) 45vw, 90vw"
-                        loading="lazy"
-                        className="object-cover"
-                      />
-                    </div>
-
-                    <div className="mt-5 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                      <h3 className="brand-display text-[length:var(--brand-lead)]">
-                        {item.name}
-                      </h3>
-                      {item.price ? (
-                        <p
-                          className="brand-display text-[length:var(--brand-lead)] font-semibold tabular-nums text-[var(--brand-primary)]"
-                          dir="ltr"
-                        >
-                          {item.price}
-                        </p>
-                      ) : null}
-                    </div>
-
-                    {item.description ? (
-                      <p className="mt-2 text-sm leading-relaxed font-light text-pretty text-[var(--brand-ink-muted)]">
-                        {item.description}
-                      </p>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Reveal>
-        ) : null}
       </div>
     </section>
   );

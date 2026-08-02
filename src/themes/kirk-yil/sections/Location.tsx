@@ -134,7 +134,11 @@ export default function Location({ content }: SectionProps) {
               </>
             ) : null}
 
-            {/* Hero'daki cagri butonunun AYNISI: sayfada tek bir buton dili var. */}
+            {/*
+              Olcusu hero'daki butonlarla ayni (12.5px / .2em yazi, 15px 32px);
+              rengi bilerek bordo cerceve: bu sayfadan CIKAN tek baglanti,
+              hero'daki cerceveli butondan ayrilmali.
+            */}
             <p className="mt-9">
               <a
                 href={directionsHref}
