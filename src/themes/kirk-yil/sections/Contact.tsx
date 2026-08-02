@@ -75,55 +75,46 @@ export default function Contact({ content }: SectionProps) {
           </SectionTitle>
         </Reveal>
 
-        {rows.length > 0 ? (
-          <Reveal delay={0.08}>
-            {/*
-              Sabit kolonlu izgara DEGIL: 5 bilgi 3 kolona sigmayinca son satir
-              yana yaslanip simetriyi bozuyordu. Saran flex + justify-center ile
-              kac bilgi olursa olsun her satir ortada kaliyor.
-            */}
-            <dl className="mx-auto mt-12 flex max-w-4xl flex-wrap justify-center gap-x-12 gap-y-8 text-center">
-              {rows.map((row, index) => (
-                <div key={`${row.term}-${index}`} className="min-w-44 max-w-64">
-                  <dt className={`${meta} text-[var(--brand-primary)]`}>
-                    {row.term}
-                  </dt>
-                  <dd
-                    className="ky-detail mt-2 text-pretty"
-                    {...(row.ltr ? { dir: "ltr" as const } : {})}
-                  >
-                    {row.href ? (
-                      <a
-                        href={row.href}
-                        className="underline-offset-4 transition-colors hover:text-[var(--brand-primary)] hover:underline"
-                        {...(row.href.startsWith("http")
-                          ? { target: "_blank", rel: "noopener noreferrer" }
-                          : {})}
-                      >
-                        {row.value}
-                      </a>
-                    ) : (
-                      row.value
-                    )}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </Reveal>
-        ) : null}
+        {/*
+          UC KOLON — tasarimdaki adres bolumu (1.2fr .85fr .85fr): solda adres,
+          ortada acilis saatleri, sagda iletisim bilgileri.
 
-        {hours.length > 0 ? (
-          <Reveal delay={0.1}>
-            <div className="mx-auto mt-14 w-full max-w-2xl">
-              <h3 className={`${meta} text-center text-[var(--brand-primary)]`}>
+          NEDEN: onceki hali her blogu ayri ayri ortalanmis dar kolonlara
+          koyuyordu (max-w-2xl / 4xl); 1240px'lik sayfada sag ve sol taraf bos
+          kaliyor, bolum gereksiz uzuyordu.
+        */}
+        <div className="mt-12 grid gap-10 lg:grid-cols-[1.2fr_0.85fr_0.85fr] lg:gap-14">
+          {contact.address ? (
+            <Reveal>
+              <h3 className={`${meta} text-[var(--brand-primary)]`}>
+                {t.contact.address}
+              </h3>
+              <p className="ky-detail mt-3 text-pretty">{contact.address}</p>
+
+              {contact.mapsUrl ? (
+                <a
+                  href={contact.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ky-strip mt-4 inline-block border-b border-[var(--brand-primary)] pb-1 text-[var(--brand-primary)] transition-colors hover:text-[var(--brand-accent)]"
+                >
+                  {t.location.directions}
+                </a>
+              ) : null}
+            </Reveal>
+          ) : null}
+
+          {hours.length > 0 ? (
+            <Reveal delay={0.08}>
+              <h3 className={`${meta} text-[var(--brand-primary)]`}>
                 {t.about.openingHours}
               </h3>
 
-              <dl className="mt-5 flex flex-col">
+              <dl className="mt-3 flex flex-col">
                 {hours.map((hour) => (
                   <div
                     key={hour.dayOfWeek}
-                    className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-[var(--brand-border)] py-2.5 last:border-b-0"
+                    className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-[var(--brand-border)] py-2 last:border-b-0"
                   >
                     <dt className="ky-detail">{hour.dayLabel}</dt>
                     <dd className="ky-detail tabular-nums text-[var(--brand-ink-muted)]">
@@ -138,15 +129,47 @@ export default function Contact({ content }: SectionProps) {
                   </div>
                 ))}
               </dl>
+            </Reveal>
+          ) : null}
 
-              <p className="ky-note mt-4 text-center text-[var(--brand-ink-muted)]">
-                {t.about.hoursNote}
-              </p>
-            </div>
-          </Reveal>
-        ) : null}
+          {rows.length > 1 ? (
+            <Reveal delay={0.12}>
+              <h3 className={`${meta} text-[var(--brand-primary)]`}>
+                {t.contact.eyebrow}
+              </h3>
 
-        <Reveal delay={0.12}>
+              <dl className="mt-3 flex flex-col gap-3">
+                {rows
+                  .filter((row) => row.term !== t.contact.address)
+                  .map((row, index) => (
+                    <div key={`${row.term}-${index}`}>
+                      <dt className="sr-only">{row.term}</dt>
+                      <dd
+                        className="ky-detail"
+                        {...(row.ltr ? { dir: "ltr" as const } : {})}
+                      >
+                        {row.href ? (
+                          <a
+                            href={row.href}
+                            className="text-[var(--brand-primary)] underline-offset-4 transition-colors hover:text-[var(--brand-accent)] hover:underline"
+                            {...(row.href.startsWith("http")
+                              ? { target: "_blank", rel: "noopener noreferrer" }
+                              : {})}
+                          >
+                            {row.value}
+                          </a>
+                        ) : (
+                          row.value
+                        )}
+                      </dd>
+                    </div>
+                  ))}
+              </dl>
+            </Reveal>
+          ) : null}
+        </div>
+
+        <Reveal delay={0.16}>
           {/* Form kolonu bilerek okuma kolonundan da dar: fis hissi. */}
           <div className="mx-auto mt-16 w-full max-w-2xl text-center">
             <h3 className="brand-display ky-h3">{t.contact.formTitle}</h3>

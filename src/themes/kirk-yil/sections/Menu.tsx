@@ -22,6 +22,31 @@ export default function Menu({ content }: SectionProps) {
 
   const { t } = content;
 
+  /*
+   * Kategorileri IKI KOLONA elle dagitiyoruz.
+   *
+   * NEDEN: grid-cols-2 kategorileri sirayla yerlestiriyor; uc kategoride
+   * (3+2+2 urun) sag kolon yarim kaliyor ve tasarimin dengeli iki sutunu
+   * bozuluyordu. Burada urun sayisina gore boluyoruz: her kolona yaklasik
+   * ayni sayida SATIR dusuyor.
+   */
+  const totalRows = categories.reduce(
+    (sum, category) => sum + category.items.length + 1,
+    0,
+  );
+  const left: typeof categories = [];
+  const right: typeof categories = [];
+  let filled = 0;
+  for (const category of categories) {
+    const rows = category.items.length + 1;
+    if (filled + rows / 2 <= totalRows / 2 || left.length === 0) {
+      left.push(category);
+      filled += rows;
+    } else {
+      right.push(category);
+    }
+  }
+
   return (
     <section
       id="menu"
@@ -64,9 +89,12 @@ export default function Menu({ content }: SectionProps) {
           Kategori sayisi tekse ikinci kolon bos kalmasin diye tek kolona
           duser; ikiden fazlaysa siraya dizilir.
         */}
-        <div className="mx-auto mt-[52px] grid max-w-[1000px] gap-x-[70px] gap-y-12 md:grid-cols-2">
-          {categories.map((category, index) => (
-            <Reveal key={category.id} delay={Math.min(index, 3) * 0.06}>
+        <div className="mx-auto mt-[52px] grid max-w-[1000px] items-start gap-x-[70px] gap-y-12 md:grid-cols-2">
+          {[left, right].map((group, groupIndex) =>
+            group.length === 0 ? null : (
+              <div key={groupIndex} className="flex flex-col gap-12">
+                {group.map((category, index) => (
+                  <Reveal key={category.id} delay={Math.min(index, 3) * 0.06}>
               <h3 className="ky-eyebrow border-b border-[var(--brand-surface)]/25 pb-3 text-[var(--brand-accent)]">
                 {category.name}
               </h3>
@@ -110,9 +138,12 @@ export default function Menu({ content }: SectionProps) {
                     ) : null}
                   </li>
                 ))}
-              </ul>
-            </Reveal>
-          ))}
+                    </ul>
+                  </Reveal>
+                ))}
+              </div>
+            ),
+          )}
         </div>
       </div>
     </section>

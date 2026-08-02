@@ -71,7 +71,9 @@ export default function Location({ content }: SectionProps) {
         </Reveal>
 
         <Reveal delay={0.08}>
-          <div className="mx-auto mt-12 w-full max-w-3xl text-center">
+          {/* Kroki 1240px kapta max-w-3xl ile daraliyordu; tasarimda bolum sayfa
+              genisliginde duruyor. */}
+          <div className="mx-auto mt-12 w-full max-w-5xl text-center">
             {/*
               Passe-partout ile ayni cerceve mantigi, ama ky-sepia YOK: sepya
               arsiv fotografina ait, cizime uygulaninca kirli gorunuyor.

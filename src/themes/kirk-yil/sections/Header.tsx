@@ -57,7 +57,7 @@ export default function Header({ content }: SectionProps) {
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className="ky-strip text-[var(--brand-ink-muted)] underline-offset-[6px] transition-colors hover:text-[var(--brand-primary)] hover:underline"
+                  className="ky-strip text-[var(--brand-primary)] underline-offset-[6px] transition-colors hover:text-[var(--brand-accent)] hover:underline"
                 >
                   {link.label}
                 </a>

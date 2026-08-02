@@ -42,7 +42,8 @@ export default function About({ content }: SectionProps) {
               durur, bolum bos kalmaz.
             */}
             <div className="border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-3">
-              <div className="relative aspect-[4/5] w-full">
+              {/* Tasarimda gorsel YATAY: 470px yukseklik, kolon ~582px genislik. */}
+              <div className="relative aspect-[5/4] w-full">
                 <Image
                   src={imageOrFallback(heroImageUrl, HERO_FALLBACK)}
                   alt={fill(t.hero.coverAlt, { name })}
