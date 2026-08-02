@@ -21,7 +21,7 @@ müdahalesine ihtiyaç kalmaz.
 | **Veritabanı** | SQLite tek dosya (`/data/app.db`), Drizzle ORM |
 | **Görseller** | `/data/uploads` altında; sharp ile 1920px WebP + 400px thumbnail + orijinal |
 | **Diller** | Türkçe, İngilizce, İspanyolca, Almanca, Arapça (RTL). Arayüz otomatik, müşteri içeriği panelden çevrilir |
-| **SEO** | Metadata API, `CafeOrCoffeeShop` JSON-LD, hreflang, çok dilli sitemap, robots, dinamik OG görseli |
+| **SEO** | Metadata API, hreflang, çok dilli sitemap, robots, dinamik OG görseli. JSON-LD `@graph`: `CafeOrCoffeeShop` (adres, koordinat, saatler, tam menü, `sameAs`, `Review` + `AggregateRating`) ve `FAQPage`. Şema yalnızca **sayfada görünen** bölümler için üretilir |
 | **Deploy** | Multi-stage Dockerfile (standalone), tek named volume, `/api/health` |
 
 ---
