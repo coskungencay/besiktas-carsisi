@@ -8,6 +8,7 @@ import Gallery from "@/themes/placeholder/sections/Gallery";
 import Hero from "@/themes/placeholder/sections/Hero";
 import Location from "@/themes/placeholder/sections/Location";
 import Menu from "@/themes/placeholder/sections/Menu";
+import MenuPage from "@/themes/placeholder/sections/MenuPage";
 import Testimonials from "@/themes/placeholder/sections/Testimonials";
 
 /**
@@ -34,6 +35,8 @@ const theme: ThemeDefinition = {
     { id: "iletisim", Component: Contact },
   ],
   Footer,
+  // Ana sayfadaki "menu" bolumu vitrin; tam liste ayri sayfada (/[locale]/menu).
+  MenuPage,
   tokensPath: "src/themes/placeholder/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {

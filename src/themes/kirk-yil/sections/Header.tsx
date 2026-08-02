@@ -1,5 +1,7 @@
+import Link from "next/link";
+
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
-import { hasMenu } from "@/themes/_shared/data";
+import { hasMenu, menuHref } from "@/themes/_shared/data";
 import { shell, surface } from "@/themes/kirk-yil/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -17,21 +19,32 @@ export default function Header({ content }: SectionProps) {
   const { name, contact, t } = content;
 
   /*
+   * Capalar dile ait ANA SAYFA yolu ile birlikte yaziliyor.
+   *
+   * NEDEN: bu serit artik iki sayfada birden basiliyor (ana sayfa ve /menu).
+   * Ciplak "#hakkimizda" menu sayfasinda hicbir yere gitmezdi. next/link ayni
+   * rotada kalindiginda yeniden yukleme yapmadan bolume kaydirir, menu
+   * sayfasindan tiklandiginda once ana sayfaya gecer.
+   */
+  const home = `/${content.locale}`;
+
+  /*
    * Bolumler icerik bosken kendini basmiyor; nav de AYNI kosullari kullanmali,
    * yoksa musteri galeri yuklemeden yayina alinca "Galeri" linki hicbir yere
-   * gitmeyen kirik bir capa olur.
+   * gitmeyen kirik bir capa olur. Menu icin kosul hasMenu: urun yoksa hem
+   * link hem sayfa olmamali (menu sayfasi da 404 doner).
    */
   const links = [
     (content.about || content.openingHours.length > 0) && {
-      href: "#hakkimizda",
+      href: `${home}#hakkimizda`,
       label: t.about.title,
     },
-    hasMenu(content) && { href: "#menu", label: t.menu.eyebrow },
+    hasMenu(content) && { href: menuHref(content), label: t.menu.eyebrow },
     content.isVisible("galeri") && {
-      href: "#galeri",
+      href: `${home}#galeri`,
       label: t.gallery.eyebrow,
     },
-    { href: "#iletisim", label: t.contact.eyebrow },
+    { href: `${home}#iletisim`, label: t.contact.eyebrow },
   ].filter((link): link is { href: string; label: string } => Boolean(link));
 
   return (
@@ -61,12 +74,12 @@ export default function Header({ content }: SectionProps) {
           <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
             {links.map((link) => (
               <li key={link.href}>
-                <a
+                <Link
                   href={link.href}
                   className="ky-strip text-[var(--brand-primary)] underline-offset-[6px] transition-colors hover:text-[var(--brand-accent)] hover:underline"
                 >
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

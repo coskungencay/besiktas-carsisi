@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Fragment } from "react";
 
 import { fill } from "@/i18n";
@@ -7,6 +8,7 @@ import {
   hasMenu,
   highlightsOrDerived,
   imageOrFallback,
+  menuHref,
   paragraphs,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
@@ -67,21 +69,32 @@ export default function Hero({ content }: SectionProps) {
    * Tasarimdaki eylem seridi: solda mavi zeminli fiyat listesi, saginda konum.
    * Hedef bolum basilmiyorsa (menu bos, konum panelden kapali) hucre de
    * cikmaz; serit tek hucreye duser, hicbiri yoksa serit hic basilmaz.
+   *
+   * `isPage`: fiyat listesi artik ayni sayfada bir capa degil, kendi sayfasi
+   * (/tr/menu). Sayfa hedefleri <Link> ile basilir; capalar duz <a> kalir.
    */
   const actions = [
     hasMenu(content) && {
-      href: "#menu",
+      href: menuHref(content),
       label: t.hero.viewMenu,
       isPrimary: true,
+      isPage: true,
     },
     content.isVisible("konum") && {
       href: "#konum",
       label: t.location.eyebrow,
       isPrimary: false,
+      isPage: false,
     },
   ].filter(
-    (action): action is { href: string; label: string; isPrimary: boolean } =>
-      Boolean(action),
+    (
+      action,
+    ): action is {
+      href: string;
+      label: string;
+      isPrimary: boolean;
+      isPage: boolean;
+    } => Boolean(action),
   );
 
   return (
@@ -219,31 +232,49 @@ export default function Hero({ content }: SectionProps) {
                   actions.length > 1 ? "sm:grid-cols-2" : ""
                 }`}
               >
-                {actions.map((action) => (
-                  <a
-                    key={action.href}
-                    href={action.href}
-                    /*
-                     * Tasarimda serit 96px; metin ortalanmis ve tek satir.
-                     * Dar ekranda hucreler ALT ALTA gectigi icin yukseklik
-                     * 72px'e cekildi — iki kez 96px, telefonda gorselden
-                     * daha fazla yer kaplayan bir dugme blogu yapiyordu.
-                     * Ayni sebeple nowrap YOK: uzun cevirilerde metin ikinci
-                     * satira sarkabilmeli.
-                     */
-                    className={`${actionLabel} flex min-h-[4.5rem] items-center justify-center gap-2 px-4 text-center transition-colors sm:min-h-[6rem] hover:bg-[var(--brand-accent)] hover:text-[var(--brand-primary-contrast)] ${
-                      action.isPrimary
-                        ? "bg-[var(--brand-primary)] text-[var(--brand-primary-contrast)]"
-                        : "bg-[var(--brand-surface)] text-[var(--brand-ink)]"
-                    }`}
-                  >
-                    {action.label}
-                    {/* Tasarimda yalnizca ikinci hucrede ok var. */}
-                    {action.isPrimary ? null : (
-                      <ArrowIcon className="size-3.5" />
-                    )}
-                  </a>
-                ))}
+                {actions.map((action) => {
+                  /*
+                   * Tasarimda serit 96px; metin ortalanmis ve tek satir.
+                   * Dar ekranda hucreler ALT ALTA gectigi icin yukseklik
+                   * 72px'e cekildi — iki kez 96px, telefonda gorselden
+                   * daha fazla yer kaplayan bir dugme blogu yapiyordu.
+                   * Ayni sebeple nowrap YOK: uzun cevirilerde metin ikinci
+                   * satira sarkabilmeli.
+                   */
+                  const cellClass = `${actionLabel} flex min-h-[4.5rem] items-center justify-center gap-2 px-4 text-center transition-colors sm:min-h-[6rem] hover:bg-[var(--brand-accent)] hover:text-[var(--brand-primary-contrast)] ${
+                    action.isPrimary
+                      ? "bg-[var(--brand-primary)] text-[var(--brand-primary-contrast)]"
+                      : "bg-[var(--brand-surface)] text-[var(--brand-ink)]"
+                  }`;
+
+                  const body = (
+                    <>
+                      {action.label}
+                      {/* Tasarimda yalnizca ikinci hucrede ok var. */}
+                      {action.isPrimary ? null : (
+                        <ArrowIcon className="size-3.5" />
+                      )}
+                    </>
+                  );
+
+                  return action.isPage ? (
+                    <Link
+                      key={action.href}
+                      href={action.href}
+                      className={cellClass}
+                    >
+                      {body}
+                    </Link>
+                  ) : (
+                    <a
+                      key={action.href}
+                      href={action.href}
+                      className={cellClass}
+                    >
+                      {body}
+                    </a>
+                  );
+                })}
               </div>
             ) : null}
           </div>

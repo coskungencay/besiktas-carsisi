@@ -1,58 +1,50 @@
+import Link from "next/link";
+
 import { Reveal } from "@/components/motion/Reveal";
-import { menuWithItems } from "@/themes/_shared/data";
-import { shell } from "@/themes/kirk-yil/parts";
+import {
+  allMenuItems,
+  featuredItems,
+  hasMenu,
+  menuHref,
+} from "@/themes/_shared/data";
+import {
+  OrnamentDark,
+  PriceRow,
+  board,
+  buttonSolid,
+  shell,
+} from "@/themes/kirk-yil/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Fiyat listesi — TASARIMIN EN CARPICI BOLUMU.
+ * Ana sayfadaki menu VITRINI — tam liste artik /menu sayfasinda.
  *
- * Tasarimda bu bolum sayfanin tek KOYU alani: kahve zemin (--brand-ink) uzerine
- * kagit rengi yazi (--brand-surface). Sayfa boyunca akan acik krem ritmi burada
- * kesiliyor ve menu bir "tabela" gibi one cikiyor. Onceki hali acik zeminde bir
- * kart icindeydi; bolum sayfadan ayrilmiyordu.
+ * NEDEN VITRIN: menu buyudukce (30+ urun) ana sayfa okunamaz hale geliyordu.
+ * Burada tasarimin koyu "fiyat listesi tabelasi" duruyor ama uzerinde yalnizca
+ * uc satir var: bir kahvehanenin kapisina astigi gunun tahtasi gibi. Devami
+ * icin belirgin bir cagri butonu.
  *
- * Olculer tasarimdan: bolum 84px/92px dikey dolgu, ic kap 1000px, iki kolon
- * 70px araliki, urun satiri 19px/300 agirlik ve 14px dikey dolgu.
+ * Tasarimdan gelen olculer: bolum 84px/92px dikey dolgu, koyu zemin
+ * (--brand-ink) uzerine kagit rengi yazi, urun satiri 19px/300.
  *
  * Urun gorseli YOK: burasi bir menu KARTI, katalog degil.
  */
 export default function Menu({ content }: SectionProps) {
-  const categories = menuWithItems(content);
-  if (categories.length === 0) return null;
+  if (!hasMenu(content)) return null;
 
   const { t } = content;
 
   /*
-   * Kategorileri IKI KOLONA elle dagitiyoruz.
-   *
-   * NEDEN: grid-cols-2 kategorileri sirayla yerlestiriyor; uc kategoride
-   * (3+2+2 urun) sag kolon yarim kaliyor ve tasarimin dengeli iki sutunu
-   * bozuluyordu. Burada urun sayisina gore boluyoruz: her kolona yaklasik
-   * ayni sayida SATIR dusuyor.
+   * Once "one cikan" isaretli urunler. Musteri hicbirini isaretlememisse
+   * bolum bos kalmasin diye menunun ilk uc urunune duseriz — vitrin her
+   * kurulumda dolu gorunmeli.
    */
-  const totalRows = categories.reduce(
-    (sum, category) => sum + category.items.length + 1,
-    0,
-  );
-  const left: typeof categories = [];
-  const right: typeof categories = [];
-  let filled = 0;
-  for (const category of categories) {
-    const rows = category.items.length + 1;
-    if (filled + rows / 2 <= totalRows / 2 || left.length === 0) {
-      left.push(category);
-      filled += rows;
-    } else {
-      right.push(category);
-    }
-  }
+  const featured = featuredItems(content, 3);
+  const items =
+    featured.length > 0 ? featured : allMenuItems(content).slice(0, 3);
 
   return (
-    <section
-      id="menu"
-      aria-labelledby="menu-title"
-      className="bg-[var(--brand-ink)] text-[var(--brand-surface)]"
-    >
+    <section id="menu" aria-labelledby="menu-title" className={board}>
       <div className={`${shell} py-[84px] sm:py-[92px]`}>
         {/*
           Bolum basligi ortada. SectionTitle kullanilmiyor: o bilesen acik
@@ -64,87 +56,47 @@ export default function Menu({ content }: SectionProps) {
             <p className="ky-eyebrow text-[var(--brand-accent)]">
               {t.menu.eyebrow}
             </p>
+
             <h2
               id="menu-title"
-              className="brand-display mt-3.5 text-[clamp(2rem,4vw,3.5rem)] leading-[1.06] text-balance"
+              className="brand-display ky-h2 mt-3.5 text-balance"
             >
               {t.menu.title}
             </h2>
 
-            {/* Elmas ayrac: acik zemindeki surumun kagit rengi karsiligi. */}
-            <div
-              className="mt-[18px] flex items-center justify-center gap-4"
-              aria-hidden="true"
-            >
-              <span className="h-px w-20 bg-[var(--brand-surface)]/30" />
-              <span className="text-[13px] text-[var(--brand-accent)]">✦</span>
-              <span className="h-px w-20 bg-[var(--brand-surface)]/30" />
-            </div>
+            <OrnamentDark className="mt-[18px]" />
           </div>
         </Reveal>
 
         {/*
-          Iki kolon: tasarimda kategoriler yan yana duruyor (KAHVELER |
-          FIRIN & TATLI). Tek kolon liste sayfayi gereksiz uzatiyordu.
-          Kategori sayisi tekse ikinci kolon bos kalmasin diye tek kolona
-          duser; ikiden fazlaysa siraya dizilir.
+          Vitrin DAR ve TEK kolon: uc satirlik bir liste 1000px'e yayilirsa ad
+          ile fiyat arasindaki noktali dolgu metrelerce uzar ve satir okunmaz.
+          Tam liste zaten iki kolonlu kendi sayfasinda.
         */}
-        <div className="mx-auto mt-[52px] grid max-w-[1000px] items-start gap-x-[70px] gap-y-12 md:grid-cols-2">
-          {[left, right].map((group, groupIndex) =>
-            group.length === 0 ? null : (
-              <div key={groupIndex} className="flex flex-col gap-12">
-                {group.map((category, index) => (
-                  <Reveal key={category.id} delay={Math.min(index, 3) * 0.06}>
-              <h3 className="ky-eyebrow border-b border-[var(--brand-surface)]/25 pb-3 text-[var(--brand-accent)]">
-                {category.name}
-              </h3>
+        <Reveal delay={0.06}>
+          <ul className="mx-auto mt-[46px] flex max-w-[46rem] flex-col divide-y divide-[var(--brand-surface)]/15">
+            {items.map((item) => (
+              <PriceRow key={item.id} item={item} />
+            ))}
+          </ul>
+        </Reveal>
 
-              <ul className="mt-1.5 flex flex-col">
-                {category.items.map((item) => (
-                  <li key={item.id} className="py-3.5">
-                    <div className="flex items-baseline gap-2.5 text-[19px] font-light">
-                      <p>
-                        {item.name}
-                        {item.isFeatured ? (
-                          <span className="ky-eyebrow ms-3 text-[var(--brand-accent)]">
-                            {t.menu.featured}
-                          </span>
-                        ) : null}
-                      </p>
+        {/*
+          Cagri: hero'daki birincil buton bicimi (dolu bordo). Menu sayfasi ayri
+          bir rota oldugu icin next/link ile istemci tarafi gecis yapilir.
+        */}
+        <Reveal delay={0.12}>
+          <div className="mt-[46px] text-center">
+            <Link href={menuHref(content)} className={buttonSolid}>
+              {t.menu.viewAll}
+            </Link>
 
-                      {/*
-                        Noktali dolgu: eski fiyat listelerinin imzasi. flex-1
-                        oldugu icin ad ile fiyat arasi ne olursa olsun doluyor,
-                        RTL'de de dogru yonde uzuyor.
-                      */}
-                      {item.price ? (
-                        <span
-                          aria-hidden="true"
-                          className="mb-1.5 flex-1 border-b border-dotted border-[var(--brand-surface)]/30"
-                        />
-                      ) : null}
-
-                      {item.price ? (
-                        <p className="shrink-0 tabular-nums" dir="ltr">
-                          {item.price}
-                        </p>
-                      ) : null}
-                    </div>
-
-                    {item.description ? (
-                      <p className="ky-note mt-1 text-pretty text-[var(--brand-surface)]/65">
-                        {item.description}
-                      </p>
-                    ) : null}
-                  </li>
-                ))}
-                    </ul>
-                  </Reveal>
-                ))}
-              </div>
-            ),
-          )}
-        </div>
+            {/* Tasarimdaki italik not satirinin yeri: butonun altinda kunye. */}
+            <p className="ky-note mt-4 text-[var(--brand-surface)]/65">
+              {t.menu.pageIntro}
+            </p>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

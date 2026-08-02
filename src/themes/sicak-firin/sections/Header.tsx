@@ -1,10 +1,18 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { fill } from "@/i18n";
-import { hasMenu, hoursRange } from "@/themes/_shared/data";
+import { hasMenu, hoursRange, menuHref } from "@/themes/_shared/data";
 import { shell } from "@/themes/sicak-firin/parts";
 import type { SectionProps } from "@/themes/types";
+
+/** `page`: ayri bir sayfaya gider (capa degil). */
+type NavLink = { href: string; label: string; page?: boolean };
+
+/** Serit baglantisi — capa ve sayfa baglantisinda ayni gorunum. */
+const navLink =
+  "block text-[var(--brand-nav-ink)] transition-colors hover:text-[var(--brand-accent)]";
 
 /**
  * Ince ust serit — TEK satir, UC parca: marka · nav · acilis saati.
@@ -40,21 +48,28 @@ export default function Header({ content }: SectionProps) {
    * Yeni bolumler (yorumlar, sss, konum) nav'a EKLENMEDI: serit tasarimda dort
    * baglantiyla dengede duruyor, yedi baglantı ikinci satira tasip ust seridi
    * kalinlastirirdi.
+   *
+   * Menu artik sayfa ici capa DEGIL, kendi sayfasi (page: true). Kosul yine
+   * hasMenu: urun yoksa ne link ne de sayfa olmali.
    */
-  const links = [
+  const links: NavLink[] = [
     // Hakkimizda seridi hikaye ya da fotograf varsa basiliyor; ikisi de yoksa
     // link hicbir yere gitmeyen kirik bir capa olurdu.
     (content.about || content.isVisible("galeri")) && {
       href: "#hakkimizda",
       label: t.about.title,
     },
-    hasMenu(content) && { href: "#menu", label: t.menu.eyebrow },
+    hasMenu(content) && {
+      href: menuHref(content),
+      label: t.menu.eyebrow,
+      page: true,
+    },
     content.isVisible("galeri") && {
       href: "#galeri",
       label: t.gallery.eyebrow,
     },
     { href: "#iletisim", label: t.contact.eyebrow },
-  ].filter((link): link is { href: string; label: string } => Boolean(link));
+  ].filter((link): link is NavLink => Boolean(link));
 
   return (
     <header
@@ -93,12 +108,20 @@ export default function Header({ content }: SectionProps) {
           <ul className="flex flex-wrap items-center gap-x-7 gap-y-2 text-[length:var(--brand-text-nav)]">
             {links.map((link) => (
               <li key={link.href}>
-                <a
-                  href={link.href}
-                  className="block text-[var(--brand-nav-ink)] transition-colors hover:text-[var(--brand-accent)]"
-                >
-                  {link.label}
-                </a>
+                {/*
+                  Ayri sayfaya giden baglanti <Link> (istemci tarafi gecis);
+                  sayfa ici capalar duz <a> kalir — capa icin Link'in yonlendirme
+                  makinesini calistirmanin bir faydasi yok.
+                */}
+                {link.page ? (
+                  <Link href={link.href} className={navLink}>
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a href={link.href} className={navLink}>
+                    {link.label}
+                  </a>
+                )}
               </li>
             ))}
           </ul>

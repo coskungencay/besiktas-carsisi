@@ -1,37 +1,55 @@
+import Link from "next/link";
+
 import { Reveal } from "@/components/motion/Reveal";
-import { menuWithItems } from "@/themes/_shared/data";
+import {
+  allMenuItems,
+  featuredItems,
+  hasMenu,
+  menuHref,
+} from "@/themes/_shared/data";
+import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   Plate,
+  actionLabel,
+  bodyTextSm,
+  cellEdge,
   edgeBottom,
+  edgeTop,
+  gridBleed,
+  gridClip,
   hair,
   label,
+  padSm,
   shell,
-  tableHead,
 } from "@/themes/tesviye/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Tasarimin "liste" paftasi: bir fiyat cetveli.
+ * Ana sayfadaki menu VITRINI.
  *
- * Sutunlar tasarimdaki gibi: sira no (60px) · urun (1.4 pay) · not (1 pay) ·
- * fiyat (110px). Urun adi Anton, not ve numara ince monospace, fiyat sagda
- * hizali. Kategori adi tasarimdaki KOYU baslik seridinin yerini tutar —
- * tasarimda liste tek parcaydi, bizde kategorilere bolunuyor.
+ * NEDEN VITRIN: tam fiyat cetveli artik /[locale]/menu sayfasinda. 30+ satirlik
+ * cetvel ana sayfada okunmaz bir blok haline geliyordu; burada yalnizca birkac
+ * urun ve tam listeye giden belirgin bir baglanti var.
  *
- * Sira numarasi kategoriler boyunca KESINTISIZ artar: cetvel tek bir belge,
- * her kategoride bire donmesi numarayi anlamsizlastiriyordu.
+ * NEDEN CETVEL DEGIL KUTU: uc satirlik bir cetvel cetvel gibi durmuyor —
+ * sutun basliklari ve kesintisiz numaralandirma anlamini yitiriyor. Onun
+ * yerine tasarimin diger imzasi kullanildi: 2px cizgilerle bolunmus esit
+ * hucreler (bkz. Hakkimizda'nin uc kutusu, Galeri'nin dort hucresi).
  *
- * Urun gorseli YOK: bu tasarim teknik bir liste; panelden yuklenen urun
- * gorselleri bu temada gosterilmez.
+ * Bolum id'si "menu" KALIR: nav capalari ve isVisible mantigi buna bagli.
  */
 export default function Menu({ content }: SectionProps) {
-  const categories = menuWithItems(content);
-  if (categories.length === 0) return null;
+  if (!hasMenu(content)) return null;
 
   const { t } = content;
 
-  // Kategoriler arasinda devam eden sayac.
-  let row = 0;
+  /*
+   * Musteri hic urunu "one cikan" isaretlemediyse bolum bos kalmasin diye
+   * menunun ilk urunlerine duseriz.
+   */
+  const featured = featuredItems(content, 3);
+  const items =
+    featured.length > 0 ? featured : allMenuItems(content).slice(0, 3);
 
   return (
     <section
@@ -47,69 +65,83 @@ export default function Menu({ content }: SectionProps) {
             title={t.menu.title}
             titleId="menu-title"
           >
-            {categories.map((category) => (
-              <div key={category.id}>
-                <h3
-                  className={`${tableHead} bg-[var(--brand-accent)] px-4 py-3 text-[var(--brand-primary-contrast)] sm:px-[14px]`}
-                >
-                  {category.name}
-                </h3>
+            {/*
+              gridClip/gridBleed: hucre adedi 1-3 arasinda degisebilir; splitGrid'in
+              zemin hilesi eksik satirda koyu bir blok birakirdi.
+            */}
+            <div className={gridClip}>
+              <ul className={`grid sm:grid-cols-2 lg:grid-cols-3 ${gridBleed}`}>
+                {items.map((item, index) => (
+                  <li
+                    key={item.id}
+                    className={`${padSm} flex flex-col gap-3`}
+                    style={cellEdge}
+                  >
+                    {/*
+                      Hucre kunyesi: tasarimda kutular "01 · Seffaflik" gibi
+                      numarali mavi etiketle acilir. Numara gorsel bir isaret,
+                      "one cikan" ise gercek bilgi — o yuzden ayri span'lar.
+                    */}
+                    <p
+                      className={`${label} flex flex-wrap items-baseline gap-x-2 text-[var(--brand-primary)]`}
+                    >
+                      <span className="tabular-nums" aria-hidden="true">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      {item.isFeatured ? <span>{t.menu.featured}</span> : null}
+                    </p>
 
-                <ul>
-                  {category.items.map((item) => {
-                    row += 1;
+                    {/*
+                      Urun adi kart olcusunde (30px) Anton: cetveldeki 19px'lik
+                      satirdan buyuk, cunku burada urun tek basina duruyor.
+                    */}
+                    <h3 className="brand-display text-[length:var(--ts-card-title)] leading-[var(--ts-title-leading)] text-balance uppercase">
+                      {item.name}
+                    </h3>
 
-                    return (
-                      <li
-                        key={item.id}
-                        /*
-                         * Dar ekranda uc sutun (no · ad · fiyat) kalir, not
-                         * alt satira gecer; sm ustunde tasarimin dort sutunlu
-                         * cetveli acilir. Hucre yerlesimi acikca yazildi ki
-                         * DOM sirasi (no, ad, fiyat, not) iki duzende de
-                         * dogru okunsun.
-                         */
-                        className={`${hair} grid grid-cols-[2.5rem_minmax(0,1fr)_auto] items-baseline gap-x-3 gap-y-1 px-4 py-[15px] transition-colors hover:bg-[var(--ts-row-hover)] sm:grid-cols-[60px_minmax(0,1.4fr)_minmax(0,1fr)_110px] sm:gap-0 sm:p-0`}
+                    {item.description ? (
+                      /*
+                       * line-clamp: vitrinde aciklama kisa tutulur, tam metin
+                       * menu sayfasinda. Ayni zamanda uc hucrenin yuksekligini
+                       * birbirine yaklastirir.
+                       */
+                      <p
+                        className={`${bodyTextSm} line-clamp-2 flex-1 text-[var(--brand-ink-muted)]`}
                       >
-                        {/* Sira numarasi: sadece gorsel bir cetvel isareti. */}
-                        <span
-                          className="col-start-1 row-start-1 text-[length:var(--ts-body)] font-light tabular-nums text-[var(--brand-ink-muted)] sm:px-[14px] sm:py-[15px]"
-                          aria-hidden="true"
-                        >
-                          {String(row).padStart(2, "0")}
-                        </span>
+                        {item.description}
+                      </p>
+                    ) : null}
 
-                        <p className="col-start-2 row-start-1 brand-display text-[length:var(--ts-item)] leading-[1.25] tracking-[0.01em] uppercase sm:px-[14px] sm:py-[15px]">
-                          {item.name}
-                          {item.isFeatured ? (
-                            <span
-                              className={`${label} ms-3 align-middle text-[var(--brand-primary)]`}
-                            >
-                              {t.menu.featured}
-                            </span>
-                          ) : null}
-                        </p>
+                    {item.price ? (
+                      /*
+                       * Fiyat hucrenin ALTINA yaslanir (mt-auto): hucreler
+                       * farkli yukseklikte bile fiyatlar ayni hizada okunur.
+                       * Ince ayrac cetveldeki satir cizgisinin ayni kalemi.
+                       */
+                      <p
+                        className={`${hair} mt-auto pt-3 text-[length:var(--ts-body)] font-medium tabular-nums`}
+                        dir="ltr"
+                      >
+                        {item.price}
+                      </p>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-                        {item.price ? (
-                          <p
-                            className="col-start-3 row-start-1 text-[length:var(--ts-body)] font-medium tabular-nums sm:col-start-4 sm:px-[14px] sm:py-[15px] sm:text-end"
-                            dir="ltr"
-                          >
-                            {item.price}
-                          </p>
-                        ) : null}
-
-                        {item.description ? (
-                          <p className="col-start-2 col-end-4 row-start-2 text-[length:var(--ts-body-sm)] leading-[var(--ts-body-sm-leading)] font-light text-pretty text-[var(--brand-ink-muted)] sm:col-start-3 sm:col-end-4 sm:row-start-1 sm:px-[14px] sm:py-[15px]">
-                            {item.description}
-                          </p>
-                        ) : null}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            ))}
+            {/*
+              Bolumun asil isi: tam menuye gonderen cagri. Bicim hero'nun
+              altindaki mavi eylem hucresiyle AYNI — temada "ana buton" bu.
+            */}
+            <Link
+              href={menuHref(content)}
+              className={`${actionLabel} flex min-h-[4.5rem] items-center justify-center gap-2 bg-[var(--brand-primary)] px-4 text-center text-[var(--brand-primary-contrast)] transition-colors sm:min-h-[6rem] hover:bg-[var(--brand-accent)]`}
+              style={edgeTop}
+            >
+              {t.menu.viewAll}
+              <ArrowIcon className="size-3.5" />
+            </Link>
           </Plate>
         </Reveal>
       </div>

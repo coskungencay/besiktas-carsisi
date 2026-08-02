@@ -1,6 +1,8 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { fill } from "@/i18n";
+import { hasMenu, menuHref } from "@/themes/_shared/data";
 import { CupIcon } from "@/themes/_shared/icons";
 import type { SiteContent } from "@/themes/types";
 
@@ -135,8 +137,23 @@ export function BrandMark({
 }
 
 /* -------------------------------------------------------------------------- */
-/*                             Hero aksiyon butonlari                          */
+/*                                  Butonlar                                   */
 /* -------------------------------------------------------------------------- */
+
+/*
+ * Buton bicimleri TEK yerde duruyor. Menu artik ayri bir sayfa oldugu icin
+ * ayni bicim uc yerde lazim (hero'daki "Menuyu Incele", ana sayfadaki vitrin
+ * CTA'si, menu sayfasindaki geri donus). Sinif dizisini kopyalamak, biri
+ * degisince digerlerinin sessizce geride kalmasi demekti.
+ */
+
+/** Dolu zeminli birincil buton — sayfa basina bir tane olmali. */
+export const primaryButtonClass =
+  "brand-rounded inline-flex items-center gap-2 bg-[var(--brand-primary)] px-6 py-3 text-sm font-medium text-[var(--brand-primary-contrast)] transition-opacity hover:opacity-85";
+
+/** Cerceveli ikincil buton — birincilin yaninda veya sayfa sonunda. */
+export const secondaryButtonClass =
+  "brand-frame inline-flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors hover:bg-[var(--brand-surface-alt)]";
 
 export function HeroActions({
   content,
@@ -146,28 +163,26 @@ export function HeroActions({
   className?: string;
 }) {
   /*
-   * Menu bolumu urun yokken hic basilmiyor; "Menuyu Incele" butonu da o zaman
-   * gizlenmeli, yoksa hicbir yere gitmeyen kirik bir capa kaliyor.
+   * Menude urun yoksa menu sayfasi da yok (route 404 veriyor); buton o zaman
+   * gizlenmeli, yoksa hicbir yere gitmeyen kirik bir baglanti kaliyor.
    */
-  const showMenuLink = content.menu.some((category) => category.items.length > 0);
+  const showMenuLink = hasMenu(content);
 
   return (
     <div className={`flex flex-wrap items-center gap-3 ${className}`}>
       {showMenuLink ? (
-        <a
-          href="#menu"
-          className="brand-rounded inline-flex items-center gap-2 bg-[var(--brand-primary)] px-6 py-3 text-sm font-medium text-[var(--brand-primary-contrast)] transition-opacity hover:opacity-85"
-        >
+        // Menu artik ana sayfada capa degil, ayri sayfa: istemci tarafi gecis.
+        <Link href={menuHref(content)} className={primaryButtonClass}>
           <span>{content.t.hero.viewMenu}</span>
           <ArrowIcon />
-        </a>
+        </Link>
       ) : null}
 
       {content.contact.phoneHref ? (
         <a
           href={content.contact.phoneHref}
           dir="ltr"
-          className="brand-frame inline-flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors hover:bg-[var(--brand-surface-alt)]"
+          className={secondaryButtonClass}
         >
           <PhoneIcon />
           <span>{content.contact.phone}</span>

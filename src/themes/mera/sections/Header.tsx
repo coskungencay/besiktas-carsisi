@@ -1,8 +1,9 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { fill } from "@/i18n";
-import { hasMenu, hoursRange } from "@/themes/_shared/data";
+import { hasMenu, hoursRange, menuHref } from "@/themes/_shared/data";
 import { labelBase, page, surface } from "@/themes/mera/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -23,22 +24,31 @@ export default function Header({ content }: SectionProps) {
 
   const range = hoursRange(openingHours);
 
+  /*
+   * Capalar ana sayfaya MUTLAK yaziliyor ("/tr#galeri"), cunku bu serit menu
+   * sayfasinda da basiliyor: orada ciplak "#galeri" hicbir yere gitmeyen bir
+   * capa olurdu. Ana sayfada davranis degismez, link yine ayni sayfada kaydirir.
+   */
+  const home = `/${content.locale}`;
+
   const links = [
     // Calisma saatleri artik kapanis bolumunde (tasarimdaki yeri orasi), bu
     // yuzden hakkimizda yalnizca METIN varsa basiliyor — yoksa bolum de
     // basilmiyor ve link kirik bir capa olurdu.
     content.about && {
-      href: "#hakkimizda",
+      href: `${home}#hakkimizda`,
       label: t.about.title,
     },
-    hasMenu(content) && { href: "#menu", label: t.menu.eyebrow },
+    // Menu artik capa degil, kendi sayfasi. Kosul AYNI kalir: urun yoksa hem
+    // link hem sayfa olmamali (route de hasMenu ile 404 veriyor).
+    hasMenu(content) && { href: menuHref(content), label: t.menu.eyebrow },
     // isVisible: musteri galeriyi panelden kapattiginda link de gitsin
     // (yalnizca "gorsel var mi" sorusu bunu kacirirdi).
     content.isVisible("galeri") && {
-      href: "#galeri",
+      href: `${home}#galeri`,
       label: t.gallery.eyebrow,
     },
-    { href: "#iletisim", label: t.contact.eyebrow },
+    { href: `${home}#iletisim`, label: t.contact.eyebrow },
   ].filter((link): link is { href: string; label: string } => Boolean(link));
 
   return (
@@ -47,7 +57,9 @@ export default function Header({ content }: SectionProps) {
       <div
         className={`${page} mera-fade flex flex-wrap items-baseline justify-between gap-x-10 gap-y-4 pt-6 pe-14 sm:pt-[1.625rem] sm:pe-0`}
       >
-        <a href="#hero" className="flex items-baseline gap-3">
+        {/* Marka adi ana sayfaya doner: menu sayfasinda "#hero" capasi yok,
+            kunye adi orada olu bir baglanti olurdu. */}
+        <Link href={home} className="flex items-baseline gap-3">
           {/* Logo yoksa hic basilmaz: bu tasarimda marka adi zaten kunyenin
               kendisi, yer tutucu bir isaret ince seridi bozar. */}
           {logoUrl.trim() ? (
@@ -65,18 +77,20 @@ export default function Header({ content }: SectionProps) {
           <span className="brand-display mera-regular mera-mark text-[1.1875rem]">
             {name}
           </span>
-        </a>
+        </Link>
 
         <nav aria-label={name} className="min-w-0">
           <ul className="flex flex-wrap items-baseline gap-x-[2.125rem] gap-y-2">
-            {links.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
+            {links.map((item) => (
+              <li key={item.href}>
+                {/* next/link: menu artik ayri bir sayfa, istemci tarafi gecis
+                    sayfayi bastan yuklemez. Capalar icin de calisir. */}
+                <Link
+                  href={item.href}
                   className={`${labelBase} mera-nav text-[0.78rem] text-[var(--brand-ink-muted)] transition-colors hover:text-[var(--brand-ink)]`}
                 >
-                  {link.label}
-                </a>
+                  {item.label}
+                </Link>
               </li>
             ))}
           </ul>

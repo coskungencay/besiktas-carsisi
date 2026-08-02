@@ -35,6 +35,8 @@ const tr = {
   menu: {
     eyebrow: "Menü",
     title: "Bugün tezgâhta ne var?",
+    viewAll: "Tüm menüyü gör",
+    pageIntro: "Fiyatlar ve tam liste",
     featured: "Öne çıkan",
   },
   gallery: {

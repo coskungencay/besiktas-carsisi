@@ -28,6 +28,8 @@ const de: Messages = {
   menu: {
     eyebrow: "Speisekarte",
     title: "Was gibt es heute an der Theke?",
+    viewAll: "Ganze Karte ansehen",
+    pageIntro: "Preise und vollständige Liste",
     featured: "Empfehlung",
   },
   gallery: {

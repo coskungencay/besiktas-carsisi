@@ -1,18 +1,42 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { Reveal } from "@/components/motion/Reveal";
 import {
+  allMenuItems,
+  featuredItems,
+  hasMenu,
+  menuHref,
+} from "@/themes/_shared/data";
+import {
+  ArrowIcon,
   SectionHeader,
   containerClass,
+  primaryButtonClass,
   sectionClass,
 } from "@/themes/placeholder/parts";
 import type { SectionProps } from "@/themes/types";
 
+/**
+ * Ana sayfadaki menu VITRINI.
+ *
+ * NEDEN VITRIN: tam liste artik /[locale]/menu sayfasinda. Burada yalnizca
+ * birkac urun ve "tum menuyu gor" baglantisi var; boylece ana sayfa menu
+ * buyudukce okunamaz hale gelmiyor.
+ *
+ * Bolum id'si "menu" KALIYOR: nav capalari ve isVisible mantigi buna bagli.
+ */
 export default function Menu({ content }: SectionProps) {
-  const categories = content.menu.filter((c) => c.items.length > 0);
-  if (categories.length === 0) return null;
+  if (!hasMenu(content)) return null;
 
   const { t } = content;
+
+  /*
+   * Musteri hic urunu "one cikan" isaretlemediyse bolum bos kalmasin diye
+   * menunun ilk urunlerine duseriz.
+   */
+  const featured = featuredItems(content, 3);
+  const items = featured.length > 0 ? featured : allMenuItems(content).slice(0, 3);
 
   return (
     <section id="menu" aria-labelledby="menu-title" className={sectionClass}>
@@ -25,61 +49,62 @@ export default function Menu({ content }: SectionProps) {
           />
         </Reveal>
 
-        <div className="mt-12 flex flex-col gap-14">
-          {categories.map((category, ci) => (
-            <Reveal as="section" key={category.id} delay={Math.min(ci, 4) * 0.05}>
-              <h3 className="brand-display border-b border-[var(--brand-border)] pb-4 text-2xl">
-                {category.name}
-              </h3>
+        <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((item, i) => (
+            <Reveal as="li" key={item.id} delay={Math.min(i, 4) * 0.05}>
+              <article className="brand-frame flex h-full flex-col gap-4 bg-[var(--brand-surface-alt)] p-4 transition-colors hover:border-[var(--brand-primary)]">
+                {item.thumbUrl ? (
+                  <div className="brand-rounded relative aspect-4/3 w-full overflow-hidden">
+                    <Image
+                      src={item.thumbUrl}
+                      alt={item.name}
+                      fill
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                ) : null}
 
-              <ul className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                {category.items.map((item) => (
-                  <li
-                    key={item.id}
-                    className="brand-frame flex gap-4 bg-[var(--brand-surface-alt)] p-4 transition-colors hover:border-[var(--brand-primary)]"
-                  >
-                    {item.thumbUrl ? (
-                      <div className="brand-rounded relative aspect-square w-20 shrink-0 overflow-hidden">
-                        <Image
-                          src={item.thumbUrl}
-                          alt={item.name}
-                          fill
-                          sizes="80px"
-                          className="object-cover"
-                        />
-                      </div>
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  {/*
+                   * flex-wrap + gap: uzun urun adi fiyatin uzerine binmez,
+                   * 390px'te fiyat alt satira iner.
+                   */}
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                    <h3 className="brand-display text-base leading-snug">
+                      {item.name}
+                    </h3>
+                    {item.price ? (
+                      <p className="text-sm font-medium tabular-nums text-[var(--brand-primary)]">
+                        {item.price}
+                      </p>
                     ) : null}
+                  </div>
 
-                    <div className="flex min-w-0 flex-1 flex-col gap-1">
-                      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                        <h4 className="brand-display text-base leading-snug">
-                          {item.name}
-                        </h4>
-                        {item.price ? (
-                          <p className="text-sm font-medium tabular-nums text-[var(--brand-primary)]">
-                            {item.price}
-                          </p>
-                        ) : null}
-                      </div>
-
-                      {item.description ? (
-                        <p className="text-sm leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
-                          {item.description}
-                        </p>
-                      ) : null}
-
-                      {item.isFeatured ? (
-                        <p className="brand-rounded brand-eyebrow mt-1 inline-flex w-fit items-center bg-[var(--brand-primary)] px-2.5 py-1 text-[11px] text-[var(--brand-primary-contrast)]">
-                          {t.menu.featured}
-                        </p>
-                      ) : null}
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                  {item.description ? (
+                    // Vitrinde kisa tutuluyor; tam aciklama menu sayfasinda.
+                    <p className="line-clamp-2 text-sm leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
+                      {item.description}
+                    </p>
+                  ) : null}
+                </div>
+              </article>
             </Reveal>
           ))}
-        </div>
+        </ul>
+
+        {/*
+         * Bolumun asil isi: tam menuye gonderen belirgin cagri.
+         * Hero'nun birincil buton bicimiyle AYNI sinif kaynagini kullanir.
+         */}
+        <Reveal delay={0.1}>
+          <div className="mt-10">
+            <Link href={menuHref(content)} className={primaryButtonClass}>
+              <span>{t.menu.viewAll}</span>
+              <ArrowIcon />
+            </Link>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

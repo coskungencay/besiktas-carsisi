@@ -28,6 +28,8 @@ const es: Messages = {
   menu: {
     eyebrow: "Carta",
     title: "¿Qué hay hoy en la barra?",
+    viewAll: "Ver el menú completo",
+    pageIntro: "Precios y lista completa",
     featured: "Destacado",
   },
   gallery: {

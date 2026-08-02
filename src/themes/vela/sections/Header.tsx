@@ -1,5 +1,7 @@
+import Link from "next/link";
+
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
-import { hasMenu } from "@/themes/_shared/data";
+import { hasMenu, menuHref } from "@/themes/_shared/data";
 import { metaSoft, shell } from "@/themes/vela/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -20,6 +22,9 @@ import type { SectionProps } from "@/themes/types";
  * vl-fade: acilista yalnizca opaklik degisir. Serit kaymasin diye bilerek
  * translate YOK; ust seritte hareket goz yorar.
  */
+/** `page: true` → ayri bir sayfaya gider (capa degil), yani next/link ile. */
+type NavLink = { href: string; label: string; page?: boolean };
+
 export default function Header({ content }: SectionProps) {
   const { name, t } = content;
 
@@ -30,14 +35,22 @@ export default function Header({ content }: SectionProps) {
   const links = [
     // Saatler artik iletisim bolumunde; "hakkimizda" sadece metne bagli.
     content.about && { href: "#hakkimizda", label: t.about.title },
-    hasMenu(content) && { href: "#menu", label: t.menu.eyebrow },
+    /*
+     * Menu artik ana sayfada bir capa degil, kendi sayfasi. Kosul yine
+     * hasMenu: urun yoksa ne sayfa var ne de link olmali.
+     */
+    hasMenu(content) && {
+      href: menuHref(content),
+      label: t.menu.eyebrow,
+      page: true,
+    },
     // isVisible: musteri galeriyi panelden kapatinca link de gitmeli.
     content.isVisible("galeri") && {
       href: "#galeri",
       label: t.gallery.eyebrow,
     },
     { href: "#iletisim", label: t.contact.eyebrow },
-  ].filter((link): link is { href: string; label: string } => Boolean(link));
+  ].filter((link): link is NavLink => Boolean(link));
 
   /*
    * Baglantilar ikiye bolunuyor. Tek sayida link varsa fazlalik SOLA gidiyor:
@@ -47,16 +60,24 @@ export default function Header({ content }: SectionProps) {
   const leadingLinks = links.slice(0, split);
   const trailingLinks = links.slice(split);
 
-  const navItem = (link: { href: string; label: string }) => (
-    <li key={link.href}>
-      <a
-        href={link.href}
-        className={`${metaSoft} transition-colors hover:text-[var(--brand-primary)]`}
-      >
-        {link.label}
-      </a>
-    </li>
-  );
+  const navItem = (link: NavLink) => {
+    const className = `${metaSoft} transition-colors hover:text-[var(--brand-primary)]`;
+
+    return (
+      <li key={link.href}>
+        {/* Capa ayni sayfada kaydirir; menu ayri bir sayfa, istemci gecisi. */}
+        {link.page ? (
+          <Link href={link.href} className={className}>
+            {link.label}
+          </Link>
+        ) : (
+          <a href={link.href} className={className}>
+            {link.label}
+          </a>
+        )}
+      </li>
+    );
+  };
 
   return (
     <header className="vl-fade relative z-20 brand-body">

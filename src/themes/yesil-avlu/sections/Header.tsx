@@ -1,10 +1,35 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { fill } from "@/i18n";
-import { hasMenu } from "@/themes/_shared/data";
+import { hasMenu, menuHref } from "@/themes/_shared/data";
 import { shell, surface } from "@/themes/yesil-avlu/parts";
 import type { SectionProps } from "@/themes/types";
+
+/**
+ * Serit navigasyonunun tek ogesi.
+ *
+ * `isRoute`: menu artik ana sayfada bir capa degil, AYRI BIR SAYFA. Capa
+ * baglantilari duz <a> kalmali (ayni sayfada kaydirma), sayfa baglantisi ise
+ * <Link> olmali — istemci tarafi gecis ve on-yukleme onunla geliyor.
+ */
+type NavItem = { href: string; label: string; isRoute?: boolean };
+
+function NavLink({ href, label, isRoute }: NavItem) {
+  // Hover rengi tema genelinde tanimli (tokens.css); burada yalnizca gecisi var.
+  const className = "ya-nav transition-colors";
+
+  return isRoute ? (
+    <Link href={href} className={className}>
+      {label}
+    </Link>
+  ) : (
+    <a href={href} className={className}>
+      {label}
+    </a>
+  );
+}
 
 /**
  * TEK ince serit: solda nav'in yarisi, ORTADA marka adi, sagda nav'in diger
@@ -34,13 +59,21 @@ export default function Header({ content }: SectionProps) {
       href: "#hakkimizda",
       label: t.about.title,
     },
-    hasMenu(content) && { href: "#menu", label: t.menu.eyebrow },
+    /*
+     * Menu artik ayri bir sayfa; kosul yine hasMenu cunku menude urun yoksa
+     * hem link hem sayfa (404) olmamali.
+     */
+    hasMenu(content) && {
+      href: menuHref(content),
+      label: t.menu.eyebrow,
+      isRoute: true,
+    },
     content.isVisible("galeri") && {
       href: "#galeri",
       label: t.gallery.eyebrow,
     },
     { href: "#iletisim", label: t.contact.eyebrow },
-  ].filter((link): link is { href: string; label: string } => Boolean(link));
+  ].filter((link): link is NavItem => Boolean(link));
 
   /*
    * Tasarimda serit iki yana iki linkle simetrik duruyor. Link sayisi musteriye
@@ -50,9 +83,6 @@ export default function Header({ content }: SectionProps) {
   const half = Math.ceil(links.length / 2);
   const leadingLinks = links.slice(0, half);
   const trailingLinks = links.slice(half);
-
-  // Hover rengi tema genelinde tanimli (tokens.css); burada yalnizca gecisi var.
-  const linkClass = "ya-nav transition-colors";
 
   return (
     // ya-fade: tasarimda ust serit sayfa acilir acilmaz yerinde beliriyor.
@@ -71,9 +101,7 @@ export default function Header({ content }: SectionProps) {
         <ul className="flex flex-wrap items-center justify-center gap-x-[1.875rem] gap-y-2 sm:justify-start">
           {leadingLinks.map((link) => (
             <li key={link.href}>
-              <a href={link.href} className={linkClass}>
-                {link.label}
-              </a>
+              <NavLink {...link} />
             </li>
           ))}
         </ul>
@@ -106,9 +134,7 @@ export default function Header({ content }: SectionProps) {
             <ul className="flex flex-wrap items-center gap-x-[1.875rem] gap-y-2">
               {trailingLinks.map((link) => (
                 <li key={link.href}>
-                  <a href={link.href} className={linkClass}>
-                    {link.label}
-                  </a>
+                  <NavLink {...link} />
                 </li>
               ))}
             </ul>

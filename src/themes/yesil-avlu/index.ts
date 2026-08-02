@@ -9,6 +9,7 @@ import Header from "@/themes/yesil-avlu/sections/Header";
 import Hero from "@/themes/yesil-avlu/sections/Hero";
 import Location from "@/themes/yesil-avlu/sections/Location";
 import Menu from "@/themes/yesil-avlu/sections/Menu";
+import MenuPage from "@/themes/yesil-avlu/sections/MenuPage";
 import Testimonials from "@/themes/yesil-avlu/sections/Testimonials";
 
 /**
@@ -26,6 +27,7 @@ const theme: ThemeDefinition = {
   sections: [
     { id: "hero", Component: Hero },
     { id: "hakkimizda", Component: About },
+    /* Ana sayfadaki "menu" artik VITRIN; tam liste MenuPage'de (/tr/menu). */
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },
     /*
@@ -39,6 +41,7 @@ const theme: ThemeDefinition = {
     { id: "iletisim", Component: Contact },
   ],
   Footer,
+  MenuPage,
   tokensPath: "src/themes/yesil-avlu/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {

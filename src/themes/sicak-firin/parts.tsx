@@ -79,6 +79,12 @@ export const leaderLine =
  * `size` tasarimin iki basamakli baslik olcegini tasiyor: anlatim bolumleri
  * 46px ("lg"), vitrin bolumleri 38px ("md"). Tek olcek kullanmak sayfayi
  * duzlestiriyordu.
+ *
+ * `as` GORSEL degil YAPISAL: ana sayfada h1 hero'nun (bolumler h2), ama menu
+ * kendi sayfasinda hero yok — orada bu baslik sayfanin adi, yani h1. Sabit h2
+ * birakilinca menu sayfasi h1'siz kaliyor ve kategori basliklari sayfa
+ * basligiyla ayni kademede duruyordu; ekran okuyucuda liste duz bir yigina
+ * donusuyordu.
  */
 export function SectionHead({
   eyebrow,
@@ -86,6 +92,7 @@ export function SectionHead({
   titleId,
   intro,
   size = "lg",
+  as: Title = "h2",
   children,
 }: {
   eyebrow: string;
@@ -93,6 +100,7 @@ export function SectionHead({
   titleId: string;
   intro?: string;
   size?: "lg" | "md";
+  as?: "h1" | "h2";
   children?: ReactNode;
 }) {
   const titleScale =
@@ -104,12 +112,12 @@ export function SectionHead({
     <div className="flex flex-col items-start text-start">
       <p className={metaText}>{eyebrow}</p>
 
-      <h2
+      <Title
         id={titleId}
         className={`brand-display mt-3 leading-[var(--brand-h2-leading)] text-balance ${titleScale}`}
       >
         {title}
-      </h2>
+      </Title>
 
       {intro ? (
         // Tasarimda bolum girisleri 380px'te kesiliyor; daha uzun satir

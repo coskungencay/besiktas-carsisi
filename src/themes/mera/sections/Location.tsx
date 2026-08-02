@@ -4,9 +4,8 @@ import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   SectionHead,
   bodyText,
+  cta,
   label,
-  labelBase,
-  link,
   page,
   sectionPad,
   surface,
@@ -73,15 +72,14 @@ export default function Location({ content }: SectionProps) {
                 ) : null}
 
                 {directionsHref ? (
-                  /* Tasarimdaki "Yol tarifi al →": 12px kunye punto, .18em
-                     aralik, marka renginde alt cizgi. Rengi de MARKA RENGI —
-                     tasarimin global `a` kurali; ustune gelince mureekkebe
-                     doner. */
+                  /* Temanin ana eylem bicimi (bkz. parts.tsx `cta`) — bu
+                     tasarimda dolgulu buton yok, marka renginde alt cizgili
+                     kunye baglantisi var. */
                   <a
                     href={directionsHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`${labelBase} ${link} mera-caption mt-9 inline-flex items-center gap-3 border-b border-[var(--brand-primary)] pb-1 text-[0.75rem]`}
+                    className={`${cta} mt-9`}
                   >
                     <span>{t.location.directions}</span>
                     <ArrowIcon className="size-3.5" />

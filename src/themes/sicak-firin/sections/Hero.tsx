@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { fill } from "@/i18n";
 import {
@@ -7,6 +8,7 @@ import {
   hasMenu,
   highlightsOrDerived,
   imageOrFallback,
+  menuHref,
   paragraphs,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
@@ -25,8 +27,8 @@ import type { SectionProps } from "@/themes/types";
  *
  * Gorselin kosesine "not kagidi" yapisiyor: one cikan ilk urun, tezgaha
  * birakilmis egik bir kartla duyuruluyor. One cikan DIGER urunler burada
- * DEGIL, menu bolumunde "one cikan" etiketiyle duruyor — tasarimda hero iki
- * kolondan ibaret, altina bir kart vitrini eklemek ilk ekrani uzatiyordu.
+ * DEGIL, asagidaki menu vitrininde duruyor — tasarimda hero iki kolondan
+ * ibaret, altina bir kart vitrini eklemek ilk ekrani uzatiyordu.
  *
  * ANIMASYON: bu bolumde <Reveal> (scroll ile beliren, istemci tarafi) YOK.
  * Ilk ekran zaten goruntude oldugu icin acilis animasyonu CSS ile calisiyor
@@ -125,14 +127,17 @@ export default function Hero({ content }: SectionProps) {
             ) : null}
 
             {/*
-              Menu bolumu yoksa dolu buton hic basilmaz — hicbir yere gitmeyen
-              bir capa birakmak istemiyoruz. Ikinci buton her zaman var.
+              Menude urun yoksa dolu buton hic basilmaz — hicbir yere gitmeyen
+              bir baglanti birakmak istemiyoruz. Ikinci buton her zaman var.
+
+              Bu buton artik sayfa ici capaya degil MENU SAYFASINA gidiyor;
+              <Link> ile istemci tarafi gecis (sayfa bastan yuklenmiyor).
             */}
             <div className="sf-up-3 mt-8 flex flex-wrap items-center gap-3">
               {showMenuCta ? (
-                <a href="#menu" className={pillSolid}>
+                <Link href={menuHref(content)} className={pillSolid}>
                   {t.hero.viewMenu}
-                </a>
+                </Link>
               ) : null}
 
               {/* Semt yazildiysa buton onu soyler ("Kadikoy →"), yoksa

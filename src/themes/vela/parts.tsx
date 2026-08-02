@@ -131,6 +131,31 @@ export const proseFine =
   "text-[0.8125rem] leading-[1.75] text-pretty text-[var(--brand-ink-muted)]";
 
 /**
+ * Temanin TEK buton bicimi.
+ *
+ * Tasarimdaki tek buton (rezervasyon talebi): ince altin cerceve, 15/32px
+ * dolgu, 11.5px / .24em uppercase metin, uzerine gelince zemin altina donuyor.
+ * Radius yok — tema genelinde kose yok.
+ *
+ * NEDEN TEK YERDE: ayni bicim artik uc yerde geciyor (yol tarifi, menu
+ * vitrinindeki "tum menuyu gor", menu sayfasinin donus baglantisi). Uc kopya
+ * zamanla birbirinden ayrilirdi.
+ */
+const buttonBase =
+  "inline-flex items-center gap-3 border px-8 py-[0.9375rem] text-[0.71875rem] leading-[1.6] uppercase tracking-[var(--brand-meta-tracking)] transition-colors";
+
+/** Koyu zemin uzerinde: altin cerceve, dolunca zemin altin olur. */
+export const goldButton = `${buttonBase} border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary)] hover:text-[var(--brand-primary-contrast)]`;
+
+/**
+ * KREM panel uzerinde ayni buton.
+ *
+ * NEDEN AYRI: acik zeminde parlak altin okunmuyor; panelin kendi koyu altini
+ * (--brand-primary-deep) kullanilir, dolunca yazi panel zeminine (krem) doner.
+ */
+export const goldButtonOnAccent = `${buttonBase} border-[var(--brand-primary-deep)] text-[var(--brand-primary-deep)] hover:bg-[var(--brand-primary-deep)] hover:text-[var(--brand-accent)]`;
+
+/**
  * Sac teli cizgi.
  *
  * `tone="gold"` hero'daki uzun ayrac icin: tam altin cok parlak kalirdi,

@@ -9,6 +9,7 @@ import Header from "@/themes/tesviye/sections/Header";
 import Hero from "@/themes/tesviye/sections/Hero";
 import Location from "@/themes/tesviye/sections/Location";
 import Menu from "@/themes/tesviye/sections/Menu";
+import MenuPage from "@/themes/tesviye/sections/MenuPage";
 import Testimonials from "@/themes/tesviye/sections/Testimonials";
 
 /**
@@ -39,6 +40,11 @@ const theme: ThemeDefinition = {
     { id: "iletisim", Component: Contact },
   ],
   Footer,
+  /*
+   * Ayri menu sayfasinin govdesi. Ana sayfadaki "menu" bolumu vitrin olarak
+   * sections dizisinde KALIR; tam fiyat cetveli burada.
+   */
+  MenuPage,
   tokensPath: "src/themes/tesviye/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {

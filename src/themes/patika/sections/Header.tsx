@@ -1,8 +1,9 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { fill } from "@/i18n";
-import { hasMenu, imageOrFallback } from "@/themes/_shared/data";
+import { hasMenu, imageOrFallback, menuHref } from "@/themes/_shared/data";
 import {
   edgeBottom,
   navCta,
@@ -34,18 +35,31 @@ export default function Header({ content }: SectionProps) {
    * Yeni bolumlere (yorumlar, sss, konum) BILEREK link yok: tasarimda serit tek
    * satir ve dolu; sekiz rozet dar ekranda ikinci satira tasip bandrolu bozardi.
    */
+  /*
+   * `isPage`: menu artik bir capa degil, kendi adresi olan bir SAYFA. Capalar
+   * duz <a> ile kaliyor (ayni sayfada kaydirma), sayfa baglantisi next/link
+   * ile basiliyor — yoksa tam sayfa yenilemesi olurdu.
+   */
   const links = [
     /* About artik yalnizca METIN varsa basiliyor (saatler iletisime tasindi). */
     content.about && {
       href: "#hakkimizda",
       label: t.about.title,
     },
-    hasMenu(content) && { href: "#menu", label: t.menu.eyebrow },
+    /* Kosul AYNI kaliyor: urun yoksa menu sayfasi da 404, link de olmamali. */
+    hasMenu(content) && {
+      href: menuHref(content),
+      label: t.menu.eyebrow,
+      isPage: true,
+    },
     content.isVisible("galeri") && {
       href: "#galeri",
       label: t.gallery.eyebrow,
     },
-  ].filter((link): link is { href: string; label: string } => Boolean(link));
+  ].filter(
+    (link): link is { href: string; label: string; isPage?: boolean } =>
+      Boolean(link),
+  );
 
   return (
     <header className={`${surface} ${edgeBottom} brand-body sticky top-0 z-20`}>
@@ -82,9 +96,15 @@ export default function Header({ content }: SectionProps) {
             <ul className="flex flex-wrap items-center gap-2">
               {links.map((link) => (
                 <li key={link.href}>
-                  <a href={link.href} className={navLink}>
-                    {link.label}
-                  </a>
+                  {link.isPage ? (
+                    <Link href={link.href} className={navLink}>
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <a href={link.href} className={navLink}>
+                      {link.label}
+                    </a>
+                  )}
                 </li>
               ))}
 

@@ -44,6 +44,17 @@ export function menuWithItems(content: SiteContent): MenuCategory[] {
   return content.menu.filter((category) => category.items.length > 0);
 }
 
+/**
+ * Menu SAYFASININ adresi.
+ *
+ * Menu artik ana sayfada bir capa (#menu) degil, kendi sayfasi. Adres dile
+ * bagli oldugu icin tek yerden uretiliyor; temalarda elle "/tr/menu" yazmak
+ * dil degisince kirilirdi.
+ */
+export function menuHref(content: SiteContent): string {
+  return `/${content.locale}/menu`;
+}
+
 export function hasMenu(content: SiteContent): boolean {
   return menuWithItems(content).length > 0;
 }

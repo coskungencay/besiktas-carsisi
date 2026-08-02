@@ -78,6 +78,15 @@ html[data-theme="tesviye"] {
   /* Bolum basligi: tasarimda 36px (beyan) — 44px (konum) arasi. */
   --ts-title: clamp(1.625rem, 3.6vw, 2.75rem);
 
+  /*
+   * Ayri menu sayfasinin basligi (/tr/menu).
+   *
+   * NEDEN ARADA BIR OLCU: o sayfada ustte hero yok, sayfayi bu baslik aciyor.
+   * --ts-title (44px) sayfayi bassiz birakiyor; --ts-hero (148px) ise altindaki
+   * fiyat cetvelini eziyordu. Bu olcu ikisinin arasinda durur.
+   */
+  --ts-page-title: clamp(2.25rem, 5.4vw, 4.5rem);
+
   /* Kisa, alt alta dizilen Anton bloklari (mavi eylem karti) — tasarimda 1.22. */
   --ts-title-leading: 1.22;
 

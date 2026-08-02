@@ -1,7 +1,8 @@
+import Link from "next/link";
 import { Fragment } from "react";
 
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
-import { hasMenu, hoursRange } from "@/themes/_shared/data";
+import { hasMenu, hoursRange, menuHref } from "@/themes/_shared/data";
 import {
   edgeBottom,
   edgeEnd,
@@ -37,18 +38,37 @@ export default function Header({ content }: SectionProps) {
 
   const range = hoursRange(openingHours);
 
+  /*
+   * `isPage`: menu artik bir capa degil, kendi sayfasi (/tr/menu). Sayfa
+   * baglantilari <Link> ile basilir (istemci tarafi gecis + on yukleme),
+   * ayni sayfadaki capalar duz <a> kalir.
+   *
+   * Menu kosulu hasMenu OLARAK KALIR: urun yoksa hem link hem sayfa yok.
+   */
   const links = [
     (content.about || content.openingHours.length > 0) && {
       href: "#hakkimizda",
       label: t.about.title,
+      isPage: false,
     },
-    hasMenu(content) && { href: "#menu", label: t.menu.eyebrow },
+    hasMenu(content) && {
+      href: menuHref(content),
+      label: t.menu.eyebrow,
+      isPage: true,
+    },
     content.isVisible("galeri") && {
       href: "#galeri",
       label: t.gallery.eyebrow,
+      isPage: false,
     },
-    { href: "#iletisim", label: t.contact.eyebrow },
-  ].filter((link): link is { href: string; label: string } => Boolean(link));
+    { href: "#iletisim", label: t.contact.eyebrow, isPage: false },
+  ].filter(
+    (link): link is { href: string; label: string; isPage: boolean } =>
+      Boolean(link),
+  );
+
+  // Iki baglanti bicimi de ayni gorunmeli; sinif tek yerde.
+  const navLink = "transition-colors hover:text-[var(--brand-primary)]";
 
   return (
     <header
@@ -120,12 +140,15 @@ export default function Header({ content }: SectionProps) {
                     </li>
                   ) : null}
                   <li>
-                    <a
-                      href={link.href}
-                      className="transition-colors hover:text-[var(--brand-primary)]"
-                    >
-                      {link.label}
-                    </a>
+                    {link.isPage ? (
+                      <Link href={link.href} className={navLink}>
+                        {link.label}
+                      </Link>
+                    ) : (
+                      <a href={link.href} className={navLink}>
+                        {link.label}
+                      </a>
+                    )}
                   </li>
                 </Fragment>
               ))}

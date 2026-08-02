@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import type { MenuItem } from "@/themes/types";
+
 /**
  * Mera'ya OZEL parcalar — bir yemek dergisinin ic sayfasi.
  *
@@ -78,6 +80,19 @@ export const labelFaint =
 export const labelStripBase =
   "brand-body mera-mark text-[0.6875rem] leading-none";
 export const labelStrip = `${labelStripBase} text-[var(--brand-ink-faint)]`;
+
+/**
+ * Temanin ANA eylem bicimi.
+ *
+ * Bu tasarimda dolgulu buton YOK — hero'da bile buton yok, cunku dergi
+ * kapaginda dugme olmaz. Tasarimin tek eylem ogesi kapanis bolumundeki
+ * "Yol tarifi al →" baglantisi: 12px kunye punto, .18em aralik, marka renginde
+ * ALT CIZGI. Menu sayfasina goturen baglantilar da ayni bicimi kullanir ki
+ * sayfada iki farkli "buton dili" olusmasin.
+ *
+ * Ust bosluk verilmez: nerede kullanildigina cagiran karar verir.
+ */
+export const cta = `${labelBase} ${link} mera-caption inline-flex items-center gap-3 border-b border-[var(--brand-primary)] pb-1 text-[0.75rem]`;
 
 /** Govde metni olcegi: tasarimda 15px / 1.7. */
 export const bodyText =
@@ -168,6 +183,67 @@ export function SectionHeadRow({
         {title}
       </h2>
     </div>
+  );
+}
+
+/**
+ * Menu satiri — basili menulerin "ad ......... fiyat" alistirmasi.
+ *
+ * NEDEN ORTAK: ayni satir hem ana sayfadaki vitrin bolumunde hem de tam menu
+ * sayfasinda geciyor. Iki yerde ayri ayri yazilirsa biri degistiginde digeri
+ * geride kalir ve ayni sitede iki farkli menu dili olusur.
+ *
+ * Noktali dolgu ayri bir <span> olarak esner ve fiyati daima satirin sonuna
+ * yaslar. 390px'de GIZLENIR: dar ekranda uzun bir urun adi ile fiyat arasinda
+ * zaten yer kalmiyor, dolgu birkac piksele sikisip cizik gibi gorunuyordu.
+ * Orada fiyati `ms-auto` sona atar; ad cok uzunsa satir sarar ve fiyat alt
+ * satirin sonuna iner — ust uste binme olmaz.
+ *
+ * Kendisi <li> dondurur: alt cizgiyi kapatan `last:border-0` ancak liste
+ * ogesinin KENDISINDE calisir; ara bir sarmalayici konulursa her satir
+ * "son cocuk" olur ve tum ayraclar kaybolur.
+ */
+export function MenuLine({
+  item,
+  badge,
+}: {
+  item: MenuItem;
+  /** "One cikan" etiketi. Bos birakilirsa basilmaz. */
+  badge?: string;
+}) {
+  return (
+    /* Ustune gelince satir isinir (tasarim: marka renginin %5'i). Yatay dolgu
+       YOK — tasarimda da zemin satirin tam genisligini kapliyor. */
+    <li className="border-b border-[var(--mera-hair-soft)] py-[0.9375rem] transition-colors last:border-0 hover:bg-[var(--mera-row-hover)]">
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <span className="min-w-0 text-base">{item.name}</span>
+
+        {badge ? <span className={label}>{badge}</span> : null}
+
+        {/* Noktali dolgu: yalnizca fiyat varsa anlamli. */}
+        {item.price ? (
+          <>
+            <span
+              aria-hidden="true"
+              className="mb-[5px] hidden min-w-6 flex-1 border-b border-dotted border-[var(--mera-dot)] sm:block"
+            />
+            {/* dir=ltr: para birimi ve rakam sirasi Arapca'da da bozulmasin. */}
+            <span
+              className="ms-auto text-[0.875rem] tabular-nums text-[var(--brand-ink-body)]"
+              dir="ltr"
+            >
+              {item.price}
+            </span>
+          </>
+        ) : null}
+      </div>
+
+      {item.description ? (
+        <p className="mt-1.5 max-w-md text-[0.8125rem] leading-[1.6] text-pretty italic text-[var(--brand-ink-faint)] rtl:not-italic">
+          {item.description}
+        </p>
+      ) : null}
+    </li>
   );
 }
 

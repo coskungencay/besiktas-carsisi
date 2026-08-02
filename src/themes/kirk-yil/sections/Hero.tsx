@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { fill } from "@/i18n";
 import {
@@ -6,6 +7,7 @@ import {
   hasMenu,
   highlightsOrDerived,
   imageOrFallback,
+  menuHref,
   paragraphs,
 } from "@/themes/_shared/data";
 import {
@@ -123,10 +125,14 @@ export default function Hero({ content }: SectionProps) {
               ortada tek basina kalir (justify-center).
             */
             <div className="ky-up-3 mt-[34px] flex flex-wrap items-center justify-center gap-4">
+              {/*
+                Menu artik ana sayfada bir capa degil, kendi sayfasi; bu yuzden
+                next/link ile istemci tarafi gecis.
+              */}
               {showMenu ? (
-                <a href="#menu" className={buttonSolid}>
+                <Link href={menuHref(content)} className={buttonSolid}>
                   {t.hero.viewMenu}
-                </a>
+                </Link>
               ) : null}
 
               {showDirections ? (

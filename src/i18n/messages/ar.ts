@@ -28,6 +28,8 @@ const ar: Messages = {
   menu: {
     eyebrow: "القائمة",
     title: "ماذا يوجد على الطاولة اليوم؟",
+    viewAll: "عرض القائمة كاملة",
+    pageIntro: "الأسعار والقائمة الكاملة",
     featured: "مميّز",
   },
   gallery: {
