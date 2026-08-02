@@ -111,7 +111,16 @@ html[data-theme="patika"] {
    * icin bolumler arasi 96 yerine 192px olurdu; bu yuzden tema kendi
    * .pk-section sinifini kullanir (asagida).
    */
-  --brand-container: 1440px;
+  /*
+   * Sayfa siniri.
+   *
+   * Tasarim dosyasinda sayfa genelinde max-width YOK: icerik ekrani doldurur,
+   * yalnizca kenar boslugu birakilir. 1440px'lik eski sinir genis ekranlarda
+   * iki yanda olu alan birakiyor ve tasarimi oldugundan kucuk gosteriyordu.
+   * Buradaki deger bir "tasarim sinir" degil, 4K ekranlarda satir uzunlugu
+   * okunamaz hale gelmesin diye birakilan ust siniridir.
+   */
+  --brand-container: 2200px;
   --brand-section-py: 4rem; /* dar ekran: 64px */
   --brand-section-py-lg: 6rem; /* tasarimdaki 96px */
   --brand-section-pb-end: 2.75rem; /* son bolumun alt boslugu: 44px */

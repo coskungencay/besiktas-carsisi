@@ -72,6 +72,7 @@ html[data-theme="kirk-yil"] {
   --ky-rule-color: rgba(42, 33, 27, 0.32);
 
   /* --- Olcek (tasarimdaki gercek px degerleri) --- */
+  /* Tasarimda ACIKCA max-width:1240px var — klasik simetrik duzen. */
   --brand-container: 1240px;
   --brand-section-py: 4.5rem;      /* 72px  — dar ekran */
   --brand-section-py-lg: 6.875rem; /* 110px — tasarimdaki bolum araligi */

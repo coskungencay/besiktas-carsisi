@@ -17,7 +17,7 @@ import type { ReactNode } from "react";
  * o degere gecilir (kucuk ekranlarda 60px cok fazla olurdu).
  */
 export const shell =
-  "mx-auto w-full max-w-[var(--brand-container)] px-6 sm:px-10 lg:px-[3.75rem]";
+  "mx-auto w-full max-w-[var(--brand-container)] px-6 sm:px-15 lg:px-[3.75rem]";
 
 /** Bolum kabugu: koyu zemin + govde yazi tipi. */
 export const surface = "bg-[var(--brand-surface)] text-[var(--brand-ink)]";

@@ -83,7 +83,16 @@ html[data-theme="mera"] {
    * bu yuzden 1440px (page yardimcisi 56px yatay dolguyu kendisi ekler).
    * Bolum ritmi: onceki bolumun sonu ile ayirici cizgi arasi 120px.
    */
-  --brand-container: 1440px;
+  /*
+   * Sayfa siniri.
+   *
+   * Tasarim dosyasinda sayfa genelinde max-width YOK: icerik ekrani doldurur,
+   * yalnizca kenar boslugu birakilir. 1440px'lik eski sinir genis ekranlarda
+   * iki yanda olu alan birakiyor ve tasarimi oldugundan kucuk gosteriyordu.
+   * Buradaki deger bir "tasarim sinir" degil, 4K ekranlarda satir uzunlugu
+   * okunamaz hale gelmesin diye birakilan ust siniridir.
+   */
+  --brand-container: 2200px;
   --brand-section-py: 4.5rem; /* 72px — mobil */
   --brand-section-py-lg: 7.5rem; /* 120px — tasarimin gercek degeri */
 

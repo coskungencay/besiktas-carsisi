@@ -15,7 +15,7 @@
  * padding'i ile ayni; boylece ust serit ile hero ayni dikey cizgide baslar.
  */
 export const shell =
-  "mx-auto w-full max-w-[var(--brand-container)] px-5 sm:px-8 lg:px-10";
+  "mx-auto w-full max-w-[var(--brand-container)] px-5 sm:px-10 lg:px-10";
 
 /** Bolum kabugu: koyu zemin + govde yazi tipi. */
 export const surface = "bg-[var(--brand-surface)] text-[var(--brand-ink)]";
