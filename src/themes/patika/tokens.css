@@ -1,8 +1,12 @@
 /*
- * Patika — koyu, iddialı, neon
+ * Patika — koyu, iddiali, neon ("konser afisi")
  *
  * Bu dosya temanin TEK gorsel kaynagidir. Bilesenlerde sabit renk, radius,
- * font veya harf araligi YOKTUR; hepsi buradaki degiskenlerden okunur.
+ * font veya harf araligi YOKTUR; hepsi buradaki degiskenlerden ya da asagida
+ * tanimli pk-* yardimci siniflarindan okunur.
+ *
+ * Olculer orijinal tasarim dosyasindaki gercek px degerleridir (1440px genislik):
+ * h1 168px / h2 76px / h3 56px / kart basligi 32px / govde 17px.
  *
  * DIKKAT: secici html[data-theme] olmali — :root fallback ile ayni
  * ozgullukte olmasi durumunda dosya sirasi yuzunden tema uygulanmaz.
@@ -24,21 +28,396 @@ html[data-theme="patika"] {
   --brand-ink-muted: #B9B6AA;
   --brand-border: #2C2C24;
 
-  /* --- Tipografi (harici font yok; sistem yigini) --- */
-  --brand-font-display: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --brand-font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --brand-display-weight: 900;
+  /*
+   * --- Tipografi ---
+   * Tasarimin font cifti: Bricolage Grotesque 800 (baslik) + Space Grotesk
+   * (govde). next/font degiskenleri <html> uzerinde tanimli (src/themes/fonts.ts).
+   *
+   * Yigin sonundaki sistem yedegi ZORUNLU: bu iki fontta Arapca glif yok,
+   * Arapca sayfa sessizce sistem fontuna duser.
+   */
+  --brand-font-display:
+    var(--font-bricolage), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --brand-font-body:
+    var(--font-space-grotesk), system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Bricolage'in yuklu en kalin kesimi 800; 900 istemek sahte kalinlik uretir. */
+  --brand-display-weight: 800;
 
-  /* --- Kucuk etiketler (eyebrow, rozet) --- */
-  --brand-eyebrow-tracking: 0.18em;
+  /* --- Baslik olcegi (tasarimdaki px degerleri) --- */
+  --brand-h1-size: clamp(3.25rem, 11vw, 10.5rem); /* 168px tavan */
+  --brand-h1-leading: 0.98;
+  --brand-h1-tracking: -0.045em;
+
+  --brand-h2-size: clamp(2.5rem, 6.6vw, 4.75rem); /* 76px */
+  --brand-h2-leading: 1.02;
+  --brand-h2-tracking: -0.04em;
+
+  --brand-h3-size: clamp(2rem, 4.6vw, 3.5rem); /* 56px */
+  --brand-h3-leading: 1.05;
+
+  --brand-title-size: clamp(1.625rem, 2.6vw, 2rem); /* kart basligi 32px */
+  --brand-title-tracking: -0.03em;
+  --brand-price-size: clamp(1.375rem, 2vw, 1.625rem); /* fiyat 26px */
+
+  /*
+   * Kayan serit tasarimda 30px ve -.02em: baslik olcusunden AYRI, cunku serit
+   * tek satirda akiyor ve kart basligiyla (32px / -.03em) ayni olursa dar
+   * ekranda satir yuksekligi seridi sisiriyor.
+   */
+  --brand-marquee-size: clamp(1.25rem, 2.6vw, 1.875rem); /* 30px tavan */
+  --brand-marquee-tracking: -0.02em;
+
+  /* --- Govde olcegi --- */
+  --brand-lead-size: 1.0625rem; /* 17px — hero paragrafi */
+  --brand-lead-leading: 1.55;
+  --brand-body-size: 0.9375rem; /* 15px — bolum paragraflari */
+  --brand-body-leading: 1.6;
+
+  /*
+   * Yorum metni tasarimda 19px / 1.45 / -.01em: hero paragrafindan (17px) BUYUK
+   * ve daha sikilastirilmis. Alinti kartta tek basina durdugu icin kendi
+   * kademesi var; lead ile birlestirilirse yorumlar kartin icinde sonuyor.
+   */
+  --brand-quote-size: 1.1875rem; /* 19px */
+  --brand-quote-leading: 1.45;
+  --brand-quote-tracking: -0.01em;
+
+  /*
+   * --- Kucuk etiketler ---
+   * Tasarimda tek bir "kucuk etiket" yok, dort ayri kademe var; hepsi farkli
+   * bir isi yapiyor, o yuzden ayri token:
+   *   .2em  → bolum ustu etiketi ve iletisim kolon basliklari (12px/700)
+   *   .18em → menu kartinin numara satiri (11px/700)
+   *   .16em → footer kunye satiri (11px/500)
+   *   .06em → nav linkleri ve hero'daki yuvarlak saat rozeti
+   */
+  --brand-label-tracking: 0.2em; /* bolum ustu etiketi */
+  --brand-eyebrow-tracking: 0.18em; /* kart numarasi */
   --brand-eyebrow-transform: uppercase;
+  --brand-nav-tracking: 0.06em; /* nav, rozet ve link etiketleri */
+  --brand-meta-tracking: 0.16em; /* footer kunye satiri */
 
   /* --- Bicim --- */
-  --brand-radius: 1rem;
+  --brand-radius: 1.25rem; /* 20px — kart */
+  --brand-radius-media: 1rem; /* 16px — gorsel */
+  --brand-radius-block: 1.75rem; /* 28px — buyuk blok */
+  --brand-radius-pill: 100px; /* rozet ve nav linki */
   --brand-border-width: 2px;
 
-  /* --- Olcek --- */
-  --brand-container: 1280px;
-  --brand-section-py: 4rem;
-  --brand-section-py-lg: 6rem;
+  /*
+   * --- Olcek ---
+   * Tasarimda bolumler `padding:96px 40px 0` — yani bosluk TEK TARAFLI, sadece
+   * ustte. Ortak .brand-section utility'si padding-block (iki taraf) verdigi
+   * icin bolumler arasi 96 yerine 192px olurdu; bu yuzden tema kendi
+   * .pk-section sinifini kullanir (asagida).
+   */
+  --brand-container: 1440px;
+  --brand-section-py: 4rem; /* dar ekran: 64px */
+  --brand-section-py-lg: 6rem; /* tasarimdaki 96px */
+  --brand-section-pb-end: 2.75rem; /* son bolumun alt boslugu: 44px */
+}
+
+/*
+ * Arapca istisnasi.
+ *
+ * Bricolage/Space Grotesk Arapca tasimadigi icin sayfa sistem fontuna duser;
+ * o fontta tasarimin sikilastirilmis harf araligi harfleri BIRBIRINE gecirir.
+ * Ayrica pozitif tracking Arapca'da bitisik harfleri koparir. Ikisi de sifirlanir.
+ * (Ozgullugu bilerek yuksek: globals.css'teki html[lang="ar"] blogunu ezmeli.)
+ */
+html[data-theme="patika"][lang="ar"] {
+  --brand-h1-tracking: 0;
+  --brand-h2-tracking: 0;
+  --brand-title-tracking: 0;
+  --brand-marquee-tracking: 0;
+  --brand-quote-tracking: 0;
+  --brand-label-tracking: 0;
+  --brand-nav-tracking: 0;
+  --brand-meta-tracking: 0;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                            Tipografi yardimcilari                           */
+/* -------------------------------------------------------------------------- */
+/*
+ * NEDEN SINIF: olculer (boyut + satir yuksekligi + harf araligi + BUYUK HARF)
+ * tasarimda hep birlikte hareket ediyor. Bileseninde tek tek yazmak yerine
+ * burada kilitleniyor; boylece token degisince tum tema birlikte kayiyor.
+ *
+ * Basliklar tasarimda BUYUK HARF. text-transform yerel duyarli calisir:
+ * lang="tr" sayfada "i" harfi dogru sekilde "İ" olur.
+ */
+
+html[data-theme="patika"] .pk-h1 {
+  font-family: var(--brand-font-display);
+  font-weight: var(--brand-display-weight);
+  font-size: var(--brand-h1-size);
+  line-height: var(--brand-h1-leading);
+  letter-spacing: var(--brand-h1-tracking);
+  text-transform: uppercase;
+}
+
+html[data-theme="patika"] .pk-h2 {
+  font-family: var(--brand-font-display);
+  font-weight: var(--brand-display-weight);
+  font-size: var(--brand-h2-size);
+  line-height: var(--brand-h2-leading);
+  letter-spacing: var(--brand-h2-tracking);
+  text-transform: uppercase;
+}
+
+html[data-theme="patika"] .pk-h3 {
+  font-family: var(--brand-font-display);
+  font-weight: var(--brand-display-weight);
+  font-size: var(--brand-h3-size);
+  line-height: var(--brand-h3-leading);
+  letter-spacing: var(--brand-h2-tracking);
+  text-transform: uppercase;
+}
+
+/* Kart basligi — BUYUK HARF DEGIL: tasarimda urun adlari kendi yazimiyla durur. */
+html[data-theme="patika"] .pk-title {
+  font-family: var(--brand-font-display);
+  font-weight: var(--brand-display-weight);
+  font-size: var(--brand-title-size);
+  line-height: 1.02;
+  letter-spacing: var(--brand-title-tracking);
+}
+
+html[data-theme="patika"] .pk-price {
+  font-family: var(--brand-font-display);
+  font-weight: var(--brand-display-weight);
+  font-size: var(--brand-price-size);
+  line-height: 1;
+  letter-spacing: var(--brand-title-tracking);
+}
+
+html[data-theme="patika"] .pk-lead {
+  font-size: var(--brand-lead-size);
+  line-height: var(--brand-lead-leading);
+}
+
+html[data-theme="patika"] .pk-body {
+  font-size: var(--brand-body-size);
+  line-height: var(--brand-body-leading);
+}
+
+/* Yorum alintisi — 19px / 1.45 / -.01em (tasarimdaki "dedikodu" karti). */
+html[data-theme="patika"] .pk-quote {
+  font-size: var(--brand-quote-size);
+  line-height: var(--brand-quote-leading);
+  letter-spacing: var(--brand-quote-tracking);
+}
+
+/*
+ * Yildiz dizisi — 18px, .2em aralikli (tasarim). Aralik BILEREK bolum etiketi
+ * token'i: yildizlar tasarimda etiket satirlariyla ayni genislikte nefes aliyor.
+ * Yildizlar dekoratif (aria-hidden), yanlarinda sr-only puan metni var.
+ */
+html[data-theme="patika"] .pk-stars {
+  font-size: 1.125rem;
+  line-height: 1;
+  letter-spacing: var(--brand-label-tracking);
+}
+
+/*
+ * Kayan serit yazisi — 30px / 800 / -.02em / BUYUK HARF (tasarim).
+ * leading-none: serit yuksekligini yalnizca dikey ic bosluk belirlesin.
+ */
+html[data-theme="patika"] .pk-marquee-item {
+  font-family: var(--brand-font-display);
+  font-weight: var(--brand-display-weight);
+  font-size: var(--brand-marquee-size);
+  line-height: 1;
+  letter-spacing: var(--brand-marquee-tracking);
+  text-transform: uppercase;
+}
+
+/* 12px / 700 / .2em — bolum ustu etiketi ve iletisim kolon basliklari. */
+html[data-theme="patika"] .pk-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: var(--brand-label-tracking);
+  text-transform: var(--brand-eyebrow-transform);
+}
+
+/*
+ * Hero'daki yuvarlak saat rozeti: 11px / 700 / 1.35 satir / .06em.
+ * Aralik BILEREK dar — daire icinde uc satir yan yana sigsin diye.
+ */
+html[data-theme="patika"] .pk-badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: var(--brand-nav-tracking);
+  text-transform: var(--brand-eyebrow-transform);
+}
+
+/* 11px / 700 / .18em — menu kartinin numara satiri. */
+html[data-theme="patika"] .pk-caps {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: var(--brand-eyebrow-tracking);
+  text-transform: var(--brand-eyebrow-transform);
+}
+
+/* 12px / 500 — nav linkleri ve kucuk baglantilar. */
+html[data-theme="patika"] .pk-caps-sm {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: var(--brand-nav-tracking);
+  text-transform: var(--brand-eyebrow-transform);
+}
+
+/* 11px / 500 — footer kunye satiri. */
+html[data-theme="patika"] .pk-meta {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: var(--brand-meta-tracking);
+  text-transform: var(--brand-eyebrow-transform);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                 Bolum ritmi                                 */
+/* -------------------------------------------------------------------------- */
+/*
+ * Tasarimda bolum boslugu TEK TARAFLI: `padding:96px 40px 0`. Iki bolum
+ * arasindaki mesafe bu yuzden 96px'dir, 192 degil. Ortak .brand-section
+ * utility'si padding-block verdigi icin burada temaya ozel bir sinif var.
+ */
+html[data-theme="patika"] .pk-section {
+  padding-top: var(--brand-section-py);
+  padding-bottom: 0;
+}
+
+@media (min-width: 640px) {
+  html[data-theme="patika"] .pk-section {
+    padding-top: var(--brand-section-py-lg);
+  }
+}
+
+/* Son bolum (iletisim) sayfayi kapatir; tasarimda altinda 44px bosluk var. */
+html[data-theme="patika"] .pk-section-end {
+  padding-bottom: var(--brand-section-pb-end);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                            SSS acilir kapanir satiri                        */
+/* -------------------------------------------------------------------------- */
+/*
+ * <details>/<summary> ile kuruldu: JS yok, klavye ve ekran okuyucu destegi
+ * tarayicidan geliyor, kapali cevap yine de sayfada (SEO).
+ *
+ * Tarayicinin varsayilan ucgen isareti gizleniyor; yerine tasarimin kendi
+ * dilinden yuvarlak bir rozet icinde arti isareti var. Acikken 45 derece
+ * donerek carpiya donusuyor — ayri bir "kapat" ikonu gerekmiyor.
+ */
+html[data-theme="patika"] .pk-faq > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+html[data-theme="patika"] .pk-faq > summary::-webkit-details-marker {
+  display: none;
+}
+
+html[data-theme="patika"] .pk-faq-sign {
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+html[data-theme="patika"] .pk-faq[open] .pk-faq-sign {
+  transform: rotate(45deg);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                 Animasyonlar                                */
+/* -------------------------------------------------------------------------- */
+/*
+ * Tasarimdan bire bir tasinan keyframe'ler. Bunlar ACILIS animasyonudur:
+ * saf CSS, JS beklemez, sunucudan gelen isaretlemede aninda calisir. Bu yuzden
+ * hero'da <Reveal> (scroll ile beliren, istemci tarafli) KULLANILMAZ — ikisi
+ * ust uste binerse icerik iki kez animasyonlanir.
+ *
+ * Yalnizca opacity/transform degisir; hicbiri yerlesimi kaydirmaz.
+ * prefers-reduced-motion globals.css'te tum animasyonlari zaten kapatiyor.
+ */
+
+@keyframes pkUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pkPop {
+  from {
+    opacity: 0;
+    transform: scale(0.86) rotate(-6deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(-6deg);
+  }
+}
+
+@keyframes pkMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Sirali giris: tasarimdaki gecikmeler (0 / .05 / .15 / .25 / .35 / .42 / .5s). */
+html[data-theme="patika"] .pk-up {
+  animation: pkUp 0.7s both;
+}
+html[data-theme="patika"] .pk-up-1 {
+  animation: pkUp 0.8s 0.05s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+html[data-theme="patika"] .pk-up-2 {
+  animation: pkUp 0.8s 0.15s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+html[data-theme="patika"] .pk-up-3 {
+  animation: pkUp 0.8s 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+html[data-theme="patika"] .pk-up-4 {
+  animation: pkUp 0.8s 0.35s both;
+}
+html[data-theme="patika"] .pk-up-5 {
+  animation: pkUp 0.8s 0.42s both;
+}
+html[data-theme="patika"] .pk-up-6 {
+  animation: pkUp 0.8s 0.5s both;
+}
+
+/* Yuvarlak rozet: yayli giris, bitisde -6 derecelik egiklik korunur (fill: both). */
+html[data-theme="patika"] .pk-pop {
+  animation: pkPop 0.7s 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+}
+
+/*
+ * Kayan serit. Icerik iki kez basildigi icin -50% tam bir tur eder ve dikis
+ * gorunmez. Hareket azaltma modunda animasyon durur, serit basa doner.
+ */
+html[data-theme="patika"] .pk-marquee {
+  display: flex;
+  width: max-content;
+  animation: pkMarquee 26s linear infinite;
+}
+
+/*
+ * Ust serit yapiskan oldugu icin capa linkleri (#menu, #galeri...) bolum
+ * basligini seridin ALTINDA birakirdi. Kaydirma payi bolum yuksekligini
+ * degistirmez, yalnizca duracagi noktayi yukari alir.
+ */
+html[data-theme="patika"] :is(section, footer)[id] {
+  scroll-margin-top: 5.5rem;
 }

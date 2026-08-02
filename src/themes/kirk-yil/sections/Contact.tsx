@@ -81,7 +81,7 @@ export default function Contact({ content }: SectionProps) {
                     {row.term}
                   </dt>
                   <dd
-                    className="mt-2 text-sm leading-relaxed text-pretty"
+                    className="ky-detail mt-2 text-pretty"
                     {...(row.ltr ? { dir: "ltr" as const } : {})}
                   >
                     {row.href ? (
@@ -107,7 +107,7 @@ export default function Contact({ content }: SectionProps) {
         <Reveal delay={0.12}>
           {/* Form kolonu bilerek okuma kolonundan da dar: fis hissi. */}
           <div className="mx-auto mt-16 w-full max-w-2xl text-center">
-            <h3 className="brand-display text-2xl">{t.contact.formTitle}</h3>
+            <h3 className="brand-display ky-h3">{t.contact.formTitle}</h3>
             <Ornament className="mt-5" />
 
             <div className="brand-frame mt-8 bg-[var(--brand-surface-alt)] px-6 py-8 text-start sm:px-10 sm:py-10">

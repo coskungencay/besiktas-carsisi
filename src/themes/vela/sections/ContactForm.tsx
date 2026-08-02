@@ -32,7 +32,7 @@ export function ContactForm({
       action={form.formAction}
       onSubmit={form.onSubmit}
       noValidate
-      className="flex flex-col gap-10"
+      className="flex flex-col gap-8"
     >
       <input type="hidden" name="locale" value={locale} />
 
@@ -131,10 +131,11 @@ export function ContactForm({
       </div>
 
       <div>
+        {/* Buton olculeri tasarimdan: 15px/32px dolgu, 11.5px yazi, .24em. */}
         <button
           type="submit"
           disabled={form.pending}
-          className="brand-eyebrow inline-flex items-center gap-3 border border-[var(--brand-primary)] px-9 py-4 text-[0.6875rem] text-[var(--brand-primary)] transition-colors hover:bg-[var(--brand-primary)] hover:text-[var(--brand-primary-contrast)] disabled:opacity-60"
+          className="inline-flex items-center gap-3 border border-[var(--brand-primary)] px-8 py-[0.9375rem] text-[0.71875rem] uppercase tracking-[var(--brand-meta-tracking)] text-[var(--brand-primary)] transition-colors hover:bg-[var(--brand-primary)] hover:text-[var(--brand-primary-contrast)] disabled:opacity-60"
         >
           <span>
             {form.pending ? messages.form.submitting : messages.form.submit}

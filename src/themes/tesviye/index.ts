@@ -2,11 +2,14 @@ import type { ThemeDefinition } from "@/themes/types";
 
 import About from "@/themes/tesviye/sections/About";
 import Contact from "@/themes/tesviye/sections/Contact";
+import Faq from "@/themes/tesviye/sections/Faq";
 import Footer from "@/themes/tesviye/sections/Footer";
 import Gallery from "@/themes/tesviye/sections/Gallery";
 import Header from "@/themes/tesviye/sections/Header";
 import Hero from "@/themes/tesviye/sections/Hero";
+import Location from "@/themes/tesviye/sections/Location";
 import Menu from "@/themes/tesviye/sections/Menu";
+import Testimonials from "@/themes/tesviye/sections/Testimonials";
 
 /**
  * Tesviye — teknik cizim paftasi.
@@ -20,11 +23,18 @@ const theme: ThemeDefinition = {
   description: "Brutalist çerçeveler, elektrik mavisi, kalın kenarlıklar ve monospace.",
   scheme: "light",
   Header,
+  /*
+   * Sira paftalarin dosya numarasiyla ayni: 01 Hakkimizda ... 07 Iletisim.
+   * Yeni bir bolum araya girerse SheetHead'deki numaralar da guncellenmeli.
+   */
   sections: [
     { id: "hero", Component: Hero },
     { id: "hakkimizda", Component: About },
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },
+    { id: "yorumlar", Component: Testimonials },
+    { id: "sss", Component: Faq },
+    { id: "konum", Component: Location },
     { id: "iletisim", Component: Contact },
   ],
   Footer,

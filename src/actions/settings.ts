@@ -15,10 +15,14 @@ import {
 import { getSettings } from "@/lib/content";
 import { requirePanelUser } from "@/lib/session";
 import { deleteImage, storeImage, UploadError } from "@/lib/uploads";
+import { TOGGLEABLE_SECTION_KEYS } from "@/lib/sections";
+import { SOCIAL_PLATFORMS } from "@/lib/social";
 import {
   MAX_HIGHLIGHTS,
+  hiddenSectionsSchema,
   highlightsSchema,
   siteSettingsSchema,
+  socialLinksSchema,
 } from "@/lib/validators";
 
 function revalidateSite() {
@@ -47,6 +51,20 @@ function readHighlights(formData: FormData) {
   return highlightsSchema.safeParse(rows);
 }
 
+/**
+ * Sosyal baglantilari duz form alanlarindan toplar: social_<platform>.
+ * Bos birakilan platformlar hic kaydedilmez — musteri sadece kullandiklarini
+ * doldurur, digerleri sitede gorunmez.
+ */
+function readSocialLinks(formData: FormData) {
+  const rows = SOCIAL_PLATFORMS.map((platform) => ({
+    platform: platform.key as string,
+    url: String(formData.get(`social_${platform.key}`) ?? "").trim(),
+  })).filter((row) => row.url.length > 0);
+
+  return socialLinksSchema.safeParse(rows);
+}
+
 export async function saveSettingsAction(
   _prev: ActionState,
   formData: FormData,
@@ -58,6 +76,9 @@ export async function saveSettingsAction(
 
   const highlights = readHighlights(formData);
   if (!highlights.success) return fromZodError(highlights.error);
+
+  const socialLinks = readSocialLinks(formData);
+  if (!socialLinks.success) return fromZodError(socialLinks.error);
 
   const current = getSettings();
 
@@ -83,6 +104,7 @@ export async function saveSettingsAction(
       .set({
         ...parsed.data,
         highlights: highlights.data,
+        socialLinks: socialLinks.data,
         logoUrl,
         heroImageUrl,
         updatedAt: new Date(),
@@ -121,4 +143,30 @@ export async function removeSettingsImageAction(
 
   revalidateSite();
   return ok("Görsel kaldırıldı.");
+}
+
+/**
+ * Bolum gorunurlugu. Form yalnizca ACIK kutulari gonderir; kaydedilen deger
+ * ise KAPALI olanlarin listesidir (bkz. lib/sections.ts — yeni bolum eklendiginde
+ * mevcut kurulumlar otomatik acik gelsin diye).
+ */
+export async function saveHiddenSectionsAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requirePanelUser();
+
+  const visible = new Set(formData.getAll("visible").map(String));
+  const hidden = TOGGLEABLE_SECTION_KEYS.filter((key) => !visible.has(key));
+
+  const parsed = hiddenSectionsSchema.safeParse({ hidden });
+  if (!parsed.success) return fromZodError(parsed.error);
+
+  db.update(siteSettings)
+    .set({ hiddenSections: parsed.data.hidden, updatedAt: new Date() })
+    .where(eq(siteSettings.id, SINGLETON_ID))
+    .run();
+
+  revalidateSite();
+  return ok("Bölüm görünürlüğü kaydedildi.");
 }

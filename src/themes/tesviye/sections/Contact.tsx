@@ -4,9 +4,12 @@ import { coordinateLabel } from "@/themes/_shared/data";
 import {
   Sheet,
   SheetHead,
+  bodyText,
+  bodyTextSm,
   cell,
   hair,
-  mono,
+  label,
+  meta,
   pad,
   shell,
   splitGrid,
@@ -64,11 +67,13 @@ export default function Contact({ content }: SectionProps) {
       aria-labelledby="contact-title"
       className="bg-[var(--brand-surface)]"
     >
-      <div className={`${shell} pb-6 sm:pb-10`}>
+      <div
+        className={`${shell} pb-[var(--brand-section-py)] sm:pb-[var(--brand-section-py-lg)]`}
+      >
         <Sheet>
           <Reveal>
             <SheetHead
-              code="04"
+              code="07"
               eyebrow={t.contact.eyebrow}
               title={t.contact.title}
               titleId="contact-title"
@@ -78,7 +83,7 @@ export default function Contact({ content }: SectionProps) {
           <Reveal delay={0.08}>
             <div className={`${splitGrid} lg:grid-cols-2`}>
               <div className={`${cell} ${pad}`}>
-                <p className="text-sm leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
+                <p className={`${bodyText} text-[var(--brand-ink-muted)]`}>
                   {fill(t.contact.intro, { name })}
                 </p>
 
@@ -90,12 +95,12 @@ export default function Contact({ content }: SectionProps) {
                         className={`${hair} flex flex-wrap items-baseline gap-x-4 gap-y-1 py-3`}
                       >
                         <dt
-                          className={`${mono} w-20 shrink-0 text-[var(--brand-ink-muted)]`}
+                          className={`${label} w-24 shrink-0 text-[var(--brand-primary)]`}
                         >
                           {row.term}
                         </dt>
                         <dd
-                          className="min-w-0 flex-1 text-start text-sm"
+                          className={`${bodyTextSm} min-w-0 flex-1 text-start`}
                           {...(row.ltr ? { dir: "ltr" as const } : {})}
                         >
                           {row.href ? (
@@ -103,7 +108,10 @@ export default function Contact({ content }: SectionProps) {
                               href={row.href}
                               className="underline-offset-4 transition-colors hover:text-[var(--brand-primary)] hover:underline"
                               {...(row.href.startsWith("http")
-                                ? { target: "_blank", rel: "noopener noreferrer" }
+                                ? {
+                                    target: "_blank",
+                                    rel: "noopener noreferrer",
+                                  }
                                 : {})}
                             >
                               {row.value}
@@ -119,7 +127,7 @@ export default function Contact({ content }: SectionProps) {
 
                 {coords ? (
                   <p
-                    className={`${mono} mt-6 tabular-nums text-[var(--brand-ink-muted)]`}
+                    className={`${meta} mt-6 tabular-nums text-[var(--brand-ink-muted)]`}
                     dir="ltr"
                   >
                     {coords}
@@ -128,10 +136,10 @@ export default function Contact({ content }: SectionProps) {
               </div>
 
               <div className={`${cell} ${pad}`}>
-                <h3 className={`${mono} text-[var(--brand-ink-muted)]`}>
+                <h3 className={`${label} text-[var(--brand-primary)]`}>
                   {t.contact.formTitle}
                 </h3>
-                <div className="mt-5">
+                <div className="mt-[18px]">
                   <ContactForm locale={content.locale} messages={t} />
                 </div>
               </div>

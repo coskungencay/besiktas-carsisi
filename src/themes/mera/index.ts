@@ -2,11 +2,14 @@ import type { ThemeDefinition } from "@/themes/types";
 
 import About from "@/themes/mera/sections/About";
 import Contact from "@/themes/mera/sections/Contact";
+import Faq from "@/themes/mera/sections/Faq";
 import Footer from "@/themes/mera/sections/Footer";
 import Gallery from "@/themes/mera/sections/Gallery";
 import Header from "@/themes/mera/sections/Header";
 import Hero from "@/themes/mera/sections/Hero";
+import Location from "@/themes/mera/sections/Location";
 import Menu from "@/themes/mera/sections/Menu";
+import Testimonials from "@/themes/mera/sections/Testimonials";
 
 /**
  * Mera — bir yemek dergisinin ic sayfasi.
@@ -25,6 +28,12 @@ const theme: ThemeDefinition = {
     { id: "hakkimizda", Component: About },
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },
+    // Yorumlar ve sorular gorselden sonra: dergi once mekani gosterir, sonra
+    // okur mektuplarina gecer. Konum, kapanis kunyesinden (iletisim) hemen
+    // once — sayfa "buraya gelin" diyerek biter.
+    { id: "yorumlar", Component: Testimonials },
+    { id: "sss", Component: Faq },
+    { id: "konum", Component: Location },
     { id: "iletisim", Component: Contact },
   ],
   Footer,

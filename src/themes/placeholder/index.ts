@@ -2,10 +2,13 @@ import type { ThemeDefinition } from "@/themes/types";
 
 import About from "@/themes/placeholder/sections/About";
 import Contact from "@/themes/placeholder/sections/Contact";
+import Faq from "@/themes/placeholder/sections/Faq";
 import Footer from "@/themes/placeholder/sections/Footer";
 import Gallery from "@/themes/placeholder/sections/Gallery";
 import Hero from "@/themes/placeholder/sections/Hero";
+import Location from "@/themes/placeholder/sections/Location";
 import Menu from "@/themes/placeholder/sections/Menu";
+import Testimonials from "@/themes/placeholder/sections/Testimonials";
 
 /**
  * Placeholder (notr)
@@ -23,6 +26,11 @@ const theme: ThemeDefinition = {
     { id: "hakkimizda", Component: About },
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },
+    // Once sosyal kanit, sonra sorular, sonra "nasil gelinir": ziyaretcinin
+    // ikna olup yola cikma sirasi.
+    { id: "yorumlar", Component: Testimonials },
+    { id: "sss", Component: Faq },
+    { id: "konum", Component: Location },
     { id: "iletisim", Component: Contact },
   ],
   Footer,

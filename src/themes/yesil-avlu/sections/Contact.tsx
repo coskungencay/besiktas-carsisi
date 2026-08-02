@@ -62,13 +62,19 @@ export default function Contact({ content }: SectionProps) {
         <div className="mx-auto mt-12 grid max-w-5xl gap-8 lg:grid-cols-2 lg:gap-10">
           {rows.length > 0 ? (
             <Reveal>
-              <div className="brand-frame h-full bg-[var(--brand-surface-alt)] px-8 py-8">
+              {/*
+                Tasarimdaki bilgi kutusu DOLGUSUZ: yalnizca ince bir kenarlik
+                ve 34/32px ic bosluk. Dolgu eklemek sayfadaki tek koyu zemin
+                olan menu seridiyle yarisiyordu.
+              */}
+              <div className="brand-frame h-full px-8 py-[2.125rem]">
                 <dl className="flex flex-col gap-6">
                   {rows.map((row, index) => (
                     <div key={`${row.term}-${index}`}>
                       <dt className={eyebrow}>{row.term}</dt>
+                      {/* Tasarimda adres blogu 16px / 1.9 ve 300 agirlikta. */}
                       <dd
-                        className="mt-2 text-base text-pretty"
+                        className="mt-2 text-base leading-[1.9] font-light text-pretty"
                         {...(row.ltr ? { dir: "ltr" as const } : {})}
                       >
                         {row.href ? (

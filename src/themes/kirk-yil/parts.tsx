@@ -17,33 +17,66 @@ export const shell = "mx-auto w-full max-w-[var(--brand-container)] px-6 sm:px-1
  */
 export const column = "mx-auto w-full max-w-3xl";
 
-export const surface = "bg-[var(--brand-surface)] text-[var(--brand-ink)]";
+/*
+ * Zemin ky-paper ile geliyor: tasarimin kagidi duz degil, 16px'lik ince nokta
+ * izgarasi tasiyor (doku tokens.css icinde tanimli).
+ */
+export const surface =
+  "ky-paper bg-[var(--brand-surface)] text-[var(--brand-ink)]";
 export const surfaceAlt = "bg-[var(--brand-surface-alt)] text-[var(--brand-ink)]";
 
-/** Kunye yazisi: kucuk, genis harf arali, soluk. */
-export const meta =
-  "brand-body brand-eyebrow text-xs text-[var(--brand-ink-muted)]";
+/**
+ * Kunye yazisi: kucuk, genis harf arali. RENK ICERMEZ.
+ *
+ * NEDEN: sinifa renk gomulurse cagri yerindeki `text-[var(--brand-primary)]`
+ * ile ayni ozgullukte iki kural cikiyor ve hangisinin kazandigini CSS
+ * dosyasindaki siralama belirliyor. Rengi her zaman cagri yeri versin.
+ */
+export const meta = "brand-body brand-eyebrow text-xs";
+
+/** Kunye yazisinin soluk hali — varsayilan kullanim. */
+export const metaMuted = `${meta} text-[var(--brand-ink-muted)]`;
+
+/** Bolum kunyesi: tasarimda altin sarisi ve 12px. */
+export const eyebrow =
+  "brand-body brand-eyebrow text-xs text-[var(--brand-accent)]";
 
 /**
  * Cift cizgi: tabelalarin ust/alt kenari.
- * Tek elemana border-y verip aralarinda 1px yukseklik birakiyoruz; iki ayri
- * <hr> yerine bu, dikey ritmi bozmadan ayni etkiyi verir.
+ * Tasarimdaki deger birebir 3px double; tarayici bunu 1px cizgi + 1px bosluk +
+ * 1px cizgi olarak cizer, yani tek elemanla iki cizgi elde ederiz.
  */
 export function DoubleRule({ className = "" }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className={`h-[3px] border-y border-[var(--brand-primary)] ${className}`}
+      className={`border-t-[3px] border-double border-[var(--ky-rule-color)] ${className}`}
     />
   );
 }
 
-/** Basliklarin altindaki kisa, ortalanmis ayrac (ortada elmas). */
-export function Ornament({ className = "" }: { className?: string }) {
+/**
+ * Basliklarin altindaki ortalanmis ayrac (ortada elmas).
+ * Genislik tasarimdaki 80px cizgi + 16px bosluk olcusune gore; elmas, fonta
+ * bagimli kalmamak icin cevrilmis kare (tasarimdaki ✦ glifi yerine).
+ *
+ * `wide`: tasarimda hero'nun altindaki ayrac 120px cizgi + 20px bosluk ile
+ * belirgin sekilde daha genis. Genislik prop ile veriliyor cunku disaridan
+ * gelen bir `w-*` sinifi buradakiyle ayni ozgullukte olur ve ezemez.
+ */
+export function Ornament({
+  className = "",
+  wide = false,
+}: {
+  className?: string;
+  wide?: boolean;
+}) {
   return (
     <div
       aria-hidden="true"
-      className={`mx-auto flex w-24 items-center gap-2 ${className}`}
+      className={`mx-auto flex items-center ${
+        wide ? "w-72 gap-5" : "w-52 gap-4"
+      } ${className}`}
     >
       <span className="h-px flex-1 bg-[var(--brand-accent)]" />
       <span className="size-1.5 rotate-45 border border-[var(--brand-accent)]" />
@@ -54,7 +87,9 @@ export function Ornament({ className = "" }: { className?: string }) {
 
 /** Ortalanmis bolum basligi: kunye + h2 + ayrac. */
 export function SectionTitle({
-  eyebrow,
+  // Disaridaki API ayni kalsin diye prop adi `eyebrow`; ayni isimli sinif
+  // sabitini golgelememesi icin iceride yeniden adlandirildi.
+  eyebrow: eyebrowText,
   title,
   titleId,
   children,
@@ -66,19 +101,17 @@ export function SectionTitle({
 }) {
   return (
     <div className="text-center">
-      {eyebrow ? <p className={meta}>{eyebrow}</p> : null}
+      {eyebrowText ? <p className={eyebrow}>{eyebrowText}</p> : null}
 
-      <h2
-        id={titleId}
-        className="brand-display mt-4 text-3xl leading-tight text-balance sm:text-4xl"
-      >
+      {/* Tasarim: kunyeden basliga 14px, basliktan ayraca 18px. */}
+      <h2 id={titleId} className="brand-display ky-h2 mt-3.5 text-balance">
         {title}
       </h2>
 
-      <Ornament className="mt-6" />
+      <Ornament className="mt-[18px]" />
 
       {children ? (
-        <div className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
+        <div className="ky-prose mx-auto mt-6 max-w-xl text-pretty text-[var(--brand-ink-muted)]">
           {children}
         </div>
       ) : null}
@@ -94,7 +127,7 @@ export function CategoryHeading({ children }: { children: ReactNode }) {
   return (
     <div className="flex items-center gap-4">
       <span aria-hidden="true" className="h-px flex-1 bg-[var(--brand-border)]" />
-      <h3 className="brand-display brand-eyebrow text-sm text-[var(--brand-primary)]">
+      <h3 className="brand-body brand-eyebrow text-xs text-[var(--brand-accent)]">
         {children}
       </h3>
       <span aria-hidden="true" className="h-px flex-1 bg-[var(--brand-border)]" />
@@ -115,9 +148,12 @@ export function Passepartout({
 }) {
   return (
     <div
-      className={`brand-frame bg-[var(--brand-surface-alt)] p-2 sm:p-3 ${className}`}
+      className={`brand-frame bg-[var(--brand-surface-alt)] p-2.5 sm:p-3 ${className}`}
     >
-      <div className="border border-[var(--brand-border)]">{children}</div>
+      {/* ky-sepia: arsiv fotografi tonu — cerceve icindeki her gorsele. */}
+      <div className="ky-sepia border border-[var(--brand-border)]">
+        {children}
+      </div>
     </div>
   );
 }

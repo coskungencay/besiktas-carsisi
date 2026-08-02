@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import { SQUARE_FALLBACK, imageOrFallback } from "@/themes/_shared/data";
-import { Sheet, SheetHead, edgeTop, mono, shell } from "@/themes/tesviye/parts";
+import { Sheet, SheetHead, edgeTop, meta, shell } from "@/themes/tesviye/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
@@ -15,8 +15,10 @@ import type { SectionProps } from "@/themes/types";
  * kullanilsaydi eksik kalan son satir koyu bir blok olarak gorunurdu.
  */
 export default function Gallery({ content }: SectionProps) {
+  // Musteri galeriyi panelden kapatabilir; kosul tek yerde (isVisible).
+  if (!content.isVisible("galeri")) return null;
+
   const { gallery, name, t } = content;
-  if (gallery.length === 0) return null;
 
   return (
     <section
@@ -24,7 +26,9 @@ export default function Gallery({ content }: SectionProps) {
       aria-labelledby="gallery-title"
       className="bg-[var(--brand-surface)]"
     >
-      <div className={`${shell} pb-6 sm:pb-10`}>
+      <div
+        className={`${shell} pb-[var(--brand-section-py)] sm:pb-[var(--brand-section-py-lg)]`}
+      >
         <Sheet>
           <Reveal>
             <SheetHead
@@ -36,7 +40,7 @@ export default function Gallery({ content }: SectionProps) {
           </Reveal>
 
           <Reveal delay={0.08}>
-            <ul className="grid grid-cols-2 gap-[var(--brand-border-width)] p-4 sm:grid-cols-3 sm:p-6 lg:grid-cols-4">
+            <ul className="grid grid-cols-2 gap-[var(--brand-border-width)] p-4 sm:grid-cols-3 sm:p-[var(--ts-pad)] lg:grid-cols-4">
               {gallery.map((image, index) => (
                 <li key={image.id} className="brand-frame">
                   <div className="relative aspect-square bg-[var(--brand-surface-alt)]">
@@ -60,7 +64,7 @@ export default function Gallery({ content }: SectionProps) {
                   </div>
 
                   <p
-                    className={`${mono} px-2 py-1.5 tabular-nums text-[var(--brand-ink-muted)]`}
+                    className={`${meta} px-3 py-2 tabular-nums text-[var(--brand-ink-muted)]`}
                     style={edgeTop}
                     aria-hidden="true"
                   >

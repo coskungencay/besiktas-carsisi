@@ -2,11 +2,14 @@ import type { ThemeDefinition } from "@/themes/types";
 
 import About from "@/themes/beyaz-oda/sections/About";
 import Contact from "@/themes/beyaz-oda/sections/Contact";
+import Faq from "@/themes/beyaz-oda/sections/Faq";
 import Footer from "@/themes/beyaz-oda/sections/Footer";
 import Gallery from "@/themes/beyaz-oda/sections/Gallery";
 import Header from "@/themes/beyaz-oda/sections/Header";
 import Hero from "@/themes/beyaz-oda/sections/Hero";
+import Location from "@/themes/beyaz-oda/sections/Location";
 import Menu from "@/themes/beyaz-oda/sections/Menu";
+import Testimonials from "@/themes/beyaz-oda/sections/Testimonials";
 
 /**
  * Beyaz Oda — tasarimina gore yeniden yazilmis ILK tema.
@@ -17,7 +20,8 @@ import Menu from "@/themes/beyaz-oda/sections/Menu";
  */
 const theme: ThemeDefinition = {
   name: "Beyaz Oda",
-  description: "Saf beyaz, monospace gövde metni, editoryal ızgara.",
+  description:
+    "Saf beyaz, Schibsted Grotesk + JetBrains Mono, 12 kolonluk editoryal ızgara.",
   scheme: "light",
   Header,
   sections: [
@@ -25,6 +29,14 @@ const theme: ThemeDefinition = {
     { id: "hakkimizda", Component: About },
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },
+    /*
+     * Yorumlar ve SSS menuden sonra: once ne sattigimiz, sonra guven ve
+     * sorular. Konum ise iletisimin hemen oncesinde — ikisi birlikte sayfanin
+     * kapanis blogunu olusturuyor.
+     */
+    { id: "yorumlar", Component: Testimonials },
+    { id: "sss", Component: Faq },
+    { id: "konum", Component: Location },
     { id: "iletisim", Component: Contact },
   ],
   Footer,

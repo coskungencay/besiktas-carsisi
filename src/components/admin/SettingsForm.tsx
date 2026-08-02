@@ -17,6 +17,7 @@ import {
 } from "@/components/admin/ui";
 import type { SiteSettingsRow } from "@/db/schema";
 import { IDLE } from "@/lib/action-result";
+import { SOCIAL_PLATFORMS } from "@/lib/social";
 import { MAX_HIGHLIGHTS } from "@/lib/validators";
 
 export function SettingsForm({ settings }: { settings: SiteSettingsRow }) {
@@ -25,6 +26,11 @@ export function SettingsForm({ settings }: { settings: SiteSettingsRow }) {
   const highlights = Array.isArray(settings.highlights)
     ? settings.highlights
     : [];
+  const socialByPlatform = new Map(
+    (Array.isArray(settings.socialLinks) ? settings.socialLinks : []).map(
+      (link) => [link?.platform, link?.url ?? ""],
+    ),
+  );
   const [removeState, removeAction] = useActionState(
     removeSettingsImageAction,
     IDLE,
@@ -174,6 +180,57 @@ export function SettingsForm({ settings }: { settings: SiteSettingsRow }) {
                 </div>
               );
             })}
+          </div>
+        </section>
+
+        <section className={cardClass}>
+          <h2 className="text-lg font-semibold">Duyuru şeridi</h2>
+          <p className="mt-1 text-sm text-zinc-600">
+            Sayfanın en üstünde tek satır olarak görünür. Boş bırakırsanız
+            hiç görünmez.
+          </p>
+
+          <div className="mt-4">
+            <label htmlFor="announcement" className="sr-only">
+              Duyuru metni
+            </label>
+            <input
+              id="announcement"
+              name="announcement"
+              maxLength={200}
+              defaultValue={settings.announcement}
+              placeholder="Pazar günleri 10:00–14:00 brunch"
+              className={inputClass}
+            />
+            <FieldError state={state} name="announcement" />
+          </div>
+        </section>
+
+        <section className={cardClass}>
+          <h2 className="text-lg font-semibold">Sosyal medya</h2>
+          <p className="mt-1 text-sm text-zinc-600">
+            Yalnızca kullandığınız hesapların bağlantısını girin; boş
+            bıraktıklarınız sitede görünmez.
+          </p>
+
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            {SOCIAL_PLATFORMS.map((platform) => (
+              <div key={platform.key}>
+                <label htmlFor={`social_${platform.key}`} className={labelClass}>
+                  {platform.label}
+                </label>
+                <input
+                  id={`social_${platform.key}`}
+                  name={`social_${platform.key}`}
+                  type="url"
+                  dir="ltr"
+                  maxLength={400}
+                  defaultValue={socialByPlatform.get(platform.key) ?? ""}
+                  placeholder="https://"
+                  className={inputClass}
+                />
+              </div>
+            ))}
           </div>
         </section>
 

@@ -5,7 +5,7 @@ import { SectionHead, card, shell, surface } from "@/themes/patika/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Tek genis kolon, ortalanmis metin — afisin "manifesto" bloku.
+ * Manifesto bloku: solda baslik, sagda metin — tasarimin iki kolonlu duzeni.
  *
  * Saatler tabloya DEGIL yatay kaydirilabilir gun kartlarina donusur: koyu
  * zeminde satir satir bir cetvel agir durur, kart serisi ise afis ritmini korur.
@@ -20,30 +20,27 @@ export default function About({ content }: SectionProps) {
 
   return (
     <section id="hakkimizda" aria-labelledby="about-title" className={surface}>
-      <div className={`${shell} brand-section`}>
+      <div className={`${shell} pk-section`}>
         <Reveal>
-          <div className="mx-auto max-w-3xl">
-            <SectionHead
-              eyebrow={t.about.eyebrow}
-              title={t.about.title}
-              titleId="about-title"
-              centered
-            />
+          <SectionHead
+            eyebrow={t.about.eyebrow}
+            title={t.about.title}
+            titleId="about-title"
+          />
 
-            <div className="mt-8 flex flex-col gap-5 text-center text-lg leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
-              {body.length > 0 ? (
-                body.map((paragraph, index) => <p key={index}>{paragraph}</p>)
-              ) : (
-                <p>{fill(t.about.placeholder, { name })}</p>
-              )}
-            </div>
+          <div className="pk-lead mt-10 flex max-w-[46rem] flex-col gap-5 text-pretty text-[var(--brand-ink-muted)]">
+            {body.length > 0 ? (
+              body.map((paragraph, index) => <p key={index}>{paragraph}</p>)
+            ) : (
+              <p>{fill(t.about.placeholder, { name })}</p>
+            )}
           </div>
         </Reveal>
 
         {hours.length > 0 ? (
           <Reveal delay={0.1}>
             <div className="mt-14">
-              <h3 className="brand-eyebrow text-center text-xs text-[var(--brand-ink-muted)]">
+              <h3 className="pk-eyebrow text-[var(--brand-primary)]">
                 {t.about.openingHours}
               </h3>
 
@@ -51,18 +48,18 @@ export default function About({ content }: SectionProps) {
                 Negatif kenar boslugu: kartlar ekranin kenarina kadar kaysin,
                 kaydirilabilir oldugu ilk bakista anlasilsin diye.
               */}
-              <div className="-mx-5 mt-5 overflow-x-auto px-5 sm:-mx-8 sm:px-8">
-                <dl className="flex w-max gap-3">
+              <div className="-mx-5 mt-5 overflow-x-auto px-5 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
+                <dl className="flex w-max gap-3.5">
                   {hours.map((hour) => (
                     <div
                       key={hour.dayOfWeek}
-                      className={`${card} min-w-[9rem] text-center`}
+                      className={`${card} min-w-[9.5rem] text-center`}
                     >
-                      <dt className="brand-eyebrow text-xs text-[var(--brand-ink-muted)]">
+                      <dt className="pk-caps text-[var(--brand-ink-muted)]">
                         {hour.dayLabel}
                       </dt>
                       <dd
-                        className={`brand-display mt-2 text-base tabular-nums ${
+                        className={`brand-display mt-3 text-base tabular-nums ${
                           hour.isClosed
                             ? "text-[var(--brand-accent)]"
                             : "text-[var(--brand-primary)]"
@@ -81,7 +78,7 @@ export default function About({ content }: SectionProps) {
                 </dl>
               </div>
 
-              <p className="mt-5 text-center text-xs leading-relaxed text-[var(--brand-ink-muted)]">
+              <p className="mt-5 text-xs leading-relaxed text-[var(--brand-ink-muted)]">
                 {t.about.hoursNote}
               </p>
             </div>

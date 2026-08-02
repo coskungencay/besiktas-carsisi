@@ -4,17 +4,18 @@ import type { Messages } from "@/i18n";
 import type { Locale } from "@/i18n/config";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import { useContactForm } from "@/themes/_shared/useContactForm";
-import { metaText } from "@/themes/sicak-firin/parts";
+import { fieldLabel, pillSolid } from "@/themes/sicak-firin/parts";
 
 /**
- * Sicak Firin'in formu: yuvarlak, dolgulu alanlar.
+ * Sicak Firin'in formu: yuvarlak, acik renk alanlar.
  *
- * Alanlar alt cizgi degil kutu; bu tema kenarliktan cok yuzey kullaniyor.
+ * Form artik krem PANELIN uzerinde duruyor, bu yuzden alanlarin zemini ana
+ * yuzey rengi: ikincil zemin kullanilsa alanlar panelin icinde kaybolurdu.
  * Dogrulama/gonderim mantigi _shared/useContactForm icinde.
  */
 
 const field =
-  "brand-frame w-full bg-[var(--brand-surface-alt)] px-4 py-3 text-sm outline-none transition-colors placeholder:text-[var(--brand-ink-muted)] focus:border-[var(--brand-primary)]";
+  "w-full rounded-[var(--brand-radius-sm)] border border-[var(--brand-hairline-soft)] bg-[var(--brand-surface)] px-4 py-3 text-sm outline-none transition-colors placeholder:text-[var(--brand-ink-muted)] focus:border-[var(--brand-primary)]";
 
 const errorText = "mt-2 text-sm text-[var(--brand-accent)]";
 
@@ -38,7 +39,7 @@ export function ContactForm({
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="contact-name" className={metaText}>
+          <label htmlFor="contact-name" className={fieldLabel}>
             {messages.form.name} <span aria-hidden="true">*</span>
           </label>
           <input
@@ -60,7 +61,7 @@ export function ContactForm({
         </div>
 
         <div>
-          <label htmlFor="contact-phone" className={metaText}>
+          <label htmlFor="contact-phone" className={fieldLabel}>
             {messages.form.phone}
           </label>
           <input
@@ -78,7 +79,7 @@ export function ContactForm({
         </div>
 
         <div className="sm:col-span-2">
-          <label htmlFor="contact-email" className={metaText}>
+          <label htmlFor="contact-email" className={fieldLabel}>
             {messages.form.email}
           </label>
           <input
@@ -97,7 +98,7 @@ export function ContactForm({
         </div>
 
         <div className="sm:col-span-2">
-          <label htmlFor="contact-message" className={metaText}>
+          <label htmlFor="contact-message" className={fieldLabel}>
             {messages.form.message} <span aria-hidden="true">*</span>
           </label>
           <textarea
@@ -136,7 +137,7 @@ export function ContactForm({
         <button
           type="submit"
           disabled={form.pending}
-          className="brand-rounded inline-flex items-center gap-2 bg-[var(--brand-primary)] px-6 py-3 text-sm text-[var(--brand-primary-contrast)] transition-opacity hover:opacity-85 disabled:opacity-60"
+          className={`${pillSolid} disabled:opacity-60`}
         >
           <span>
             {form.pending ? messages.form.submitting : messages.form.submit}

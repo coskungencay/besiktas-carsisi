@@ -1,6 +1,6 @@
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { hasMenu } from "@/themes/_shared/data";
-import { DoubleRule, meta, shell, surface } from "@/themes/kirk-yil/parts";
+import { DoubleRule, metaMuted, shell, surface } from "@/themes/kirk-yil/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
@@ -23,26 +23,33 @@ export default function Header({ content }: SectionProps) {
       label: t.about.title,
     },
     hasMenu(content) && { href: "#menu", label: t.menu.eyebrow },
-    content.gallery.length > 0 && { href: "#galeri", label: t.gallery.eyebrow },
+    // isVisible: galeri panelden kapatildiginda link de gitmeli; "gorsel var mi"
+    // tek basina yetmiyor.
+    content.isVisible("galeri") && {
+      href: "#galeri",
+      label: t.gallery.eyebrow,
+    },
     { href: "#iletisim", label: t.contact.eyebrow },
   ].filter((link): link is { href: string; label: string } => Boolean(link));
 
   return (
-    <header className={`${surface} brand-body`}>
+    // ky-fade: tasarimda tabela serit sayfayla birlikte usulca beliriyor.
+    <header className={`${surface} brand-body ky-fade`}>
       <div className={shell}>
         <DoubleRule className="mt-4" />
 
         <div className="py-7 text-center sm:py-9">
           <a
             href="#hero"
-            className="brand-display brand-eyebrow text-lg text-[var(--brand-primary)] transition-opacity hover:opacity-75 sm:text-xl"
+            className="brand-display ky-brand inline-block text-[var(--brand-primary)] transition-opacity hover:opacity-75"
           >
             {name}
           </a>
 
-          {tagline ? <p className={`${meta} mt-3`}>{tagline}</p> : null}
+          {tagline ? <p className={`${metaMuted} mt-3`}>{tagline}</p> : null}
         </div>
 
+        {/* Nav yazisi tasarimdaki kunye serit olcusunde: 13px / .18em. */}
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 border-t border-[var(--brand-border)] py-4">
           <nav aria-label={name}>
             <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
@@ -50,7 +57,7 @@ export default function Header({ content }: SectionProps) {
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className="brand-eyebrow text-xs underline-offset-[6px] transition-colors hover:text-[var(--brand-primary)] hover:underline"
+                    className="ky-strip text-[var(--brand-ink-muted)] underline-offset-[6px] transition-colors hover:text-[var(--brand-primary)] hover:underline"
                   >
                     {link.label}
                   </a>

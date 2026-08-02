@@ -1,14 +1,19 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
-import { SectionHead, card, shell, surface } from "@/themes/patika/parts";
+import { shell, surface } from "@/themes/patika/parts";
 import { ContactForm } from "@/themes/patika/sections/ContactForm";
 import type { SectionProps } from "@/themes/types";
 
 type Row = { term: string; value: string; href: string; ltr: boolean };
 
 /**
- * Iletisim bilgileri satir listesi degil KART IZGARASI; form ise ayri ve
- * kalin cerceveli genis bir blok icinde.
+ * Sayfayi kapatan NEON BLOK: tasarimda iletisim, koyu zeminden cikip lime bir
+ * kutuya tasiniyor (28px kose, 52/46px ic bosluk, 1.25fr + bilgi kolonlari).
+ *
+ * Blok icinde renk devrildigi icin ikincil metinler `opacity` ile soluklastirilir;
+ * koyu tema icin tanimli --brand-ink-muted burada okunmazdi.
+ *
+ * Form bloku ayri ve koyu: lime kutunun icinde form alanlari afisi bozardi.
  */
 export default function Contact({ content }: SectionProps) {
   const { contact, name, t } = content;
@@ -52,55 +57,53 @@ export default function Contact({ content }: SectionProps) {
 
   return (
     <section id="iletisim" aria-labelledby="contact-title" className={surface}>
-      <div className={`${shell} brand-section`}>
+      {/* Sayfanin son bolumu: tasarimda tek yer altinda da bosluk tasiyan. */}
+      <div className={`${shell} pk-section pk-section-end`}>
         <Reveal>
-          <SectionHead
-            eyebrow={t.contact.eyebrow}
-            title={t.contact.title}
-            titleId="contact-title"
-          />
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
-            {fill(t.contact.intro, { name })}
-          </p>
+          <div className="grid gap-10 rounded-[var(--brand-radius-block)] bg-[var(--brand-primary)] p-8 text-[var(--brand-primary-contrast)] sm:p-13 lg:grid-cols-[1.25fr_1.6fr] lg:gap-11">
+            <div>
+              <p className="pk-eyebrow opacity-60">{t.contact.eyebrow}</p>
+              <h2 id="contact-title" className="pk-h3 mt-3 text-balance">
+                {t.contact.title}
+              </h2>
+              <p className="pk-lead mt-6 max-w-[24rem] font-medium text-pretty">
+                {fill(t.contact.intro, { name })}
+              </p>
+            </div>
+
+            {rows.length > 0 ? (
+              <dl className="grid gap-x-11 gap-y-7 sm:grid-cols-2">
+                {rows.map((row, index) => (
+                  <div key={`${row.term}-${index}`}>
+                    <dt className="pk-eyebrow opacity-60">{row.term}</dt>
+                    <dd
+                      className="mt-3 text-sm leading-[1.6] font-medium text-pretty"
+                      {...(row.ltr ? { dir: "ltr" as const } : {})}
+                    >
+                      {row.href ? (
+                        <a
+                          href={row.href}
+                          className="border-b-[length:var(--brand-border-width)] border-current/30 pb-0.5 transition-opacity hover:opacity-70"
+                          {...(row.href.startsWith("http")
+                            ? { target: "_blank", rel: "noopener noreferrer" }
+                            : {})}
+                        >
+                          {row.value}
+                        </a>
+                      ) : (
+                        row.value
+                      )}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            ) : null}
+          </div>
         </Reveal>
 
-        {rows.length > 0 ? (
-          <Reveal delay={0.08}>
-            <dl className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {rows.map((row, index) => (
-                <div key={`${row.term}-${index}`} className={card}>
-                  <dt className="brand-eyebrow text-xs text-[var(--brand-ink-muted)]">
-                    {row.term}
-                  </dt>
-                  <dd
-                    className="brand-display mt-2 text-base leading-snug text-pretty"
-                    {...(row.ltr ? { dir: "ltr" as const } : {})}
-                  >
-                    {row.href ? (
-                      <a
-                        href={row.href}
-                        className="underline-offset-4 transition-colors hover:text-[var(--brand-primary)] hover:underline"
-                        {...(row.href.startsWith("http")
-                          ? { target: "_blank", rel: "noopener noreferrer" }
-                          : {})}
-                      >
-                        {row.value}
-                      </a>
-                    ) : (
-                      row.value
-                    )}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </Reveal>
-        ) : null}
-
         <Reveal delay={0.12}>
-          <div className="brand-frame mt-14 bg-[var(--brand-surface-alt)] p-6 sm:p-10">
-            <h3 className="brand-display text-[clamp(1.5rem,4vw,2.25rem)] leading-[0.95]">
-              {t.contact.formTitle}
-            </h3>
+          <div className="brand-frame mt-4 bg-[var(--brand-surface-alt)] p-6 sm:p-10">
+            <h3 className="pk-title">{t.contact.formTitle}</h3>
             <div className="mt-8">
               <ContactForm locale={content.locale} messages={t} />
             </div>

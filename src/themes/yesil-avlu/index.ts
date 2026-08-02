@@ -2,11 +2,14 @@ import type { ThemeDefinition } from "@/themes/types";
 
 import About from "@/themes/yesil-avlu/sections/About";
 import Contact from "@/themes/yesil-avlu/sections/Contact";
+import Faq from "@/themes/yesil-avlu/sections/Faq";
 import Footer from "@/themes/yesil-avlu/sections/Footer";
 import Gallery from "@/themes/yesil-avlu/sections/Gallery";
 import Header from "@/themes/yesil-avlu/sections/Header";
 import Hero from "@/themes/yesil-avlu/sections/Hero";
+import Location from "@/themes/yesil-avlu/sections/Location";
 import Menu from "@/themes/yesil-avlu/sections/Menu";
+import Testimonials from "@/themes/yesil-avlu/sections/Testimonials";
 
 /**
  * Yeşil Avlu — botanik bahce.
@@ -25,6 +28,14 @@ const theme: ThemeDefinition = {
     { id: "hakkimizda", Component: About },
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },
+    /*
+     * Yorumlar ve SSS galeriden sonra: once mekan gorulur, sonra baskalari
+     * anlatir, sonra sorular kapanir. Konum iletisimden hemen once duruyor
+     * cunku ikisi birlikte sayfanin "ziyaret" bolumunu olusturuyor.
+     */
+    { id: "yorumlar", Component: Testimonials },
+    { id: "sss", Component: Faq },
+    { id: "konum", Component: Location },
     { id: "iletisim", Component: Contact },
   ],
   Footer,

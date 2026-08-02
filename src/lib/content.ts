@@ -4,11 +4,13 @@ import { asc, eq } from "drizzle-orm";
 
 import { SINGLETON_ID, db } from "@/db";
 import {
+  faqs,
   galleryImages,
   menuCategories,
   menuItems,
   openingHours,
   siteSettings,
+  testimonials,
   translations,
   type SiteSettingsRow,
   type TranslationNamespace,
@@ -31,6 +33,8 @@ import {
   thumbUrl,
   whatsappHref,
 } from "@/lib/format";
+import { SOCIAL_PLATFORMS } from "@/lib/social";
+import { normalizeHiddenSections } from "@/lib/sections";
 import { MAX_HIGHLIGHTS } from "@/lib/validators";
 import { resolveThemeSlug } from "@/themes/registry";
 import type { LocaleOption, SiteContent } from "@/themes/types";
@@ -56,6 +60,9 @@ const EMPTY_SETTINGS: SiteSettingsRow = {
   brandColors: {},
   themeSlug: "placeholder",
   enabledLocales: [],
+  announcement: "",
+  socialLinks: [],
+  hiddenSections: [],
   updatedAt: new Date(0),
 };
 
@@ -179,6 +186,24 @@ export function getMenuItems() {
     .all();
 }
 
+export function getTestimonials() {
+  return db
+    .select()
+    .from(testimonials)
+    .where(eq(testimonials.isActive, true))
+    .orderBy(asc(testimonials.sortOrder), asc(testimonials.id))
+    .all();
+}
+
+export function getFaqs() {
+  return db
+    .select()
+    .from(faqs)
+    .where(eq(faqs.isActive, true))
+    .orderBy(asc(faqs.sortOrder), asc(faqs.id))
+    .all();
+}
+
 export function getGalleryImages() {
   return db
     .select()
@@ -201,6 +226,8 @@ export function getSiteContent(locale: Locale = DEFAULT_LOCALE): SiteContent {
   const categories = getMenuCategories();
   const items = getMenuItems();
   const gallery = getGalleryImages();
+  const reviews = getTestimonials();
+  const questions = getFaqs();
   const map = getTranslations(locale);
 
   const enabled = getEnabledLocales(settings);
@@ -229,6 +256,52 @@ export function getSiteContent(locale: Locale = DEFAULT_LOCALE): SiteContent {
     }))
     .filter((highlight) => highlight.label || highlight.value)
     .slice(0, MAX_HIGHLIGHTS);
+
+  // Bilinmeyen platform ya da bos url panelde de kaydedilmiyor; yine de
+  // elle bozulmus JSON'a karsi burada bir kez daha suzuluyor.
+  const rawSocials = Array.isArray(settings.socialLinks)
+    ? settings.socialLinks
+    : [];
+  const socialLinks = rawSocials
+    .map((link) => ({
+      platform: String(link?.platform ?? ""),
+      url: String(link?.url ?? "").trim(),
+    }))
+    .filter(
+      (link) =>
+        link.url.length > 0 &&
+        SOCIAL_PLATFORMS.some((p) => p.key === link.platform),
+    )
+    .map((link) => ({
+      ...link,
+      label:
+        SOCIAL_PLATFORMS.find((p) => p.key === link.platform)?.label ??
+        link.platform,
+    }));
+
+  /*
+   * Bolum gorunurlugu TEK yerde karara baglanir: panelden kapatilmis mi, ve
+   * gosterilecek icerigi var mi. Tema yalnizca isVisible(key) sorar; her temada
+   * ayni kosulu tekrar yazmak (ve unutmak) gerekmez.
+   */
+  const hidden = new Set(normalizeHiddenSections(settings.hiddenSections));
+  const hasContent: Record<string, boolean> = {
+    yorumlar: reviews.length > 0,
+    sss: questions.length > 0,
+    // Koordinat da yeter: Konum bolumu adres olmadan da yol tarifi uretebiliyor.
+    konum: Boolean(
+      settings.address.trim() ||
+        settings.mapsUrl.trim() ||
+        (settings.lat !== null && settings.lng !== null),
+    ),
+    galeri: gallery.length > 0,
+    whatsapp: Boolean(settings.whatsapp.trim()),
+    duyuru: Boolean(settings.announcement.trim()),
+  };
+  const isVisible = (key: string): boolean => {
+    if (hidden.has(key)) return false;
+    return hasContent[key] ?? true;
+  };
 
   return {
     locale,
@@ -293,6 +366,24 @@ export function getSiteContent(locale: Locale = DEFAULT_LOCALE): SiteContent {
       thumbUrl: thumbUrl(image.url),
       alt: tr(map, "gallery", image.id, "alt", image.alt),
     })),
+    testimonials: reviews.map((review) => ({
+      id: review.id,
+      author: tr(map, "testimonial", review.id, "author", review.author),
+      text: tr(map, "testimonial", review.id, "text", review.text),
+      // 1-5 disina cikan degerler (elle DB duzenlemesi) yildiz yerine bos gecer.
+      rating:
+        review.rating !== null && review.rating >= 1 && review.rating <= 5
+          ? review.rating
+          : null,
+    })),
+    faq: questions.map((item) => ({
+      id: item.id,
+      question: tr(map, "faq", item.id, "question", item.question),
+      answer: tr(map, "faq", item.id, "answer", item.answer),
+    })),
+    socialLinks: socialLinks,
+    announcement: tr(map, "settings", 0, "announcement", settings.announcement),
+    isVisible,
     brandColors: settings.brandColors ?? {},
     themeSlug: resolveThemeSlug(settings.themeSlug),
   };

@@ -2,11 +2,14 @@ import type { ThemeDefinition } from "@/themes/types";
 
 import About from "@/themes/vela/sections/About";
 import Contact from "@/themes/vela/sections/Contact";
+import Faq from "@/themes/vela/sections/Faq";
 import Footer from "@/themes/vela/sections/Footer";
 import Gallery from "@/themes/vela/sections/Gallery";
 import Header from "@/themes/vela/sections/Header";
 import Hero from "@/themes/vela/sections/Hero";
+import Location from "@/themes/vela/sections/Location";
 import Menu from "@/themes/vela/sections/Menu";
+import Testimonials from "@/themes/vela/sections/Testimonials";
 
 /**
  * Vela — bir butik otelin restoran sayfasi.
@@ -25,6 +28,15 @@ const theme: ThemeDefinition = {
     { id: "hakkimizda", Component: About },
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },
+    /*
+     * Yorumlar ve SSS, galeri ile iletisim arasinda: once mekân goruluyor,
+     * sonra baskalarinin sozu ve merak edilenler, en son "nerede" ve "nasil
+     * ulasirim". Konum bilerek iletisimin hemen ustunde — ikisi birlikte
+     * sayfanin kapanis blogunu kuruyor.
+     */
+    { id: "yorumlar", Component: Testimonials },
+    { id: "sss", Component: Faq },
+    { id: "konum", Component: Location },
     { id: "iletisim", Component: Contact },
   ],
   Footer,

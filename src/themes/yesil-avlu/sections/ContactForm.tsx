@@ -134,7 +134,8 @@ export function ContactForm({
       <button
         type="submit"
         disabled={form.pending}
-        className="brand-rounded mt-7 inline-flex items-center gap-2 bg-[var(--brand-primary)] px-7 py-3 text-sm text-[var(--brand-primary-contrast)] transition-opacity hover:opacity-85 disabled:opacity-60"
+        /* Tasarimda dugmeler hap seklinde ve kucuk, genis harf arali. */
+        className="ya-pill ya-nav mt-7 inline-flex items-center gap-2 bg-[var(--brand-primary)] px-7 py-3.5 text-[var(--brand-primary-contrast)] transition-opacity hover:opacity-85 disabled:opacity-60"
       >
         <span>
           {form.pending ? messages.form.submitting : messages.form.submit}

@@ -5,8 +5,9 @@ import {
   SheetHead,
   edgeTop,
   hair,
-  mono,
+  label,
   shell,
+  tableHead,
 } from "@/themes/tesviye/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -29,7 +30,9 @@ export default function Menu({ content }: SectionProps) {
       aria-labelledby="menu-title"
       className="bg-[var(--brand-surface)]"
     >
-      <div className={`${shell} pb-6 sm:pb-10`}>
+      <div
+        className={`${shell} pb-[var(--brand-section-py)] sm:pb-[var(--brand-section-py-lg)]`}
+      >
         <Sheet>
           <Reveal>
             <SheetHead
@@ -44,7 +47,7 @@ export default function Menu({ content }: SectionProps) {
             {categories.map((category, index) => (
               <div key={category.id} style={index > 0 ? edgeTop : undefined}>
                 <h3
-                  className={`${mono} bg-[var(--brand-primary)] px-4 py-3 text-[var(--brand-primary-contrast)] sm:px-6`}
+                  className={`${tableHead} bg-[var(--brand-accent)] px-4 py-3 text-[var(--brand-primary-contrast)] sm:px-[18px]`}
                 >
                   {category.name}
                 </h3>
@@ -53,14 +56,15 @@ export default function Menu({ content }: SectionProps) {
                   {category.items.map((item) => (
                     <li
                       key={item.id}
-                      className={`${hair} flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 px-4 py-3.5 sm:px-6`}
+                      className={`${hair} flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 px-4 py-[15px] sm:px-[18px]`}
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm sm:text-base">
+                        {/* Tasarimda urun adi da Anton: liste bir cetvel gibi okunuyor. */}
+                        <p className="brand-display text-[var(--ts-item)] leading-[1.25] tracking-[0.01em] uppercase">
                           {item.name}
                           {item.isFeatured ? (
                             <span
-                              className={`${mono} ms-3 align-middle text-[var(--brand-primary)]`}
+                              className={`${label} ms-3 align-middle text-[var(--brand-primary)]`}
                             >
                               {t.menu.featured}
                             </span>
@@ -68,14 +72,17 @@ export default function Menu({ content }: SectionProps) {
                         </p>
 
                         {item.description ? (
-                          <p className="mt-1 text-xs leading-relaxed text-pretty text-[var(--brand-ink-muted)] sm:text-sm">
+                          <p className="mt-1 text-[var(--ts-body-sm)] leading-[var(--ts-body-sm-leading)] font-light text-pretty text-[var(--brand-ink-muted)]">
                             {item.description}
                           </p>
                         ) : null}
                       </div>
 
                       {item.price ? (
-                        <p className="text-sm tabular-nums sm:text-base" dir="ltr">
+                        <p
+                          className="text-[var(--ts-body)] font-medium tabular-nums"
+                          dir="ltr"
+                        >
                           {item.price}
                         </p>
                       ) : null}

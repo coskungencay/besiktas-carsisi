@@ -7,18 +7,20 @@ import { SectionHead, shell, surface } from "@/themes/patika/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Izgara degil, YATAY SERIT: kareler snap ile tek tek duruyor.
+ * Kare izgara: tasarimda genis ekranda 5 kolon, 14px aralik, 16px yuvarlak kose.
  *
- * NEDEN: afis dilinde galeri bir "film seridi"; dikey izgara sayfayi uzatip
- * menunun kart ritmini tekrarlardi. Galeri bossa bolum hic basilmaz.
+ * Kareler cerceve DEGIL sadece yuvarlak: menu kartlarinin kalin kenarligi burada
+ * tekrar etseydi izgara tel orgu gibi gorunurdu.
  */
 export default function Gallery({ content }: SectionProps) {
+  // Gorsel yoksa ya da musteri panelden kapattiysa bolum hic basilmaz.
+  if (!content.isVisible("galeri")) return null;
+
   const { gallery, name, t } = content;
-  if (gallery.length === 0) return null;
 
   return (
     <section id="galeri" aria-labelledby="gallery-title" className={surface}>
-      <div className={`${shell} brand-section`}>
+      <div className={`${shell} pk-section`}>
         <Reveal>
           <SectionHead
             eyebrow={t.gallery.eyebrow}
@@ -28,35 +30,32 @@ export default function Gallery({ content }: SectionProps) {
         </Reveal>
 
         <Reveal delay={0.08}>
-          {/* snap-x kaydirma KABINDA olmali; seride verilirse etkisiz kalir. */}
-          <div className="-mx-5 mt-10 snap-x snap-mandatory overflow-x-auto px-5 sm:-mx-8 sm:px-8">
-            <ul className="flex w-max gap-4">
-              {gallery.map((image, index) => (
-                <li
-                  key={image.id}
-                  className="brand-frame relative aspect-square w-[72vw] shrink-0 snap-start overflow-hidden bg-[var(--brand-surface-alt)] sm:w-[20rem]"
-                >
-                  <Image
-                    src={imageOrFallback(
-                      image.thumbUrl || image.url,
-                      SQUARE_FALLBACK,
-                    )}
-                    alt={
-                      image.alt ||
-                      fill(t.gallery.imageAlt, {
-                        name,
-                        index: String(index + 1),
-                      })
-                    }
-                    fill
-                    sizes="(min-width: 640px) 20rem, 72vw"
-                    loading="lazy"
-                    className="object-cover"
-                  />
-                </li>
-              ))}
-            </ul>
-          </div>
+          <ul className="mt-10 grid grid-cols-2 gap-3.5 sm:grid-cols-3 lg:grid-cols-5">
+            {gallery.map((image, index) => (
+              <li
+                key={image.id}
+                className="relative aspect-square overflow-hidden rounded-[var(--brand-radius-media)] bg-[var(--brand-surface-alt)]"
+              >
+                <Image
+                  src={imageOrFallback(
+                    image.thumbUrl || image.url,
+                    SQUARE_FALLBACK,
+                  )}
+                  alt={
+                    image.alt ||
+                    fill(t.gallery.imageAlt, {
+                      name,
+                      index: String(index + 1),
+                    })
+                  }
+                  fill
+                  sizes="(min-width: 1024px) 17rem, (min-width: 640px) 30vw, 45vw"
+                  loading="lazy"
+                  className="object-cover"
+                />
+              </li>
+            ))}
+          </ul>
         </Reveal>
       </div>
     </section>

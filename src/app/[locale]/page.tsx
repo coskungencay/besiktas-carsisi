@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 
+import { AnnouncementBar } from "@/components/site/AnnouncementBar";
+import { FloatingWhatsApp } from "@/components/site/FloatingWhatsApp";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { isLocale } from "@/i18n/config";
 import { getSiteContent } from "@/lib/content";
@@ -47,6 +49,8 @@ export default async function HomePage({
         </div>
       ) : null}
 
+      <AnnouncementBar content={content} />
+
       {Header ? <Header content={content} /> : null}
 
       {/*
@@ -60,6 +64,8 @@ export default async function HomePage({
       </main>
 
       {Footer ? <Footer content={content} /> : null}
+
+      <FloatingWhatsApp content={content} />
     </>
   );
 }

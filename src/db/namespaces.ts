@@ -13,6 +13,10 @@ export const TRANSLATION_NAMESPACES = [
   "gallery",
   /** refId = highlights dizisindeki sira (0-3), field = label | value */
   "highlight",
+  /** refId = testimonials.id, field = author | text */
+  "testimonial",
+  /** refId = faqs.id, field = question | answer */
+  "faq",
 ] as const;
 
 export type TranslationNamespace = (typeof TRANSLATION_NAMESPACES)[number];

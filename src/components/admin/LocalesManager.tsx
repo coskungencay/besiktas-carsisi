@@ -33,8 +33,11 @@ type BaseContent = {
     heroSubline: string;
     about: string;
     address: string;
+    announcement: string;
   };
   highlights: { index: number; label: string; value: string }[];
+  testimonials: { id: number; author: string; text: string }[];
+  faq: { id: number; question: string; answer: string }[];
   categories: { id: number; name: string }[];
   items: { id: number; name: string; description: string }[];
   gallery: { id: number; alt: string; thumb: string }[];
@@ -47,6 +50,7 @@ const SETTINGS_FIELDS = [
   { field: "heroSubline", label: "Başlığın devamı", multiline: false },
   { field: "about", label: "Hakkımızda", multiline: true },
   { field: "address", label: "Adres", multiline: true },
+  { field: "announcement", label: "Duyuru şeridi", multiline: false },
 ] as const;
 
 export function LocalesManager({
@@ -250,6 +254,98 @@ export function LocalesManager({
                           name={name("highlight", highlight.index, "value")}
                           defaultValue={val("highlight", highlight.index, "value")}
                           className={inputClass}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {/* Yorumlar */}
+            {base.testimonials.length > 0 ? (
+              <div>
+                <h3 className="text-sm font-semibold tracking-wide text-zinc-700 uppercase">
+                  Yorumlar
+                </h3>
+                <div className="mt-3 space-y-4">
+                  {base.testimonials.map((item) => (
+                    <div key={item.id} className="grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <label
+                          htmlFor={name("testimonial", item.id, "author")}
+                          className="text-xs text-zinc-500"
+                        >
+                          Orijinal isim:{" "}
+                          <span className="text-zinc-700">{item.author}</span>
+                        </label>
+                        <input
+                          id={name("testimonial", item.id, "author")}
+                          name={name("testimonial", item.id, "author")}
+                          defaultValue={val("testimonial", item.id, "author")}
+                          className={inputClass}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor={name("testimonial", item.id, "text")}
+                          className="text-xs text-zinc-500"
+                        >
+                          Orijinal yorum:{" "}
+                          <span className="text-zinc-700">{item.text}</span>
+                        </label>
+                        <textarea
+                          id={name("testimonial", item.id, "text")}
+                          name={name("testimonial", item.id, "text")}
+                          rows={2}
+                          defaultValue={val("testimonial", item.id, "text")}
+                          className={`${inputClass} resize-y`}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {/* S.S.S. */}
+            {base.faq.length > 0 ? (
+              <div>
+                <h3 className="text-sm font-semibold tracking-wide text-zinc-700 uppercase">
+                  Sıkça sorulan sorular
+                </h3>
+                <div className="mt-3 space-y-4">
+                  {base.faq.map((item) => (
+                    <div key={item.id} className="space-y-2">
+                      <div>
+                        <label
+                          htmlFor={name("faq", item.id, "question")}
+                          className="text-xs text-zinc-500"
+                        >
+                          Orijinal soru:{" "}
+                          <span className="text-zinc-700">{item.question}</span>
+                        </label>
+                        <input
+                          id={name("faq", item.id, "question")}
+                          name={name("faq", item.id, "question")}
+                          defaultValue={val("faq", item.id, "question")}
+                          className={inputClass}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor={name("faq", item.id, "answer")}
+                          className="text-xs text-zinc-500"
+                        >
+                          Orijinal cevap:{" "}
+                          <span className="text-zinc-700">{item.answer}</span>
+                        </label>
+                        <textarea
+                          id={name("faq", item.id, "answer")}
+                          name={name("faq", item.id, "answer")}
+                          rows={3}
+                          defaultValue={val("faq", item.id, "answer")}
+                          className={`${inputClass} resize-y`}
                         />
                       </div>
                     </div>

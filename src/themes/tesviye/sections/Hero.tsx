@@ -1,6 +1,6 @@
 import Image from "next/image";
+import { Fragment } from "react";
 
-import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import {
   HERO_FALLBACK,
@@ -12,42 +12,43 @@ import {
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   Sheet,
-  cell,
+  bodyText,
   edgeBottom,
   edgeTop,
+  hair,
+  meta,
   mono,
   shell,
-  splitGrid,
+  specList,
 } from "@/themes/tesviye/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Sutun sayisi kunye adedine gore secilir.
+ * Tek kalin cerceveli pafta: ustte konum/koordinat seridi, altinda dosya
+ * numarasi, dev baslik, cizgi ve iki bolmeli teknik ozet; en altta gorsel bandi.
  *
- * NEDEN: splitGrid'de hucreler arasi bosluk kabin koyu zeminidir; son satir
- * eksik kalirsa bos hucre koyu bir blok olarak gorunur. Bu yuzden izgara her
- * zaman TAM dolacak sekilde kuruluyor.
- */
-const HIGHLIGHT_COLUMNS: Record<number, string> = {
-  1: "grid-cols-1",
-  2: "grid-cols-2",
-  3: "grid-cols-1 sm:grid-cols-3",
-  4: "grid-cols-2 lg:grid-cols-4",
-};
-
-/**
- * Tek bir kalin cerceveli pafta: ustte koordinat/konum seridi, ortada dev
- * baslik, altinda kunyeler ayri ayri hucrelerde, en altta gorsel bandi.
+ * NEDEN burada <Reveal> YOK: bunlar ACILIS animasyonlari. Reveal viewport'a
+ * girmeyi ve JS'i bekler; hero zaten ilk ekranda oldugu icin bu bekleme
+ * gorunur bir gecikme yaratiyordu. Animasyonlar tokens.css'teki ts-* siniflari
+ * ile CSS uzerinden, SSR ciktisiyla birlikte basliyor.
  */
 export default function Hero({ content }: SectionProps) {
   const { heroHeadline, heroSubline, heroImageUrl, contact, name, tagline, t } =
     content;
 
-  // En fazla 4 kunye: izgara sutun haritasi bu adede gore kurulu.
+  // En fazla 4 kunye: tasarimdaki ozet tablosu da dort satiri gecmiyor.
   const highlights = highlightsOrDerived(content).slice(0, 4);
   const coords = coordinateLabel(contact.lat, contact.lng);
-  // Ust serit ayri bir DB alani degil: konum yoksa slogan ayni yeri doldurur.
-  const strip = contact.locality || tagline;
+
+  /*
+   * Baslik kelimelere bolunuyor.
+   *
+   * Tasarimda baslik UC satira elle bolunmus ve her satir sirayla yukseliyor.
+   * Bizde baslik veritabanindan tek parca geliyor; satir sayisini bilemiyoruz.
+   * Kelime bazinda bolmek ayni kademeli etkiyi veriyor ve satir sonu firsatini
+   * bozmuyor (span'lar arasindaki bosluk gercek bir metin dugumu olarak kaliyor).
+   */
+  const headlineWords = heroHeadline.split(/\s+/).filter(Boolean);
 
   return (
     <section
@@ -55,88 +56,122 @@ export default function Hero({ content }: SectionProps) {
       aria-labelledby="hero-title"
       className="bg-[var(--brand-surface)]"
     >
-      <div className={`${shell} py-6 sm:py-10`}>
-        <Reveal>
-          <Sheet>
-            {strip || coords ? (
-              <div
-                className={`${mono} flex flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-2.5 text-[var(--brand-ink-muted)] sm:px-6`}
-                style={edgeBottom}
+      <div
+        className={`${shell} py-[var(--brand-section-py)] sm:py-[var(--brand-section-py-lg)]`}
+      >
+        <Sheet>
+          {contact.locality || coords ? (
+            <div
+              className={`ts-fade ${meta} flex flex-wrap items-center justify-between gap-x-6 gap-y-1 px-[18px] py-[14px] text-[var(--brand-ink-muted)]`}
+              style={edgeBottom}
+            >
+              {contact.locality ? (
+                <span className="inline-flex items-center gap-2">
+                  {/* Tasarimdaki "acik" gostergesi: yaniyor-sonuyor kare. */}
+                  <span
+                    className="ts-blink size-2 shrink-0 bg-[var(--brand-primary)]"
+                    aria-hidden="true"
+                  />
+                  {contact.locality}
+                </span>
+              ) : null}
+              {coords ? (
+                <span className="tabular-nums" dir="ltr">
+                  {coords}
+                </span>
+              ) : null}
+            </div>
+          ) : null}
+
+          <div className="px-4 py-10 sm:px-[var(--ts-pad)] sm:py-[2.5rem]">
+            {tagline ? (
+              <p
+                className={`ts-fade-late brand-body text-[var(--ts-label-lg)] leading-[1.4] font-medium tracking-[var(--ts-track-eyebrow)] uppercase text-[var(--brand-primary)]`}
               >
-                {strip ? <span>{strip}</span> : null}
-                {coords ? (
-                  <span className="tabular-nums" dir="ltr">
-                    {coords}
-                  </span>
-                ) : null}
-              </div>
+                {tagline}
+              </p>
             ) : null}
 
-            <div className="px-4 py-10 sm:px-6 sm:py-16">
-              <h1
-                id="hero-title"
-                /*
-                 * leading 0.9 + uppercase Turkce'de sorunlu: buyuk Ç ve Ş'nin
-                 * kuyrugu satir kutusunun disina tasip alttaki metne giriyor.
-                 * 1.02 blueprint sikiligini bozmadan kuyrugu iceride tutar.
-                 */
-                className="brand-display text-[clamp(2.5rem,9vw,6.5rem)] leading-[1.02] text-balance uppercase"
-              >
-                {heroHeadline}
-              </h1>
+            <h1
+              id="hero-title"
+              className="ts-stagger brand-display mt-[22px] text-[var(--ts-hero)] leading-[var(--ts-hero-leading)] tracking-[var(--ts-hero-tracking)] text-balance uppercase"
+            >
+              {headlineWords.map((word, index) => (
+                <Fragment key={index}>
+                  {index > 0 ? " " : null}
+                  <span className="inline-block">{word}</span>
+                </Fragment>
+              ))}
+            </h1>
 
-              {heroSubline ? (
-                <p className="mt-6 max-w-2xl text-sm leading-relaxed text-pretty text-[var(--brand-ink-muted)] sm:text-base">
-                  {heroSubline}
-                </p>
-              ) : null}
+            {/* Tasarimin imzasi: soldan saga cizilen kalin ayrac. */}
+            <div
+              className="ts-wipe mt-[34px] mb-[26px] h-[var(--brand-border-width)] bg-[var(--brand-ink)]"
+              aria-hidden="true"
+            />
+
+            <div className="ts-up-late">
+              <div
+                className={
+                  heroSubline && highlights.length > 0
+                    ? "grid gap-[34px] sm:grid-cols-2"
+                    : "grid gap-[34px]"
+                }
+              >
+                {heroSubline ? (
+                  <p className={`${bodyText} text-[var(--brand-ink)]`}>
+                    {heroSubline}
+                  </p>
+                ) : null}
+
+                {highlights.length > 0 ? (
+                  <dl className={specList}>
+                    {highlights.map((highlight, index) => (
+                      /*
+                       * Satirlarda dikey dolgu YOK: tasarimda araligi 1.9'luk
+                       * satir yuksekligi veriyor, ustune padding eklemek
+                       * cetvel ritmini bozuyordu.
+                       */
+                      <div
+                        key={index}
+                        className={`${hair} flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1`}
+                      >
+                        <dt>{highlight.label}</dt>
+                        <dd className="text-[var(--brand-ink)]">
+                          {highlight.value}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : null}
+              </div>
 
               {hasMenu(content) ? (
                 <a
                   href="#menu"
-                  className={`${mono} mt-8 inline-flex items-center gap-2 bg-[var(--brand-primary)] px-5 py-3 text-[var(--brand-primary-contrast)] transition-opacity hover:opacity-85`}
+                  className={`${mono} mt-8 inline-flex items-center gap-2 bg-[var(--brand-primary)] px-6 py-4 text-[var(--brand-primary-contrast)] transition-colors hover:bg-[var(--brand-accent)]`}
                 >
                   {t.hero.viewMenu}
                   <ArrowIcon className="size-3.5" />
                 </a>
               ) : null}
             </div>
+          </div>
 
-            {highlights.length > 0 ? (
-              <dl
-                className={`${splitGrid} ${
-                  HIGHLIGHT_COLUMNS[highlights.length] ?? "grid-cols-2"
-                }`}
-                style={edgeTop}
-              >
-                {highlights.map((highlight, index) => (
-                  <div key={index} className={`${cell} px-4 py-5 sm:px-6`}>
-                    <dt className={`${mono} text-[var(--brand-ink-muted)]`}>
-                      {highlight.label}
-                    </dt>
-                    <dd className="brand-display mt-2 text-xl uppercase sm:text-2xl">
-                      {highlight.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            ) : null}
-
-            <div
-              className="relative aspect-[16/10] w-full bg-[var(--brand-surface-alt)] sm:aspect-[21/8]"
-              style={edgeTop}
-            >
-              <Image
-                src={imageOrFallback(heroImageUrl, HERO_FALLBACK)}
-                alt={fill(t.hero.coverAlt, { name })}
-                fill
-                sizes="100vw"
-                priority
-                className="object-cover"
-              />
-            </div>
-          </Sheet>
-        </Reveal>
+          <div
+            className="ts-fade-slow relative aspect-[16/10] w-full bg-[var(--brand-surface-alt)] sm:aspect-[21/8]"
+            style={edgeTop}
+          >
+            <Image
+              src={imageOrFallback(heroImageUrl, HERO_FALLBACK)}
+              alt={fill(t.hero.coverAlt, { name })}
+              fill
+              sizes="100vw"
+              priority
+              className="object-cover"
+            />
+          </div>
+        </Sheet>
       </div>
     </section>
   );

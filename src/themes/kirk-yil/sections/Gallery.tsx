@@ -16,8 +16,11 @@ import type { SectionProps } from "@/themes/types";
  * eski fotograflar gibi. Galeri bossa bolum hic basilmaz.
  */
 export default function Gallery({ content }: SectionProps) {
+  // isVisible hem "gorsel var mi" hem "musteri panelden kapatmis mi" sorusunu
+  // birlikte cevapliyor; gallery.length kontrolu ikincisini kaciriyordu.
+  if (!content.isVisible("galeri")) return null;
+
   const { gallery, name, t } = content;
-  if (gallery.length === 0) return null;
 
   return (
     <section id="galeri" aria-labelledby="gallery-title" className={surface}>

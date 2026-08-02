@@ -4,9 +4,11 @@ import { hoursFromMonday, paragraphs } from "@/themes/_shared/data";
 import {
   Sheet,
   SheetHead,
+  bodyText,
+  bodyTextSm,
   cell,
   hair,
-  mono,
+  label,
   pad,
   shell,
   splitGrid,
@@ -30,7 +32,9 @@ export default function About({ content }: SectionProps) {
       aria-labelledby="about-title"
       className="bg-[var(--brand-surface)]"
     >
-      <div className={`${shell} pb-6 sm:pb-10`}>
+      <div
+        className={`${shell} pb-[var(--brand-section-py)] sm:pb-[var(--brand-section-py-lg)]`}
+      >
         <Sheet>
           <Reveal>
             <SheetHead
@@ -48,7 +52,7 @@ export default function About({ content }: SectionProps) {
               }`}
             >
               <div
-                className={`${cell} ${pad} flex flex-col gap-4 text-sm leading-relaxed text-pretty text-[var(--brand-ink-muted)] sm:text-base`}
+                className={`${cell} ${pad} ${bodyText} flex flex-col gap-4 text-[var(--brand-ink-muted)]`}
               >
                 {body.length > 0 ? (
                   body.map((paragraph, index) => <p key={index}>{paragraph}</p>)
@@ -59,18 +63,19 @@ export default function About({ content }: SectionProps) {
 
               {hours.length > 0 ? (
                 <div className={`${cell} ${pad}`}>
-                  <h3 className={`${mono} text-[var(--brand-ink-muted)]`}>
+                  <h3 className={`${label} text-[var(--brand-primary)]`}>
                     {t.about.openingHours}
                   </h3>
 
-                  <dl className="mt-4">
+                  {/* Tasarimda etiketle tablo arasi 18px. */}
+                  <dl className="mt-[18px]">
                     {hours.map((hour) => (
                       <div
                         key={hour.dayOfWeek}
-                        className={`${hair} flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2.5`}
+                        className={`${hair} ${bodyTextSm} flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-[10px]`}
                       >
-                        <dt className="text-sm">{hour.dayLabel}</dt>
-                        <dd className="text-sm tabular-nums">
+                        <dt>{hour.dayLabel}</dt>
+                        <dd className="font-medium tabular-nums">
                           {hour.isClosed ? (
                             t.hours.closed
                           ) : (
@@ -83,7 +88,7 @@ export default function About({ content }: SectionProps) {
                     ))}
                   </dl>
 
-                  <p className="mt-5 text-xs leading-relaxed text-[var(--brand-ink-muted)]">
+                  <p className="mt-5 text-[var(--ts-label)] leading-[1.8] font-light text-[var(--brand-ink-muted)]">
                     {t.about.hoursNote}
                   </p>
                 </div>
