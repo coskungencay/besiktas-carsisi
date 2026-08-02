@@ -54,6 +54,7 @@ const theme: ThemeDefinition = {
 | Katman | İçerik | Kural |
 |---|---|---|
 | `src/themes/_shared/` | Menü gruplama, saat aralığı, koordinat biçimi, görsel fallback, `useContactForm` hook'u, ikonlar | **Sadece mantık.** Renk, ızgara, boşluk, sınıf adı buraya giremez |
+| `src/themes/fonts.ts` | 16 Google Font, `next/font` ile self-host | Tanım burada, **seçim** temanın `tokens.css`'inde |
 | `src/themes/<slug>/` | Header, bölümler, footer, `parts.tsx`, `tokens.css` | Görsel kararların tamamı |
 
 **Dokuz temanın dokuzu da kendi bölümlerini yazar.** Ortak bir bölüm bileşeni
@@ -78,6 +79,56 @@ src/themes/
     └── sections/                #   Header, Hero, About, Menu, Gallery, Contact,
                                  #   ContactForm, Footer
 ```
+
+### Yazı tipleri
+
+Her tasarımın kendi font çifti var; sistem fontuna düşmek tasarımı "düz"
+gösteriyordu. Fontlar `src/themes/fonts.ts` içinde `next/font` ile tanımlı:
+build sırasında indirilip **uygulamadan** sunulurlar — çalışma anında Google'a
+istek gitmez (KVKK/GDPR temiz). `preload: false` çünkü tek sayfada yalnızca
+aktif temanın fontu gerekir.
+
+Tema kendi fontunu `tokens.css`'te seçer:
+
+```css
+--brand-font-display: var(--font-schibsted), system-ui, sans-serif;
+--brand-font-body: var(--font-jetbrains-mono), ui-monospace, monospace;
+```
+
+> **Yığının sonunda sistem yedeği bırakın.** Bu fontların hiçbirinde Arapça
+> glif yok; Arapça sayfa otomatik olarak yedeğe düşer.
+
+`pnpm new:customer` müşteri repo'sunda `fonts.ts`'i de tek temaya indirir
+(16 font → 2), böylece kullanılmayan fontlar build'e girmez.
+
+### Animasyonlar
+
+Tasarımların açılış animasyonları (fade, yukarı kayma, çizginin çizilmesi)
+temanın `tokens.css`'inde `@keyframes` + yardımcı sınıf olarak durur:
+
+```css
+@keyframes boUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+html[data-theme="beyaz-oda"] .bo-up { animation: boUp .8s both; }
+```
+
+**Neden CSS, neden `Reveal` değil:** `Reveal` istemci taraflı ve scroll ile
+tetikleniyor; ilk ekranda görünen hero için bu, JS yüklenene kadar boş bir
+alan demek. CSS animasyonu SSR çıktısıyla birlikte başlar. Sayfa aşağısındaki
+bölümlerde `Reveal` kullanmaya devam edin.
+
+`prefers-reduced-motion` `globals.css`'te tüm animasyonları zaten kapatıyor.
+
+### Bölüm görünürlüğü
+
+Bölümler `content.isVisible(key)` sorar; bu tek çağrı hem "müşteri panelden
+kapattı mı" hem "gösterilecek içerik var mı" sorusunu yanıtlar:
+
+```tsx
+if (!content.isVisible("yorumlar")) return null;
+```
+
+Anahtarlar `src/lib/sections.ts` içinde. Header'daki nav bağlantısı da aynı
+koşulu kullanmalı, yoksa hiçbir yere gitmeyen kırık çapa kalır.
 
 ### Temaların düzen kimlikleri
 
