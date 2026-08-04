@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
 
@@ -34,7 +35,7 @@ import type { SectionProps } from "@/themes/types";
  * ust siniri. Yeni bolumler sayfa akisinda zaten sirayla geliyor.
  */
 export default function Header({ content }: SectionProps) {
-  const { name, contact, openingHours, t } = content;
+  const { name, contact, logoUrl, openingHours, t } = content;
 
   const range = hoursRange(openingHours);
 
@@ -90,9 +91,23 @@ export default function Header({ content }: SectionProps) {
         */}
         <a
           href="#hero"
-          className={`${padStrip} flex items-center text-[length:var(--ts-meta)] leading-[1.5] font-semibold tracking-[var(--ts-track-brand)] uppercase transition-colors hover:text-[var(--brand-primary)] lg:flex-1`}
+          className={`${padStrip} flex items-center gap-2.5 text-[length:var(--ts-meta)] leading-[1.5] font-semibold tracking-[var(--ts-track-brand)] uppercase transition-colors hover:text-[var(--brand-primary)] lg:flex-1`}
           style={edgeEnd}
         >
+          {/*
+            Logo marka hucresinin basinda, KARE: bu temada yuvarlak hicbir sey
+            yok. Tasarimda logo bulunmadigi icin yuklenmemisse hic basilmaz ve
+            serit tasarimdaki haline birebir doner.
+          */}
+          {logoUrl ? (
+            <Image
+              src={logoUrl}
+              alt=""
+              width={20}
+              height={20}
+              className="size-5 shrink-0 object-contain"
+            />
+          ) : null}
           {name}
         </a>
 

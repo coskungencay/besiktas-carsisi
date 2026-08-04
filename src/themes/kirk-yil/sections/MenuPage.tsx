@@ -1,7 +1,12 @@
 import Link from "next/link";
 
 import { Reveal } from "@/components/motion/Reveal";
-import { hasMenu, menuWithItems } from "@/themes/_shared/data";
+import {
+  anyItemHasImage,
+  hasMenu,
+  itemThumb,
+  menuWithItems,
+} from "@/themes/_shared/data";
 import {
   DoubleRuleDark,
   OrnamentDark,
@@ -207,6 +212,11 @@ export default function MenuPage({ content }: SectionProps) {
                               key={item.id}
                               item={item}
                               featuredLabel={t.menu.featured}
+                              thumb={itemThumb(content, item)}
+                              reserveImage={anyItemHasImage(
+                                content,
+                                category.items,
+                              )}
                             />
                           ))}
                         </ul>

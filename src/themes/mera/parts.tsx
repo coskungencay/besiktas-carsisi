@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { ReactNode } from "react";
 
 import type { MenuItem } from "@/themes/types";
@@ -206,15 +207,23 @@ export function SectionHeadRow({
 export function MenuLine({
   item,
   badge,
+  thumb = null,
+  reserveImage = false,
 }: {
   item: MenuItem;
   /** "One cikan" etiketi. Bos birakilirsa basilmaz. */
   badge?: string;
+  /** Urun fotografi (kucuk kare). null = bu urunun fotografi yok/kapali. */
+  thumb?: string | null;
+  /**
+   * Listedeki BASKA bir urunun fotografi varsa true gelir ve bu satirda da
+   * ayni genislikte yer ayrilir. Aksi halde fotografli ve fotografsiz satirlar
+   * farkli girintilerde baslar, liste kirik gorunur.
+   */
+  reserveImage?: boolean;
 }) {
-  return (
-    /* Ustune gelince satir isinir (tasarim: marka renginin %5'i). Yatay dolgu
-       YOK — tasarimda da zemin satirin tam genisligini kapliyor. */
-    <li className="border-b border-[var(--mera-hair-soft)] py-[0.9375rem] transition-colors last:border-0 hover:bg-[var(--mera-row-hover)]">
+  const body = (
+    <>
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <span className="min-w-0 text-base">{item.name}</span>
 
@@ -247,6 +256,38 @@ export function MenuLine({
           {item.description}
         </p>
       ) : null}
+    </>
+  );
+
+  return (
+    /* Ustune gelince satir isinir (tasarim: marka renginin %5'i). Yatay dolgu
+       YOK — tasarimda da zemin satirin tam genisligini kapliyor. */
+    <li className="border-b border-[var(--mera-hair-soft)] py-[0.9375rem] transition-colors last:border-0 hover:bg-[var(--mera-row-hover)]">
+      {reserveImage ? (
+        /*
+         * Fotografli menu: kare gorsel BASTA, metin kolonu yaninda. Kare
+         * keskin koseli — temanin radius'u sifir, yuvarlatmak bu editoryal
+         * dilin disina duserdi.
+         */
+        <div className="flex items-start gap-4">
+          <div
+            className={`relative size-14 shrink-0 overflow-hidden rounded-[var(--brand-radius)] sm:size-16 ${thumb ? "bg-[var(--mera-row-hover)]" : ""}`}
+          >
+            {thumb ? (
+              <Image
+                src={thumb}
+                alt=""
+                fill
+                sizes="64px"
+                className="object-cover"
+              />
+            ) : null}
+          </div>
+          <div className="min-w-0 flex-1">{body}</div>
+        </div>
+      ) : (
+        body
+      )}
     </li>
   );
 }

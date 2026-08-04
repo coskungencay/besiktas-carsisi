@@ -40,6 +40,11 @@ export const TOGGLEABLE_SECTIONS = [
     label: "Duyuru şeridi",
     hint: "Sayfanın en üstündeki tek satırlık duyuru. Duyuru metni boşsa görünmez.",
   },
+  {
+    key: "menuGorselleri",
+    label: "Menüde ürün fotoğrafları",
+    hint: "Menü sayfasında ve ana sayfadaki vitrinde ürün fotoğraflarını gösterir. Hiçbir ürüne fotoğraf eklemediyseniz zaten görünmez.",
+  },
 ] as const;
 
 export type ToggleableSectionKey = (typeof TOGGLEABLE_SECTIONS)[number]["key"];

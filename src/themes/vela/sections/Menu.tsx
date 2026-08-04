@@ -1,10 +1,13 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { Reveal } from "@/components/motion/Reveal";
 import {
   allMenuItems,
+  anyItemHasImage,
   featuredItems,
   hasMenu,
+  itemThumb,
   menuHref,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
@@ -30,7 +33,8 @@ import type { SectionProps } from "@/themes/types";
  * Olculer tasarimdan: panel dolgusu 64/60px, satir dolgusu 19px, urun adi
  * 21px, fiyat 19px, aciklama 13px.
  *
- * Urun gorseli yok; bosluk bu tasarimin malzemesi.
+ * Bosluk bu tasarimin malzemesi; urun fotografi yalnizca musteri panelden
+ * eklerse belirir ve o zaman da kucuk, altin cerceveli bir kare olarak durur.
  */
 export default function Menu({ content }: SectionProps) {
   if (!hasMenu(content)) return null;
@@ -44,6 +48,8 @@ export default function Menu({ content }: SectionProps) {
    */
   const featured = featuredItems(content, 3);
   const items = featured.length > 0 ? featured : allMenuItems(content).slice(0, 3);
+
+  const withImages = anyItemHasImage(content, items);
   if (items.length === 0) return null;
 
   return (
@@ -82,7 +88,29 @@ export default function Menu({ content }: SectionProps) {
                     }`}
                   >
                     {/* min-w-0: uzun urun adi sarsin, fiyatin uzerine binmesin. */}
-                    <div className="min-w-0">
+                    <div className="flex min-w-0 items-center gap-4">
+                      {withImages ? (
+                        /*
+                          Koyu butik zeminde fotograf altin bir saç teliyle
+                          cevriliyor: cercevesiz birakildiginda koyu bir gorsel
+                          zeminle birlesip lekeye donusuyordu.
+                        */
+                        <span
+                          className={`relative block size-14 shrink-0 overflow-hidden rounded-[var(--brand-radius)] sm:size-16 ${itemThumb(content, item) ? "border border-[var(--brand-rule-soft)] bg-[var(--brand-surface-alt)]" : ""}`}
+                        >
+                          {itemThumb(content, item) ? (
+                            <Image
+                              src={itemThumb(content, item) as string}
+                              alt=""
+                              fill
+                              sizes="64px"
+                              className="object-cover"
+                            />
+                          ) : null}
+                        </span>
+                      ) : null}
+
+                      <div className="min-w-0">
                       <p className="brand-display text-[1.3125rem] leading-[1.3] text-pretty">
                         {item.name}
                       </p>
@@ -92,6 +120,7 @@ export default function Menu({ content }: SectionProps) {
                           {item.description}
                         </p>
                       ) : null}
+                      </div>
                     </div>
 
                     {item.price ? (

@@ -1,7 +1,13 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { Reveal } from "@/components/motion/Reveal";
-import { hasMenu, menuWithItems } from "@/themes/_shared/data";
+import {
+  anyItemHasImage,
+  hasMenu,
+  itemThumb,
+  menuWithItems,
+} from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import { navLink, pillSolid, surface } from "@/themes/patika/parts";
 import type { SectionProps } from "@/themes/types";
@@ -141,6 +147,8 @@ export default function MenuPage({ content }: SectionProps) {
             <div className="flex flex-col gap-12 sm:gap-14">
               {categories.map((category, categoryIndex) => {
                 const anchor = categoryAnchor(category.id);
+                /* Fotograf sutunu kategori bazinda acilir. */
+                const withImages = anyItemHasImage(content, category.items);
 
                 return (
                   <section
@@ -203,6 +211,33 @@ export default function MenuPage({ content }: SectionProps) {
                           className="border-b-[length:var(--brand-border-width)] border-[var(--brand-border)] py-6"
                         >
                           {/*
+                            Cetvelde fotograf KARE ve satirin basinda: vitrindeki
+                            gibi tam genislikte gorsel basmak 30+ urunluk listeyi
+                            sonsuz uzatirdi. Cerceve temanin kalin kenarligi.
+                          */}
+                          <div
+                            className={
+                              withImages ? "flex items-start gap-4" : ""
+                            }
+                          >
+                            {withImages ? (
+                              <div
+                                className={`relative size-16 shrink-0 overflow-hidden rounded-[var(--brand-radius)] sm:size-20 ${itemThumb(content, item) ? "border-[length:var(--brand-border-width)] border-[var(--brand-border)] bg-[var(--brand-surface-alt)]" : ""}`}
+                              >
+                                {itemThumb(content, item) ? (
+                                  <Image
+                                    src={itemThumb(content, item) as string}
+                                    alt=""
+                                    fill
+                                    sizes="80px"
+                                    className="object-cover"
+                                  />
+                                ) : null}
+                              </div>
+                            ) : null}
+
+                            <div className="min-w-0 flex-1">
+                          {/*
                             One cikan urunun isareti: kart numarasiyla ayni kucuk
                             buyuk-harf satiri, ama neon. Vitrinde bu isi kartin
                             hover rengi yapiyordu; cetvelde renk tasiyacak zemin
@@ -251,6 +286,8 @@ export default function MenuPage({ content }: SectionProps) {
                               {item.description}
                             </p>
                           ) : null}
+                            </div>
+                          </div>
                         </li>
                       ))}
                     </ul>

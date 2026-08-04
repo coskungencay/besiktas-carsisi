@@ -1,7 +1,12 @@
 import Link from "next/link";
 
 import { Reveal } from "@/components/motion/Reveal";
-import { hasMenu, menuWithItems } from "@/themes/_shared/data";
+import {
+  anyItemHasImage,
+  hasMenu,
+  itemThumb,
+  menuWithItems,
+} from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   MenuLine,
@@ -256,6 +261,14 @@ export default function MenuPage({ content }: SectionProps) {
                                       ? t.menu.featured
                                       : undefined
                                   }
+                                  thumb={itemThumb(content, item)}
+                                  /* Sutun KATEGORI bazinda acilir: tatlilarin
+                                     fotografi varken icecekler listesinde bos
+                                     kare acmanin anlami yok. */
+                                  reserveImage={anyItemHasImage(
+                                    content,
+                                    category.items,
+                                  )}
                                 />
                               ))}
                             </ul>

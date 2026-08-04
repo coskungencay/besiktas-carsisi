@@ -1,7 +1,13 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { Reveal } from "@/components/motion/Reveal";
-import { hasMenu, menuWithItems } from "@/themes/_shared/data";
+import {
+  anyItemHasImage,
+  hasMenu,
+  itemThumb,
+  menuWithItems,
+} from "@/themes/_shared/data";
 import {
   goldButton,
   Hairline,
@@ -122,6 +128,8 @@ export default function MenuPage({ content }: SectionProps) {
               {categories.map((category, index) => {
                 // Tek sayili kategoriler krem yaprak (tasarimdaki sag panel).
                 const isLight = index % 2 === 1;
+                /* Fotograf sutunu kategori bazinda acilir. */
+                const withImages = anyItemHasImage(content, category.items);
 
                 const leaf = isLight
                   ? "bg-[var(--brand-accent)] text-[var(--brand-surface)]"
@@ -180,7 +188,26 @@ export default function MenuPage({ content }: SectionProps) {
                            * overflow-wrap kalitsal oldugu icin ad, "one cikan"
                            * etiketi ve aciklama tek yerden kapsanir.
                            */}
-                          <div className="min-w-0 break-words">
+                          <div className="flex min-w-0 items-center gap-4 break-words">
+                            {withImages ? (
+                              /* Ayni altin cerceveli kare; ana sayfadaki
+                                 vitrinle ayni dil. */
+                              <span
+                                className={`relative block size-14 shrink-0 overflow-hidden rounded-[var(--brand-radius)] sm:size-16 ${itemThumb(content, item) ? "border border-[var(--brand-rule-soft)] bg-[var(--brand-surface-alt)]" : ""}`}
+                              >
+                                {itemThumb(content, item) ? (
+                                  <Image
+                                    src={itemThumb(content, item) as string}
+                                    alt=""
+                                    fill
+                                    sizes="64px"
+                                    className="object-cover"
+                                  />
+                                ) : null}
+                              </span>
+                            ) : null}
+
+                            <div className="min-w-0">
                             <p className="brand-display text-[1.3125rem] leading-[1.3] text-pretty">
                               {item.name}
                             </p>
@@ -200,6 +227,7 @@ export default function MenuPage({ content }: SectionProps) {
                                 {item.description}
                               </p>
                             ) : null}
+                            </div>
                           </div>
 
                           {item.price ? (

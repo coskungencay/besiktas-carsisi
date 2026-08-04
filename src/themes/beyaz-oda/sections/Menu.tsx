@@ -1,10 +1,13 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { Reveal } from "@/components/motion/Reveal";
 import {
   allMenuItems,
+  anyItemHasImage,
   featuredItems,
   hasMenu,
+  itemThumb,
   menuHref,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
@@ -28,8 +31,8 @@ const SHOWCASE_COUNT = 3;
  * Burada yalnizca birkac one cikan urun duruyor, tam liste kendi sayfasinda.
  *
  * Satir bicimi tasarimdan birebir: "sira no / ad / aciklama / fiyat" dort
- * kolona oturur. Urun gorseli YOK — tasarimin sadeligi bunu istiyor; panelden
- * yuklenen urun gorselleri bu temada gosterilmez.
+ * kolona oturur. Urun fotografi OPSIYONEL: musteri panelden eklerse adin
+ * onunde kucuk bir kare belirir, eklemezse tasarimin sadeligi aynen kalir.
  */
 export default function Menu({ content }: SectionProps) {
   if (!hasMenu(content)) return null;
@@ -43,6 +46,8 @@ export default function Menu({ content }: SectionProps) {
   const featured = featuredItems(content, SHOWCASE_COUNT);
   const items =
     featured.length > 0 ? featured : allMenuItems(content).slice(0, SHOWCASE_COUNT);
+
+  const withImages = anyItemHasImage(content, items);
 
   return (
     <section id="menu" aria-labelledby="menu-title" className={surface}>
@@ -78,9 +83,33 @@ export default function Menu({ content }: SectionProps) {
                         hucresinden tasip genis ekranda fiyatin uzerine
                         binerdi, dar ekranda sayfayi yana kaydirirdi.
                       */}
-                      <p className="brand-display text-[clamp(1.25rem,1.9vw,1.625rem)] leading-[1.2] tracking-[-0.02em] break-words">
-                        {item.name}
-                      </p>
+                      {/*
+                        Fotograf AD HUCRESININ icinde duruyor, izgaraya yeni
+                        bir kolon eklenmiyor: aciklama ve fiyat hucreleri
+                        acikca col-start ile konumlandigi icin araya kolon
+                        sokmak butun satiri kaydirirdi.
+                      */}
+                      <div className="flex min-w-0 items-center gap-4">
+                        {withImages ? (
+                          <span
+                            className={`relative block size-12 shrink-0 overflow-hidden rounded-[var(--brand-radius)] sm:size-14 ${itemThumb(content, item) ? "bg-[var(--brand-surface-alt)]" : ""}`}
+                          >
+                            {itemThumb(content, item) ? (
+                              <Image
+                                src={itemThumb(content, item) as string}
+                                alt=""
+                                fill
+                                sizes="56px"
+                                className="object-cover"
+                              />
+                            ) : null}
+                          </span>
+                        ) : null}
+
+                        <p className="brand-display min-w-0 text-[clamp(1.25rem,1.9vw,1.625rem)] leading-[1.2] tracking-[-0.02em] break-words">
+                          {item.name}
+                        </p>
+                      </div>
 
                       {item.description ? (
                         <p className="col-start-2 text-[13.5px] leading-[1.6] text-pretty text-[var(--brand-ink-muted)] lg:col-start-3">

@@ -1,7 +1,13 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { Reveal } from "@/components/motion/Reveal";
-import { hasMenu, menuWithItems } from "@/themes/_shared/data";
+import {
+  anyItemHasImage,
+  hasMenu,
+  itemThumb,
+  menuWithItems,
+} from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import { meta, rowNumber } from "@/themes/beyaz-oda/parts";
 import type { SectionProps } from "@/themes/types";
@@ -144,6 +150,12 @@ export default function MenuPage({ content }: SectionProps) {
                       {category.items.map((item, itemIndex) => {
                         counter += 1;
                         const number = String(counter).padStart(2, "0");
+                        /* Fotograf sutunu kategori bazinda: bir kategoride
+                           fotograf varken digerinde bos kare acilmaz. */
+                        const withImages = anyItemHasImage(
+                          content,
+                          category.items,
+                        );
 
                         return (
                           <Reveal
@@ -174,14 +186,37 @@ export default function MenuPage({ content }: SectionProps) {
                                 tasip genis ekranda fiyat kolonunun uzerine
                                 binerdi, dar ekranda da sayfayi yana kaydirirdi.
                               */}
-                              <p className="brand-display text-[clamp(1.25rem,1.6vw,1.5rem)] leading-[1.2] tracking-[-0.02em] break-words">
-                                {item.name}
-                                {item.isFeatured ? (
-                                  <span className={`${meta} brand-eyebrow ms-3`}>
-                                    {t.menu.featured}
+                              {/* Fotograf ad hucresinin icinde: izgaraya kolon
+                                  eklemek aciklama/fiyat col-start'larini
+                                  kaydirirdi (bkz. ana sayfadaki vitrin). */}
+                              <div className="flex min-w-0 items-center gap-4">
+                                {withImages ? (
+                                  <span
+                                    className={`relative block size-12 shrink-0 overflow-hidden rounded-[var(--brand-radius)] sm:size-14 ${itemThumb(content, item) ? "bg-[var(--brand-surface-alt)]" : ""}`}
+                                  >
+                                    {itemThumb(content, item) ? (
+                                      <Image
+                                        src={itemThumb(content, item) as string}
+                                        alt=""
+                                        fill
+                                        sizes="56px"
+                                        className="object-cover"
+                                      />
+                                    ) : null}
                                   </span>
                                 ) : null}
-                              </p>
+
+                                <p className="brand-display min-w-0 text-[clamp(1.25rem,1.6vw,1.5rem)] leading-[1.2] tracking-[-0.02em] break-words">
+                                  {item.name}
+                                  {item.isFeatured ? (
+                                    <span
+                                      className={`${meta} brand-eyebrow ms-3`}
+                                    >
+                                      {t.menu.featured}
+                                    </span>
+                                  ) : null}
+                                </p>
+                              </div>
 
                               {/*
                                 break-words aciklamada da gerekli: aciklama

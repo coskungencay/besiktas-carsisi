@@ -2,7 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Reveal } from "@/components/motion/Reveal";
-import { hasMenu, menuWithItems } from "@/themes/_shared/data";
+import {
+  anyItemHasImage,
+  hasMenu,
+  itemThumb,
+  menuWithItems,
+} from "@/themes/_shared/data";
 import {
   ArrowIcon,
   secondaryButtonClass,
@@ -115,7 +120,11 @@ export default function MenuPage({ content }: SectionProps) {
             ) : null}
 
             <div className="mt-12 flex flex-col gap-14">
-              {categories.map((category, ci) => (
+              {categories.map((category, ci) => {
+                /* Fotograf sutunu kategori bazinda acilir. */
+                const withImages = anyItemHasImage(content, category.items);
+
+                return (
                 <Reveal
                   as="section"
                   key={category.id}
@@ -141,15 +150,19 @@ export default function MenuPage({ content }: SectionProps) {
                         key={item.id}
                         className="brand-frame flex gap-4 bg-[var(--brand-surface-alt)] p-4 transition-colors hover:border-[var(--brand-primary)]"
                       >
-                        {item.thumbUrl ? (
-                          <div className="brand-rounded relative aspect-square w-20 shrink-0 overflow-hidden">
-                            <Image
-                              src={item.thumbUrl}
-                              alt={item.name}
-                              fill
-                              sizes="80px"
-                              className="object-cover"
-                            />
+                        {withImages ? (
+                          <div
+                            className={`brand-rounded relative aspect-square w-20 shrink-0 overflow-hidden ${itemThumb(content, item) ? "bg-[var(--brand-surface)]" : ""}`}
+                          >
+                            {itemThumb(content, item) ? (
+                              <Image
+                                src={itemThumb(content, item) as string}
+                                alt=""
+                                fill
+                                sizes="80px"
+                                className="object-cover"
+                              />
+                            ) : null}
                           </div>
                         ) : null}
 
@@ -186,7 +199,8 @@ export default function MenuPage({ content }: SectionProps) {
                     ))}
                   </ul>
                 </Reveal>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

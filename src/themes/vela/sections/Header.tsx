@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
@@ -26,7 +27,7 @@ import type { SectionProps } from "@/themes/types";
 type NavLink = { href: string; label: string; page?: boolean };
 
 export default function Header({ content }: SectionProps) {
-  const { name, t } = content;
+  const { name, logoUrl, t } = content;
 
   /*
    * Bos icerikli bolumler kendini basmiyor; nav ayni kosullari tekrarlamali,
@@ -101,8 +102,23 @@ export default function Header({ content }: SectionProps) {
          */}
         <a
           href="#hero"
-          className="order-1 w-full text-center uppercase brand-display text-2xl leading-none tracking-[var(--brand-wordmark-tracking)] ps-[var(--brand-wordmark-tracking)] lg:order-none lg:w-auto"
+          className="order-1 flex w-full flex-col items-center gap-2 text-center uppercase brand-display text-2xl leading-none tracking-[var(--brand-wordmark-tracking)] ps-[var(--brand-wordmark-tracking)] lg:order-none lg:w-auto"
         >
+          {/*
+            Logo kelime-markanin USTUNDE, yaninda degil: bu tasarimda marka
+            ortalanmis tek bir eksende duruyor, yana bir isaret koymak o ekseni
+            kaydirirdi. Logo yuklenmemisse hic basilmaz ve serit tasarimdaki
+            haline birebir doner.
+          */}
+          {logoUrl ? (
+            <Image
+              src={logoUrl}
+              alt=""
+              width={36}
+              height={36}
+              className="size-9 object-contain"
+            />
+          ) : null}
           {name}
         </a>
 

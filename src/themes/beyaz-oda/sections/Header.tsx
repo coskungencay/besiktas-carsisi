@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
@@ -20,7 +21,7 @@ type NavLink = {
  * Girilmemisse orta sutun bos kalir, duzen bozulmaz.
  */
 export default function Header({ content }: SectionProps) {
-  const { name, t } = content;
+  const { name, logoUrl, t } = content;
   const coords = placeStamp(content);
 
   /*
@@ -81,8 +82,24 @@ export default function Header({ content }: SectionProps) {
             icin vurgu rengi burada da EL ILE veriliyor; yoksa sayfadaki tek
             hover'siz baglanti bu olurdu.
           */
-          className="brand-display text-[13px] font-medium tracking-[0.02em] transition-colors hover:text-[var(--brand-accent)] lg:col-span-4"
+          className="brand-display flex items-center gap-2.5 text-[13px] font-medium tracking-[0.02em] transition-colors hover:text-[var(--brand-accent)] lg:col-span-4"
         >
+          {/*
+            Logo yuklendiyse kelime-markanin ONUNDE kucuk bir kare olarak
+            durur. Tasarimda logo yok, o yuzden hicbir zaman yer TUTMAZ:
+            yuklenmemisse eleman hic basilmaz ve serit tasarimdaki haline
+            birebir doner. Olcu 20px — bu seritteki yazi 13px, daha buyuk bir
+            isaret uc kolonluk marka alanini tasardi.
+          */}
+          {logoUrl ? (
+            <Image
+              src={logoUrl}
+              alt=""
+              width={20}
+              height={20}
+              className="size-5 shrink-0 object-contain"
+            />
+          ) : null}
           {name}
         </a>
 

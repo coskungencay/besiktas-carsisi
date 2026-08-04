@@ -3,11 +3,11 @@ import Link from "next/link";
 
 import { Reveal } from "@/components/motion/Reveal";
 import {
-  SQUARE_FALLBACK,
   allMenuItems,
+  anyItemHasImage,
   featuredItems,
   hasMenu,
-  imageOrFallback,
+  itemThumb,
   menuHref,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
@@ -49,6 +49,8 @@ export default function Menu({ content }: SectionProps) {
   const featured = featuredItems(content, 3);
   const items = featured.length > 0 ? featured : allMenuItems(content).slice(0, 3);
 
+  const withImages = anyItemHasImage(content, items);
+
   return (
     <section id="menu" aria-labelledby="menu-title" className={surface}>
       <div className={`${shell} brand-section`}>
@@ -70,15 +72,26 @@ export default function Menu({ content }: SectionProps) {
                   key={item.id}
                   className={`${dashedRow} flex items-start gap-4 py-4`}
                 >
-                  {item.thumbUrl ? (
-                    <Image
-                      src={imageOrFallback(item.thumbUrl, SQUARE_FALLBACK)}
-                      alt={item.name}
-                      width={64}
-                      height={64}
-                      loading="lazy"
-                      className="brand-rounded size-16 shrink-0 bg-[var(--brand-surface-alt)] object-cover"
-                    />
+                  {/*
+                    Fotograf artik panelden kapatilabiliyor; ayrica listedeki
+                    hicbir urunde fotograf yoksa sutun hic acilmaz. Fotografi
+                    olmayan TEKIL urunde yer bos birakilir, yoksa satirlar
+                    farkli girintilerden baslar.
+                  */}
+                  {withImages ? (
+                    <span
+                      className={`brand-rounded relative block size-16 shrink-0 overflow-hidden ${itemThumb(content, item) ? "bg-[var(--brand-surface-alt)]" : ""}`}
+                    >
+                      {itemThumb(content, item) ? (
+                        <Image
+                          src={itemThumb(content, item) as string}
+                          alt=""
+                          fill
+                          sizes="64px"
+                          className="object-cover"
+                        />
+                      ) : null}
+                    </span>
                   ) : null}
 
                   {/* min-w-0: uzun urun adi kolonu tasirip fiyati disari

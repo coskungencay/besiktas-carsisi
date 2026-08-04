@@ -1,7 +1,13 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { Reveal } from "@/components/motion/Reveal";
-import { hasMenu, menuWithItems } from "@/themes/_shared/data";
+import {
+  anyItemHasImage,
+  hasMenu,
+  itemThumb,
+  menuWithItems,
+} from "@/themes/_shared/data";
 import { Sprig, bodyText, sectionEyebrow } from "@/themes/yesil-avlu/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -103,7 +109,11 @@ export default function MenuPage({ content }: SectionProps) {
           ) : null}
 
           <div className="mt-14">
-            {categories.map((category) => (
+            {categories.map((category) => {
+              /* Fotograf sutunu kategori bazinda acilir. */
+              const withImages = anyItemHasImage(content, category.items);
+
+              return (
               <section
                 key={category.id}
                 id={`menu-kategori-${category.id}`}
@@ -138,6 +148,31 @@ export default function MenuPage({ content }: SectionProps) {
                         key={item.id}
                         className="break-inside-avoid py-[0.8125rem]"
                       >
+                        <div
+                          className={
+                            withImages ? "flex items-start gap-4" : ""
+                          }
+                        >
+                          {withImages ? (
+                            /* Sayfada tek tek kart basmak yerine kucuk kare:
+                               columns-2 ile akan uzun listede buyuk gorseller
+                               kolonlari kirardi. Yuvarlatma temanin token'i. */
+                            <span
+                              className={`relative block size-14 shrink-0 overflow-hidden rounded-[var(--brand-radius)] sm:size-16 ${itemThumb(content, item) ? "bg-[var(--brand-surface-alt)]" : ""}`}
+                            >
+                              {itemThumb(content, item) ? (
+                                <Image
+                                  src={itemThumb(content, item) as string}
+                                  alt=""
+                                  fill
+                                  sizes="64px"
+                                  className="object-cover"
+                                />
+                              ) : null}
+                            </span>
+                          ) : null}
+
+                          <div className="min-w-0 flex-1">
                         {/*
                           flex-wrap + min-w-0: uzun urun adi fiyatin uzerine
                           binmez, sigmayinca fiyat alt satira duser.
@@ -167,12 +202,15 @@ export default function MenuPage({ content }: SectionProps) {
                             {item.description}
                           </p>
                         ) : null}
+                          </div>
+                        </div>
                       </li>
                     ))}
                   </ul>
                 </Reveal>
               </section>
-            ))}
+              );
+            })}
           </div>
 
           {/*

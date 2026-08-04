@@ -1,7 +1,13 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
 
-import { hasMenu, menuWithItems } from "@/themes/_shared/data";
+import {
+  anyItemHasImage,
+  hasMenu,
+  itemThumb,
+  menuWithItems,
+} from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   actionLabel,
@@ -164,7 +170,11 @@ export default function MenuPage({ content }: SectionProps) {
             ) : null}
           </div>
 
-          {categories.map((category) => (
+          {categories.map((category) => {
+            /* Fotograf sutunu kategori bazinda acilir. */
+            const withImages = anyItemHasImage(content, category.items);
+
+            return (
             <div key={category.id} id={anchorId(category.id)}>
               {/*
                 Yapiskan kategori seridi: uzun listede asagi inildikce
@@ -226,16 +236,40 @@ export default function MenuPage({ content }: SectionProps) {
                         {String(row).padStart(2, "0")}
                       </span>
 
-                      <p className="col-start-2 row-start-1 brand-display text-[length:var(--ts-item)] leading-[1.25] tracking-[0.01em] uppercase md:px-[14px] md:py-[15px]">
-                        {item.name}
-                        {item.isFeatured ? (
+                      {/*
+                        Fotograf AD HUCRESININ icinde duruyor, cetvele yeni bir
+                        sutun eklenmiyor: aciklama ve fiyat acikca col-start ile
+                        konumlandigi icin araya sutun sokmak butun satiri
+                        kaydirirdi.
+                      */}
+                      <div className="col-start-2 row-start-1 flex min-w-0 items-center gap-3 md:px-[14px] md:py-[15px]">
+                        {withImages ? (
                           <span
-                            className={`${label} ms-3 align-middle text-[var(--brand-primary)]`}
+                            className={`relative block size-12 shrink-0 overflow-hidden rounded-[var(--brand-radius)] ${itemThumb(content, item) ? "border-[length:var(--brand-border-width)] border-[var(--brand-border)] bg-[var(--brand-surface-alt)]" : ""}`}
                           >
-                            {t.menu.featured}
+                            {itemThumb(content, item) ? (
+                              <Image
+                                src={itemThumb(content, item) as string}
+                                alt=""
+                                fill
+                                sizes="48px"
+                                className="object-cover"
+                              />
+                            ) : null}
                           </span>
                         ) : null}
-                      </p>
+
+                        <p className="brand-display min-w-0 text-[length:var(--ts-item)] leading-[1.25] tracking-[0.01em] uppercase">
+                          {item.name}
+                          {item.isFeatured ? (
+                            <span
+                              className={`${label} ms-3 align-middle text-[var(--brand-primary)]`}
+                            >
+                              {t.menu.featured}
+                            </span>
+                          ) : null}
+                        </p>
+                      </div>
 
                       {item.price ? (
                         /*
@@ -262,7 +296,8 @@ export default function MenuPage({ content }: SectionProps) {
                 })}
               </ul>
             </div>
-          ))}
+            );
+          })}
 
           {/*
             Donus seridi: menu ayri bir sayfa oldugu icin ziyaretcinin tek

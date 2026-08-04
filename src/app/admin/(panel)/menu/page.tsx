@@ -1,4 +1,5 @@
 import { CategoryManager } from "@/components/admin/CategoryManager";
+import { MediaQuota } from "@/components/admin/MediaQuota";
 import { MenuItemManager } from "@/components/admin/MenuItemManager";
 import { getMenuCategories, getMenuItems } from "@/lib/content";
 
@@ -17,6 +18,8 @@ export default function MenuPage() {
           sürükleyerek veya ok tuşlarıyla değiştirebilirsiniz.
         </p>
       </header>
+
+      <MediaQuota />
 
       <CategoryManager categories={categories} />
       <MenuItemManager categories={categories} items={items} />
