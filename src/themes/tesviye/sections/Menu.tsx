@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   allMenuItems,
@@ -124,7 +125,7 @@ export default function Menu({ content }: SectionProps) {
                       satirdan buyuk, cunku burada urun tek basina duruyor.
                     */}
                     <h3 className="brand-display text-[length:var(--ts-card-title)] leading-[var(--ts-title-leading)] text-balance uppercase">
-                      {item.name}
+                      <Latin>{item.name}</Latin>
                     </h3>
 
                     {item.description ? (

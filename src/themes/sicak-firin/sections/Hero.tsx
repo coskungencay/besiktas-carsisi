@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { fill } from "@/i18n";
 import {
   HERO_FALLBACK,
@@ -112,17 +113,17 @@ export default function Hero({ content }: SectionProps) {
               id="hero-title"
               className="sf-up-1 brand-display mt-6 first:mt-0 text-[length:var(--brand-h1)] leading-[var(--brand-h1-leading)] tracking-[var(--brand-h1-tracking)] text-balance"
             >
-              {heroHeadline}
+              <Latin>{heroHeadline}</Latin>
               {heroSubline ? (
                 <span className="block italic text-[var(--brand-accent)]">
-                  {heroSubline}
+                  <Latin>{heroSubline}</Latin>
                 </span>
               ) : null}
             </h1>
 
             {intro ? (
               <p className={`${lead} sf-up-2 mt-6 max-w-[29.375rem] text-pretty`}>
-                {intro}
+                <Latin>{intro}</Latin>
               </p>
             ) : null}
 

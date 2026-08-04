@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
 
+import { Latin } from "@/components/site/Latin";
 import { fill } from "@/i18n";
 import {
   HERO_FALLBACK,
@@ -134,7 +135,7 @@ export default function Hero({ content }: SectionProps) {
                 <span aria-hidden="true" className="tabular-nums">
                   001 —{" "}
                 </span>
-                {tagline}
+                <Latin>{tagline}</Latin>
               </p>
             ) : null}
 
@@ -158,7 +159,7 @@ export default function Hero({ content }: SectionProps) {
               */}
               {heroSubline ? (
                 <span className="block text-[var(--brand-primary)]">
-                  {heroSubline}
+                  <Latin>{heroSubline}</Latin>
                 </span>
               ) : null}
             </h1>
@@ -175,7 +176,7 @@ export default function Hero({ content }: SectionProps) {
               }`}
             >
               {intro ? (
-                <p className={`${bodyText} text-[var(--brand-ink)]`}>{intro}</p>
+                <p className={`${bodyText} text-[var(--brand-ink)]`}><Latin>{intro}</Latin></p>
               ) : null}
 
               {highlights.length > 0 ? (

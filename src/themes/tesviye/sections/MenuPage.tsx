@@ -8,6 +8,7 @@ import {
   itemThumb,
   menuWithItems,
 } from "@/themes/_shared/data";
+import { Latin } from "@/components/site/Latin";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   actionLabel,
@@ -160,7 +161,7 @@ export default function MenuPage({ content }: SectionProps) {
                           href={`#${anchorId(category.id)}`}
                           className="transition-colors hover:text-[var(--brand-primary)]"
                         >
-                          {category.name}
+                          <Latin>{category.name}</Latin>
                         </a>
                       </li>
                     </Fragment>
@@ -187,7 +188,7 @@ export default function MenuPage({ content }: SectionProps) {
                 className={`${tableHead} sticky top-0 z-10 flex items-baseline justify-between gap-3 bg-[var(--brand-accent)] px-4 py-3 text-[var(--brand-primary-contrast)] sm:px-[14px]`}
                 style={edgeBottom}
               >
-                <span>{category.name}</span>
+                <span><Latin>{category.name}</Latin></span>
                 {/*
                   Dar ekranda kalem adedi BASILMAZ: serit top-0'da yapiskan
                   duruyor, dil secici ise mobilde tam o kosede sabit
@@ -260,7 +261,7 @@ export default function MenuPage({ content }: SectionProps) {
                         ) : null}
 
                         <p className="brand-display min-w-0 text-[length:var(--ts-item)] leading-[1.25] tracking-[0.01em] uppercase">
-                          {item.name}
+                          <Latin>{item.name}</Latin>
                           {item.isFeatured ? (
                             <span
                               className={`${label} ms-3 align-middle text-[var(--brand-primary)]`}

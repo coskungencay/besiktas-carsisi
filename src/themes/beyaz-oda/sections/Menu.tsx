@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   allMenuItems,
@@ -107,7 +108,7 @@ export default function Menu({ content }: SectionProps) {
                         ) : null}
 
                         <p className="brand-display min-w-0 text-[clamp(1.25rem,1.9vw,1.625rem)] leading-[1.2] tracking-[-0.02em] break-words">
-                          {item.name}
+                          <Latin>{item.name}</Latin>
                         </p>
                       </div>
 

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   anyItemHasImage,
@@ -110,7 +111,7 @@ export default function MenuPage({ content }: SectionProps) {
                           href={`#${anchorId(category.id)}`}
                           className="brand-frame inline-flex px-4 py-2 text-sm transition-colors hover:bg-[var(--brand-surface-alt)]"
                         >
-                          {category.name}
+                          <Latin>{category.name}</Latin>
                         </a>
                       </li>
                     ))}
@@ -135,7 +136,7 @@ export default function MenuPage({ content }: SectionProps) {
                     id={anchorId(category.id)}
                     className="brand-display scroll-mt-8 border-b border-[var(--brand-border)] pb-4 text-2xl sm:text-3xl"
                   >
-                    {category.name}
+                    <Latin>{category.name}</Latin>
                   </h2>
 
                   {/*
@@ -174,7 +175,7 @@ export default function MenuPage({ content }: SectionProps) {
                            */}
                           <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                             <h3 className="brand-display min-w-0 text-base leading-snug break-words">
-                              {item.name}
+                              <Latin>{item.name}</Latin>
                             </h3>
                             {item.price ? (
                               <p className="shrink-0 text-sm font-medium tabular-nums text-[var(--brand-primary)]">

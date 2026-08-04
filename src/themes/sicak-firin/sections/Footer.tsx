@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { shell } from "@/themes/sicak-firin/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -51,7 +52,7 @@ export default function Footer({ content }: SectionProps) {
                        uzerine gelince vurgu rengi, alt cizgi yok. */
                     className="text-[var(--brand-primary)] transition-colors hover:text-[var(--brand-accent)]"
                   >
-                    {link.label}
+                    <Latin>{link.label}</Latin>
                   </a>
                 </li>
               ))}

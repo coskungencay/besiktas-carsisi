@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import { paragraphs } from "@/themes/_shared/data";
 import {
@@ -61,7 +62,7 @@ export default function Faq({ content }: SectionProps) {
                   </span>
 
                   <span className="brand-display min-w-0 flex-1 text-[length:var(--ts-item)] leading-[1.25] tracking-[0.01em] uppercase">
-                    {item.question}
+                    <Latin>{item.question}</Latin>
                   </span>
 
                   {/*

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   allMenuItems,
@@ -98,7 +99,7 @@ export default function Menu({ content }: SectionProps) {
 
               <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-[var(--brand-border)] pb-3.5">
                 <h3 className="brand-display ya-serif-book min-w-0 text-[1.625rem] leading-tight italic">
-                  {item.name}
+                  <Latin>{item.name}</Latin>
                 </h3>
 
                 {item.price ? (

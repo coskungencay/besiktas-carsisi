@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   allMenuItems,
@@ -131,7 +132,7 @@ export default function Menu({ content }: SectionProps) {
                   <h3
                     className={`pk-title text-balance ${withImages ? "mt-4" : "mt-15"}`}
                   >
-                    {item.name}
+                    <Latin>{item.name}</Latin>
                   </h3>
 
                   {/*

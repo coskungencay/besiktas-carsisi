@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import {
@@ -93,7 +94,7 @@ export default function Testimonials({ content }: SectionProps) {
                       <figcaption
                         className={`${meta} flex flex-wrap items-center gap-x-4 gap-y-2 lg:justify-end`}
                       >
-                        <span className="brand-eyebrow">{item.author}</span>
+                        <span className="brand-eyebrow"><Latin>{item.author}</Latin></span>
                         {item.rating ? (
                           <Rating
                             rating={item.rating}

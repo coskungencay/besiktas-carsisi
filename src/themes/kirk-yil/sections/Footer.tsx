@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { placeStamp } from "@/themes/_shared/data";
 import {
   DoubleRule,
@@ -67,7 +68,7 @@ export default function Footer({ content }: SectionProps) {
                       aria-label={link.label}
                       className="ky-strip text-[var(--brand-ink-muted)] underline-offset-[6px] transition-colors hover:text-[var(--brand-primary)] hover:underline"
                     >
-                      {link.label}
+                      <Latin>{link.label}</Latin>
                     </a>
                   </li>
                 ))}

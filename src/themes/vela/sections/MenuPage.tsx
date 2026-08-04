@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   anyItemHasImage,
@@ -110,7 +111,7 @@ export default function MenuPage({ content }: SectionProps) {
                             href={`#${anchorId(category.id)}`}
                             className={`${meta} transition-colors hover:text-[var(--brand-accent)]`}
                           >
-                            {category.name}
+                            <Latin>{category.name}</Latin>
                           </a>
                         </li>
                       ))}
@@ -164,7 +165,7 @@ export default function MenuPage({ content }: SectionProps) {
                     <h3
                       className={`brand-body brand-eyebrow text-[0.6875rem] leading-[1.6] ${accentTone}`}
                     >
-                      {category.name}
+                      <Latin>{category.name}</Latin>
                     </h3>
 
                     {/*
@@ -209,7 +210,7 @@ export default function MenuPage({ content }: SectionProps) {
 
                             <div className="min-w-0">
                             <p className="brand-display text-[1.3125rem] leading-[1.3] text-pretty">
-                              {item.name}
+                              <Latin>{item.name}</Latin>
                             </p>
 
                             {item.isFeatured ? (

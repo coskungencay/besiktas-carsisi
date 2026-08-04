@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { placeStamp } from "@/themes/_shared/data";
 import { shell, surface } from "@/themes/beyaz-oda/parts";
 import type { SectionProps } from "@/themes/types";
@@ -44,7 +45,7 @@ export default function Footer({ content }: SectionProps) {
                       aria-label={link.label}
                       className="bo-mono brand-eyebrow border-b border-transparent pb-[3px] font-light text-[10.5px] text-[var(--brand-ink-muted)] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
                     >
-                      {link.label}
+                      <Latin>{link.label}</Latin>
                     </a>
                   </li>
                 ))}

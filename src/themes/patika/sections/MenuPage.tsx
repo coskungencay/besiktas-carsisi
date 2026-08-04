@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   anyItemHasImage,
@@ -135,7 +136,7 @@ export default function MenuPage({ content }: SectionProps) {
                           href={`#${categoryAnchor(category.id)}`}
                           className={navLink}
                         >
-                          {category.name}
+                          <Latin>{category.name}</Latin>
                         </a>
                       </li>
                     ))}
@@ -172,7 +173,7 @@ export default function MenuPage({ content }: SectionProps) {
                           {String(categoryIndex + 1).padStart(2, "0")}
                         </span>
                         <h2 id={`${anchor}-title`} className="pk-h3 text-balance">
-                          {category.name}
+                          <Latin>{category.name}</Latin>
                         </h2>
                       </div>
                     </Reveal>
@@ -262,7 +263,7 @@ export default function MenuPage({ content }: SectionProps) {
                             }`}
                           >
                             <h3 className="pk-title min-w-0 break-words">
-                              {item.name}
+                              <Latin>{item.name}</Latin>
                             </h3>
 
                             {item.price ? (

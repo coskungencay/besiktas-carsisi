@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   allMenuItems,
@@ -83,7 +84,7 @@ export default function Menu({ content }: SectionProps) {
                    */}
                   <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                     <h3 className="brand-display text-base leading-snug">
-                      {item.name}
+                      <Latin>{item.name}</Latin>
                     </h3>
                     {item.price ? (
                       <p className="text-sm font-medium tabular-nums text-[var(--brand-primary)]">

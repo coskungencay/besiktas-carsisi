@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   allMenuItems,
@@ -104,7 +105,7 @@ export default function Menu({ content }: SectionProps) {
                         bir uyari listesine cevirirdi.
                       */}
                       <p className="min-w-0 text-[length:var(--brand-lead)]">
-                        {item.name}
+                        <Latin>{item.name}</Latin>
                       </p>
 
                       <span aria-hidden="true" className={leaderLine} />

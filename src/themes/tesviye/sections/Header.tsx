@@ -2,11 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
 
+import { Latin } from "@/components/site/Latin";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { hasMenu, hoursRange, menuHref } from "@/themes/_shared/data";
 import {
   edgeBottom,
-  edgeEnd,
   meta,
   padStrip,
   shell,
@@ -71,13 +71,27 @@ export default function Header({ content }: SectionProps) {
   // Iki baglanti bicimi de ayni gorunmeli; sinif tek yerde.
   const navLink = "transition-colors hover:text-[var(--brand-primary)]";
 
+  /*
+   * Serit hucresi.
+   *
+   * DAR EKRAN: hucreler alt alta, aralarinda YATAY cizgi. Onceden ayrac inline
+   * style ile hep DIKEY veriliyordu; serit sarinca o cizgiler satir sonunda
+   * havada asili kaliyor ve tasarim kirik gorunuyordu (brutalist dilde cizgi
+   * bir kenar, sus degil).
+   *
+   * lg VE USTU: tasarimdaki tek satirlik serit — ayrac yeniden dikey olur,
+   * alt cizgi kalkar.
+   */
+  const cell =
+    "w-full border-b-[length:var(--brand-border-width)] border-[var(--brand-border)] last:border-b-0 lg:w-auto lg:border-b-0 lg:border-e-[length:var(--brand-border-width)] lg:border-e-[var(--brand-border)]";
+
   return (
     <header
       // ts-fade: tasarimda serit sayfa acilirken yumusakca beliriyor.
       className="ts-fade brand-body bg-[var(--brand-surface)]"
     >
       <div
-        className={`${shell} pe-14 sm:pe-0 flex flex-wrap items-stretch`}
+        className={`${shell} flex flex-wrap items-stretch`}
         style={edgeBottom}
       >
         {/*
@@ -91,8 +105,7 @@ export default function Header({ content }: SectionProps) {
         */}
         <a
           href="#hero"
-          className={`${padStrip} flex items-center gap-2.5 text-[length:var(--ts-meta)] leading-[1.5] font-semibold tracking-[var(--ts-track-brand)] uppercase transition-colors hover:text-[var(--brand-primary)] lg:flex-1`}
-          style={edgeEnd}
+          className={`${cell} ${padStrip} flex items-center gap-2.5 text-[length:var(--ts-meta)] leading-[1.5] font-semibold tracking-[var(--ts-track-brand)] uppercase transition-colors hover:text-[var(--brand-primary)] lg:flex-1`}
         >
           {/*
             Logo marka hucresinin basinda, KARE: bu temada yuvarlak hicbir sey
@@ -108,13 +121,12 @@ export default function Header({ content }: SectionProps) {
               className="size-5 shrink-0 object-contain"
             />
           ) : null}
-          {name}
+          <Latin>{name}</Latin>
         </a>
 
         {contact.locality ? (
           <p
-            className={`${meta} ${padStrip} flex items-center lg:flex-1`}
-            style={edgeEnd}
+            className={`${cell} ${meta} ${padStrip} flex items-center lg:flex-1`}
           >
             {contact.locality}
           </p>
@@ -122,8 +134,7 @@ export default function Header({ content }: SectionProps) {
 
         {range ? (
           <p
-            className={`${meta} ${padStrip} flex items-center gap-2 lg:flex-1`}
-            style={edgeEnd}
+            className={`${cell} ${meta} ${padStrip} flex items-center gap-2 lg:flex-1`}
           >
             {/* Tasarimdaki "acik" gostergesi: yaniyor-sonuyor kare. */}
             <span
@@ -142,7 +153,7 @@ export default function Header({ content }: SectionProps) {
 
         {/* ms-auto: nav tasarimdaki gibi seridin sonuna yaslanir. */}
         <div
-          className={`${padStrip} ms-auto flex flex-wrap items-center gap-x-5 gap-y-3`}
+          className={`${padStrip} flex w-full flex-wrap items-center gap-x-5 gap-y-3 lg:ms-auto lg:w-auto`}
         >
           <nav aria-label={name}>
             <ul className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[length:var(--ts-label-lg)] leading-[1.4] font-medium tracking-[var(--ts-track-nav)] uppercase">

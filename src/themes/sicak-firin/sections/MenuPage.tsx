@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   anyItemHasImage,
@@ -119,7 +120,7 @@ export default function MenuPage({ content }: SectionProps) {
                           href={`#kategori-${category.id}`}
                           className={`${chip} transition-colors hover:bg-[var(--brand-primary)] hover:text-[var(--brand-primary-contrast)]`}
                         >
-                          {category.name}
+                          <Latin>{category.name}</Latin>
                         </a>
                       </li>
                     ))}
@@ -162,7 +163,7 @@ export default function MenuPage({ content }: SectionProps) {
                             id={`kategori-${category.id}`}
                             className="brand-display scroll-mt-8 text-[length:var(--brand-h4)] leading-[var(--brand-h4-leading)] tracking-[var(--brand-h3-tracking)]"
                           >
-                            {category.name}
+                            <Latin>{category.name}</Latin>
                           </h2>
 
                           <ul className="mt-6 flex flex-col">
@@ -197,7 +198,7 @@ export default function MenuPage({ content }: SectionProps) {
                                   */}
                                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
                                     <p className="min-w-0 text-[length:var(--brand-lead)]">
-                                      {item.name}
+                                      <Latin>{item.name}</Latin>
                                       {item.isFeatured ? (
                                         <span
                                           className={`${metaText} ms-3 whitespace-nowrap`}

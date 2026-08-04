@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { Latin } from "@/components/site/Latin";
 import { fill } from "@/i18n";
 import {
   HERO_FALLBACK,
@@ -79,7 +80,7 @@ export default function Hero({ content }: SectionProps) {
               id="hero-title"
               className="brand-display mera-up text-[clamp(2.6rem,7.2vw,6.5rem)] leading-[0.94] tracking-[-0.02em] text-balance"
             >
-              {heroHeadline}
+              <Latin>{heroHeadline}</Latin>
 
               {/* Tasarimin imzasi: basligin ikinci satiri AYNI puntoda ama
                   italik ve marka renginde. Panelde baslik tek satirlik bir
@@ -89,7 +90,7 @@ export default function Hero({ content }: SectionProps) {
                   rtl:not-italic — Arapca'da egik serif okunaksiz. */}
               {heroSubline ? (
                 <span className="block italic text-[var(--brand-primary)] rtl:not-italic">
-                  {heroSubline}
+                  <Latin>{heroSubline}</Latin>
                 </span>
               ) : null}
             </h1>
@@ -100,7 +101,7 @@ export default function Hero({ content }: SectionProps) {
             <div className="mera-up-late grid max-w-[620px] gap-10 sm:grid-cols-2">
               {intro ? (
                 <p className="text-[0.97rem] leading-[1.65] text-pretty text-[var(--brand-ink-body)]">
-                  {intro}
+                  <Latin>{intro}</Latin>
                 </p>
               ) : null}
 
@@ -148,7 +149,7 @@ export default function Hero({ content }: SectionProps) {
               {/* truncate + min-w-0: satir yuksekligi leading-none oldugu icin
                   uzun bir mekan adi ikinci satira tasarsa harfler ust uste
                   binerdi; dar ekranda tek satirda kalir. */}
-              <span className="min-w-0 truncate text-end">{name}</span>
+              <span className="min-w-0 truncate text-end"><Latin>{name}</Latin></span>
             </div>
           </div>
         </div>

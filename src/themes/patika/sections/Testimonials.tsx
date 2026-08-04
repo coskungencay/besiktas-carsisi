@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import { shell, surface } from "@/themes/patika/parts";
@@ -125,7 +126,7 @@ export default function Testimonials({ content }: SectionProps) {
                         isAccent ? "opacity-70" : "text-[var(--brand-ink-dim)]"
                       }`}
                     >
-                      {item.author}
+                      <Latin>{item.author}</Latin>
                     </figcaption>
                   </figure>
                 </li>

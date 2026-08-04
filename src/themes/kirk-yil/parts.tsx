@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 
+import { Latin } from "@/components/site/Latin";
 import type { MenuItem } from "@/themes/types";
 
 /**
@@ -241,7 +242,7 @@ export function PriceRow({
           binmesin diye ad once kirilir, fiyat hic kuculmez (shrink-0).
         */}
         <p className="min-w-0 break-words">
-          {item.name}
+          <Latin>{item.name}</Latin>
           {featuredLabel && item.isFeatured ? (
             <span className="ky-eyebrow ms-3 text-[var(--brand-accent)]">
               {featuredLabel}

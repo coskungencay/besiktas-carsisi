@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   anyItemHasImage,
@@ -102,7 +103,7 @@ export default function MenuPage({ content }: SectionProps) {
                   /* Hover rengi tema genelinde tanimli (tokens.css). */
                   className="ya-nav brand-body text-[var(--brand-ink-muted)] transition-colors"
                 >
-                  {category.name}
+                  <Latin>{category.name}</Latin>
                 </a>
               ))}
             </nav>
@@ -130,7 +131,7 @@ export default function MenuPage({ content }: SectionProps) {
                   id={`menu-kategori-${category.id}-title`}
                   className="brand-display ya-serif-book sticky top-0 z-10 border-b border-[var(--brand-border)] bg-[var(--brand-surface)] pt-5 pb-3.5 text-[1.625rem] italic sm:text-[1.75rem]"
                 >
-                  {category.name}
+                  <Latin>{category.name}</Latin>
                 </h2>
 
                 <Reveal>
@@ -179,7 +180,7 @@ export default function MenuPage({ content }: SectionProps) {
                         */}
                         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
                           <h3 className="brand-body min-w-0 text-[0.9375rem] font-light">
-                            {item.name}
+                            <Latin>{item.name}</Latin>
                             {item.isFeatured ? (
                               <span className="brand-body brand-eyebrow ms-3 text-[0.6rem] text-[var(--brand-accent)]">
                                 {t.menu.featured}

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 
+import { Latin } from "@/components/site/Latin";
 import type { MenuItem } from "@/themes/types";
 
 /**
@@ -225,7 +226,7 @@ export function MenuLine({
   const body = (
     <>
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <span className="min-w-0 text-base">{item.name}</span>
+        <span className="min-w-0 text-base"><Latin>{item.name}</Latin></span>
 
         {badge ? <span className={label}>{badge}</span> : null}
 

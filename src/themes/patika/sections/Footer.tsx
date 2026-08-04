@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { placeStamp } from "@/themes/_shared/data";
 import { pillLine, shell, surface } from "@/themes/patika/parts";
 import type { SectionProps } from "@/themes/types";
@@ -59,7 +60,7 @@ export default function Footer({ content }: SectionProps) {
                     aria-label={link.label}
                     className={metaLink}
                   >
-                    {link.label}
+                    <Latin>{link.label}</Latin>
                   </a>
                 </li>
               ))}

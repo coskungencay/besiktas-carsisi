@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { Latin } from "@/components/site/Latin";
 import { fill } from "@/i18n";
 import { HERO_FALLBACK, imageOrFallback } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
@@ -49,7 +50,7 @@ export default function Hero({ content }: SectionProps) {
               id="hero-title"
               className="bo-up brand-display text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.18] tracking-[-0.025em] text-balance"
             >
-              {heroHeadline}
+              <Latin>{heroHeadline}</Latin>
               {heroSubline ? (
                 /*
                  * Tasarimda soluk devam KENDI satirinda basliyor; ayni satirda
@@ -58,7 +59,7 @@ export default function Hero({ content }: SectionProps) {
                  * degistiginde de ayni kalsin.
                  */
                 <span className="block text-[var(--brand-ink-faint)]">
-                  {heroSubline}
+                  <Latin>{heroSubline}</Latin>
                 </span>
               ) : null}
             </h1>
@@ -79,7 +80,7 @@ export default function Hero({ content }: SectionProps) {
             <div className="bo-up-2 grid gap-6 lg:grid-cols-8">
               {intro ? (
                 <p className="text-[15px] leading-[1.72] text-pretty text-[var(--brand-ink-soft)] lg:col-span-3">
-                  {intro}
+                  <Latin>{intro}</Latin>
                 </p>
               ) : null}
 

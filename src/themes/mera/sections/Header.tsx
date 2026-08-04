@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { fill } from "@/i18n";
 import { hasMenu, hoursRange, menuHref } from "@/themes/_shared/data";
@@ -55,7 +56,7 @@ export default function Header({ content }: SectionProps) {
     <header className={`${surface} brand-body`}>
       {/* mera-fade: acilista serit yumusakca belirir (tasarim: meraFade .8s). */}
       <div
-        className={`${page} mera-fade flex flex-wrap items-baseline justify-between gap-x-10 gap-y-4 pt-6 pe-14 sm:pt-[1.625rem] sm:pe-0`}
+        className={`${page} mera-fade flex flex-wrap items-baseline justify-between gap-x-10 gap-y-4 pt-6 sm:pt-[1.625rem]`}
       >
         {/* Marka adi ana sayfaya doner: menu sayfasinda "#hero" capasi yok,
             kunye adi orada olu bir baglanti olurdu. */}
@@ -81,7 +82,7 @@ export default function Header({ content }: SectionProps) {
           {/* mera-regular: tasarimda marka adinda agirlik yazmiyor (=400);
               300'de 19px'lik serif kunye adi silik kaliyordu. */}
           <span className="brand-display mera-regular mera-mark text-[1.1875rem]">
-            {name}
+            <Latin>{name}</Latin>
           </span>
         </Link>
 

@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import {
@@ -35,12 +36,12 @@ export default function SplitHero({ content }: SectionProps) {
               id="hero-title"
               className="brand-display mt-4 text-4xl leading-tight text-balance sm:text-6xl"
             >
-              {name}
+              <Latin>{name}</Latin>
             </h1>
 
             {tagline ? (
               <p className="mt-5 max-w-md text-lg leading-relaxed text-pretty text-[var(--brand-ink-muted)]">
-                {tagline}
+                <Latin>{tagline}</Latin>
               </p>
             ) : null}
 

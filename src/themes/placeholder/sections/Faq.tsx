@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   PlusIcon,
@@ -34,7 +35,7 @@ export default function Faq({ content }: SectionProps) {
               <details className="brand-frame group bg-[var(--brand-surface-alt)] transition-colors open:border-[var(--brand-primary)]">
                 {/* list-none + webkit kurali: tarayicinin varsayilan ucgeni gizlenir. */}
                 <summary className="brand-display flex cursor-pointer list-none items-center justify-between gap-4 p-6 text-start text-base leading-snug [&::-webkit-details-marker]:hidden">
-                  <span>{item.question}</span>
+                  <span><Latin>{item.question}</Latin></span>
                   <PlusIcon className="text-[var(--brand-ink-muted)] transition-transform duration-300 group-open:rotate-45 motion-reduce:transition-none" />
                 </summary>
 

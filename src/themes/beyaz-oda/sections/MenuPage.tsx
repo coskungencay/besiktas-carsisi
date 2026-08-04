@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   anyItemHasImage,
@@ -122,7 +123,7 @@ export default function MenuPage({ content }: SectionProps) {
                           href={`#${anchorId(category.id)}`}
                           className="brand-eyebrow border-b border-transparent pb-[2px] break-words transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
                         >
-                          {category.name}
+                          <Latin>{category.name}</Latin>
                         </a>
                       </li>
                     ))}
@@ -142,7 +143,7 @@ export default function MenuPage({ content }: SectionProps) {
                         id={anchorId(category.id)}
                         className={`${meta} brand-eyebrow scroll-mt-24`}
                       >
-                        {category.name}
+                        <Latin>{category.name}</Latin>
                       </h2>
                     </Reveal>
 
@@ -207,7 +208,7 @@ export default function MenuPage({ content }: SectionProps) {
                                 ) : null}
 
                                 <p className="brand-display min-w-0 text-[clamp(1.25rem,1.6vw,1.5rem)] leading-[1.2] tracking-[-0.02em] break-words">
-                                  {item.name}
+                                  <Latin>{item.name}</Latin>
                                   {item.isFeatured ? (
                                     <span
                                       className={`${meta} brand-eyebrow ms-3`}

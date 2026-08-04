@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import { SectionHead, shell, surface } from "@/themes/patika/parts";
 import type { SectionProps } from "@/themes/types";
@@ -34,7 +35,7 @@ export default function Faq({ content }: SectionProps) {
               <li key={item.id}>
                 <details className="pk-faq brand-frame bg-[var(--brand-surface-alt)] px-6 py-5 transition-colors hover:border-[var(--brand-primary)] sm:px-8 sm:py-7">
                   <summary className="flex items-start justify-between gap-6">
-                    <h3 className="pk-title text-balance">{item.question}</h3>
+                    <h3 className="pk-title text-balance"><Latin>{item.question}</Latin></h3>
 
                     {/*
                       Arti isareti: acikken tokens.css onu 45 derece dondurup

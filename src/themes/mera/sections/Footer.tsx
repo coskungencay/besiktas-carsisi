@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { placeStamp } from "@/themes/_shared/data";
 import {
   labelStrip,
@@ -64,7 +65,7 @@ export default function Footer({ content }: SectionProps) {
                          gelince mureekkebe doner. */
                       className={`${labelStripBase} ${link} underline-offset-[6px] hover:underline`}
                     >
-                      {social.label}
+                      <Latin>{social.label}</Latin>
                     </a>
                   </li>
                 ))}

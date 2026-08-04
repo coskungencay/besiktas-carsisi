@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { goldLink, label, shell, surface } from "@/themes/vela/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -49,7 +50,7 @@ export default function Footer({ content }: SectionProps) {
                     aria-label={link.label}
                     className={`brand-body brand-eyebrow text-[0.6875rem] leading-[1.6] ${goldLink}`}
                   >
-                    {link.label}
+                    <Latin>{link.label}</Latin>
                   </a>
                 </li>
               ))}
