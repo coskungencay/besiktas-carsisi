@@ -6,6 +6,9 @@ Her müşteri için bu repodan bir kopya alınır, kendi sunucusunda Docker ile 
 müşteri tüm içeriğini kendi admin panelinden yönetir. Kurulumdan sonra geliştirici
 müdahalesine ihtiyaç kalmaz.
 
+> **Yeni bir müşteri sitesi mi çıkaracaksınız?** Adım adım akış:
+> **[YENI-PROJE.md](./YENI-PROJE.md)**
+
 ---
 
 ## 1. Ne yapar?
@@ -344,6 +347,7 @@ pnpm build         # temiz
 
 ## 10. Sonraki adımlar
 
-- Yeni müşteri kurulumu → **[DEPLOY.md](./DEPLOY.md)** (15 dakikalık checklist)
+- Şablondan yeni müşteri sitesi çıkarma → **[YENI-PROJE.md](./YENI-PROJE.md)** (repo açmaktan yayına hazır commit'e)
+- Sunucuya kurulum → **[DEPLOY.md](./DEPLOY.md)** (15 dakikalık checklist)
 - Müşteriye verilecek kılavuz → **[CUSTOMER.md](./CUSTOMER.md)**
 - Yeni tasarım/tema ekleme → **[THEMING.md](./THEMING.md)**
