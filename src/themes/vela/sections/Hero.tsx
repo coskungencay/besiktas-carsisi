@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { Latin } from "@/components/site/Latin";
 import { fill } from "@/i18n";
 import {
   HERO_FALLBACK_DARK,
@@ -107,7 +108,7 @@ export default function Hero({ content }: SectionProps) {
             id="hero-title"
             className="vl-up brand-display max-w-[47.5rem] text-[clamp(2.5rem,6.6vw,5.25rem)] leading-[1.02] tracking-[-0.01em] text-balance"
           >
-            {heroHeadline}
+            <Latin>{heroHeadline}</Latin>
             {/*
              * Tasarimda basligin bir parcasi ITALIK VE ALTIN — temanin imzasi
              * bu tek vurgu. Ayni punto ve ayni satir icinde akar; kucuk punto
@@ -117,7 +118,7 @@ export default function Hero({ content }: SectionProps) {
               <>
                 {" "}
                 <span className="italic text-[var(--brand-primary)]">
-                  {heroSubline}
+                  <Latin>{heroSubline}</Latin>
                 </span>
               </>
             ) : null}
@@ -125,7 +126,7 @@ export default function Hero({ content }: SectionProps) {
 
           {/* Dar kolon tasarimda sabit 330px; buyuyen baslik onu ezmesin. */}
           <div className="vl-up-late w-full lg:w-[20.625rem] lg:shrink-0">
-            {intro ? <p className={proseOnPhoto}>{intro}</p> : null}
+            {intro ? <p className={proseOnPhoto}><Latin>{intro}</Latin></p> : null}
 
             {/*
              * Tasarimda paragrafin 20px altinda tek satirlik altin bir kunye

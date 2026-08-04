@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { placeStamp } from "@/themes/_shared/data";
 import { Sprig, eyebrow, shell, surface } from "@/themes/yesil-avlu/parts";
 import type { SectionProps } from "@/themes/types";
@@ -61,7 +62,7 @@ export default function Footer({ content }: SectionProps) {
                     /* Hover rengi tema genelinde tanimli (tokens.css). */
                     className="ya-nav brand-body transition-colors"
                   >
-                    {link.label}
+                    <Latin>{link.label}</Latin>
                   </a>
                 </li>
               ))}

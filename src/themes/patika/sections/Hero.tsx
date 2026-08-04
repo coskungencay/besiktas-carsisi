@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Fragment } from "react";
 
+import { Latin } from "@/components/site/Latin";
 import { fill } from "@/i18n";
 import {
   HERO_FALLBACK_DARK,
@@ -174,7 +175,7 @@ export default function Hero({ content }: SectionProps) {
           */}
           {intro ? (
             <p className="pk-up-4 pk-lead max-w-[24rem] text-pretty text-[var(--brand-ink-muted)]">
-              {intro}
+              <Latin>{intro}</Latin>
             </p>
           ) : null}
 

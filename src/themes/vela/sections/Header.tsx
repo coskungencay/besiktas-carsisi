@@ -1,5 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { hasMenu, menuHref } from "@/themes/_shared/data";
 import { metaSoft, shell } from "@/themes/vela/parts";
@@ -26,7 +28,7 @@ import type { SectionProps } from "@/themes/types";
 type NavLink = { href: string; label: string; page?: boolean };
 
 export default function Header({ content }: SectionProps) {
-  const { name, t } = content;
+  const { name, logoUrl, t } = content;
 
   /*
    * Bos icerikli bolumler kendini basmiyor; nav ayni kosullari tekrarlamali,
@@ -87,7 +89,7 @@ export default function Header({ content }: SectionProps) {
        */}
       <nav
         aria-label={name}
-        className={`${shell} pe-14 sm:pe-0 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 py-[1.875rem] lg:grid lg:grid-cols-[1fr_auto_1fr]`}
+        className={`${shell} flex flex-wrap items-center justify-center gap-x-8 gap-y-4 py-[1.875rem] lg:grid lg:grid-cols-[1fr_auto_1fr]`}
       >
         {/* Nav ogeleri arasi 34px — tasarimdaki deger. */}
         <ul className="order-2 flex flex-wrap items-center justify-center gap-x-[2.125rem] gap-y-2 lg:order-none lg:justify-start">
@@ -101,9 +103,24 @@ export default function Header({ content }: SectionProps) {
          */}
         <a
           href="#hero"
-          className="order-1 w-full text-center uppercase brand-display text-2xl leading-none tracking-[var(--brand-wordmark-tracking)] ps-[var(--brand-wordmark-tracking)] lg:order-none lg:w-auto"
+          className="order-1 flex w-full flex-col items-center gap-2 text-center uppercase brand-display text-2xl leading-none tracking-[var(--brand-wordmark-tracking)] ps-[var(--brand-wordmark-tracking)] lg:order-none lg:w-auto"
         >
-          {name}
+          {/*
+            Logo kelime-markanin USTUNDE, yaninda degil: bu tasarimda marka
+            ortalanmis tek bir eksende duruyor, yana bir isaret koymak o ekseni
+            kaydirirdi. Logo yuklenmemisse hic basilmaz ve serit tasarimdaki
+            haline birebir doner.
+          */}
+          {logoUrl ? (
+            <Image
+              src={logoUrl}
+              alt=""
+              width={36}
+              height={36}
+              className="size-9 object-contain"
+            />
+          ) : null}
+          <Latin>{name}</Latin>
         </a>
 
         <div className="order-3 flex flex-wrap items-center justify-center gap-x-[2.125rem] gap-y-2 lg:justify-end">

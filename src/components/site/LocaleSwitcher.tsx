@@ -29,8 +29,17 @@ function GlobeIcon() {
  * yiyordu ve tasarimin ritmini bozuyordu.
  *
  * <details>/<summary> tercih edildi cunku klavye ve ekran okuyucu destegi
- * tarayicidan geliyor, disari tiklaninca kapanmasi icin JS gerekmiyor
- * (mobilde acilir menu zaten tam ekran bir karar degil).
+ * tarayicidan geliyor, disari tiklaninca kapanmasi icin JS gerekmiyor.
+ *
+ * KONUM: secici artik header'in NORMAL AKISINDA duruyor (fixed DEGIL).
+ * Bir sure sabit konumda denendi; sayfanin sag ust kosesinde asili kalan kutu
+ * her temada baska bir metnin (semt adi, saat, nav) uzerine biniyordu ve
+ * kaydirinca da ekranda kaliyordu. Akista durunca hicbir seyi ortmuyor,
+ * header'in kendi sarma duzenine katiliyor.
+ *
+ * Dar ekranda tetikleyici yalnizca ikon + IKI HARFLI dil kodu tasir ("TR"),
+ * cunku "Türkçe"/"English" gibi tam adlar dar seritte bir satiri tek basina
+ * dolduruyordu. Acilan listede tam adlar yaziyor.
  */
 export function LocaleSwitcher({
   content,
@@ -52,24 +61,18 @@ export function LocaleSwitcher({
 
   return (
     <>
-      {/*
-        Dar ekran: sag ust kosede SABIT duran ikon + aktif dil; dokununca liste
-        aciliyor.
-
-        NEDEN SABIT (fixed): dokuz temanin header yapisi birbirinden farkli
-        (kimi tek serit, kimi uc katli, kimi sticky). Seciciyi her header'in
-        icine yerlestirmeye calismak dar ekranda ya ucuncu bir satir aciyor ya
-        da acilan listeyi ekran disina tasiyordu. Sag ust kose her temada bos
-        ve acilan liste end-0 ile hep sola dogru aciliyor — hicbir ekranda
-        tasma olmuyor. Genis ekranda secici header'daki yerine donuyor.
-      */}
+      {/* Dar ekran: ikon + dil kodu; dokununca liste aciliyor. */}
       <details
-        className={`brand-body fixed end-3 top-3 z-40 sm:hidden ${className}`}
+        className={`brand-body relative sm:hidden ${className}`}
         aria-label={content.t.nav.changeLanguage}
       >
-        <summary className="brand-frame brand-rounded flex cursor-pointer list-none items-center gap-1.5 bg-[var(--brand-surface)] px-2.5 py-1.5 text-xs font-medium text-[var(--brand-ink)] [&::-webkit-details-marker]:hidden">
+        <summary className="brand-frame brand-rounded flex cursor-pointer list-none items-center gap-1.5 bg-[var(--brand-surface)] px-2 py-1 text-xs font-medium text-[var(--brand-ink)] [&::-webkit-details-marker]:hidden">
           <GlobeIcon />
-          <span>{active?.label ?? content.t.nav.languageLabel}</span>
+          {/*
+            Dil KODU, tam ad degil. toUpperCase() burada guvenli: kodlar ascii
+            (tr/en/es/de/ar) ve hicbirinde Turkce'nin "i" sorunu yok.
+          */}
+          <span>{(active?.locale ?? "").toUpperCase()}</span>
         </summary>
 
         <nav
@@ -77,11 +80,10 @@ export function LocaleSwitcher({
           /*
             Mutlak konum: acilan liste sayfayi asagi itmemeli, yoksa ust serit
             her acilista zipliyor.
-            
+
             TASMA: liste secicinin SAG kenarina hizali (end-0) ve genisligi
-            ekrandan tasamayacak sekilde sinirli. Secici header'in sag ucunda
-            durdugu icin liste sola dogru aciliyor ve hicbir ekranda disari
-            cikmiyor; Arapca'da yon kendiliginden tersleniyor.
+            ekrandan tasamayacak sekilde sinirli; Arapca'da yon kendiliginden
+            terslenir.
           */
           className="brand-frame brand-rounded absolute end-0 z-50 mt-1.5 flex w-max max-w-[calc(100vw-1.5rem)] min-w-32 flex-col gap-1 bg-[var(--brand-surface)] p-1.5 shadow-lg"
         >

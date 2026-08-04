@@ -1,7 +1,16 @@
+import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
-import { allMenuItems, featuredItems, hasMenu, menuHref } from "@/themes/_shared/data";
+import {
+  allMenuItems,
+  anyItemHasImage,
+  featuredItems,
+  hasMenu,
+  itemThumb,
+  menuHref,
+} from "@/themes/_shared/data";
 import { SectionHeading, shell } from "@/themes/yesil-avlu/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -34,6 +43,8 @@ export default function Menu({ content }: SectionProps) {
   const featured = featuredItems(content, 3);
   const items = featured.length > 0 ? featured : allMenuItems(content).slice(0, 3);
 
+  const withImages = anyItemHasImage(content, items);
+
   return (
     <section id="menu" aria-labelledby="menu-title" className="ya-grove">
       {/*
@@ -64,9 +75,31 @@ export default function Menu({ content }: SectionProps) {
                 flex-wrap + min-w-0: uzun urun adi dar ekranda fiyatin uzerine
                 binmez, fiyat alt satira duser.
               */}
+              {withImages ? (
+                /*
+                  Fotograf hucrenin USTUNDE ve GENIS yuvarlatilmis: bu temanin
+                  imzasi yumusak koseler, kare bir pul buraya yabanci dururdu.
+                  Fotografi olmayan urunde ayni yer bos birakilir ki uc kolonun
+                  basliklari ayni hizada kalsin.
+                */
+                <div
+                  className={`relative mb-5 aspect-[4/3] overflow-hidden rounded-[var(--brand-radius)] ${itemThumb(content, item) ? "bg-[var(--brand-surface-alt)]" : ""}`}
+                >
+                  {itemThumb(content, item) ? (
+                    <Image
+                      src={itemThumb(content, item) as string}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 360px, (min-width: 640px) 45vw, 90vw"
+                      className="object-cover"
+                    />
+                  ) : null}
+                </div>
+              ) : null}
+
               <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-[var(--brand-border)] pb-3.5">
                 <h3 className="brand-display ya-serif-book min-w-0 text-[1.625rem] leading-tight italic">
-                  {item.name}
+                  <Latin>{item.name}</Latin>
                 </h3>
 
                 {item.price ? (

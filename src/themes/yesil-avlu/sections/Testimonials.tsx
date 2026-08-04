@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import {
@@ -73,7 +74,7 @@ export default function Testimonials({ content }: SectionProps) {
                     <Sprig className="mt-auto pt-7" />
 
                     <figcaption className="mt-6">
-                      <span className={eyebrow}>{item.author}</span>
+                      <span className={eyebrow}><Latin>{item.author}</Latin></span>
 
                       {stars !== null ? (
                         <span className="mt-3 flex items-center justify-center gap-1.5">

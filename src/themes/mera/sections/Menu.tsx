@@ -3,8 +3,10 @@ import Link from "next/link";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   allMenuItems,
+  anyItemHasImage,
   featuredItems,
   hasMenu,
+  itemThumb,
   menuHref,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
@@ -32,7 +34,9 @@ const SHOWCASE_COUNT = 3;
  * dolgu, ustune gelince isinan zemin — ama iki kolon yerine TEK kolon:
  * uc satir iki kolona bolununce bolum yarim kalmis bir tablo gibi gorunuyordu.
  *
- * Urun gorseli YOK: bu siki tipografik ritim gorselle bozulur.
+ * Urun fotografi OPSIYONEL: musteri panelden fotograf eklerse satirin basinda
+ * kucuk bir kare belirir, eklemezse tasarimin siki tipografik ritmi aynen
+ * kalir. Karar musterinin (bkz. "Menude urun fotograflari" ayari).
  */
 export default function Menu({ content }: SectionProps) {
   if (!hasMenu(content)) return null;
@@ -48,6 +52,12 @@ export default function Menu({ content }: SectionProps) {
     featured.length > 0
       ? featured
       : allMenuItems(content).slice(0, SHOWCASE_COUNT);
+
+  /*
+   * Fotograf sutunu VITRINDEKI urunlere gore acilir: menunun baska bir yerinde
+   * fotograf olmasi burada bos kare acmayi gerektirmez.
+   */
+  const withImages = anyItemHasImage(content, items);
 
   return (
     <section id="menu" aria-labelledby="menu-title" className={surface}>
@@ -70,7 +80,12 @@ export default function Menu({ content }: SectionProps) {
                   urun, hepsine ayni etiketi vurmak gurultu olurdu. */}
               <ul>
                 {items.map((item) => (
-                  <MenuLine key={item.id} item={item} />
+                  <MenuLine
+                    key={item.id}
+                    item={item}
+                    thumb={itemThumb(content, item)}
+                    reserveImage={withImages}
+                  />
                 ))}
               </ul>
 

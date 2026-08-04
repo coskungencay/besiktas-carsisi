@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { fill } from "@/i18n";
 import { hasMenu, imageOrFallback, menuHref } from "@/themes/_shared/data";
@@ -64,7 +65,7 @@ export default function Header({ content }: SectionProps) {
   return (
     <header className={`${surface} ${edgeBottom} brand-body sticky top-0 z-20`}>
       <div
-        className={`${shell} pe-14 sm:pe-0 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5`}
+        className={`${shell} flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5`}
       >
         <a href="#hero" className="flex items-center gap-3">
           {logoUrl ? (
@@ -84,7 +85,7 @@ export default function Header({ content }: SectionProps) {
             logotip. Sonundaki neon nokta dekoratif: ekran okuyucu okumasin.
           */}
           <span className="brand-display text-[1.375rem] leading-none tracking-[var(--brand-title-tracking)] uppercase">
-            {name}
+            <Latin>{name}</Latin>
             <span aria-hidden="true" className="text-[var(--brand-primary)]">
               .
             </span>

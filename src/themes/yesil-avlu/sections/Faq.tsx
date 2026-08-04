@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   SectionHeading,
@@ -48,7 +49,7 @@ export default function Faq({ content }: SectionProps) {
                   <summary className="flex items-center justify-between gap-6 py-5 text-start">
                     {/* Menudeki urun adiyla ayni olcek: 15px, 300 agirlik. */}
                     <h3 className="brand-body text-[0.9375rem] font-light">
-                      {item.question}
+                      <Latin>{item.question}</Latin>
                     </h3>
                     <span aria-hidden="true" className="ya-faq-mark" />
                   </summary>

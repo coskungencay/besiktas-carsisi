@@ -1,9 +1,13 @@
+import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   allMenuItems,
+  anyItemHasImage,
   featuredItems,
+  itemThumb,
   menuHref,
   menuWithItems,
 } from "@/themes/_shared/data";
@@ -41,6 +45,8 @@ export default function Menu({ content }: SectionProps) {
   const featured = featuredItems(content, SHOWCASE_COUNT);
   const items =
     featured.length > 0 ? featured : allMenuItems(content).slice(0, SHOWCASE_COUNT);
+
+  const withImages = anyItemHasImage(content, items);
 
   /*
    * Kartin numara satiri kategori adini gosteriyor; featuredItems duz bir urun
@@ -84,19 +90,50 @@ export default function Menu({ content }: SectionProps) {
                    * tasarimda da izgaradaki kartlarin hover rengi ayni degil,
                    * diziyi kiran tekil vurgular var.
                    */
-                  className={`brand-frame flex flex-col bg-[var(--brand-surface-alt)] px-6 pt-[1.625rem] pb-[1.375rem] transition-colors hover:text-[var(--brand-primary-contrast)] ${
+                  className={`brand-frame flex flex-col overflow-hidden bg-[var(--brand-surface-alt)] px-6 pt-[1.625rem] pb-[1.375rem] transition-colors hover:text-[var(--brand-primary-contrast)] ${
                     item.isFeatured
                       ? "hover:border-[var(--brand-accent)] hover:bg-[var(--brand-accent)]"
                       : "hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary)]"
                   }`}
                 >
+                  {withImages ? (
+                    /*
+                      Fotograf kartin TAM ustunde, ic dolgunun disina tasarak
+                      (-mx/-mt): kart zaten cerceveli bir kutu, gorseli
+                      dolgunun icine koymak onu kucuk bir pul haline getirirdi.
+                      Fotografi olmayan urunde ayni yer bos birakilir, yoksa
+                      izgaradaki kartlar farkli yerlerden baslar.
+                    */
+                    <div
+                      className={`relative -mx-6 -mt-[1.625rem] mb-6 aspect-[4/3] overflow-hidden ${itemThumb(content, item) ? "bg-[var(--brand-surface)]" : ""}`}
+                    >
+                      {itemThumb(content, item) ? (
+                        <Image
+                          src={itemThumb(content, item) as string}
+                          alt=""
+                          fill
+                          sizes="(min-width: 1024px) 340px, (min-width: 640px) 45vw, 90vw"
+                          className="object-cover"
+                        />
+                      ) : null}
+                    </div>
+                  ) : null}
+
                   <p className="pk-caps opacity-55">
                     {String(index + 1).padStart(2, "0")}
                     {categoryName ? <> &middot; {categoryName}</> : null}
                   </p>
 
-                  {/* Tasarimdaki 60px'lik bosluk: kart ustu ile ad arasi. */}
-                  <h3 className="pk-title mt-15 text-balance">{item.name}</h3>
+                  {/*
+                    Tasarimdaki 60px'lik bosluk: kart ustu ile ad arasi.
+                    Fotografli kartta o bosluk yerini gorsele biraktigi icin
+                    kuculur — yoksa kart gereksiz uzar.
+                  */}
+                  <h3
+                    className={`pk-title text-balance ${withImages ? "mt-4" : "mt-15"}`}
+                  >
+                    <Latin>{item.name}</Latin>
+                  </h3>
 
                   {/*
                     Aciklama rengi `opacity` ile veriliyor, sabit muted renkle

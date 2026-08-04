@@ -1,5 +1,7 @@
+import Image from "next/image";
 import type { ReactNode } from "react";
 
+import { Latin } from "@/components/site/Latin";
 import type { MenuItem } from "@/themes/types";
 
 /**
@@ -221,12 +223,18 @@ export const buttonGhostDark =
 export function PriceRow({
   item,
   featuredLabel,
+  thumb = null,
+  reserveImage = false,
 }: {
   item: MenuItem;
   featuredLabel?: string;
+  /** Urun fotografi (kucuk kare). null = fotograf yok ya da kapali. */
+  thumb?: string | null;
+  /** Listedeki baska bir urunun fotografi varsa satirlar hizali kalsin diye. */
+  reserveImage?: boolean;
 }) {
-  return (
-    <li className="py-3.5">
+  const body = (
+    <>
       <div className="flex items-baseline gap-2.5 text-[19px] font-light">
         {/*
           break-words + min-w-0: urun adi DB'den geliyor, uzunluguna
@@ -234,7 +242,7 @@ export function PriceRow({
           binmesin diye ad once kirilir, fiyat hic kuculmez (shrink-0).
         */}
         <p className="min-w-0 break-words">
-          {item.name}
+          <Latin>{item.name}</Latin>
           {featuredLabel && item.isFeatured ? (
             <span className="ky-eyebrow ms-3 text-[var(--brand-accent)]">
               {featuredLabel}
@@ -269,6 +277,37 @@ export function PriceRow({
           {item.description}
         </p>
       ) : null}
+    </>
+  );
+
+  return (
+    <li className="py-3.5">
+      {reserveImage ? (
+        /*
+         * Fotograf koyu menu tahtasinin uzerinde duruyor: ince altin cerceve
+         * onu zeminden ayirir, cerceve olmadan koyu bir fotograf tahtaya
+         * karisiyordu. Daire degil kare — bu tasarimda yuvarlatilmis tek oge
+         * hero'daki muhur, onun disinda her sey dik acili.
+         */
+        <div className="flex items-start gap-4">
+          <div
+            className={`relative size-14 shrink-0 overflow-hidden rounded-[var(--brand-radius)] sm:size-16 ${thumb ? "border border-[var(--brand-accent)]/35 bg-[var(--brand-surface)]/10" : ""}`}
+          >
+            {thumb ? (
+              <Image
+                src={thumb}
+                alt=""
+                fill
+                sizes="64px"
+                className="object-cover"
+              />
+            ) : null}
+          </div>
+          <div className="min-w-0 flex-1">{body}</div>
+        </div>
+      ) : (
+        body
+      )}
     </li>
   );
 }

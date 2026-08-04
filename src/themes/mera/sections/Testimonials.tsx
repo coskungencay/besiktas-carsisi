@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import {
@@ -87,7 +88,7 @@ export default function Testimonials({ content }: SectionProps) {
                     </blockquote>
 
                     <figcaption className={`${labelFaint} mt-5`}>
-                      {item.author}
+                      <Latin>{item.author}</Latin>
                     </figcaption>
                   </figure>
                 </Reveal>

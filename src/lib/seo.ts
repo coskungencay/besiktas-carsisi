@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 
 import { LOCALE_META } from "@/i18n/config";
 import { appUrl } from "@/lib/env";
-import { SCHEMA_DAYS } from "@/lib/format";
+import { SCHEMA_DAYS, thumbUrl } from "@/lib/format";
 import type { SiteContent } from "@/themes/types";
 
 export function buildMetadata(content: SiteContent): Metadata {
@@ -64,7 +64,21 @@ export function buildMetadata(content: SiteContent): Metadata {
       follow: true,
       googleBot: { index: true, follow: true, "max-image-preview": "large" },
     },
-    icons: content.logoUrl ? { icon: content.logoUrl } : undefined,
+    /*
+     * Favicon musterinin logosundan gelir; logo yoksa Next dosya tabanli
+     * src/app/icon.svg'ye duser (metadata.icons verildiginde dosya kurali
+     * EZILIR, o yuzden burasi doluyken icon.svg basilmaz).
+     *
+     * KUCUK varyant kullaniliyor: ana gorsel 1920px genisliginde ve sekmedeki
+     * 16px'lik kare icin megabaytlarca veri indirmek anlamsiz. apple-icon da
+     * ayni kaynaktan; iOS ana ekrana eklendiginde logo gorunur.
+     */
+    icons: content.logoUrl
+      ? {
+          icon: thumbUrl(content.logoUrl),
+          apple: thumbUrl(content.logoUrl),
+        }
+      : undefined,
   };
 }
 

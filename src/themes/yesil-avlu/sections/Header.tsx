@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { fill } from "@/i18n";
 import { hasMenu, menuHref } from "@/themes/_shared/data";
@@ -96,7 +97,7 @@ export default function Header({ content }: SectionProps) {
       */}
       <nav
         aria-label={name}
-        className={`${shell} pe-14 sm:pe-0 grid items-center gap-x-8 gap-y-4 py-6 sm:grid-cols-3`}
+        className={`${shell} grid items-center gap-x-8 gap-y-4 py-6 sm:grid-cols-3`}
       >
         <ul className="flex flex-wrap items-center justify-center gap-x-[1.875rem] gap-y-2 sm:justify-start">
           {leadingLinks.map((link) => (
@@ -125,7 +126,7 @@ export default function Header({ content }: SectionProps) {
             (17px / .34em); boyutunu degil araligini tasiyor.
           */}
           <span className="brand-display ya-serif-book ya-wordmark text-[1.0625rem] leading-none">
-            {name}
+            <Latin>{name}</Latin>
           </span>
         </a>
 

@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { Latin } from "@/components/site/Latin";
 import { fill } from "@/i18n";
 import {
   HERO_FALLBACK,
@@ -114,7 +115,7 @@ export default function Hero({ content }: SectionProps) {
               id="hero-title"
               className="brand-display ya-rise mx-auto mt-4 max-w-[16ch] text-[clamp(2.25rem,6.5vw,5.75rem)] leading-[1.02] tracking-[-0.01em] text-balance"
             >
-              {heroHeadline}
+              <Latin>{heroHeadline}</Latin>
 
               {/*
                 Tasarimin imzasi: basligin IKINCI satiri ayni puntoda ama
@@ -125,7 +126,7 @@ export default function Hero({ content }: SectionProps) {
                 basmak tasarimin karakterini bozar.
               */}
               {heroSubline ? (
-                <span className="block italic">{heroSubline}</span>
+                <span className="block italic"><Latin>{heroSubline}</Latin></span>
               ) : null}
             </h1>
           </div>

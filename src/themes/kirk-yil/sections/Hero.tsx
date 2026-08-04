@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { fill } from "@/i18n";
 import {
   HERO_FALLBACK,
@@ -100,21 +101,21 @@ export default function Hero({ content }: SectionProps) {
             */
             className="brand-display ky-h1 ky-up mt-[22px] break-words text-balance"
           >
-            {heroHeadline}
+            <Latin>{heroHeadline}</Latin>
             {/*
               "Baslik devami" alani basligin ICINDE, AYNI puntoda ikinci satir
               olarak basilir: tasarimdaki dev tabela yazisi tek renk ve cok
               satirli (line-height .92 tam bunun icin). Kucuk punto ile ayri
               bir yere basmak afis hissini bozuyordu.
             */}
-            {heroSubline ? <span className="block">{heroSubline}</span> : null}
+            {heroSubline ? <span className="block"><Latin>{heroSubline}</Latin></span> : null}
           </h1>
 
           <Ornament wide className="ky-fade-slow mt-6" />
 
           {intro ? (
             <p className="ky-lead ky-up-2 mx-auto mt-[26px] max-w-[40rem] text-pretty text-[var(--brand-ink-muted)]">
-              {intro}
+              <Latin>{intro}</Latin>
             </p>
           ) : null}
 

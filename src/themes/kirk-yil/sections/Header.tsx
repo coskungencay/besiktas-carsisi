@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
@@ -16,7 +17,7 @@ import type { SectionProps } from "@/themes/types";
  * Alt kenarlik cift cizgi (3px double) — tasarimin imzasi.
  */
 export default function Header({ content }: SectionProps) {
-  const { name, contact, t } = content;
+  const { name, contact, logoUrl, t } = content;
 
   /*
    * Capalar dile ait ANA SAYFA yolu ile birlikte yaziliyor.
@@ -59,14 +60,29 @@ export default function Header({ content }: SectionProps) {
       className={`${surface} brand-body ky-fade border-b-[3px] border-double border-[color-mix(in_srgb,var(--brand-ink)_32%,transparent)]`}
     >
       <div
-        className={`${shell} pe-14 sm:pe-0 flex flex-wrap items-center justify-between gap-x-8 gap-y-3 py-4`}
+        className={`${shell} flex flex-wrap items-center justify-between gap-x-8 gap-y-3 py-4`}
       >
         {/*
           Sol uc: tasarimda "Est. 1986 · Beyoglu". Bizde kurulus yili diye bir
           alan yok; semt/sehir ayni islevi goruyor (nerede oldugumuz), yoksa
           slogana duseriz.
         */}
-        <span className="ky-strip text-[var(--brand-ink-muted)]">
+        {/*
+          Bu seritte marka ADI yok — tasarimda marka hero'daki dev tabelada
+          duruyor. Logo yuklendiyse serit'in sol ucune, kunye yazisinin onune
+          kucuk bir isaret olarak giriyor; yuklenmemisse satir tasarimdaki
+          haliyle tek basina kaliyor.
+        */}
+        <span className="ky-strip flex items-center gap-2.5 text-[var(--brand-ink-muted)]">
+          {logoUrl ? (
+            <Image
+              src={logoUrl}
+              alt=""
+              width={22}
+              height={22}
+              className="size-[22px] shrink-0 object-contain"
+            />
+          ) : null}
           {contact.locality || content.tagline}
         </span>
 

@@ -3,8 +3,10 @@ import Link from "next/link";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   allMenuItems,
+  anyItemHasImage,
   featuredItems,
   hasMenu,
+  itemThumb,
   menuHref,
 } from "@/themes/_shared/data";
 import {
@@ -76,7 +78,12 @@ export default function Menu({ content }: SectionProps) {
         <Reveal delay={0.06}>
           <ul className="mx-auto mt-[46px] flex max-w-[46rem] flex-col divide-y divide-[var(--brand-surface)]/15">
             {items.map((item) => (
-              <PriceRow key={item.id} item={item} />
+              <PriceRow
+                key={item.id}
+                item={item}
+                thumb={itemThumb(content, item)}
+                reserveImage={anyItemHasImage(content, items)}
+              />
             ))}
           </ul>
         </Reveal>

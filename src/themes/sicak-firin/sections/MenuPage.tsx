@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
-  SQUARE_FALLBACK,
+  anyItemHasImage,
   hasMenu,
-  imageOrFallback,
+  itemThumb,
   menuWithItems,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
@@ -119,7 +120,7 @@ export default function MenuPage({ content }: SectionProps) {
                           href={`#kategori-${category.id}`}
                           className={`${chip} transition-colors hover:bg-[var(--brand-primary)] hover:text-[var(--brand-primary-contrast)]`}
                         >
-                          {category.name}
+                          <Latin>{category.name}</Latin>
                         </a>
                       </li>
                     ))}
@@ -144,7 +145,14 @@ export default function MenuPage({ content }: SectionProps) {
                 {[leftColumn, rightColumn].map((column, columnIndex) =>
                   column.length > 0 ? (
                     <div key={columnIndex} className="flex flex-col gap-12">
-                      {column.map((category, index) => (
+                      {column.map((category, index) => {
+                        /* Fotograf sutunu kategori bazinda acilir. */
+                        const withImages = anyItemHasImage(
+                          content,
+                          category.items,
+                        );
+
+                        return (
                         <Reveal
                           key={category.id}
                           delay={columnIndex === 0 && index === 0 ? 0 : 0.06}
@@ -155,7 +163,7 @@ export default function MenuPage({ content }: SectionProps) {
                             id={`kategori-${category.id}`}
                             className="brand-display scroll-mt-8 text-[length:var(--brand-h4)] leading-[var(--brand-h4-leading)] tracking-[var(--brand-h3-tracking)]"
                           >
-                            {category.name}
+                            <Latin>{category.name}</Latin>
                           </h2>
 
                           <ul className="mt-6 flex flex-col">
@@ -164,18 +172,20 @@ export default function MenuPage({ content }: SectionProps) {
                                 key={item.id}
                                 className={`${dashedRow} flex items-start gap-4 py-4`}
                               >
-                                {item.thumbUrl ? (
-                                  <Image
-                                    src={imageOrFallback(
-                                      item.thumbUrl,
-                                      SQUARE_FALLBACK,
-                                    )}
-                                    alt={item.name}
-                                    width={64}
-                                    height={64}
-                                    loading="lazy"
-                                    className="brand-rounded size-14 shrink-0 bg-[var(--brand-surface-alt)] object-cover sm:size-16"
-                                  />
+                                {withImages ? (
+                                  <span
+                                    className={`brand-rounded relative block size-14 shrink-0 overflow-hidden sm:size-16 ${itemThumb(content, item) ? "bg-[var(--brand-surface-alt)]" : ""}`}
+                                  >
+                                    {itemThumb(content, item) ? (
+                                      <Image
+                                        src={itemThumb(content, item) as string}
+                                        alt=""
+                                        fill
+                                        sizes="64px"
+                                        className="object-cover"
+                                      />
+                                    ) : null}
+                                  </span>
                                 ) : null}
 
                                 {/* min-w-0: uzun urun adi kolonu tasirip fiyati
@@ -188,7 +198,7 @@ export default function MenuPage({ content }: SectionProps) {
                                   */}
                                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
                                     <p className="min-w-0 text-[length:var(--brand-lead)]">
-                                      {item.name}
+                                      <Latin>{item.name}</Latin>
                                       {item.isFeatured ? (
                                         <span
                                           className={`${metaText} ms-3 whitespace-nowrap`}
@@ -225,7 +235,8 @@ export default function MenuPage({ content }: SectionProps) {
                             ))}
                           </ul>
                         </Reveal>
-                      ))}
+                        );
+                      })}
                     </div>
                   ) : null,
                 )}

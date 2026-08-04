@@ -1,10 +1,14 @@
+import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   allMenuItems,
+  anyItemHasImage,
   featuredItems,
   hasMenu,
+  itemThumb,
   menuHref,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
@@ -51,6 +55,8 @@ export default function Menu({ content }: SectionProps) {
   const items =
     featured.length > 0 ? featured : allMenuItems(content).slice(0, 3);
 
+  const withImages = anyItemHasImage(content, items);
+
   return (
     <section
       id="menu"
@@ -91,12 +97,35 @@ export default function Menu({ content }: SectionProps) {
                       {item.isFeatured ? <span>{t.menu.featured}</span> : null}
                     </p>
 
+                    {withImages ? (
+                      /*
+                        Fotograf hucrenin kunyesinden SONRA, kalin kenarlikli
+                        bir kutu icinde: bu temada her sey cerceveli, cerceve
+                        olmadan gorsel teknik belgeye yapistirilmis gibi durur.
+                        Fotografsiz urunde ayni yer bos kalir ki uc hucrenin
+                        basliklari ayni hizadan bassin.
+                      */
+                      <div
+                        className={`relative aspect-[4/3] w-full overflow-hidden rounded-[var(--brand-radius)] ${itemThumb(content, item) ? "border-[length:var(--brand-border-width)] border-[var(--brand-border)] bg-[var(--brand-surface-alt)]" : ""}`}
+                      >
+                        {itemThumb(content, item) ? (
+                          <Image
+                            src={itemThumb(content, item) as string}
+                            alt=""
+                            fill
+                            sizes="(min-width: 1024px) 340px, (min-width: 640px) 45vw, 90vw"
+                            className="object-cover"
+                          />
+                        ) : null}
+                      </div>
+                    ) : null}
+
                     {/*
                       Urun adi kart olcusunde (30px) Anton: cetveldeki 19px'lik
                       satirdan buyuk, cunku burada urun tek basina duruyor.
                     */}
                     <h3 className="brand-display text-[length:var(--ts-card-title)] leading-[var(--ts-title-leading)] text-balance uppercase">
-                      {item.name}
+                      <Latin>{item.name}</Latin>
                     </h3>
 
                     {item.description ? (

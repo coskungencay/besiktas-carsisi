@@ -1,5 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { placeStamp, hasMenu, menuHref } from "@/themes/_shared/data";
 import { hasAboutSection, shell, surface } from "@/themes/beyaz-oda/parts";
@@ -20,7 +22,7 @@ type NavLink = {
  * Girilmemisse orta sutun bos kalir, duzen bozulmaz.
  */
 export default function Header({ content }: SectionProps) {
-  const { name, t } = content;
+  const { name, logoUrl, t } = content;
   const coords = placeStamp(content);
 
   /*
@@ -70,7 +72,7 @@ export default function Header({ content }: SectionProps) {
       className={`${surface} bo-fade border-b border-[var(--brand-border)]`}
     >
       <div
-        className={`${shell} pe-14 sm:pe-0 flex flex-wrap items-center justify-between gap-x-8 gap-y-3 py-[28px] lg:grid lg:grid-cols-12 lg:gap-6`}
+        className={`${shell} flex flex-wrap items-center justify-between gap-x-8 gap-y-3 py-[28px] lg:grid lg:grid-cols-12 lg:gap-6`}
       >
         <a
           /* Capalarla ayni gerekce: menu sayfasindan da ana sayfaya donmeli. */
@@ -81,9 +83,25 @@ export default function Header({ content }: SectionProps) {
             icin vurgu rengi burada da EL ILE veriliyor; yoksa sayfadaki tek
             hover'siz baglanti bu olurdu.
           */
-          className="brand-display text-[13px] font-medium tracking-[0.02em] transition-colors hover:text-[var(--brand-accent)] lg:col-span-4"
+          className="brand-display flex items-center gap-2.5 text-[13px] font-medium tracking-[0.02em] transition-colors hover:text-[var(--brand-accent)] lg:col-span-4"
         >
-          {name}
+          {/*
+            Logo yuklendiyse kelime-markanin ONUNDE kucuk bir kare olarak
+            durur. Tasarimda logo yok, o yuzden hicbir zaman yer TUTMAZ:
+            yuklenmemisse eleman hic basilmaz ve serit tasarimdaki haline
+            birebir doner. Olcu 20px — bu seritteki yazi 13px, daha buyuk bir
+            isaret uc kolonluk marka alanini tasardi.
+          */}
+          {logoUrl ? (
+            <Image
+              src={logoUrl}
+              alt=""
+              width={20}
+              height={20}
+              className="size-5 shrink-0 object-contain"
+            />
+          ) : null}
+          <Latin>{name}</Latin>
         </a>
 
         {coords ? (

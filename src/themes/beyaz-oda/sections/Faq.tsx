@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   SectionIndex,
@@ -53,7 +54,7 @@ export default function Faq({ content }: SectionProps) {
                           </span>
 
                           <span className="brand-display text-[clamp(1rem,1.4vw,1.25rem)] leading-[1.35] tracking-[-0.015em] text-pretty">
-                            {item.question}
+                            <Latin>{item.question}</Latin>
                           </span>
 
                           {/*

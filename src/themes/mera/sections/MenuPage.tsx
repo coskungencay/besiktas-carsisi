@@ -1,7 +1,13 @@
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
-import { hasMenu, menuWithItems } from "@/themes/_shared/data";
+import {
+  anyItemHasImage,
+  hasMenu,
+  itemThumb,
+  menuWithItems,
+} from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   MenuLine,
@@ -190,7 +196,7 @@ export default function MenuPage({ content }: SectionProps) {
                               olculdu: 390px'de belge 545px. `anywhere`
                               min-content'i de kucultur, tasma biter. */}
                           <span className="underline-offset-[6px] wrap-anywhere hover:underline">
-                            {category.name}
+                            <Latin>{category.name}</Latin>
                           </span>
                         </a>
                       </li>
@@ -242,7 +248,7 @@ export default function MenuPage({ content }: SectionProps) {
                                   Agirlik yazmiyor, yani 400 — mera-regular
                                   brand-display'in 300'unu geri alir. */}
                               <h2 className="brand-display mera-regular min-w-0 text-[1.4375rem] italic rtl:not-italic">
-                                {category.name}
+                                <Latin>{category.name}</Latin>
                               </h2>
                             </div>
 
@@ -256,6 +262,14 @@ export default function MenuPage({ content }: SectionProps) {
                                       ? t.menu.featured
                                       : undefined
                                   }
+                                  thumb={itemThumb(content, item)}
+                                  /* Sutun KATEGORI bazinda acilir: tatlilarin
+                                     fotografi varken icecekler listesinde bos
+                                     kare acmanin anlami yok. */
+                                  reserveImage={anyItemHasImage(
+                                    content,
+                                    category.items,
+                                  )}
                                 />
                               ))}
                             </ul>

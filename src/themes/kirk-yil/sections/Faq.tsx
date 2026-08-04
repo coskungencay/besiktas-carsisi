@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import { paragraphs } from "@/themes/_shared/data";
 import {
@@ -51,7 +52,7 @@ export default function Faq({ content }: SectionProps) {
                   */}
                   <summary className="ky-summary flex cursor-pointer list-none items-baseline gap-5 py-3.5 text-start">
                     <span className="ky-prose flex-1 text-pretty">
-                      {item.question}
+                      <Latin>{item.question}</Latin>
                     </span>
 
                     {/* Ayractaki elmasin kucugu: kapali bos, acik dolu. */}

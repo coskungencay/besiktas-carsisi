@@ -298,6 +298,14 @@ export function getSiteContent(locale: Locale = DEFAULT_LOCALE): SiteContent {
     galeri: gallery.length > 0,
     whatsapp: Boolean(settings.whatsapp.trim()),
     duyuru: Boolean(settings.announcement.trim()),
+    /*
+     * Menu gorselleri bir "bolum" degil, menunun gorunum bicimi; yine de ayni
+     * mekanizmayla yonetiliyor cunku kural ayni: panelden kapatilabilsin ve
+     * hicbir urunde fotograf yoksa kendiliginden devre disi kalsin.
+     */
+    menuGorselleri: items.some(
+      (item) => item.isActive && item.imageUrl.trim() !== "",
+    ),
   };
   const isVisible = (key: string): boolean => {
     if (hidden.has(key)) return false;

@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   Hairline,
@@ -58,7 +59,7 @@ export default function Faq({ content }: SectionProps) {
                     <details className="group">
                       <summary className="vl-summary flex cursor-pointer list-none items-start justify-between gap-8 py-[1.1875rem] transition-colors hover:text-[var(--brand-primary)]">
                         <span className="brand-display text-[1.3125rem] leading-[1.4] text-pretty">
-                          {item.question}
+                          <Latin>{item.question}</Latin>
                         </span>
 
                         {/*

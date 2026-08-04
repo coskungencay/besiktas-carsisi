@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import type { SectionProps } from "@/themes/types";
 
 /**
@@ -43,7 +44,7 @@ export default function Footer({ content }: SectionProps) {
                     aria-label={link.label}
                     className="underline-offset-4 transition-colors hover:text-[var(--brand-primary)] hover:underline"
                   >
-                    {link.label}
+                    <Latin>{link.label}</Latin>
                   </a>
                 </li>
               ))}

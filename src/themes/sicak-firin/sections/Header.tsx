@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { fill } from "@/i18n";
 import { hasMenu, hoursRange, menuHref } from "@/themes/_shared/data";
@@ -76,7 +77,7 @@ export default function Header({ content }: SectionProps) {
       className="sf-fade brand-body border-b border-dashed border-[var(--brand-hairline)] bg-[var(--brand-surface)] text-[var(--brand-ink)]"
     >
       <div
-        className={`${shell} pe-14 sm:pe-0 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 py-5`}
+        className={`${shell} flex flex-wrap items-center justify-between gap-x-8 gap-y-4 py-5`}
       >
         {/*
           Marka blogu tasarimda YALIN yazi: 20px slab, sonunda vurgu noktasi.
@@ -94,7 +95,7 @@ export default function Header({ content }: SectionProps) {
             />
           ) : null}
           <span className="brand-display text-xl font-semibold tracking-[-0.01em]">
-            {name}
+            <Latin>{name}</Latin>
             {/* Tasarimin imzasi: marka adinin sonundaki vurgu noktasi. Icerik
                 degil susleme oldugu icin ekran okuyucudan gizli. */}
             <span aria-hidden="true" className="text-[var(--brand-accent)]">

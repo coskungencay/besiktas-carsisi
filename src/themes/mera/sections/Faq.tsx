@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   SectionHead,
@@ -45,7 +46,7 @@ export default function Faq({ content }: SectionProps) {
                 >
                   <details className="mera-detail">
                     <summary className="flex cursor-pointer items-baseline justify-between gap-8 py-4 text-[1rem] leading-[1.5] text-pretty transition-colors hover:text-[var(--brand-primary)]">
-                      <span>{item.question}</span>
+                      <span><Latin>{item.question}</Latin></span>
                       {/* Isaret salt gorsel; soruyu okuyan zaten satirin
                           acilabilir oldugunu <details> sayesinde biliyor. */}
                       <span

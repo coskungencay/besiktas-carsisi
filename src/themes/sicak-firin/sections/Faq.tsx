@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   SectionHead,
@@ -52,7 +53,7 @@ export default function Faq({ content }: SectionProps) {
                       (16px alt-ust, arada kesik cizgi).
                     */}
                     <summary className="flex cursor-pointer list-none items-start justify-between gap-6 py-4 text-[length:var(--brand-lead)] text-pretty transition-colors group-open:text-[var(--brand-primary)] hover:text-[var(--brand-primary)] [&::-webkit-details-marker]:hidden">
-                      <span className="min-w-0">{item.question}</span>
+                      <span className="min-w-0"><Latin>{item.question}</Latin></span>
 
                       {/*
                         Arti isareti; acikken 45 derece donup carpiya donusuyor.

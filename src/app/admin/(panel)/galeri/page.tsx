@@ -1,4 +1,5 @@
 import { GalleryManager } from "@/components/admin/GalleryManager";
+import { MediaQuota } from "@/components/admin/MediaQuota";
 import { getGalleryImages } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
@@ -15,6 +16,8 @@ export default function GalleryPage() {
           sürükleyerek değiştirin.
         </p>
       </header>
+
+      <MediaQuota />
 
       <GalleryManager images={images} />
     </div>

@@ -71,6 +71,49 @@ export function featuredItems(content: SiteContent, limit = 3): MenuItem[] {
     .slice(0, limit);
 }
 
+/**
+ * Menude urun fotograflari gosterilsin mi?
+ *
+ * Musteri panelden kapatabilir; hicbir urunde fotograf yoksa icerik katmani
+ * zaten false dondurur (bkz. lib/content.ts). Temalar bu tek soruyu sorar.
+ */
+export function showMenuImages(content: SiteContent): boolean {
+  return content.isVisible("menuGorselleri");
+}
+
+/**
+ * Bir urunun kucuk onizleme gorseli — YOKSA null.
+ *
+ * null donmesi onemli: tasarimlar "fotografi olan urun" ile "olmayan urun"
+ * arasinda duzeni degistirmemeli. Fotografsiz urun, fotograf ozelligi hic
+ * yokmus gibi gorunmeli; yoksa yarisi resimli yarisi bos bir liste cikar.
+ */
+export function itemThumb(
+  content: SiteContent,
+  item: MenuItem,
+): string | null {
+  if (!showMenuImages(content)) return null;
+  return item.thumbUrl.trim() || null;
+}
+
+/** Ayni kural, buyuk gosterim icin tam boy gorsel. */
+export function itemImage(
+  content: SiteContent,
+  item: MenuItem,
+): string | null {
+  if (!showMenuImages(content)) return null;
+  return item.imageUrl.trim() || null;
+}
+
+/** Menude en az bir urunun fotografi var mi (izgara/duzen kararlari icin). */
+export function anyItemHasImage(
+  content: SiteContent,
+  items: MenuItem[],
+): boolean {
+  if (!showMenuImages(content)) return false;
+  return items.some((item) => item.thumbUrl.trim() !== "");
+}
+
 /* -------------------------------------------------------------------------- */
 /*                                   Galeri                                    */
 /* -------------------------------------------------------------------------- */

@@ -1,7 +1,14 @@
+import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
-import { hasMenu, menuWithItems } from "@/themes/_shared/data";
+import {
+  anyItemHasImage,
+  hasMenu,
+  itemThumb,
+  menuWithItems,
+} from "@/themes/_shared/data";
 import { Sprig, bodyText, sectionEyebrow } from "@/themes/yesil-avlu/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -96,14 +103,18 @@ export default function MenuPage({ content }: SectionProps) {
                   /* Hover rengi tema genelinde tanimli (tokens.css). */
                   className="ya-nav brand-body text-[var(--brand-ink-muted)] transition-colors"
                 >
-                  {category.name}
+                  <Latin>{category.name}</Latin>
                 </a>
               ))}
             </nav>
           ) : null}
 
           <div className="mt-14">
-            {categories.map((category) => (
+            {categories.map((category) => {
+              /* Fotograf sutunu kategori bazinda acilir. */
+              const withImages = anyItemHasImage(content, category.items);
+
+              return (
               <section
                 key={category.id}
                 id={`menu-kategori-${category.id}`}
@@ -120,7 +131,7 @@ export default function MenuPage({ content }: SectionProps) {
                   id={`menu-kategori-${category.id}-title`}
                   className="brand-display ya-serif-book sticky top-0 z-10 border-b border-[var(--brand-border)] bg-[var(--brand-surface)] pt-5 pb-3.5 text-[1.625rem] italic sm:text-[1.75rem]"
                 >
-                  {category.name}
+                  <Latin>{category.name}</Latin>
                 </h2>
 
                 <Reveal>
@@ -138,13 +149,38 @@ export default function MenuPage({ content }: SectionProps) {
                         key={item.id}
                         className="break-inside-avoid py-[0.8125rem]"
                       >
+                        <div
+                          className={
+                            withImages ? "flex items-start gap-4" : ""
+                          }
+                        >
+                          {withImages ? (
+                            /* Sayfada tek tek kart basmak yerine kucuk kare:
+                               columns-2 ile akan uzun listede buyuk gorseller
+                               kolonlari kirardi. Yuvarlatma temanin token'i. */
+                            <span
+                              className={`relative block size-14 shrink-0 overflow-hidden rounded-[var(--brand-radius)] sm:size-16 ${itemThumb(content, item) ? "bg-[var(--brand-surface-alt)]" : ""}`}
+                            >
+                              {itemThumb(content, item) ? (
+                                <Image
+                                  src={itemThumb(content, item) as string}
+                                  alt=""
+                                  fill
+                                  sizes="64px"
+                                  className="object-cover"
+                                />
+                              ) : null}
+                            </span>
+                          ) : null}
+
+                          <div className="min-w-0 flex-1">
                         {/*
                           flex-wrap + min-w-0: uzun urun adi fiyatin uzerine
                           binmez, sigmayinca fiyat alt satira duser.
                         */}
                         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
                           <h3 className="brand-body min-w-0 text-[0.9375rem] font-light">
-                            {item.name}
+                            <Latin>{item.name}</Latin>
                             {item.isFeatured ? (
                               <span className="brand-body brand-eyebrow ms-3 text-[0.6rem] text-[var(--brand-accent)]">
                                 {t.menu.featured}
@@ -167,12 +203,15 @@ export default function MenuPage({ content }: SectionProps) {
                             {item.description}
                           </p>
                         ) : null}
+                          </div>
+                        </div>
                       </li>
                     ))}
                   </ul>
                 </Reveal>
               </section>
-            ))}
+              );
+            })}
           </div>
 
           {/*

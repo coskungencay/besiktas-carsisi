@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import {
@@ -113,7 +114,7 @@ export default function Testimonials({ content }: SectionProps) {
                           /* mt-auto: metin kisa olsa da imza hucrenin dibine oturur. */
                           <footer className="mt-auto">
                             <cite className="brand-display text-[length:var(--ts-item)] leading-[1.25] tracking-[0.01em] not-italic uppercase text-[var(--brand-ink)]">
-                              {item.author}
+                              <Latin>{item.author}</Latin>
                             </cite>
                           </footer>
                         ) : null}

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { fill } from "@/i18n";
 import { hasMenu, hoursRange, menuHref } from "@/themes/_shared/data";
@@ -55,11 +56,17 @@ export default function Header({ content }: SectionProps) {
     <header className={`${surface} brand-body`}>
       {/* mera-fade: acilista serit yumusakca belirir (tasarim: meraFade .8s). */}
       <div
-        className={`${page} mera-fade flex flex-wrap items-baseline justify-between gap-x-10 gap-y-4 pt-6 pe-14 sm:pt-[1.625rem] sm:pe-0`}
+        className={`${page} mera-fade flex flex-wrap items-baseline justify-between gap-x-10 gap-y-4 pt-6 sm:pt-[1.625rem]`}
       >
         {/* Marka adi ana sayfaya doner: menu sayfasinda "#hero" capasi yok,
             kunye adi orada olu bir baglanti olurdu. */}
-        <Link href={home} className="flex items-baseline gap-3">
+        {/*
+          Marka blogu items-CENTER: seridin geri kalani items-baseline (farkli
+          puntolu metinlerin alt cizgisi hizali dursun diye), ama logo bir
+          METIN DEGIL — baseline'i yok. Blok baseline'da birakilinca logo
+          asagi kayiyor, ad ona gore yukarida duruyordu.
+        */}
+        <Link href={home} className="flex items-center gap-3">
           {/* Logo yoksa hic basilmaz: bu tasarimda marka adi zaten kunyenin
               kendisi, yer tutucu bir isaret ince seridi bozar. */}
           {logoUrl.trim() ? (
@@ -69,13 +76,13 @@ export default function Header({ content }: SectionProps) {
               width={120}
               height={40}
               priority
-              className="h-5 w-auto self-center object-contain"
+              className="h-5 w-auto object-contain"
             />
           ) : null}
           {/* mera-regular: tasarimda marka adinda agirlik yazmiyor (=400);
               300'de 19px'lik serif kunye adi silik kaliyordu. */}
           <span className="brand-display mera-regular mera-mark text-[1.1875rem]">
-            {name}
+            <Latin>{name}</Latin>
           </span>
         </Link>
 

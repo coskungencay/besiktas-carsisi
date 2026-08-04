@@ -54,8 +54,15 @@ function pickFromHeader(acceptLanguage: string | null): string {
 }
 
 export const config = {
-  // /admin, /api, /_next ve uzantili dosyalar disinda her yerde calisir.
+  /*
+   * /admin, /api, /_next ve uzantili dosyalar disinda her yerde calisir.
+   *
+   * opengraph-image DISLANMALI: uzantisi olmadigi icin bu kalibin icine
+   * giriyor, dile yonlendiriliyor (/tr/opengraph-image) ve orada boyle bir
+   * rota olmadigi icin 404 donuyordu — yani WhatsApp/X/LinkedIn onizlemesi
+   * hicbir sitede calismiyordu. Ayni sey apple-icon icin de gecerli.
+   */
   matcher: [
-    "/((?!admin|api|_next/static|_next/image|icon.svg|placeholders|.*\\..*).*)",
+    "/((?!admin|api|_next/static|_next/image|icon.svg|opengraph-image|apple-icon|placeholders|.*\\..*).*)",
   ],
 };

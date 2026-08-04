@@ -1,7 +1,13 @@
 import Link from "next/link";
 
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
-import { hasMenu, menuWithItems } from "@/themes/_shared/data";
+import {
+  anyItemHasImage,
+  hasMenu,
+  itemThumb,
+  menuWithItems,
+} from "@/themes/_shared/data";
 import {
   DoubleRuleDark,
   OrnamentDark,
@@ -150,7 +156,7 @@ export default function MenuPage({ content }: SectionProps) {
                           href={`#${anchorId(category)}`}
                           className="ky-strip break-words text-[var(--brand-surface)]/70 underline-offset-[6px] transition-colors hover:text-[var(--brand-accent)] hover:underline"
                         >
-                          {category.name}
+                          <Latin>{category.name}</Latin>
                         </a>
                       </li>
                     ))}
@@ -198,7 +204,7 @@ export default function MenuPage({ content }: SectionProps) {
                           id={anchorId(category)}
                           className="ky-eyebrow scroll-mt-8 break-words border-b border-[var(--brand-surface)]/25 pb-3 text-[var(--brand-accent)]"
                         >
-                          {category.name}
+                          <Latin>{category.name}</Latin>
                         </h2>
 
                         <ul className="mt-1.5 flex flex-col">
@@ -207,6 +213,11 @@ export default function MenuPage({ content }: SectionProps) {
                               key={item.id}
                               item={item}
                               featuredLabel={t.menu.featured}
+                              thumb={itemThumb(content, item)}
+                              reserveImage={anyItemHasImage(
+                                content,
+                                category.items,
+                              )}
                             />
                           ))}
                         </ul>

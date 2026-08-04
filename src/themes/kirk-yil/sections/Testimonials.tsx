@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import { SectionTitle, shell, surface } from "@/themes/kirk-yil/parts";
@@ -79,7 +80,7 @@ function QuoteCard({
 
       {/* Imza satiri tasarimda 12-13px / .18em — kunye serit olcusu. */}
       <figcaption className="brand-body ky-strip mt-5 text-[var(--brand-ink-muted)]">
-        {item.author}
+        <Latin>{item.author}</Latin>
       </figcaption>
     </figure>
   );

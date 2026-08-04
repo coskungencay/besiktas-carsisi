@@ -1,3 +1,4 @@
+import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import {
@@ -61,7 +62,7 @@ export default function Testimonials({ content }: SectionProps) {
                 </blockquote>
 
                 <figcaption className="brand-display border-t border-[var(--brand-border)] pt-4 text-base">
-                  {item.author}
+                  <Latin>{item.author}</Latin>
                 </figcaption>
               </figure>
             </Reveal>
