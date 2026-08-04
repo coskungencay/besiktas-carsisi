@@ -1,5 +1,11 @@
-import { coordinateLabel } from "@/themes/_shared/data";
-import { labelStrip, page, surface } from "@/themes/mera/parts";
+import { placeStamp } from "@/themes/_shared/data";
+import {
+  labelStrip,
+  labelStripBase,
+  link,
+  page,
+  surface,
+} from "@/themes/mera/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
@@ -15,14 +21,16 @@ import type { SectionProps } from "@/themes/types";
 export default function Footer({ content }: SectionProps) {
   const { name, tagline, contact, socialLinks, t } = content;
   const year = new Date().getFullYear();
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
 
   const mark = contact.locality ? `${name} · ${contact.locality}` : name;
 
   return (
     <footer className={`${surface} brand-body`}>
       <div className={`${page} pb-16`}>
-        <div className="flex flex-wrap items-baseline justify-between gap-x-10 gap-y-3 border-t border-[var(--brand-border)] pt-5">
+        {/* Serit cizgisi tasarimda murekkebin %12 opakligi (bolum ayracindan
+            daha ince): kapanis bandi sayfayi bolmez, yalnizca kapatir. */}
+        <div className="flex flex-wrap items-baseline justify-between gap-x-10 gap-y-3 border-t border-[var(--mera-hair)] pt-5">
           <p className={labelStrip}>{mark}</p>
 
           {tagline ? (
@@ -45,16 +53,18 @@ export default function Footer({ content }: SectionProps) {
                kunyesinin ritmini bozardi. */
             <nav aria-label={t.social.title} className="w-full">
               <ul className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
-                {socialLinks.map((link) => (
-                  <li key={`${link.platform}-${link.url}`}>
+                {socialLinks.map((social) => (
+                  <li key={`${social.platform}-${social.url}`}>
                     <a
-                      href={link.url}
+                      href={social.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={link.label}
-                      className={`${labelStrip} underline-offset-[6px] transition-colors hover:text-[var(--brand-primary)] hover:underline`}
+                      aria-label={social.label}
+                      /* Tasarimin global `a` kurali: marka renginde, ustune
+                         gelince mureekkebe doner. */
+                      className={`${labelStripBase} ${link} underline-offset-[6px] hover:underline`}
                     >
-                      {link.label}
+                      {social.label}
                     </a>
                   </li>
                 ))}

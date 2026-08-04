@@ -1,23 +1,28 @@
-import { coordinateLabel } from "@/themes/_shared/data";
-import { edgeTop, pillLine, shell, surface } from "@/themes/patika/parts";
+import { placeStamp } from "@/themes/_shared/data";
+import { pillLine, shell, surface } from "@/themes/patika/parts";
 import type { SectionProps } from "@/themes/types";
 
 /** Rozet baglantilarinin ortak hali: kunye rozeti + neon hover. */
 const metaLink = `${pillLine} pk-meta transition-colors hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)]`;
 
 /**
- * Kapanis afisi: kalin ust kenarlik ve sayfayi kapatan DEV marka adi.
- * Altinda sosyal baglanti rozetleri, en altta tasarimdaki ince kunye satiri
- * (11px, genis aralikli, buyuk harf).
+ * Kapanis: INCE BIR KUNYE SATIRI.
+ *
+ * Tasarimda footer diye ayri bir kat yok; lime blogun altinda 11px'lik, genis
+ * harf arali, soluk tek bir satir var: solda marka, ortada mekanin tarifi,
+ * sagda telif. Onceki turda burada sayfayi ikinci kez acan DEV bir marka adi
+ * vardi — marka zaten ust seritte ve hero'da geciyor, ucuncu kez tekrarlanmasi
+ * kapanisi agirlastiriyordu. Ust kenarlik da kaldirildi: lime blok zaten
+ * sayfayi kapatan ayrac.
  *
  * SOSYAL BAGLANTILAR IKON DEGIL METIN: bu temanin dili tipografi; kucuk ikon
  * setleri afisin kalin harfleri yaninda cerezlesirdi. Platform adlari zaten
  * rozet formunda ve nav ile ayni sekli tasiyor.
  */
 export default function Footer({ content }: SectionProps) {
-  const { name, contact, socialLinks, t } = content;
+  const { name, tagline, contact, socialLinks, t } = content;
   const year = new Date().getFullYear();
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
 
   /*
    * Instagram iki yerden gelebiliyor: iletisim alani (kullanici adi) ve sosyal
@@ -31,20 +36,20 @@ export default function Footer({ content }: SectionProps) {
     !hasSocialInstagram && Boolean(contact.instagram && contact.instagramHref);
 
   return (
-    <footer className={`${surface} ${edgeTop}`}>
-      <div className={`${shell} py-12 sm:py-16`}>
-        <p className="pk-h2 text-balance text-[var(--brand-primary)]">{name}</p>
-
-        {socialLinks.length > 0 ? (
-          <nav aria-labelledby="footer-social-title" className="mt-9">
-            <h2
-              id="footer-social-title"
-              className="pk-eyebrow text-[var(--brand-primary)]"
-            >
+    <footer className={surface}>
+      {/*
+        Ust bosluk 26px: tasarimda kunye, sayfayi kapatan lime blogun hemen
+        altinda duruyor — bolum araligi (96px) kadar acilirsa yeniden ayri bir
+        kat gibi okunur. 44px'lik alt bosluk sayfanin sonu (tasarimda da oyle).
+      */}
+      <div className={`${shell} pt-[1.625rem] pb-11`}>
+        {socialLinks.length > 0 || showInstagramMeta ? (
+          <nav aria-labelledby="footer-social-title">
+            <h2 id="footer-social-title" className="sr-only">
               {t.social.title}
             </h2>
 
-            <ul className="mt-4 flex flex-wrap items-center gap-2.5">
+            <ul className="flex flex-wrap items-center gap-2.5">
               {socialLinks.map((link) => (
                 <li key={link.platform}>
                   <a
@@ -58,32 +63,46 @@ export default function Footer({ content }: SectionProps) {
                   </a>
                 </li>
               ))}
+
+              {showInstagramMeta ? (
+                <li>
+                  <a
+                    href={contact.instagramHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={metaLink}
+                    dir="ltr"
+                  >
+                    @{contact.instagram}
+                  </a>
+                </li>
+              ) : null}
             </ul>
           </nav>
         ) : null}
 
-        <div className="mt-8 flex flex-wrap items-center gap-2.5">
-          <p className={`${pillLine} pk-meta`}>
-            © {year} {name}
-          </p>
+        {/*
+          Uc parcali kunye satiri (tasarim: justify-content:space-between).
+          Renk govde metninden de soluk — satir sayfayi kapatir, dikkat cekmez.
+        */}
+        <div
+          className={`pk-meta flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-[var(--brand-ink-faint)] ${
+            socialLinks.length > 0 || showInstagramMeta ? "mt-8" : ""
+          }`}
+        >
+          <span>{name}</span>
 
-          {coords ? (
-            <p className={`${pillLine} pk-meta`} dir="ltr">
-              {coords}
-            </p>
+          {/*
+            Ortada tasarimin "mekani bir cirpida tarif eden" satiri: slogan.
+            Slogan yoksa koordinat ayni isi gorur (her zaman soldan saga).
+          */}
+          {tagline ? (
+            <span className="text-pretty">{tagline}</span>
+          ) : coords ? (
+            <span dir="ltr">{coords}</span>
           ) : null}
 
-          {showInstagramMeta ? (
-            <a
-              href={contact.instagramHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={metaLink}
-              dir="ltr"
-            >
-              @{contact.instagram}
-            </a>
-          ) : null}
+          <span>&copy; {year}</span>
         </div>
       </div>
     </footer>

@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import type { MenuItem } from "@/themes/types";
+
 /**
  * Kırk Yıl'a OZEL parcalar.
  *
@@ -150,6 +152,124 @@ export function CategoryHeading({ children }: { children: ReactNode }) {
       </h3>
       <span aria-hidden="true" className="h-px flex-1 bg-[var(--brand-border)]" />
     </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*                        Koyu menu bandi / menu sayfasi                       */
+/* -------------------------------------------------------------------------- */
+/*
+ * Menu ana sayfada bir VITRIN bolumu, ayrica /menu adresinde TAM bir sayfa.
+ * Ikisi de tasarimin koyu "fiyat listesi tabelasi" dilini konusuyor; ortak
+ * parcalar burada duruyor ki iki dosya zamanla birbirinden ayrismasin.
+ */
+
+/** Koyu bandin zemini: tasarimda sayfanin tek ters kontrastli alani. */
+export const board = "bg-[var(--brand-ink)] text-[var(--brand-surface)]";
+
+/**
+ * Ayracin koyu zemin surumu.
+ *
+ * NEDEN Ornament'tan AYRI: acik zeminde cizgiler altin sarisi; koyu zeminde
+ * tasarim cizgileri kagit renginin %30'una dusuruyor ve yalnizca ortadaki
+ * isaret altin kaliyor. Ayni bilesende iki renk semasi tutmak yerine ikinci
+ * bir parca yazmak okunakli kaliyor.
+ */
+export function OrnamentDark({ className = "" }: { className?: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`mx-auto flex w-52 items-center gap-4 ${className}`}
+    >
+      <span className="h-px flex-1 bg-[var(--brand-surface)]/30" />
+      <span className="size-1.5 rotate-45 border border-[var(--brand-accent)]" />
+      <span className="h-px flex-1 bg-[var(--brand-surface)]/30" />
+    </div>
+  );
+}
+
+/** Koyu bandin cift cizgisi: --ky-rule-color murekkep tonunda, burada gorunmez. */
+export function DoubleRuleDark({ className = "" }: { className?: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`border-t-[3px] border-double border-[var(--brand-surface)]/30 ${className}`}
+    />
+  );
+}
+
+/**
+ * Koyu zeminde cerceveli buton.
+ *
+ * NEDEN buttonGhost DEGIL: o parca acik zemin icin yazildi (murekkep yazi,
+ * murekkep cerceve) ve koyu bandda neredeyse gorunmez kaliyor. Olculer
+ * (32px yatay, 15px dikey dolgu) tasarimdaki butonlarla ayni.
+ */
+export const buttonGhostDark =
+  "ky-btn-label inline-flex items-center justify-center whitespace-nowrap border border-[var(--brand-surface)]/35 px-8 py-[15px] text-[var(--brand-surface)] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]";
+
+/**
+ * Fiyat listesi satiri: ad + noktali dolgu + fiyat, altinda aciklama.
+ *
+ * Noktali dolgu eski fiyat listelerinin imzasi; flex-1 oldugu icin ad ile
+ * fiyat arasi ne olursa olsun doluyor ve RTL'de dogru yonde uzuyor.
+ *
+ * `featuredLabel` verilmezse "one cikan" rozeti hic basilmaz: vitrin bolumu
+ * zaten yalnizca one cikan urunleri gosterdigi icin orada rozet gereksiz
+ * tekrar olurdu.
+ */
+export function PriceRow({
+  item,
+  featuredLabel,
+}: {
+  item: MenuItem;
+  featuredLabel?: string;
+}) {
+  return (
+    <li className="py-3.5">
+      <div className="flex items-baseline gap-2.5 text-[19px] font-light">
+        {/*
+          break-words + min-w-0: urun adi DB'den geliyor, uzunluguna
+          guvenemeyiz. 390px'te uzun bir ad satira sigmayip fiyatin uzerine
+          binmesin diye ad once kirilir, fiyat hic kuculmez (shrink-0).
+        */}
+        <p className="min-w-0 break-words">
+          {item.name}
+          {featuredLabel && item.isFeatured ? (
+            <span className="ky-eyebrow ms-3 text-[var(--brand-accent)]">
+              {featuredLabel}
+            </span>
+          ) : null}
+        </p>
+
+        {item.price ? (
+          <span
+            aria-hidden="true"
+            className="mb-1.5 min-w-4 flex-1 border-b border-dotted border-[var(--brand-surface)]/30"
+          />
+        ) : null}
+
+        {/*
+          Fiyat rengi tasarimda kagit degil acik altin (#DCC79A). Token
+          eklemeden, altin ile kagidi karistirarak uretiliyor; musteri altini
+          degistirirse fiyat rengi de onunla birlikte kayar.
+        */}
+        {item.price ? (
+          <p
+            className="shrink-0 tabular-nums text-[color-mix(in_srgb,var(--brand-accent)_65%,var(--brand-surface))]"
+            dir="ltr"
+          >
+            {item.price}
+          </p>
+        ) : null}
+      </div>
+
+      {item.description ? (
+        <p className="ky-note mt-1 text-pretty text-[var(--brand-surface)]/65">
+          {item.description}
+        </p>
+      ) : null}
+    </li>
   );
 }
 

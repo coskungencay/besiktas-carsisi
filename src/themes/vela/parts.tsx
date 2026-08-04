@@ -15,12 +15,51 @@ import type { ReactNode } from "react";
  * Ic kenar boslugu.
  * Tasarim 1440px'de saglı sollu 60px bosluk kullaniyor; lg kiriliminda birebir
  * o degere gecilir (kucuk ekranlarda 60px cok fazla olurdu).
+ *
+ * NEDEN sm'de 40px: onceki deger `sm:px-15` idi, yani 3.75rem — lg ile birebir
+ * ayni. Yorumun soyledigi kademe pratikte yoktu ve 640px'lik bir ekranda
+ * iki yandan 120px gidiyordu. Kademe artik 24 → 40 → 60px.
  */
 export const shell =
-  "mx-auto w-full max-w-[var(--brand-container)] px-6 sm:px-15 lg:px-[3.75rem]";
+  "mx-auto w-full max-w-[var(--brand-container)] px-6 sm:px-10 lg:px-[3.75rem]";
 
 /** Bolum kabugu: koyu zemin + govde yazi tipi. */
 export const surface = "bg-[var(--brand-surface)] text-[var(--brand-ink)]";
+
+/**
+ * Bolum dolgusu — YALNIZCA USTTEN.
+ *
+ * NEDEN brand-section DEGIL: ortak utility dolguyu alta da veriyor, yani iki
+ * bolum arasindaki bosluk 118px yerine 236px oluyordu. Tasarimda her bolum
+ * `padding: 118px 60px 0` — alt dolgu YOK, aradaki nefesi bir sonraki bolumun
+ * ust dolgusu veriyor. Sayfa boyunca ikiye katlanan bu bosluk bizimkini
+ * tasarimdan cok daha uzun gosteriyordu.
+ */
+export const sectionTop =
+  "pt-[var(--brand-section-py)] sm:pt-[var(--brand-section-py-lg)]";
+
+/**
+ * "Deneyim" ve "yorumlar" izgaralarinin kolon sayisi.
+ *
+ * Tasarimda tam uc kart var ve satir tam doluyor. Icerik DB'den geldigi icin
+ * sayi degisken: sabit uc kolonda 1 kart uclu izgaranin bir hucresinde tek
+ * basina, 2 kart ise yarim bir satir olarak kaliyordu — checklist'in "kolon
+ * dengesi" maddesi tam olarak bu.
+ *
+ * Kural: uce tam bolunuyorsa ya da TEK sayiysa uc kolon (5 → 3+2, 7 → 3+3+1
+ * yerine yine uclu ritim), cift sayiysa iki kolon (2 → 2, 4 → 2+2, 8 → 2x4).
+ * Tek kart hic izgaraya girmez; satiri okunmaz uzunlukta olmasin diye
+ * yalnizca bir olcu sinirina (45rem) alinir.
+ *
+ * NEDEN CAGIRAN TARAFTA `sm:grid-cols-2` YOK: ayni utility'nin iki ornegi
+ * carpistiginda uretilen stil dosyasindaki sira kazanir, sinif dizisindeki
+ * sira degil. Bu yuzden tum kirilimlar tek yerden, tek dize halinde veriliyor.
+ */
+export function balancedColumns(count: number) {
+  if (count <= 1) return "max-w-[45rem]";
+  if (count % 2 === 0 && count % 3 !== 0) return "sm:grid-cols-2";
+  return "sm:grid-cols-2 lg:grid-cols-3";
+}
 
 /**
  * Etiket olculeri — RENKSIZ govde.
@@ -49,6 +88,25 @@ export const meta = `${metaBase} text-[var(--brand-primary)]`;
 export const metaMuted = `${metaBase} text-[var(--brand-ink-muted)]`;
 export const metaInk = `${metaBase} text-[var(--brand-ink)]`;
 
+/**
+ * Fotograf uzerindeki nav baglantisi: murekkebin %80'i (bkz.
+ * --brand-ink-soft). Ust serit hero'nun uzerinde durdugu icin soluk gri
+ * (metaMuted) burada okunmuyordu.
+ */
+export const metaSoft = `${metaBase} text-[var(--brand-ink-soft)]`;
+
+/**
+ * Baglanti rengi.
+ *
+ * Tasarimin <style> blogundaki global kural: `a { color:#C4A265 }` ve
+ * `a:hover { color:#F2EDE4 }`. Yani sayfadaki TUM baglantilar altin, uzerine
+ * gelince krem. Bu kural inline style'larda gorunmedigi icin ilk turda
+ * atlanmisti; iletisim satirlari ve sosyal baglantilar murekkep renginde
+ * kalmisti.
+ */
+export const goldLink =
+  "text-[var(--brand-primary)] transition-colors hover:text-[var(--brand-accent)]";
+
 /** Govde metni: tasarimda 15px / 1.8 ve kisilmis kontrast. */
 export const prose =
   "text-[0.9375rem] leading-[1.8] text-pretty text-[var(--brand-ink-muted)]";
@@ -73,10 +131,39 @@ export const proseFine =
   "text-[0.8125rem] leading-[1.75] text-pretty text-[var(--brand-ink-muted)]";
 
 /**
+ * Temanin TEK buton bicimi.
+ *
+ * Tasarimdaki tek buton (rezervasyon talebi): ince altin cerceve, 15/32px
+ * dolgu, 11.5px / .24em uppercase metin, uzerine gelince zemin altina donuyor.
+ * Radius yok — tema genelinde kose yok.
+ *
+ * NEDEN TEK YERDE: ayni bicim artik uc yerde geciyor (yol tarifi, menu
+ * vitrinindeki "tum menuyu gor", menu sayfasinin donus baglantisi). Uc kopya
+ * zamanla birbirinden ayrilirdi.
+ */
+const buttonBase =
+  "inline-flex items-center gap-3 border px-8 py-[0.9375rem] text-[0.71875rem] leading-[1.6] uppercase tracking-[var(--brand-meta-tracking)] transition-colors";
+
+/** Koyu zemin uzerinde: altin cerceve, dolunca zemin altin olur. */
+export const goldButton = `${buttonBase} border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary)] hover:text-[var(--brand-primary-contrast)]`;
+
+/**
+ * KREM panel uzerinde ayni buton.
+ *
+ * NEDEN AYRI: acik zeminde parlak altin okunmuyor; panelin kendi koyu altini
+ * (--brand-primary-deep) kullanilir, dolunca yazi panel zeminine (krem) doner.
+ */
+export const goldButtonOnAccent = `${buttonBase} border-[var(--brand-primary-deep)] text-[var(--brand-primary-deep)] hover:bg-[var(--brand-primary-deep)] hover:text-[var(--brand-accent)]`;
+
+/**
  * Sac teli cizgi.
  *
  * `tone="gold"` hero'daki uzun ayrac icin: tam altin cok parlak kalirdi,
  * opaklik ile kisilir — sabit renk yazmadan ayni etkiyi verir.
+ *
+ * Opaklik tasarimdaki degerlerden: altin ayraclar rgba(196,162,101,.35) ve
+ * .28 arasinda; %35 ikisinin de gorunumunu veriyor. Onceki %40 belirgin
+ * daha parlakti.
  */
 export function Hairline({
   className = "",
@@ -87,7 +174,7 @@ export function Hairline({
 }) {
   const color =
     tone === "gold"
-      ? "bg-[var(--brand-primary)] opacity-40"
+      ? "bg-[var(--brand-primary)] opacity-35"
       : "bg-[var(--brand-border)]";
   return <div aria-hidden="true" className={`h-px w-full ${color} ${className}`} />;
 }

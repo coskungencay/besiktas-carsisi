@@ -25,11 +25,7 @@ export default function Faq({ content }: SectionProps) {
     <section id="sss" aria-labelledby="faq-title" className={surface}>
       <div className={`${shell} pk-section`}>
         <Reveal>
-          <SectionHead
-            eyebrow={t.faq.eyebrow}
-            title={t.faq.title}
-            titleId="faq-title"
-          />
+          <SectionHead title={t.faq.title} titleId="faq-title" />
         </Reveal>
 
         <Reveal delay={0.08}>

@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 
+import { closedDayLabels, hoursRange } from "@/themes/_shared/data";
+import type { Highlight, SiteContent } from "@/themes/types";
+
 /**
  * Beyaz Oda'ya OZEL kucuk parcalar.
  *
@@ -16,8 +19,19 @@ export const shell = "mx-auto w-full max-w-[var(--brand-container)] px-6 sm:px-1
 /** Bolum kabugu: zemin + govde yazi tipi. */
 export const surface = "bg-[var(--brand-surface)] text-[var(--brand-ink)]";
 
-/** Monospace kunye yazisi (SAAT · 08–18 gibi) — tasarimda 11.5px. */
-export const meta = "bo-mono text-[11.5px] text-[var(--brand-ink-muted)]";
+/**
+ * Monospace kunye yazisi (SAAT · 08–18 gibi) — tasarimda 11.5px / 300.
+ * Agirlik burada yaziliyor cunku .bo-mono bilerek agirliksiz (bkz. tokens.css).
+ */
+export const meta = "bo-mono font-light text-[11.5px] text-[var(--brand-ink-muted)]";
+
+/**
+ * Liste satirlarinin bastaki sira numarasi (menu 01, 02...).
+ *
+ * .bo-index DEGIL: tasarimda bolum indeksleri ("— 01") acikca 300, buna karsilik
+ * liste numaralari agirlik yazmadigi icin 400. Iki kademe ayni mono ailede.
+ */
+export const rowNumber = "bo-mono text-[11px] text-[var(--brand-ink-faint)]";
 
 /**
  * Bolum ust boslugu. Tasarimda bolumler 118px bosluk sonrasi ince bir cizgiyle
@@ -30,6 +44,46 @@ export const sectionTop =
 /** Cizgi + 34px + 12 kolonluk izgara. */
 export const sectionGrid =
   "grid gap-6 border-t border-[var(--brand-border)] pt-[34px] lg:grid-cols-12";
+
+/**
+ * Kunye satirlarinin hero ile hakkimizda arasinda paylastirilmasi.
+ *
+ * Tasarimda IKI ayri kunye blogu var ve ikisi ayni veriyi tasimiyor:
+ *   - hero'daki uc satir saatten turer ("SAAT · 08—18", "KAPALI · PAZAR"),
+ *   - hakkimizdanin sagindaki tablo isletmenin sayisal kunyesidir
+ *     (MENU KALEMI 5, METREKARE 18 ...) — bizde "one cikanlar".
+ *
+ * Bolme TEK yerde yapiliyor ki iki bolum ayni satirlari iki kez basmasin.
+ * Saat girilmemisse hero bos kalmasin diye one cikanlar hero'ya gecer; o
+ * durumda hakkimizdaki tablo hic basilmaz.
+ */
+export function metaColumns(content: SiteContent): {
+  hero: Highlight[];
+  about: Highlight[];
+} {
+  const hours: Highlight[] = [];
+
+  const range = hoursRange(content.openingHours);
+  if (range) hours.push({ label: content.t.hours.label, value: range });
+
+  const closed = closedDayLabels(content.openingHours);
+  if (closed.length > 0) {
+    hours.push({ label: content.t.hours.closed, value: closed.join(", ") });
+  }
+
+  if (hours.length === 0) return { hero: content.highlights, about: [] };
+  return { hero: hours, about: content.highlights };
+}
+
+/**
+ * Hakkimizda bolumu basilacak mi?
+ *
+ * Header'daki nav ile About.tsx AYNI kosulu kullanmali; yoksa bolum kendini
+ * basmadiginda ust seritte hicbir yere gitmeyen kirik bir capa kalir.
+ */
+export function hasAboutSection(content: SiteContent): boolean {
+  return content.about !== "" || metaColumns(content).about.length > 0;
+}
 
 /**
  * Bolum indeksi + baslik.
@@ -52,7 +106,12 @@ export function SectionIndex({
 }) {
   return (
     <>
-      <div className="bo-index tracking-[0.04em] lg:col-span-2">
+      {/*
+        Harf araligi YOK: tasarimda bolum indeksleri ("— 01 / HAKKINDA") duz
+        mono, yalnizca hero'nun "— 00" satiri .04em tasiyor. Bolum adi kendi
+        brand-eyebrow'undan araligini aliyor (Arapca'da sifirlanan tek yer).
+      */}
+      <div className="bo-index lg:col-span-2">
         <p aria-hidden="true">— {index}</p>
         <h2 id={titleId} className="brand-eyebrow">
           {title}

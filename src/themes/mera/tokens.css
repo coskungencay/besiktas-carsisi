@@ -49,6 +49,31 @@ html[data-theme="mera"] {
   --brand-ink-faint: color-mix(in srgb, var(--brand-ink) 48%, var(--brand-surface));
 
   /*
+   * --- Ayirici cizgiler ---
+   * Tasarim, cizgiler icin ayri bir kenarlik rengi KULLANMIYOR: hepsi
+   * murekkebin farkli opakliklari (rgba(26,23,20,.16/.12/.10/.28)). Bizim
+   * --brand-border token'i (#DDD6C8) bunlardan belirgin daha soluk kaliyordu;
+   * bolum ayraclari sayfada neredeyse gorunmuyordu. Token'a dokunmadan (8 marka
+   * rengi degismez) ayni tonlar murekkepten karistiriliyor — musteri murekkep
+   * rengini degistirdiginde cizgiler de onunla birlikte gider.
+   *
+   * transparent ile karistirmak (surface ile degil) yari saydam bir renk verir:
+   * hangi zeminin uzerine gelirse gelsin tasarimdaki rgba ile ayni sonuc.
+   */
+  --mera-rule: color-mix(in srgb, var(--brand-ink) 16%, transparent); /* bolum ayraci */
+  --mera-hair: color-mix(in srgb, var(--brand-ink) 12%, transparent); /* kunye satirlari */
+  --mera-hair-soft: color-mix(in srgb, var(--brand-ink) 10%, transparent); /* liste satirlari */
+  --mera-dot: color-mix(in srgb, var(--brand-ink) 28%, transparent); /* menudeki noktali dolgu */
+
+  /*
+   * Menu satirinin ustune gelindiginde beliren zemin. Tasarimda her urun
+   * satirinda rgba(169,80,47,.05) — yani marka renginin cok soluk hali; kutu
+   * ya da cerceve yok, yalnizca satirin isinmasi. Marka renginden karistirilir
+   * ki musteri rengi degistirdiginde vurgu da onunla gitsin.
+   */
+  --mera-row-hover: color-mix(in srgb, var(--brand-primary) 5%, transparent);
+
+  /*
    * Soyut harita dokusunun cizgileri. Tasarimda sabit rgba(26,23,20,.14) ve
    * .10 yaziliydi; musteri mureekkep rengini degistirdiginde doku uyumsuz
    * kalmasin diye mevcut token'dan karistiriliyor.
@@ -152,6 +177,23 @@ html[data-theme="mera"] .mera-wide {
 
 html[data-theme="mera"] .mera-caption {
   letter-spacing: var(--mera-track-caption);
+}
+
+/*
+ * Serif ogelerin NORMAL agirligi.
+ *
+ * Tasarimda font-weight YAZMAYAN her oge 400'dur; 300 yalnizca uc yerde acikca
+ * belirtilmis: hero basligi (104px), bolum girisi (36px) ve kapanis basligi
+ * (52px). Marka adi, menu kategori adlari ve italik serif notlar 400.
+ * brand-display utility'si --brand-display-weight (300) tasidigi icin bu sinif
+ * onu geri alir.
+ *
+ * NEDEN SINIF (Tailwind `font-normal` degil): ikisi de ayni ozelligi veren
+ * utility olurdu ve hangisinin kazandigi uretilen CSS sirasina kalirdi;
+ * html[data-theme] ... .sinif secicisi her utility'den daha ozgul.
+ */
+html[data-theme="mera"] .mera-regular {
+  font-weight: 400;
 }
 
 /* Kunye satirlari: buyuk harfe cevrilmez, yalnizca cok hafif acilir. */

@@ -144,6 +144,8 @@ export type SiteContent = {
   testimonials: Testimonial[];
   faq: FaqItem[];
   socialLinks: SocialLink[];
+  /** Kurulus yili, orn. "2015". Bos olabilir. */
+  founded: string;
   /** Sayfanin en ustundeki duyuru; bos olabilir. */
   announcement: string;
   /**
@@ -190,6 +192,15 @@ export type ThemeDefinition = {
   sections: ThemeSection[];
   /** Sayfanin en alti. Tema istemezse hic footer olmaz. */
   Footer?: ComponentType<SectionProps>;
+  /**
+   * AYRI menu sayfasinin govdesi (/tr/menu).
+   *
+   * Ana sayfadaki "menu" bolumu artik yalnizca one cikan birkac urunu ve
+   * "tum menuyu gor" baglantisini tasiyor; tam liste burada. Tema bunu
+   * vermezse sayfa, temanin ana sayfadaki menu bolumune duser — boylece
+   * henuz kendi menu sayfasini yazmamis bir tema da calisir.
+   */
+  MenuPage?: ComponentType<SectionProps>;
   /** globals.css'e import edilen token dosyasinin repo-koku yolu. */
   tokensPath: string;
   /**

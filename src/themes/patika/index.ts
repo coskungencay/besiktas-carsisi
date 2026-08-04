@@ -9,6 +9,7 @@ import Header from "@/themes/patika/sections/Header";
 import Hero from "@/themes/patika/sections/Hero";
 import Location from "@/themes/patika/sections/Location";
 import Menu from "@/themes/patika/sections/Menu";
+import MenuPage from "@/themes/patika/sections/MenuPage";
 import Testimonials from "@/themes/patika/sections/Testimonials";
 
 /**
@@ -40,6 +41,11 @@ const theme: ThemeDefinition = {
     { id: "iletisim", Component: Contact },
   ],
   Footer,
+  /*
+   * Ana sayfadaki "menu" bolumu artik bir vitrin; tam liste bu sayfada
+   * (/tr/menu) ve tasarimin cetvel dilini kullaniyor.
+   */
+  MenuPage,
   tokensPath: "src/themes/patika/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {

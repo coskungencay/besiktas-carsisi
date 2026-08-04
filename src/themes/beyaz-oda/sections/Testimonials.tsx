@@ -3,6 +3,7 @@ import { fill } from "@/i18n";
 import {
   SectionIndex,
   meta,
+  rowNumber,
   sectionGrid,
   sectionTop,
   surface,
@@ -76,7 +77,7 @@ export default function Testimonials({ content }: SectionProps) {
                     delay={Math.min(index, 4) * 0.06}
                   >
                     <figure className="grid items-baseline gap-x-6 gap-y-3 border-b border-[var(--brand-border)] py-[26px] lg:grid-cols-[36px_minmax(0,1fr)_240px]">
-                      <span className="bo-index" aria-hidden="true">
+                      <span className={rowNumber} aria-hidden="true">
                         {number}
                       </span>
 

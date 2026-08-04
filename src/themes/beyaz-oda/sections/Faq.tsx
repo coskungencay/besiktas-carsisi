@@ -1,6 +1,7 @@
 import { Reveal } from "@/components/motion/Reveal";
 import {
   SectionIndex,
+  rowNumber,
   sectionGrid,
   sectionTop,
   surface,
@@ -47,7 +48,7 @@ export default function Faq({ content }: SectionProps) {
                       */}
                       <summary className="bo-summary transition-colors hover:text-[var(--brand-accent)]">
                         <h3 className="grid grid-cols-[36px_minmax(0,1fr)_11px] items-baseline gap-x-6 py-[22px]">
-                          <span className="bo-index" aria-hidden="true">
+                          <span className={rowNumber} aria-hidden="true">
                             {number}
                           </span>
 

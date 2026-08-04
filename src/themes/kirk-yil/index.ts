@@ -9,6 +9,7 @@ import Header from "@/themes/kirk-yil/sections/Header";
 import Hero from "@/themes/kirk-yil/sections/Hero";
 import Location from "@/themes/kirk-yil/sections/Location";
 import Menu from "@/themes/kirk-yil/sections/Menu";
+import MenuPage from "@/themes/kirk-yil/sections/MenuPage";
 import Testimonials from "@/themes/kirk-yil/sections/Testimonials";
 
 /**
@@ -39,6 +40,11 @@ const theme: ThemeDefinition = {
     { id: "konum", Component: Location },
     { id: "iletisim", Component: Contact },
   ],
+  /*
+   * Tam menu /[locale]/menu adresinde; ana sayfadaki "menu" bolumu yalnizca
+   * uc urunluk bir vitrin. Ikisi de ayni koyu tabela dilini konusur.
+   */
+  MenuPage,
   Footer,
   tokensPath: "src/themes/kirk-yil/tokens.css",
   // tokens.css ile ayni tutulmali

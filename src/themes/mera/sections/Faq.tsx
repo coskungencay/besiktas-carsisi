@@ -33,13 +33,15 @@ export default function Faq({ content }: SectionProps) {
             title={t.faq.title}
             titleId="faq-title"
           >
-            <ul className="max-w-[820px] border-t border-[var(--brand-border)]">
+            {/* 900px: tasarimda govde kolonunun siniri (dar bir olcu degil,
+                okuma genisligi). */}
+            <ul className="max-w-[900px] border-t border-[var(--mera-hair-soft)]">
               {faq.map((item, index) => (
                 <Reveal
                   key={item.id}
                   as="li"
                   delay={index < 3 ? 0.08 : 0.14}
-                  className="border-b border-[var(--brand-border)]"
+                  className="border-b border-[var(--mera-hair-soft)]"
                 >
                   <details className="mera-detail">
                     <summary className="flex cursor-pointer items-baseline justify-between gap-8 py-4 text-[1rem] leading-[1.5] text-pretty transition-colors hover:text-[var(--brand-primary)]">

@@ -18,6 +18,9 @@ const ar: Messages = {
     hoursNote: "قد تتغير ساعات العمل في أيام العطل الرسمية.",
     placeholder: "سيتم إضافة معلومات عن {name} قريبًا.",
   },
+  site: {
+    since: "تأسست",
+  },
   hours: {
     label: "الساعات",
     closed: "مغلق",
@@ -25,6 +28,8 @@ const ar: Messages = {
   menu: {
     eyebrow: "القائمة",
     title: "ماذا يوجد على الطاولة اليوم؟",
+    viewAll: "عرض القائمة كاملة",
+    pageIntro: "الأسعار والقائمة الكاملة",
     featured: "مميّز",
   },
   gallery: {

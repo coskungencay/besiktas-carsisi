@@ -1,24 +1,23 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Fragment } from "react";
 
 import { fill } from "@/i18n";
 import {
   HERO_FALLBACK,
-  coordinateLabel,
   hasMenu,
   highlightsOrDerived,
   imageOrFallback,
+  menuHref,
   paragraphs,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
-  Sheet,
   actionLabel,
   bodyText,
   cell,
   edgeBottom,
   hair,
-  meta,
   shell,
   specList,
   splitGrid,
@@ -41,12 +40,10 @@ import type { SectionProps } from "@/themes/types";
  * ile CSS uzerinden, SSR ciktisiyla birlikte basliyor.
  */
 export default function Hero({ content }: SectionProps) {
-  const { heroHeadline, heroSubline, heroImageUrl, contact, name, tagline, t } =
-    content;
+  const { heroHeadline, heroSubline, heroImageUrl, name, tagline, t } = content;
 
   // En fazla 4 kunye: tasarimdaki ozet tablosu da dort satiri gecmiyor.
   const highlights = highlightsOrDerived(content).slice(0, 4);
-  const coords = coordinateLabel(contact.lat, contact.lng);
 
   /*
    * Sol bolmenin alt metni: tasarimda burada mekani anlatan kisa bir paragraf
@@ -72,21 +69,32 @@ export default function Hero({ content }: SectionProps) {
    * Tasarimdaki eylem seridi: solda mavi zeminli fiyat listesi, saginda konum.
    * Hedef bolum basilmiyorsa (menu bos, konum panelden kapali) hucre de
    * cikmaz; serit tek hucreye duser, hicbiri yoksa serit hic basilmaz.
+   *
+   * `isPage`: fiyat listesi artik ayni sayfada bir capa degil, kendi sayfasi
+   * (/tr/menu). Sayfa hedefleri <Link> ile basilir; capalar duz <a> kalir.
    */
   const actions = [
     hasMenu(content) && {
-      href: "#menu",
+      href: menuHref(content),
       label: t.hero.viewMenu,
       isPrimary: true,
+      isPage: true,
     },
     content.isVisible("konum") && {
       href: "#konum",
       label: t.location.eyebrow,
       isPrimary: false,
+      isPage: false,
     },
   ].filter(
-    (action): action is { href: string; label: string; isPrimary: boolean } =>
-      Boolean(action),
+    (
+      action,
+    ): action is {
+      href: string;
+      label: string;
+      isPrimary: boolean;
+      isPage: boolean;
+    } => Boolean(action),
   );
 
   return (
@@ -95,188 +103,182 @@ export default function Hero({ content }: SectionProps) {
       aria-labelledby="hero-title"
       className="bg-[var(--brand-surface)]"
     >
-      <div
-        className={`${shell} py-[var(--brand-section-py)] sm:py-[var(--brand-section-py-lg)]`}
-      >
-        <Sheet>
-          {contact.locality || coords ? (
-            <div
-              className={`ts-fade ${meta} flex flex-wrap items-center justify-between gap-x-6 gap-y-1 px-[18px] py-[14px] text-[var(--brand-ink-muted)]`}
-              style={edgeBottom}
-            >
-              {contact.locality ? (
-                <span className="inline-flex items-center gap-2">
-                  {/* Tasarimdaki "acik" gostergesi: yaniyor-sonuyor kare. */}
-                  <span
-                    className="ts-blink size-2 shrink-0 bg-[var(--brand-primary)]"
-                    aria-hidden="true"
-                  />
-                  {contact.locality}
-                </span>
-              ) : null}
-              {coords ? (
-                <span className="tabular-nums" dir="ltr">
-                  {coords}
-                </span>
-              ) : null}
-            </div>
-          ) : null}
-
-          {/*
-            Paftanin iki bolmesi. Ayirici cizgiyi izgara BOSLUGU veriyor
-            (splitGrid): boylece dar ekranda bolmeler alt alta yigildiginda
-            cizgi kendiliginden yatay olur, ayri bir kural gerekmez.
-          */}
+      {/*
+        Bolum kenardan kenara: tasarimda hero'nun yani sira hicbir bolumde yan
+        dolgu yok, bolumler birbirinden yalnizca alt cizgiyle ayriliyor.
+        Semt ve calisma saati ust seride tasindi (tasarimda oradalar).
+      */}
+      <div className={shell} style={edgeBottom}>
+        {/*
+          Paftanin iki bolmesi. Ayirici cizgiyi izgara BOSLUGU veriyor
+          (splitGrid): boylece dar ekranda bolmeler alt alta yigildiginda
+          cizgi kendiliginden yatay olur, ayri bir kural gerekmez.
+        */}
+        <div
+          className={`${splitGrid} lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]`}
+        >
+          {/* Tasarimda sol bolme dolgusu: 40px ust, 34px yan, 30px alt. */}
           <div
-            className={`${splitGrid} lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]`}
+            className={`${cell} px-4 py-10 sm:px-[var(--ts-pad)] sm:pt-10 sm:pb-[1.875rem]`}
           >
-            {/* Tasarimda sol bolme dolgusu: 40px ust, 34px yan, 30px alt. */}
-            <div
-              className={`${cell} px-4 py-10 sm:px-[var(--ts-pad)] sm:pt-10 sm:pb-[1.875rem]`}
-            >
-              {tagline ? (
-                <p
-                  className={`ts-fade-late brand-body text-[length:var(--ts-label-lg)] leading-[1.4] font-medium tracking-[var(--ts-track-eyebrow)] uppercase text-[var(--brand-primary)]`}
-                >
-                  {/*
-                    Tasarimin "dosya no 001" imzasi. Sadece gorsel bir isaret
-                    (bolum paftalarindaki 01..07 kunyeleriyle ayni aile, ama uc
-                    haneli — dosyanin kendisini isaret eder), o yuzden ekran
-                    okuyuculardan gizli.
-                  */}
-                  <span aria-hidden="true" className="tabular-nums">
-                    001 —{" "}
-                  </span>
-                  {tagline}
-                </p>
-              ) : null}
-
-              <h1
-                id="hero-title"
-                className="ts-stagger brand-display mt-[22px] text-[length:var(--ts-hero)] leading-[var(--ts-hero-leading)] tracking-[var(--ts-hero-tracking)] break-words text-balance uppercase"
+            {tagline ? (
+              <p
+                className={`ts-fade-late brand-body text-[length:var(--ts-label-lg)] leading-[1.4] font-medium tracking-[var(--ts-track-eyebrow)] uppercase text-[var(--brand-primary)]`}
               >
-                {headlineWords.map((word, index) => (
-                  <Fragment key={index}>
-                    {index > 0 ? " " : null}
-                    <span className="inline-block">{word}</span>
-                  </Fragment>
-                ))}
-
                 {/*
-                  Tasarimin imzasi: basligin bir parcasi mavi ve AYNI puntoda.
-                  Panelde baslik tek satirlik bir alan oldugu icin ikinci rengi
-                  "baslik devami" alanindan aliyoruz; boylece musteri kendi
-                  metnini yazdiginda da iki tonlu ritim korunuyor. Bu satiri
-                  kucuk puntoyla basmak tasarimin karakterini bozar.
+                  Tasarimin "dosya no 001" imzasi. Sadece gorsel bir isaret
+                  (bolum paftalarindaki 01..07 kunyeleriyle ayni aile, ama uc
+                  haneli — dosyanin kendisini isaret eder), o yuzden ekran
+                  okuyuculardan gizli.
                 */}
-                {heroSubline ? (
-                  <span className="block text-[var(--brand-primary)]">
-                    {heroSubline}
-                  </span>
-                ) : null}
-              </h1>
+                <span aria-hidden="true" className="tabular-nums">
+                  001 —{" "}
+                </span>
+                {tagline}
+              </p>
+            ) : null}
 
-              {/* Tasarimin imzasi: soldan saga cizilen kalin ayrac. */}
-              <div
-                className="ts-wipe mt-[34px] mb-[26px] h-[var(--brand-border-width)] bg-[var(--brand-ink)]"
-                aria-hidden="true"
-              />
+            <h1
+              id="hero-title"
+              className="ts-stagger brand-display mt-[22px] text-[length:var(--ts-hero)] leading-[var(--ts-hero-leading)] tracking-[var(--ts-hero-tracking)] break-words text-balance uppercase"
+            >
+              {headlineWords.map((word, index) => (
+                <Fragment key={index}>
+                  {index > 0 ? " " : null}
+                  <span className="inline-block">{word}</span>
+                </Fragment>
+              ))}
 
-              <div
-                className={`ts-up-late grid gap-[34px] ${
-                  intro && highlights.length > 0 ? "sm:grid-cols-2" : ""
-                }`}
-              >
-                {intro ? (
-                  <p className={`${bodyText} text-[var(--brand-ink)]`}>
-                    {intro}
-                  </p>
-                ) : null}
+              {/*
+                Tasarimin imzasi: basligin bir parcasi mavi ve AYNI puntoda.
+                Panelde baslik tek satirlik bir alan oldugu icin ikinci rengi
+                "baslik devami" alanindan aliyoruz; boylece musteri kendi
+                metnini yazdiginda da iki tonlu ritim korunuyor. Bu satiri
+                kucuk puntoyla basmak tasarimin karakterini bozar.
+              */}
+              {heroSubline ? (
+                <span className="block text-[var(--brand-primary)]">
+                  {heroSubline}
+                </span>
+              ) : null}
+            </h1>
 
-                {highlights.length > 0 ? (
-                  <dl className={specList}>
-                    {highlights.map((highlight, index) => (
-                      /*
-                       * Ayrac SATIRLAR ARASINDA: tasarimda ilk satirin ustunde
-                       * cizgi yok, cetvel asagi dogru bolunuyor.
-                       *
-                       * Satirlarda dikey dolgu YOK: tasarimda araligi 1.9'luk
-                       * satir yuksekligi veriyor, ustune padding eklemek
-                       * cetvel ritmini bozuyordu.
-                       */
-                      <div
-                        key={index}
-                        className={`${index > 0 ? hair : ""} flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1`}
-                      >
-                        <dt>{highlight.label}</dt>
-                        <dd className="text-[var(--brand-ink)]">
-                          {highlight.value}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                ) : null}
-              </div>
-            </div>
-
-            {/* Sag bolme: gorsel + altinda eylem seridi, aralarinda kalin cizgi. */}
+            {/* Tasarimin imzasi: soldan saga cizilen kalin ayrac. */}
             <div
-              className={`${splitGrid} ${
-                actions.length > 0 ? "lg:grid-rows-[minmax(0,1fr)_auto]" : ""
+              className="ts-wipe mt-[34px] mb-[26px] h-[var(--brand-border-width)] bg-[var(--brand-ink)]"
+              aria-hidden="true"
+            />
+
+            <div
+              className={`ts-up-late grid gap-[34px] ${
+                intro && highlights.length > 0 ? "sm:grid-cols-2" : ""
               }`}
             >
-              {/*
-                Tasarimda gorsel bolmesi en az 380px ve KALAN yuksekligi doldurur
-                (sol bolme uzadikca gorsel de uzar). Dar ekranda izgara tek
-                sutuna dustugu icin yukseklik oran ile veriliyor.
-              */}
-              <div className="ts-fade-slow relative aspect-[16/10] w-full bg-[var(--brand-surface-alt)] sm:aspect-[21/9] lg:aspect-auto lg:min-h-[23.75rem]">
-                <Image
-                  src={imageOrFallback(heroImageUrl, HERO_FALLBACK)}
-                  alt={fill(t.hero.coverAlt, { name })}
-                  fill
-                  sizes="(min-width: 1024px) 40vw, 100vw"
-                  priority
-                  className="object-cover"
-                />
-              </div>
+              {intro ? (
+                <p className={`${bodyText} text-[var(--brand-ink)]`}>{intro}</p>
+              ) : null}
 
-              {actions.length > 0 ? (
-                <div
-                  className={`${splitGrid} ${
-                    actions.length > 1 ? "sm:grid-cols-2" : ""
-                  }`}
-                >
-                  {actions.map((action) => (
-                    <a
-                      key={action.href}
-                      href={action.href}
-                      /*
-                       * Tasarimda serit 96px; metin ortalanmis ve tek satir.
-                       * Dar ekranda hucreler ALT ALTA gectigi icin yukseklik
-                       * 72px'e cekildi — iki kez 96px, telefonda gorselden
-                       * daha fazla yer kaplayan bir dugme blogu yapiyordu.
-                       * Ayni sebeple nowrap YOK: uzun cevirilerde metin ikinci
-                       * satira sarkabilmeli.
-                       */
-                      className={`${actionLabel} flex min-h-[4.5rem] items-center justify-center gap-2 px-4 text-center transition-colors sm:min-h-[6rem] hover:bg-[var(--brand-accent)] hover:text-[var(--brand-primary-contrast)] ${
-                        action.isPrimary
-                          ? "bg-[var(--brand-primary)] text-[var(--brand-primary-contrast)]"
-                          : "bg-[var(--brand-surface)] text-[var(--brand-ink)]"
-                      }`}
+              {highlights.length > 0 ? (
+                <dl className={specList}>
+                  {highlights.map((highlight, index) => (
+                    /*
+                     * Ayrac SATIRLAR ARASINDA: tasarimda ilk satirin ustunde
+                     * cizgi yok, cetvel asagi dogru bolunuyor.
+                     *
+                     * Satirlarda dikey dolgu YOK: tasarimda araligi 1.9'luk
+                     * satir yuksekligi veriyor, ustune padding eklemek
+                     * cetvel ritmini bozuyordu.
+                     */
+                    <div
+                      key={index}
+                      className={`${index > 0 ? hair : ""} flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1`}
                     >
+                      <dt>{highlight.label}</dt>
+                      <dd className="text-[var(--brand-ink)]">
+                        {highlight.value}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : null}
+            </div>
+          </div>
+
+          {/* Sag bolme: gorsel + altinda eylem seridi, aralarinda kalin cizgi. */}
+          <div
+            className={`${splitGrid} ${
+              actions.length > 0 ? "lg:grid-rows-[minmax(0,1fr)_auto]" : ""
+            }`}
+          >
+            {/*
+              Tasarimda gorsel bolmesi en az 380px ve KALAN yuksekligi doldurur
+              (sol bolme uzadikca gorsel de uzar). Dar ekranda izgara tek
+              sutuna dustugu icin yukseklik oran ile veriliyor.
+            */}
+            <div className="ts-fade-slow relative aspect-[16/10] w-full bg-[var(--brand-surface-alt)] sm:aspect-[21/9] lg:aspect-auto lg:min-h-[23.75rem]">
+              <Image
+                src={imageOrFallback(heroImageUrl, HERO_FALLBACK)}
+                alt={fill(t.hero.coverAlt, { name })}
+                fill
+                sizes="(min-width: 1024px) 40vw, 100vw"
+                priority
+                className="object-cover"
+              />
+            </div>
+
+            {actions.length > 0 ? (
+              <div
+                className={`${splitGrid} ${
+                  actions.length > 1 ? "sm:grid-cols-2" : ""
+                }`}
+              >
+                {actions.map((action) => {
+                  /*
+                   * Tasarimda serit 96px; metin ortalanmis ve tek satir.
+                   * Dar ekranda hucreler ALT ALTA gectigi icin yukseklik
+                   * 72px'e cekildi — iki kez 96px, telefonda gorselden
+                   * daha fazla yer kaplayan bir dugme blogu yapiyordu.
+                   * Ayni sebeple nowrap YOK: uzun cevirilerde metin ikinci
+                   * satira sarkabilmeli.
+                   */
+                  const cellClass = `${actionLabel} flex min-h-[4.5rem] items-center justify-center gap-2 px-4 text-center transition-colors sm:min-h-[6rem] hover:bg-[var(--brand-accent)] hover:text-[var(--brand-primary-contrast)] ${
+                    action.isPrimary
+                      ? "bg-[var(--brand-primary)] text-[var(--brand-primary-contrast)]"
+                      : "bg-[var(--brand-surface)] text-[var(--brand-ink)]"
+                  }`;
+
+                  const body = (
+                    <>
                       {action.label}
                       {/* Tasarimda yalnizca ikinci hucrede ok var. */}
                       {action.isPrimary ? null : (
                         <ArrowIcon className="size-3.5" />
                       )}
+                    </>
+                  );
+
+                  return action.isPage ? (
+                    <Link
+                      key={action.href}
+                      href={action.href}
+                      className={cellClass}
+                    >
+                      {body}
+                    </Link>
+                  ) : (
+                    <a
+                      key={action.href}
+                      href={action.href}
+                      className={cellClass}
+                    >
+                      {body}
                     </a>
-                  ))}
-                </div>
-              ) : null}
-            </div>
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
-        </Sheet>
+        </div>
       </div>
     </section>
   );

@@ -1,27 +1,53 @@
+import Link from "next/link";
+
 import { Reveal } from "@/components/motion/Reveal";
-import { menuWithItems } from "@/themes/_shared/data";
 import {
+  allMenuItems,
+  featuredItems,
+  hasMenu,
+  menuHref,
+} from "@/themes/_shared/data";
+import { ArrowIcon } from "@/themes/_shared/icons";
+import {
+  MenuLine,
   SectionHead,
-  label,
+  cta,
   page,
   sectionPad,
   surface,
 } from "@/themes/mera/parts";
 import type { SectionProps } from "@/themes/types";
 
+/** Ana sayfada gosterilecek urun sayisi — tasarimdaki tek kolonluk ritim. */
+const SHOWCASE_COUNT = 3;
+
 /**
- * Dergi ilan sayfasi duzeni: kategoriler iki kolona bolunur (tasarimda kolon
- * araligi 72px), her urun tek satirda "ad ......... fiyat" olarak okunur.
- * Noktali cizgi ayri bir <span> olarak esner — basili menulerin leader-dot
- * alistirmasini taklit eder ve fiyati daima satirin sonuna yaslar.
+ * Menu VITRINI — tam liste artik kendi sayfasinda (/tr/menu).
  *
- * Urun gorseli YOK: iki kolonlu bu siki ritim gorselle bozulur.
+ * NEDEN VITRIN: menu buyudukce (30+ urun) ana sayfa okunamaz hale geliyordu;
+ * dergi de ic sayfada tum menuyu basmaz, birkac kalemi one cikarip formaya
+ * yollar.
+ *
+ * Tasarimin menu dili korunuyor — "ad ......... fiyat" satirlari, noktali
+ * dolgu, ustune gelince isinan zemin — ama iki kolon yerine TEK kolon:
+ * uc satir iki kolona bolununce bolum yarim kalmis bir tablo gibi gorunuyordu.
+ *
+ * Urun gorseli YOK: bu siki tipografik ritim gorselle bozulur.
  */
 export default function Menu({ content }: SectionProps) {
-  const categories = menuWithItems(content);
-  if (categories.length === 0) return null;
+  if (!hasMenu(content)) return null;
 
   const { t } = content;
+
+  /*
+   * Musteri hicbir urunu isaretlememis olabilir; o durumda bolum bos kalmasin
+   * diye menunun ilk urunlerine duseriz. Isaretli urunler daima oncelikli.
+   */
+  const featured = featuredItems(content, SHOWCASE_COUNT);
+  const items =
+    featured.length > 0
+      ? featured
+      : allMenuItems(content).slice(0, SHOWCASE_COUNT);
 
   return (
     <section id="menu" aria-labelledby="menu-title" className={surface}>
@@ -31,55 +57,32 @@ export default function Menu({ content }: SectionProps) {
             eyebrow={t.menu.eyebrow}
             title={t.menu.title}
             titleId="menu-title"
+            /* Tasarimda kunye kolonunun altindaki kucuk not (13px / 1.6):
+               burada menunun tamaminin baska bir sayfada oldugunu soyler. */
+            aside={
+              <p className="text-[0.8125rem] leading-[1.6] text-pretty text-[var(--brand-ink-faint)]">
+                {t.menu.pageIntro}
+              </p>
+            }
           >
-            <div className="grid gap-x-[4.5rem] gap-y-12 lg:grid-cols-2">
-              {categories.map((category, index) => (
-                <Reveal key={category.id} delay={index < 2 ? 0.08 : 0.16}>
-                  {/* Kategori adi: tasarimda 23px italik serif, altinda 22px bosluk. */}
-                  <h3 className="brand-display mb-[1.375rem] text-[1.4375rem] italic rtl:not-italic">
-                    {category.name}
-                  </h3>
+            <div className="max-w-[900px]">
+              {/* One cikan rozeti BASILMIYOR: buradaki her satir zaten secilmis
+                  urun, hepsine ayni etiketi vurmak gurultu olurdu. */}
+              <ul>
+                {items.map((item) => (
+                  <MenuLine key={item.id} item={item} />
+                ))}
+              </ul>
 
-                  <ul>
-                    {category.items.map((item) => (
-                      <li
-                        key={item.id}
-                        className="border-b border-[var(--brand-border)] py-[0.9375rem] last:border-0"
-                      >
-                        <div className="flex items-baseline gap-3">
-                          <span className="text-base">{item.name}</span>
-
-                          {item.isFeatured ? (
-                            <span className={label}>{t.menu.featured}</span>
-                          ) : null}
-
-                          {/* Noktali dolgu: yalnizca fiyat varsa anlamli. */}
-                          {item.price ? (
-                            <>
-                              <span
-                                aria-hidden="true"
-                                className="mb-[5px] min-w-6 flex-1 border-b border-dotted border-[var(--brand-border)]"
-                              />
-                              <span
-                                className="text-[0.875rem] tabular-nums text-[var(--brand-ink-body)]"
-                                dir="ltr"
-                              >
-                                {item.price}
-                              </span>
-                            </>
-                          ) : null}
-                        </div>
-
-                        {item.description ? (
-                          <p className="mt-1.5 max-w-md text-[0.8125rem] leading-[1.6] text-pretty italic text-[var(--brand-ink-faint)] rtl:not-italic">
-                            {item.description}
-                          </p>
-                        ) : null}
-                      </li>
-                    ))}
-                  </ul>
-                </Reveal>
-              ))}
+              <Reveal delay={0.12}>
+                {/* Temanin ana eylem bicimi (bkz. parts.tsx `cta`): bu
+                    tasarimda dolgulu buton yok, marka renginde alt cizgili
+                    kunye baglantisi var. */}
+                <Link href={menuHref(content)} className={`${cta} mt-9`}>
+                  <span>{t.menu.viewAll}</span>
+                  <ArrowIcon className="size-3.5" />
+                </Link>
+              </Reveal>
             </div>
           </SectionHead>
         </Reveal>

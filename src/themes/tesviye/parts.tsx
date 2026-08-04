@@ -3,20 +3,63 @@ import type { CSSProperties, ReactNode } from "react";
 /**
  * Tesviye'ye OZEL parcalar.
  *
- * Tasarimin imzasi teknik cizim paftasi: her bolum kalin cerceveli TEK bir
- * kutu, kutunun basinda numarali kunye seridi, ic bolmeler yine kalin
- * cizgilerle ayrilmis. Bu kabuk bes bolumde tekrar ettigi icin tek yerde
- * duruyor; boylece cizgi kalinligi ve kunye duzeni bolumler arasinda kaymaz.
+ * Tasarimin imzasi teknik cizim paftasi: sayfa kenardan kenara TEK bir
+ * izgaradir. Bolumler ayri kutular degil, ayni paftanin 2px cizgilerle
+ * ayrilmis bolmeleridir; her bolumun basinda 200px genisliginde bir kunye
+ * rayi (bolum adi + numara) durur. Sayfa kenarinda dolgu, bolumler arasinda
+ * bosluk YOKTUR — dolguyu hucrelerin kendisi tasir.
  *
- * DIKKAT — punto yazarken `text-[length:var(--ts-...)]` KULLANIN.
- * `text-[var(...)]` yazildiginda Tailwind degerin renk mi olcu mu oldugunu
- * bilemez ve RENK varsayar: kural font-size uretmez, butun puntolar sessizce
- * 16px'e duser. Bu temada dev Anton basliklarin 16px cikmasinin sebebi buydu.
+ * DIKKAT — punto yazarken "length:" onekini KULLANIN, orn.
+ * text-[length:var(--ts-hero)]. Onek olmadan Tailwind degerin renk mi olcu mu
+ * oldugunu bilemez ve RENK varsayar: kural font-size uretmez, butun puntolar
+ * sessizce 16px'e duser. Bu temada dev Anton basliklarin 16px cikmasinin
+ * sebebi buydu.
  */
 
-/** Sayfa ic kenar boslugu — paftalar kenara yakin dursun diye dar tutuldu. */
-export const shell =
-  "mx-auto w-full max-w-[var(--brand-container)] px-4 sm:px-6";
+/**
+ * Sayfa kabugu.
+ *
+ * Tasarimda sayfa genelinde max-width ve yan dolgu YOK; buradaki sinir bir
+ * "tasarim genisligi" degil, 4K ekranda satirlar okunmaz olmasin diye konmus
+ * ust sinirdir. YATAY DOLGU EKLEMEYIN: cizgiler ekran kenarindan baslamali.
+ */
+export const shell = "mx-auto w-full max-w-[var(--brand-container)]";
+
+/**
+ * Menu sayfasinin kitapcik kabi (yaprak).
+ *
+ * shell'den AYRI ve bilerek dar: shell bir ust sinir, bu ise okuma olcusudur.
+ * Ayri menu sayfasinda cetvel 30+ satira ciktigi icin satirin BASINDAN
+ * FIYATINA ulasabilen bir genislik gerekiyor (bkz. --ts-sheet-max).
+ * Kap sayfada ortalanir; 2000px ekranda genislemez, iki yanda sayfa zemini
+ * gorunur kalir.
+ */
+export const sheet = "mx-auto w-full max-w-[var(--ts-sheet-max)]";
+
+/**
+ * Yapragin kendi cercevesi. Kalinlik --ts-sheet-edge: dar ekranda 2px,
+ * sm ustunde 4px (tokens.css).
+ *
+ * NEDEN inline style: kalinlik token'dan geliyor; Tailwind'in
+ * `border-[var(...)]` yaziminda cizginin sessizce kaybolma riski var
+ * (bkz. edgeTop notu). Bu tasarimda cizgi duzenin kendisi.
+ */
+export const sheetEdge: CSSProperties = {
+  borderWidth: "var(--ts-sheet-edge)",
+  borderStyle: "solid",
+  borderColor: "var(--brand-border)",
+};
+
+/**
+ * Passe-partout: yapragin disindaki ikinci cizgi ve arasindaki aralik.
+ * Dar ekranda ikisi de 0'dir — kap tum genisligi kullansin diye.
+ */
+export const sheetMat: CSSProperties = {
+  padding: "var(--ts-sheet-mat)",
+  borderWidth: "var(--ts-sheet-mat-edge)",
+  borderStyle: "solid",
+  borderColor: "var(--brand-border)",
+};
 
 /**
  * Monospace teknik etiket: kunye, kategori adi, alan basligi.
@@ -99,12 +142,33 @@ export const edgeEnd: CSSProperties = {
  * Hucreler arasindaki bosluk, kabin zemininin (cizgi rengi) gorundugu yerdir;
  * boylece komsu hucrelerde cift kenarlik olusmaz. Sutun sayisini cagiran verir
  * ve TAM DOLACAK sekilde secmelidir — eksik hucre koyu bir blok birakir.
+ * Adedi degisken listelerde bunun yerine gridClip/cellEdge kullanin.
  */
 export const splitGrid =
   "grid gap-[var(--brand-border-width)] bg-[var(--brand-border)]";
 
 /** splitGrid icindeki hucre: zemini geri kazanir. */
 export const cell = "bg-[var(--brand-surface)]";
+
+/* --------------------------------------------------------------------------
+ * Adedi degisken izgaralar (galeri, yorumlar, hakkimizda bolmeleri)
+ *
+ * splitGrid'in zemin hilesi yalnizca izgara TAM dolarsa calisir; eksik kalan
+ * son satir koyu bir blok olarak gorunur. Adet veritabanindan geldigi icin
+ * bunu garanti edemeyiz. Cozum: cizgiler hucrenin kendi kenarligi olur,
+ * izgara son satir/sutunda disari tasirilir ve tasan kenarlik kirpilir —
+ * boylece ne cift cizgi ne de sarkan cizgi kalir.
+ * -------------------------------------------------------------------------- */
+
+/** Kirpma kabi — icindeki izgaranin tasan kenarligini gizler. */
+export const gridClip = "overflow-hidden";
+
+/** gridClip icindeki izgaraya eklenir. */
+export const gridBleed =
+  "-me-[var(--brand-border-width)] -mb-[var(--brand-border-width)]";
+
+/** Adedi degisken izgaranin hucresi: sag ve alt kenarlik. */
+export const cellEdge: CSSProperties = { ...edgeEnd, ...edgeBottom };
 
 /**
  * Kutu icindeki ince veri satiri ayraci (kalin cizgilerden ayrilsin diye 1px).
@@ -135,63 +199,64 @@ export const pad = "px-4 py-6 sm:px-[var(--ts-pad)] sm:py-[var(--ts-pad)]";
  */
 export const padSm = "px-4 py-5 sm:px-6 sm:py-[26px]";
 
-/** Bolum paftasi: kalin cerceve + zemin. */
-export function Sheet({
-  children,
-  className = "",
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={`brand-frame bg-[var(--brand-surface)] ${className}`}>
-      {children}
-    </div>
-  );
-}
+/** Serit hucresi dolgusu — ust serit ve liste satirlari (tasarimda 14-18px). */
+export const padStrip = "px-4 py-[14px] sm:px-[18px]";
 
 /**
- * Pafta kunyesi: solda kose numarasi, yaninda monospace etiket, altinda
- * bolumun buyuk basligi. Numara yalnizca gorsel bir isaret oldugu icin
- * ekran okuyuculardan gizlenir.
+ * Bolum paftasi: 200px kunye rayi + icerik.
+ *
+ * Tasarimda her bolum boyle basliyor: solda dar bir sutunda bolum adi ve mavi
+ * sira numarasi, saginda bolumun kendisi. Numarali ray bu tasarimin imzasi;
+ * bolum basligini yatay bir serit olarak basmak sayfayi siradan bir "baslik +
+ * icerik" yigini yapiyordu.
+ *
+ * Baslik (h2) icerik sutununun basindaki BEYAN satiridir — tasarimda da
+ * bolumler boyle aciliyor (36px/44px Anton). Ray'daki bolum adi kunyedir,
+ * baslik degil; bu yuzden <p>.
  */
-export function SheetHead({
+export function Plate({
   code,
   eyebrow,
   title,
   titleId,
+  children,
 }: {
   code: string;
   eyebrow: string;
   title: string;
   titleId: string;
+  children: ReactNode;
 }) {
   return (
-    <div style={edgeBottom}>
-      <div className="flex items-stretch" style={edgeBottom}>
-        <p
-          className={`${mono} flex items-center px-[18px] py-[13px] tabular-nums text-[var(--brand-primary)]`}
-          style={edgeEnd}
+    <div className={`${splitGrid} lg:grid-cols-[var(--ts-rail)_minmax(0,1fr)]`}>
+      <p className={`${cell} ${mono} px-4 py-[26px] sm:px-[18px]`}>
+        {eyebrow}
+        <br />
+        {/* Numara sadece gorsel bir isaret; ekran okuyucuya bilgi vermez. */}
+        <span
+          className="tabular-nums text-[var(--brand-primary)]"
           aria-hidden="true"
         >
           {code}
-        </p>
-        <p className={`${mono} flex items-center px-[18px] py-[13px]`}>
-          {eyebrow}
-        </p>
-      </div>
+        </span>
+      </p>
 
-      <h2
-        id={titleId}
-        /*
-         * leading 1.14 tasarimdaki konum basligindan geliyor. Daha siki bir
-         * deger (0.95) Turkce buyuk Ç/Ş kuyrugunu satir kutusunun disina
-         * tasirip alttaki satira sokuyordu.
-         */
-        className="brand-display px-4 py-6 text-[length:var(--ts-title)] leading-[var(--ts-title-leading)] text-balance uppercase sm:px-[var(--ts-pad)] sm:py-[var(--ts-pad)]"
-      >
-        {title}
-      </h2>
+      <div className={cell}>
+        {/*
+          Ayrac cizgi SARMALAYICIDA: baslikta olsaydi max-width yuzunden cizgi
+          de 1000px'de kesilir, pafta yarim cizilmis gorunurdu.
+        */}
+        <div style={edgeBottom}>
+          <h2
+            id={titleId}
+            className={`brand-display ${pad} max-w-[62.5rem] text-[length:var(--ts-title)] leading-[var(--ts-lead-leading)] text-balance uppercase`}
+          >
+            {title}
+          </h2>
+        </div>
+
+        {children}
+      </div>
     </div>
   );
 }

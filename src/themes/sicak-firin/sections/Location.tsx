@@ -1,17 +1,13 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
-import {
-  coordinateLabel,
-  hoursFromMonday,
-  hoursRange,
-} from "@/themes/_shared/data";
+import { placeStamp, hoursFromMonday } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   SectionHead,
-  chip,
   lead,
   metaText,
   panel,
+  pillGhost,
   pillSolid,
   shell,
   surface,
@@ -21,10 +17,14 @@ import type { SectionProps } from "@/themes/types";
 /**
  * "Kapi calmadan gir" bloku: tek krem panel, ucu birden ayni yuzeyde.
  *
- * Tasarimdaki uc kolonlu kapanis duzeni birebir: solda adres ve yol tarifi,
- * ortada saat satirlari (kesik cizgiyle), sagda kucuk kroki. Iletisim bolumu
- * ayni panel dolgusunu kullaniyor; ikisi sayfanin sonunu ayni masa gibi
+ * Tasarimdaki uc kolonlu kapanis duzeni birebir: solda adres, yol tarifi ve
+ * telefon; ortada saat satirlari (kesik cizgiyle); sagda kucuk kroki. Iletisim
+ * bolumu ayni panel dolgusunu kullaniyor; ikisi sayfanin sonunu ayni masa gibi
  * topluyor.
+ *
+ * CALISMA SAATLERI TAM OLARAK BURADA: tasarimda saatler hikayenin degil, "gel"
+ * blogunun parcasi. Hakkimizda bolumunde tutuldugunda anlatiyi ikiye boluyor ve
+ * o bolumu iki katina cikariyordu.
  *
  * GOMULU HARITA YOK: iframe her ziyaretcide ucuncu taraf istegi ve cerezi
  * demek (KVKK) ve sayfanin en agir yuku olurdu. Yerine tasarimin kendi krokisi
@@ -38,8 +38,17 @@ export default function Location({ content }: SectionProps) {
   const { contact, name, openingHours, t } = content;
 
   const hours = hoursFromMonday(openingHours);
-  const range = hoursRange(openingHours);
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
+
+  /*
+   * Tasarimdaki kolon oranlari: 1.15fr / .85fr / .85fr. Saat satiri hic
+   * girilmemisse orta kolon dusuyor ve panel iki kolona iniyor; 12'lik bir
+   * izgarada bu orani tutturmak mumkun degildi (5 / 3.5 / 3.5).
+   */
+  const columns =
+    hours.length > 0
+      ? "lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)_minmax(0,0.85fr)]"
+      : "lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]";
 
   /*
    * Yol tarifi hedefi, elde ne varsa ona gore: once musterinin girdigi harita
@@ -59,8 +68,8 @@ export default function Location({ content }: SectionProps) {
       <div className={`${shell} brand-section`}>
         {/* Panel dolgusu iletisim bolumuyle ayni: 52px dikey, 48px yatay. */}
         <div className={`${panel} p-6 sm:px-12 sm:py-13`}>
-          <div className="grid gap-10 lg:grid-cols-12 lg:gap-13">
-            <Reveal className="lg:col-span-5">
+          <div className={`grid gap-10 ${columns} lg:gap-13`}>
+            <Reveal>
               <SectionHead
                 eyebrow={t.location.eyebrow}
                 title={t.location.title}
@@ -74,44 +83,46 @@ export default function Location({ content }: SectionProps) {
               ) : null}
 
               {/*
-                Saat araligi hero'daki rozetle ayni hap bicimde: adresin hemen
-                altinda "ne zaman aciksiniz" sorusunun tek satirlik cevabi.
+                Tasarimda adresin altinda IKI dugme yan yana: yol tarifi (dolu)
+                ve telefon numarasi (ince kenarlikli). Saat araligini burada bir
+                rozet olarak tekrarlamiyoruz — tam cizelge zaten yan kolonda.
               */}
-              {range ? (
-                <dl className="mt-6 flex">
-                  <div className={chip}>
-                    <dt className="brand-eyebrow">{t.hours.label}</dt>
-                    <dd dir="ltr" className="tabular-nums">
-                      {range}
-                    </dd>
-                  </div>
-                </dl>
-              ) : null}
+              {directionsHref || contact.phone ? (
+                <div className="mt-7 flex flex-wrap items-center gap-3">
+                  {directionsHref ? (
+                    <a
+                      href={directionsHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={pillSolid}
+                    >
+                      <span>{t.location.directions}</span>
+                      <ArrowIcon />
+                    </a>
+                  ) : null}
 
-              {directionsHref ? (
-                <div className="mt-7">
-                  <a
-                    href={directionsHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={pillSolid}
-                  >
-                    <span>{t.location.directions}</span>
-                    <ArrowIcon />
-                  </a>
+                  {contact.phone ? (
+                    <a
+                      href={contact.phoneHref}
+                      dir="ltr"
+                      className={`${pillGhost} tabular-nums`}
+                    >
+                      {contact.phone}
+                    </a>
+                  ) : null}
                 </div>
               ) : null}
             </Reveal>
 
             {hours.length > 0 ? (
-              <Reveal delay={0.08} className="lg:col-span-4">
+              <Reveal delay={0.08}>
                 <h3 className={metaText}>{t.about.openingHours}</h3>
 
                 <dl className="mt-4 flex flex-col">
                   {hours.map((hour) => (
                     <div
                       key={hour.dayOfWeek}
-                      className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-dashed border-[var(--brand-hairline-soft)] py-3 last:border-b-0"
+                      className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-dashed border-[var(--brand-hairline-row)] py-3 last:border-b-0"
                     >
                       <dt className="text-[length:var(--brand-text-row)] font-light text-[var(--brand-ink-soft)]">
                         {hour.dayLabel}
@@ -131,21 +142,15 @@ export default function Location({ content }: SectionProps) {
               </Reveal>
             ) : null}
 
-            {/*
-              Kroki kolonu, saat sutunu yoksa onun yerini de aliyor: 5 + 4 + 3
-              olan izgara 5 + 3 kalinca panelin sonunda dort kolonluk olu bir
-              bosluk birakiyordu (saat satiri hic girilmemis siteler).
-            */}
-            <Reveal
-              delay={0.14}
-              className={hours.length > 0 ? "lg:col-span-3" : "lg:col-span-7"}
-            >
+            <Reveal delay={0.14}>
               {/*
                 Kroki: iki sokak cizgisi ve tek isaret noktasi. Soyut ama bos
                 degil — "burada bir yer var" hissini veriyor. role="img" +
                 aria-label ile ekran okuyucuya tek cumlede aktariliyor.
               */}
-              <div className="relative h-44 overflow-hidden rounded-[var(--brand-radius-sm)] bg-[var(--brand-surface)] sm:h-52">
+              {/* Tasarimda kroki 126px yuksekliginde GENIS bir serit; daha uzun
+                  bir kutu panelin dengesini bozup haritaymis gibi duruyordu. */}
+              <div className="relative h-32 overflow-hidden rounded-[var(--brand-radius-sm)] bg-[var(--brand-surface)]">
                 {/*
                   Cizim role="img": alt katmandaki nokta ve cizgiler ekran
                   okuyucuya tek tek degil, tek cumleyle aktariliyor.

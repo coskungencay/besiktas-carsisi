@@ -59,6 +59,25 @@ export function SettingsForm({ settings }: { settings: SiteSettingsRow }) {
             </div>
 
             <div>
+              <label htmlFor="founded" className={labelClass}>
+                Kuruluş yılı
+              </label>
+              <input
+                id="founded"
+                name="founded"
+                maxLength={10}
+                defaultValue={settings.founded}
+                placeholder="2015"
+                className={inputClass}
+              />
+              <p className="mt-1 text-xs text-zinc-500">
+                Tasarımlarda köşelerde &ldquo;Kuruluş 2015&rdquo; olarak görünür.
+                Boş bırakırsanız yerine harita koordinatı yazılır.
+              </p>
+              <FieldError state={state} name="founded" />
+            </div>
+
+            <div>
               <label htmlFor="tagline" className={labelClass}>
                 Slogan
               </label>

@@ -2,7 +2,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import {
   closedDayLabels,
-  coordinateLabel,
+  placeStamp,
   hoursRange,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
@@ -33,7 +33,7 @@ export default function Location({ content }: SectionProps) {
 
   const { contact, name, openingHours, t } = content;
 
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
   const range = hoursRange(openingHours);
   const closed = closedDayLabels(openingHours);
 
@@ -71,7 +71,9 @@ export default function Location({ content }: SectionProps) {
         </Reveal>
 
         <Reveal delay={0.08}>
-          <div className="mx-auto mt-12 w-full max-w-3xl text-center">
+          {/* Kroki 1240px kapta max-w-3xl ile daraliyordu; tasarimda bolum sayfa
+              genisliginde duruyor. */}
+          <div className="mx-auto mt-12 w-full max-w-5xl text-center">
             {/*
               Passe-partout ile ayni cerceve mantigi, ama ky-sepia YOK: sepya
               arsiv fotografina ait, cizime uygulaninca kirli gorunuyor.

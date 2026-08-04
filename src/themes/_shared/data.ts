@@ -44,6 +44,17 @@ export function menuWithItems(content: SiteContent): MenuCategory[] {
   return content.menu.filter((category) => category.items.length > 0);
 }
 
+/**
+ * Menu SAYFASININ adresi.
+ *
+ * Menu artik ana sayfada bir capa (#menu) degil, kendi sayfasi. Adres dile
+ * bagli oldugu icin tek yerden uretiliyor; temalarda elle "/tr/menu" yazmak
+ * dil degisince kirilirdi.
+ */
+export function menuHref(content: SiteContent): string {
+  return `/${content.locale}/menu`;
+}
+
 export function hasMenu(content: SiteContent): boolean {
   return menuWithItems(content).length > 0;
 }
@@ -137,6 +148,22 @@ export function coordinateLabel(
   const ns = lat >= 0 ? "N" : "S";
   const ew = lng >= 0 ? "E" : "W";
   return `${Math.abs(lat).toFixed(digits)}°${ns} / ${Math.abs(lng).toFixed(digits)}°${ew}`;
+}
+
+/**
+ * Kucuk kunye damgasi: tasarimlarda header/footer koselerinde duran tek satir.
+ *
+ * ONCELIK: kurulus yili ("Kurulus 2015") -> koordinat -> bos.
+ *
+ * NEDEN: koordinat teknik ve soguk bir bilgi; musteriye "40.9903°N" hicbir sey
+ * anlatmiyor. Tasarimlarin kendisi de orada kurulus yili kullaniyor
+ * ("EST. 1986 · BEYOGLU"). Yil girilmemisse eski davranisa duseriz, boylece
+ * mevcut kurulumlarda bosluk olusmaz.
+ */
+export function placeStamp(content: SiteContent): string {
+  const year = content.founded.trim();
+  if (year) return `${content.t.site.since} ${year}`;
+  return coordinateLabel(content.contact.lat, content.contact.lng);
 }
 
 /* -------------------------------------------------------------------------- */

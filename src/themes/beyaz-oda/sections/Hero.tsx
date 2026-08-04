@@ -1,14 +1,9 @@
 import Image from "next/image";
 
 import { fill } from "@/i18n";
-import {
-  HERO_FALLBACK,
-  highlightsOrDerived,
-  imageOrFallback,
-  paragraphs,
-} from "@/themes/_shared/data";
+import { HERO_FALLBACK, imageOrFallback } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
-import { meta, shell, surface } from "@/themes/beyaz-oda/parts";
+import { meta, metaColumns, shell, surface } from "@/themes/beyaz-oda/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
@@ -26,16 +21,17 @@ import type { SectionProps } from "@/themes/types";
  * isletme adini koyar, yani burada asla bos olmaz.
  */
 export default function Hero({ content }: SectionProps) {
-  const { heroHeadline, heroSubline, about, contact, heroImageUrl, name, t } =
-    content;
+  const { heroHeadline, heroSubline, contact, heroImageUrl, name, t } = content;
 
-  const highlights = highlightsOrDerived(content);
+  const highlights = metaColumns(content).hero;
   /*
-   * Hero'nun sol alt kolonu: tasarimda mekani anlatan kisa bir paragraf var,
-   * slogan degil. "Hakkimizda"nin ilk paragrafini kullaniyoruz. paragraphs()
-   * bos satirlari da eliyor; ham split bastaki bos paragrafi geri verirdi.
+   * Hero'nun sol alt kolonu SLOGAN'dir, "hakkimizda"nin ilk paragrafi degil.
+   * NEDEN: o paragraf hemen alttaki Hakkimizda bolumunun buyuk puntolu giris
+   * cumlesi; burada da basilinca ayni metin sayfada iki kez, iki farkli
+   * puntoyla tekrar ediyordu. Slogan girilmemisse kolon bos kalir — tasarimin
+   * uclu taban satiri kolon baslangiclari acikca yazili oldugu icin bozulmaz.
    */
-  const intro = paragraphs(about)[0] ?? content.tagline;
+  const intro = content.tagline;
 
   return (
     <section id="hero" aria-labelledby="hero-title" className={surface}>

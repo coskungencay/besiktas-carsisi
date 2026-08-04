@@ -105,9 +105,15 @@ export default function Contact({ content }: SectionProps) {
                             {...(row.ltr ? { dir: "ltr" as const } : {})}
                           >
                             {row.href ? (
+                              /*
+                                Tasarimin global stili: butun baglantilar marka
+                                renginde, uzerine gelince vurgu rengine doner ve
+                                ALTI CIZILI DEGIL. Bu kural inline style'larda
+                                gorunmedigi icin satirlar govde tonunda kalmisti.
+                              */
                               <a
                                 href={row.href}
-                                className="underline-offset-4 transition-colors hover:text-[var(--brand-primary)] hover:underline"
+                                className="text-[var(--brand-primary)] transition-colors hover:text-[var(--brand-accent)]"
                                 {...(row.href.startsWith("http")
                                   ? {
                                       target: "_blank",

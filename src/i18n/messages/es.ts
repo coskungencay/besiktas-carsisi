@@ -18,6 +18,9 @@ const es: Messages = {
     hoursNote: "El horario puede variar en días festivos.",
     placeholder: "Pronto habrá más información sobre {name}.",
   },
+  site: {
+    since: "Desde",
+  },
   hours: {
     label: "Horario",
     closed: "Cerrado",
@@ -25,6 +28,8 @@ const es: Messages = {
   menu: {
     eyebrow: "Carta",
     title: "¿Qué hay hoy en la barra?",
+    viewAll: "Ver el menú completo",
+    pageIntro: "Precios y lista completa",
     featured: "Destacado",
   },
   gallery: {

@@ -25,12 +25,13 @@ html[data-theme="beyaz-oda"] {
   --brand-border: #E4E5E7;
 
   /*
-   * Tasarimda uc kademe gri var: govde (#4C5257), kunye (#6E7479) ve
-   * cok soluk indeks/etiket (#A2A7AC). Ikisini sabit yazmak yerine
-   * ink-muted'dan turetiyoruz; boylece admin panelinden renk degistirilince
-   * ara tonlar da birlikte kayiyor, tema tutarli kaliyor.
+   * Tasarimda DORT kademe gri var: govde (#4C5257), kunye (#6E7479),
+   * ust seritteki koordinat (#8A8F94) ve cok soluk indeks/etiket (#A2A7AC).
+   * Ucunu sabit yazmak yerine ink-muted'dan turetiyoruz; boylece admin
+   * panelinden renk degistirilince ara tonlar da birlikte kayiyor.
    */
   --brand-ink-soft: color-mix(in srgb, var(--brand-ink-muted) 70%, var(--brand-ink));
+  --brand-ink-dim: color-mix(in srgb, var(--brand-ink-muted) 80%, var(--brand-surface));
   --brand-ink-faint: color-mix(in srgb, var(--brand-ink-muted) 62%, var(--brand-surface));
 
   /* --- Tipografi ---
@@ -105,10 +106,17 @@ html[lang="ar"][data-theme="beyaz-oda"] {
  * Tailwind'in text-* siniflariyla birlikte kullanmayin.
  */
 
-/* Kunye metni: mono, ince. Punto cagiran tarafta belirlenir. */
+/*
+ * Kunye metni: yalnizca mono yigini. Punto VE AGIRLIK cagiran tarafta belirlenir.
+ *
+ * NEDEN agirlik burada yok: tasarimda mono metinlerin agirligi tek degil.
+ * Kunye/etiket satirlari acikca 300 ("font-weight:300"), buna karsilik liste
+ * satirlarindaki sira numarasi ve fiyat agirlik YAZMIYOR — yani 400. Sinif
+ * 300'u dayatsaydi cagiran taraftaki `font-normal` utility'si (0,1,0) bu
+ * secicinin (0,2,1) altinda kalir ve fiyat sutunu tasarimdan ince cikardi.
+ */
 html[data-theme="beyaz-oda"] .bo-mono {
   font-family: var(--brand-font-mono);
-  font-weight: 300;
 }
 
 /* Bolum indeksi / cok soluk etiket — tasarimda 11px, #A2A7AC. */

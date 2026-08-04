@@ -1,9 +1,11 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
-import { hoursFromMonday, paragraphs } from "@/themes/_shared/data";
+import { paragraphs } from "@/themes/_shared/data";
 import {
   SectionIndex,
+  hasAboutSection,
   meta,
+  metaColumns,
   sectionGrid,
   sectionTop,
   surface,
@@ -12,17 +14,20 @@ import type { SectionProps } from "@/themes/types";
 
 /**
  * Editoryal iki kolon: solda metin (ilk paragraf 27px "lead", devami 15px),
- * sagda monospace calisma saati tablosu. Tasarimda tablo satirlari 13px dikey
- * bosluk ve ince alt cizgiyle ayriliyor.
+ * sagda isletmenin SAYISAL KUNYESI (monospace etiket/deger tablosu).
  *
- * Ne metin ne saat varsa bolum hic basilmaz.
+ * DIKKAT: burasi calisma saatlerinin yeri DEGIL. Tasarimda gun gun saat
+ * tablosu iletisim bolumunde duruyor; buraya konulunca yedi satirlik tablo bu
+ * bolumu iki katina cikariyor ve sagdaki kunye tablosunun yerini aliyordu.
+ *
+ * Ne metin ne kunye varsa bolum hic basilmaz.
  */
 export default function About({ content }: SectionProps) {
-  const { about, name, openingHours, t } = content;
-  if (!about && openingHours.length === 0) return null;
+  const { about, name, t } = content;
+  if (!hasAboutSection(content)) return null;
 
   const body = paragraphs(about);
-  const hours = hoursFromMonday(openingHours);
+  const stats = metaColumns(content).about;
 
   // Ilk paragraf tasarimda buyuk puntolu giris cumlesi; kalani govde metni.
   const [lead, ...rest] = body;
@@ -51,37 +56,28 @@ export default function About({ content }: SectionProps) {
                 ) : null}
               </div>
 
-              {hours.length > 0 ? (
+              {stats.length > 0 ? (
                 <div className="lg:col-span-4 lg:col-start-7">
                   <Reveal delay={0.16}>
-                    {/* Tasarimda blok basliklari 10.5px mono, .06em. */}
-                    <h3 className="bo-index-sm brand-eyebrow">
-                      {t.about.openingHours}
-                    </h3>
-
-                    <dl className="mt-4 flex flex-col">
-                      {hours.map((hour) => (
+                    {/*
+                      Tasarimda bu tablonun USTUNDE baslik yok: etiketlerin
+                      kendisi (MENU KALEMI, METREKARE) zaten sutunu acikliyor.
+                      Son satirda alt cizgi de yok — tablo bosluga acik biter.
+                    */}
+                    <dl className="flex flex-col">
+                      {stats.map((row, index) => (
                         <div
-                          key={hour.dayOfWeek}
-                          className={`${meta} flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-[var(--brand-border)] py-[13px]`}
+                          key={`${row.label}-${index}`}
+                          className={`${meta} flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-[var(--brand-border)] py-[13px] last:border-b-0`}
                         >
-                          <dt className="brand-eyebrow">{hour.dayLabel}</dt>
+                          <dt className="brand-eyebrow">{row.label}</dt>
+                          {/* Deger koyu: tasarimda tablonun tek vurgusu bu. */}
                           <dd className="tabular-nums text-[var(--brand-ink)]">
-                            {hour.isClosed ? (
-                              t.hours.closed
-                            ) : (
-                              <span dir="ltr">
-                                {hour.openTime} — {hour.closeTime}
-                              </span>
-                            )}
+                            {row.value}
                           </dd>
                         </div>
                       ))}
                     </dl>
-
-                    <p className="bo-index mt-5 leading-[1.8]">
-                      {t.about.hoursNote}
-                    </p>
                   </Reveal>
                 </div>
               ) : null}

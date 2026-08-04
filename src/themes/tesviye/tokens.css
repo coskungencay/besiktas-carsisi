@@ -77,7 +77,38 @@ html[data-theme="tesviye"] {
 
   /* Bolum basligi: tasarimda 36px (beyan) — 44px (konum) arasi. */
   --ts-title: clamp(1.625rem, 3.6vw, 2.75rem);
-  --ts-title-leading: 1.14;
+
+  /*
+   * Ayri menu sayfasinin basligi (/tr/menu).
+   *
+   * NEDEN ARADA BIR OLCU: o sayfada ustte hero yok, sayfayi bu baslik aciyor.
+   * --ts-title (44px) sayfayi bassiz birakiyor; --ts-hero (148px) ise altindaki
+   * fiyat cetvelini eziyordu. Bu olcu ikisinin arasinda durur.
+   */
+  --ts-page-title: clamp(2.25rem, 5.4vw, 4.5rem);
+
+  /* Kisa, alt alta dizilen Anton bloklari (mavi eylem karti) — tasarimda 1.22. */
+  --ts-title-leading: 1.22;
+
+  /*
+   * Kart ici Anton satiri (galerideki mavi eylem karti) — tasarimda 30px.
+   *
+   * NEDEN --ts-title DEGIL: o olcu bolum beyani icin ve genis ekranda 44px'e
+   * cikiyor; galeri hucresi 300px yuksekliginde ve dorde bolunmus bir sutun,
+   * orada 44px etiketle baglantinin arasindaki nefesi yiyor, uzun semt
+   * adlarinda tasiyordu.
+   */
+  --ts-card-title: clamp(1.5rem, 2.4vw, 1.875rem);
+
+  /*
+   * Bolum acilis beyaninin satir yuksekligi.
+   *
+   * Tasarimda kisa ve dik basliklar (konum: "Gel, bak, iç.") 1.14 ile,
+   * cok kelimeli beyan cumlesi ("Süslemedik. Sadece iyi kavurduk.") 1.34 ile
+   * diziliyor. Bolum baslikligimiz ikinci gruba giriyor: 1.14 ile uzun bir
+   * cumle satirlari birbirine yapistiriyordu.
+   */
+  --ts-lead-leading: 1.34;
 
   /* Liste satirindaki urun adi: 19px Anton. */
   --ts-item: 1.1875rem;
@@ -113,6 +144,22 @@ html[data-theme="tesviye"] {
    */
   --ts-hair: color-mix(in srgb, var(--brand-ink) 22%, transparent);
 
+  /*
+   * Koyu hucre icindeki vurgu rengi.
+   *
+   * Tasarim koyu kutuda mavi etiketi #0B4CFF yerine #6E9BFF yaziyor: murekkep
+   * uzerinde tam doygun mavi okunmuyor. Sabit hex yerine paletten turetiliyor
+   * ki musteri vurgu rengini degistirdiginde koyu kutu da onunla gelsin.
+   */
+  --ts-primary-on-dark: color-mix(
+    in srgb,
+    var(--brand-primary) 58%,
+    var(--brand-primary-contrast)
+  );
+
+  /* Liste satirinin uzerine gelince: tasarimda zemin bir tik koyulasiyor. */
+  --ts-row-hover: color-mix(in srgb, var(--brand-ink) 8%, var(--brand-surface));
+
   /* --- Olcek (ortak) --- */
 
   /*
@@ -133,13 +180,47 @@ html[data-theme="tesviye"] {
   --brand-container: 2200px;
 
   /*
-   * Tasarimda paftalar arasinda BOSLUK YOK — hepsi 2px cizgiyle bitisik.
-   * Bizde bolumler ayri kutular oldugu icin araya nefes payi kondu; deger
-   * paftanin ic dolgusundan (34px) kucuk tutuldu ki kutular birbirinden
-   * kopuk degil, ayni paftanin bolmeleri gibi okunsun.
+   * Tasarimda bolumler arasinda BOSLUK ve sayfa kenarinda DOLGU YOK: her bolum
+   * kenardan kenara uzanir, birbirinden yalnizca 2px cizgiyle ayrilir. Bu
+   * yuzden --brand-section-py burada tanimli degil; dikey ritmi hucre
+   * dolgulari (--ts-pad) veriyor. Kenar boslugu koymak tasarimi ortalanmis
+   * kutular dizisine cevirip cizgi izgarasini kiriyordu.
+   *
+   * Yan raylar (200px) ve liste sutunlari (60/110px) sabit px: dar ekranda
+   * izgara tek sutuna dustugu icin bu olculer yalnizca lg ustunde uygulanir.
    */
-  --brand-section-py: 1.5rem;
-  --brand-section-py-lg: 2.5rem;
+
+  /* Yan ray genisligi — tasarimda her bolumun basindaki kunye sutunu. */
+  --ts-rail: 200px;
+
+  /*
+   * --- Ayri menu sayfasinin kitapcik kabi (/tr/menu) ---
+   *
+   * NEDEN KAP: o sayfa 30+ satirlik bir cetvel. Kenardan kenara akan
+   * 2200px'lik paftada goz urun adindan fiyatina varamiyor, satirlar
+   * birbirine kariyor. Cetvel burada teknik cizim paftasinin kendisi gibi
+   * CERCEVELENIR: okunabilir genislikte tek bir yaprak, altinda sayfa zemini
+   * (surface-alt) gorunur. Tasarimda zaten her kutu 2px cizgiyle cevrili;
+   * kap yeni bir dil degil, ayni cizginin sayfa olcusunde tekrari.
+   *
+   * Olcu: dis sinir 1040px; passe-partout ve cerceveler dusunce cetvelin
+   * kendisi ~1000px kalir. Bu, uzun bir urun adi + not + fiyat ucusunun tek
+   * bakista okundugu aralik.
+   */
+  --ts-sheet-max: 1040px;
+
+  /*
+   * Yaprak cercevesi ve passe-partout (dis cerceve + araligi).
+   *
+   * Dar ekranda passe-partout KAPANIR ve cerceve tema kalinligina (2px)
+   * iner: 390px'te 4px'lik cift cerceve + 12px aralik satirdan 30px'ten
+   * fazlasini yiyor, cetvelin fiyat sutunu sikisiyordu. Genis ekranda
+   * cerceve kalinlasir ve disina ikinci bir cizgi gelir — yaprak paspartuya
+   * oturmus bir pafta gibi durur.
+   */
+  --ts-sheet-edge: var(--brand-border-width);
+  --ts-sheet-mat: 0px;
+  --ts-sheet-mat-edge: 0px;
 
   /* Tasarimin acilis egrisi. */
   --ts-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -183,6 +264,30 @@ html[data-theme="tesviye"] {
       var(--ts-plan-grid) 0 1px,
       transparent 1px 22px
     );
+}
+
+/*
+ * Menu kitapciginin kirilim noktalari.
+ *
+ * NEDEN CSS media query (Tailwind sm:/lg: degil): bu degerler kenarlik
+ * KALINLIGI ve dolgu; Tailwind'de `border-[var(...)]` yaziminda tarayici
+ * degerin renk mi kalinlik mi oldugunu tahmin etmek zorunda kaliyor ve yanlis
+ * tahminde cizgi sessizce kayboluyor (bkz. parts.tsx edgeTop notu). Olculer
+ * token olarak burada durunca bilesen tarafinda tek bir style yeterli oluyor.
+ * Kirilimlar Tailwind varsayilanlariyla ayni: sm 40rem, lg 64rem.
+ */
+@media (min-width: 40rem) {
+  html[data-theme="tesviye"] {
+    --ts-sheet-edge: 4px;
+    --ts-sheet-mat: 0.75rem;
+    --ts-sheet-mat-edge: var(--brand-border-width);
+  }
+}
+
+@media (min-width: 64rem) {
+  html[data-theme="tesviye"] {
+    --ts-sheet-mat: 1rem;
+  }
 }
 
 /* --------------------------------------------------------------------------

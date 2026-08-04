@@ -9,6 +9,7 @@ import Header from "@/themes/mera/sections/Header";
 import Hero from "@/themes/mera/sections/Hero";
 import Location from "@/themes/mera/sections/Location";
 import Menu from "@/themes/mera/sections/Menu";
+import MenuPage from "@/themes/mera/sections/MenuPage";
 import Testimonials from "@/themes/mera/sections/Testimonials";
 
 /**
@@ -37,6 +38,9 @@ const theme: ThemeDefinition = {
     { id: "iletisim", Component: Contact },
   ],
   Footer,
+  // Tam menu kendi sayfasinda (/tr/menu); yukaridaki "menu" bolumu ana
+  // sayfada yalnizca vitrin.
+  MenuPage,
   tokensPath: "src/themes/mera/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {

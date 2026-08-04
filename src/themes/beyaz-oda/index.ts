@@ -9,6 +9,7 @@ import Header from "@/themes/beyaz-oda/sections/Header";
 import Hero from "@/themes/beyaz-oda/sections/Hero";
 import Location from "@/themes/beyaz-oda/sections/Location";
 import Menu from "@/themes/beyaz-oda/sections/Menu";
+import MenuPage from "@/themes/beyaz-oda/sections/MenuPage";
 import Testimonials from "@/themes/beyaz-oda/sections/Testimonials";
 
 /**
@@ -40,6 +41,11 @@ const theme: ThemeDefinition = {
     { id: "iletisim", Component: Contact },
   ],
   Footer,
+  /*
+   * Ana sayfadaki "menu" bolumu artik yalnizca vitrin (birkac one cikan urun +
+   * baglanti); tam liste bu sayfada.
+   */
+  MenuPage,
   tokensPath: "src/themes/beyaz-oda/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {

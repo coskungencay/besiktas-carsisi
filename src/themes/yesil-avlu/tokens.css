@@ -46,6 +46,34 @@ html[data-theme="yesil-avlu"] {
    */
   --ya-accent-base: var(--brand-accent);
 
+  /*
+   * Kagit (menu kitapcigi) icin acik zemin degerlerinin dondurulmus kopyalari.
+   *
+   * Menu sayfasi koyu bir serit (.ya-grove) ve o kapsamda --brand-ink,
+   * --brand-border gibi token'lar koyu zemine gore YENIDEN tanimlaniyor. Koyu
+   * zeminin uzerine birakilan krem menu karti (.ya-leaflet) ise acik zeminin
+   * degerlerine geri donmek zorunda; golgelenmis token'dan o degeri okumak
+   * artik mumkun degil. var() bu ozelligin TANIMLANDIGI yerde cozuldugu icin
+   * kopyalar kokte aliniyor ve koyu kapsamdan etkilenmeden asagi mirasla iner.
+   */
+  --ya-paper-surface: var(--brand-surface);
+  --ya-paper-ink: var(--brand-ink);
+  --ya-paper-ink-muted: var(--brand-ink-muted);
+  --ya-paper-border: var(--brand-border);
+
+  /*
+   * Paragraf murekkebi.
+   *
+   * Tasarimda gövde paragraflari ne ana murekkep (#1F3A2C) ne de kucuk
+   * etiketlerin soluk yesili (#7A8B72): arada bir ton (#4A5C4F) kullaniliyor.
+   * Etiket rengiyle yazmak uzun paragraflari fazla soluk birakiyordu. Sabit hex
+   * yazmamak icin iki token'in karisimindan uretiliyor (~%55 murekkep).
+   *
+   * DIKKAT: color-mix bu ozelligin TANIMLANDIGI yerde cozulur; koyu zeminde
+   * (.ya-grove) --brand-ink degistigi icin orada YENIDEN tanimlanmali.
+   */
+  --ya-prose: color-mix(in srgb, var(--brand-ink) 55%, var(--brand-ink-muted));
+
   /* --- Kucuk etiketler (eyebrow, rozet) --- */
   /* Tasarimda bolum etiketleri .3em; nav, kunye seridi ve hero kickeri
      farkli ritimlerde, o yuzden ayri degiskenler. */
@@ -92,6 +120,21 @@ html[lang="ar"][data-theme="yesil-avlu"] {
   --ya-track-nav: 0;
   --ya-track-meta: 0;
   --ya-track-kicker: 0;
+}
+
+/* --------------------------------------------------------------------------
+ * Baglanti rengi
+ * Tasarimin <style> blogundaki global kural: a { color:#1F3A2C } ve
+ * a:hover { color:#7C8F5E }. Renk govdeden zaten miras aliniyordu, eksik olan
+ * HOVER'di: bizde bir kisim baglanti hicbir sey yapmiyordu. Tek yerde
+ * tanimlanmasi bilesenlerde tekrar eden hover siniflarini da gereksizlestirir.
+ *
+ * Hap dugmeler (.ya-pill) haric: onlarin zemini koyu, metni zemin rengi;
+ * accent'e donmesi kontrasti bozardi. aria-current tasiyan baglantilar da
+ * (dil secicideki aktif dil) kendi dolu zeminini korur.
+ * -------------------------------------------------------------------------- */
+html[data-theme="yesil-avlu"] a:not(.ya-pill):not([aria-current]):hover {
+  color: var(--brand-accent);
 }
 
 /* --------------------------------------------------------------------------
@@ -312,6 +355,95 @@ html[data-theme="yesil-avlu"] .ya-grove {
   --brand-ink-muted: color-mix(in srgb, var(--brand-primary-contrast) 66%, var(--brand-primary));
   --brand-border: color-mix(in srgb, var(--brand-primary-contrast) 22%, transparent);
   --brand-accent: color-mix(in srgb, var(--ya-accent-base) 55%, var(--brand-primary-contrast));
+  /* Paragraf murekkebi burada YENIDEN uretilmeli: yukaridaki tanim acik
+     zeminin degerini hesaplamis durumda ve miras yoluyla koyu zemine
+     tasinsaydi yazi zemine yapisirdi. */
+  --ya-prose: color-mix(in srgb, var(--brand-ink) 55%, var(--brand-ink-muted));
+}
+
+/* --------------------------------------------------------------------------
+ * Menu kitapcigi (kagit)
+ *
+ * NEDEN: tam menu sayfa genisliginde aktiginda 30+ urunluk liste okunmuyordu;
+ * goz urun adindan fiyata varamiyor, kategoriler birbirine karisiyordu. Liste
+ * artik koyu korunun uzerine BIRAKILMIS krem bir menu karti gibi duruyor —
+ * basili menu metaforu hem satiri kisaltiyor hem de tasarimin diline ait.
+ *
+ * BICIM: ust kenar kemer (tasarimdaki 340/260/170px'lik ust yaricaplarin menu
+ * karti olcegi), alt kenar --brand-radius; iceride passe-partout: tasarimin
+ * kutularindaki 1px'lik ince cizginin ayni recetesi.
+ *
+ * RENK: kart krem oldugu icin .ya-grove'un koyu token'lari burada acik zeminin
+ * degerlerine geri dondurulur. Boylece kartin ICINDEKI hicbir bilesen renk
+ * bilmek zorunda kalmaz, hepsi yine var(--brand-*) okur.
+ * -------------------------------------------------------------------------- */
+html[data-theme="yesil-avlu"] .ya-leaflet {
+  position: relative;
+  /* Ic cerceve z-index:-1 ile ciziliyor; kart kendi yigin baglamini kurmazsa
+     o cizgi kartin ZEMININ ARKASINA duser ve gorunmez olur. */
+  isolation: isolate;
+  background: var(--ya-paper-surface);
+  color: var(--ya-paper-ink);
+
+  --brand-surface: var(--ya-paper-surface);
+  --brand-surface-alt: color-mix(in srgb, var(--ya-paper-ink) 8%, var(--ya-paper-surface));
+  --brand-ink: var(--ya-paper-ink);
+  --brand-ink-muted: var(--ya-paper-ink-muted);
+  --brand-border: var(--ya-paper-border);
+  --brand-accent: var(--ya-accent-base);
+  /* color-mix tanimlandigi yerde cozuldugu icin paragraf murekkebi de burada
+     acik zemin degerlerinden yeniden uretilir. */
+  --ya-prose: color-mix(in srgb, var(--ya-paper-ink) 55%, var(--ya-paper-ink-muted));
+
+  border-radius: 13rem 13rem var(--brand-radius) var(--brand-radius);
+  /*
+   * Kartin zeminden AYRILDIGINI gosteren yumusak hale.
+   *
+   * DIKKAT: rengi --brand-primary'den turetilemez — koru zemini (.ya-grove)
+   * TAM OLARAK --brand-primary'dir, yani o golge zeminin uzerine kendi rengiyle
+   * duser ve hicbir sey gostermez. --brand-primary-contrast ise tanimi geregi
+   * zeminin KARSI kutbu: koyu koruda acik bir hale, acik bir palet secilirse
+   * koyu bir golge verir. Boylece panelden hangi renk secilirse secilsin
+   * kagidin kenari gorunur kalir.
+   */
+  box-shadow: 0 1rem 2.5rem -1.25rem
+    color-mix(in srgb, var(--brand-primary-contrast) 26%, transparent);
+}
+
+/*
+ * Ic cerceve. z-index:-1: cizgi kart zemininin USTUNDE ama metnin ALTINDA
+ * kalmali; konumlandirilmis sozde-oge aksi halde tum akis icerigini boyar.
+ */
+html[data-theme="yesil-avlu"] .ya-leaflet::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0.875rem;
+  border: var(--brand-border-width) solid var(--brand-border);
+  border-radius: calc(13rem - 0.875rem) calc(13rem - 0.875rem)
+    max(0px, calc(var(--brand-radius) - 0.875rem))
+    max(0px, calc(var(--brand-radius) - 0.875rem));
+  pointer-events: none;
+}
+
+/*
+ * Dar ekran: kart ekranin tamamini kullaniyor. 13rem'lik kemer 390px'te
+ * tarayici tarafindan yarim daireye kadar buyutulur ve kartin tepesinde
+ * 180px'lik bos bir kubbe birakirdi; kemer ve ic bosluklar orada kuculur.
+ */
+@media (width < 40rem) {
+  html[data-theme="yesil-avlu"] .ya-leaflet {
+    border-radius: 6rem 6rem var(--brand-radius) var(--brand-radius);
+    box-shadow: 0 0.625rem 1.5rem -0.875rem
+      color-mix(in srgb, var(--brand-primary-contrast) 26%, transparent);
+  }
+
+  html[data-theme="yesil-avlu"] .ya-leaflet::before {
+    inset: 0.5rem;
+    border-radius: calc(6rem - 0.5rem) calc(6rem - 0.5rem)
+      max(0px, calc(var(--brand-radius) - 0.5rem))
+      max(0px, calc(var(--brand-radius) - 0.5rem));
+  }
 }
 
 /* --------------------------------------------------------------------------

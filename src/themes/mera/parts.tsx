@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import type { MenuItem } from "@/themes/types";
+
 /**
  * Mera'ya OZEL parcalar — bir yemek dergisinin ic sayfasi.
  *
@@ -28,9 +30,26 @@ export const surface = "bg-[var(--brand-surface)] text-[var(--brand-ink)]";
 export const sectionPad =
   "pt-[var(--brand-section-py)] lg:pt-[var(--brand-section-py-lg)]";
 
-/** Ayirici cizgi + altindaki 40px'lik nefes. */
-export const ruled =
-  "border-t border-[var(--brand-border)] pt-[var(--mera-rule-gap)]";
+/**
+ * Ayirici cizgi + altindaki 40px'lik nefes.
+ *
+ * Cizgi rengi --brand-border DEGIL --mera-rule: tasarim cizgileri murekkebin
+ * %16 opakligiyla ciziyor, kenarlik token'i bunun yaninda gorunmeyecek kadar
+ * soluk kaliyordu (bkz. tokens.css).
+ */
+export const ruled = "border-t border-[var(--mera-rule)] pt-[var(--mera-rule-gap)]";
+
+/**
+ * Baglanti rengi.
+ *
+ * Tasarimin global stili `a { color:#A9502F } a:hover { color:#1A1714 }` —
+ * yani sayfadaki TUM baglantilar marka renginde, ustune gelince mureekkebe
+ * doner. Tek istisna ust cubuk navigasyonu: orada renk inline olarak soluk
+ * griye eziliyor. Inline style'larda gorunmedigi icin kolayca atlanan bir
+ * kural oldugundan tek yerde toplandi.
+ */
+export const link =
+  "text-[var(--brand-primary)] transition-colors hover:text-[var(--brand-ink)]";
 
 /**
  * Kunye etiketi: 11.5px, genis harf araligi (token'dan gelir).
@@ -43,12 +62,37 @@ export const labelBase = "brand-body brand-eyebrow text-[0.72rem] leading-none";
 export const label = `${labelBase} text-[var(--brand-ink-muted)]`;
 /** Bolum isaretcisi — tasarimda daima marka rengi. */
 export const labelAccent = `${labelBase} text-[var(--brand-primary)]`;
+/**
+ * Kolon basligi (tasarimda "Saatler" / "Ulasin"): ayni olcek ve aralik, ama
+ * bolum isaretcisiyle karismasin diye en soluk tonda — kapanis bolumunde
+ * marka rengi yalnizca basligin kendisine ait.
+ */
+export const labelSoft = `${labelBase} text-[var(--brand-ink-faint)]`;
 /** Fotograf altyazisi: en soluk ton, 11px, tasarimda .18em aralik. */
 export const labelFaint =
   "brand-body mera-caption text-[0.6875rem] leading-none text-[var(--brand-ink-faint)]";
-/** Kapanis seridi: ayni olcek, marka adiyla ayni .16em aralik. */
-export const labelStrip =
-  "brand-body mera-mark text-[0.6875rem] leading-none text-[var(--brand-ink-faint)]";
+/**
+ * Kapanis seridi: ayni olcek, marka adiyla ayni .16em aralik.
+ * Renksiz surum, rengi kendi veren ogeler (baglantilar) icin ayri duruyor —
+ * iki `text-[var(--…)]` sinifi ayni elemanda bulusursa hangisinin kazandigi
+ * uretilen CSS sirasina kalirdi.
+ */
+export const labelStripBase =
+  "brand-body mera-mark text-[0.6875rem] leading-none";
+export const labelStrip = `${labelStripBase} text-[var(--brand-ink-faint)]`;
+
+/**
+ * Temanin ANA eylem bicimi.
+ *
+ * Bu tasarimda dolgulu buton YOK — hero'da bile buton yok, cunku dergi
+ * kapaginda dugme olmaz. Tasarimin tek eylem ogesi kapanis bolumundeki
+ * "Yol tarifi al →" baglantisi: 12px kunye punto, .18em aralik, marka renginde
+ * ALT CIZGI. Menu sayfasina goturen baglantilar da ayni bicimi kullanir ki
+ * sayfada iki farkli "buton dili" olusmasin.
+ *
+ * Ust bosluk verilmez: nerede kullanildigina cagiran karar verir.
+ */
+export const cta = `${labelBase} ${link} mera-caption inline-flex items-center gap-3 border-b border-[var(--brand-primary)] pb-1 text-[0.75rem]`;
 
 /** Govde metni olcegi: tasarimda 15px / 1.7. */
 export const bodyText =
@@ -57,9 +101,7 @@ export const bodyText =
 /** Dergi sayfasini bolen sac teli cizgi. */
 export function Hairline({ className = "" }: { className?: string }) {
   return (
-    <hr
-      className={`border-0 border-t border-[var(--brand-border)] ${className}`}
-    />
+    <hr className={`border-0 border-t border-[var(--mera-rule)] ${className}`} />
   );
 }
 
@@ -78,18 +120,13 @@ export function SectionHead({
   eyebrow,
   title,
   titleId,
-  lead,
   aside,
-  large = false,
   children,
 }: {
   eyebrow: string;
   title: string;
   titleId: string;
-  lead?: string;
   aside?: ReactNode;
-  /** Kapanis bolumu icin tasarimdaki 52px'lik iri baslik. */
-  large?: boolean;
   children?: ReactNode;
 }) {
   return (
@@ -103,20 +140,14 @@ export function SectionHead({
       </div>
 
       <div className="min-w-0">
+        {/* Bolum girisi tasarimda 36px, 300 agirlikta ve govde kolonunun
+            900px'lik olcusunde kalir. */}
         <h2
           id={titleId}
-          className={
-            large
-              ? "brand-display max-w-[900px] text-[clamp(2.25rem,4.6vw,3.25rem)] leading-[1.05] tracking-[-0.02em] text-balance"
-              : "brand-display max-w-[900px] text-[clamp(1.6rem,3.2vw,2.25rem)] leading-[1.34] tracking-[-0.01em] text-pretty"
-          }
+          className="brand-display max-w-[900px] text-[clamp(1.6rem,3.2vw,2.25rem)] leading-[1.34] tracking-[-0.01em] text-pretty"
         >
           {title}
         </h2>
-
-        {lead ? (
-          <p className={`${bodyText} mt-7 max-w-[620px]`}>{lead}</p>
-        ) : null}
 
         {/* Tasarimda giris cumlesi ile govde arasi 30px. */}
         {children ? <div className="mt-[1.875rem]">{children}</div> : null}
@@ -144,13 +175,79 @@ export function SectionHeadRow({
       className={`${ruled} flex flex-wrap items-baseline justify-between gap-x-12 gap-y-3`}
     >
       <p className={labelAccent}>{eyebrow}</p>
+      {/* mera-regular: tasarimda bu italik notta agirlik yazmiyor, yani 400. */}
       <h2
         id={titleId}
-        className="brand-display text-[clamp(1.15rem,2.4vw,1.375rem)] italic text-pretty text-[var(--brand-ink-body)] rtl:not-italic"
+        className="brand-display mera-regular text-[clamp(1.15rem,2.4vw,1.375rem)] italic text-pretty text-[var(--brand-ink-body)] rtl:not-italic"
       >
         {title}
       </h2>
     </div>
+  );
+}
+
+/**
+ * Menu satiri — basili menulerin "ad ......... fiyat" alistirmasi.
+ *
+ * NEDEN ORTAK: ayni satir hem ana sayfadaki vitrin bolumunde hem de tam menu
+ * sayfasinda geciyor. Iki yerde ayri ayri yazilirsa biri degistiginde digeri
+ * geride kalir ve ayni sitede iki farkli menu dili olusur.
+ *
+ * Noktali dolgu ayri bir <span> olarak esner ve fiyati daima satirin sonuna
+ * yaslar. 390px'de GIZLENIR: dar ekranda uzun bir urun adi ile fiyat arasinda
+ * zaten yer kalmiyor, dolgu birkac piksele sikisip cizik gibi gorunuyordu.
+ * Orada fiyati `ms-auto` sona atar; ad cok uzunsa satir sarar ve fiyat alt
+ * satirin sonuna iner — ust uste binme olmaz.
+ *
+ * Kendisi <li> dondurur: alt cizgiyi kapatan `last:border-0` ancak liste
+ * ogesinin KENDISINDE calisir; ara bir sarmalayici konulursa her satir
+ * "son cocuk" olur ve tum ayraclar kaybolur.
+ */
+export function MenuLine({
+  item,
+  badge,
+}: {
+  item: MenuItem;
+  /** "One cikan" etiketi. Bos birakilirsa basilmaz. */
+  badge?: string;
+}) {
+  return (
+    /* Ustune gelince satir isinir (tasarim: marka renginin %5'i). Yatay dolgu
+       YOK — tasarimda da zemin satirin tam genisligini kapliyor. */
+    <li className="border-b border-[var(--mera-hair-soft)] py-[0.9375rem] transition-colors last:border-0 hover:bg-[var(--mera-row-hover)]">
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <span className="min-w-0 text-base">{item.name}</span>
+
+        {badge ? <span className={label}>{badge}</span> : null}
+
+        {/* Noktali dolgu: yalnizca fiyat varsa anlamli. */}
+        {item.price ? (
+          <>
+            <span
+              aria-hidden="true"
+              className="mb-[5px] hidden min-w-6 flex-1 border-b border-dotted border-[var(--mera-dot)] sm:block"
+            />
+            {/* dir=ltr: para birimi ve rakam sirasi Arapca'da da bozulmasin.
+                shrink-0 + break-normal: fiyat satirin sabit ucudur — ad cok
+                uzun oldugunda once ad sarar, fiyat ne daralir ne de rakamin
+                ortasindan boluner (menu sayfasinda kagit `break-words`
+                mirasini tum icerige veriyor, fiyat bunun disinda kalmali). */}
+            <span
+              className="ms-auto shrink-0 text-[0.875rem] tabular-nums break-normal text-[var(--brand-ink-body)]"
+              dir="ltr"
+            >
+              {item.price}
+            </span>
+          </>
+        ) : null}
+      </div>
+
+      {item.description ? (
+        <p className="mt-1.5 max-w-md text-[0.8125rem] leading-[1.6] text-pretty italic text-[var(--brand-ink-faint)] rtl:not-italic">
+          {item.description}
+        </p>
+      ) : null}
+    </li>
   );
 }
 
@@ -167,7 +264,7 @@ export function RuleRow({
   children: ReactNode;
 }) {
   return (
-    <div className="mera-row flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 border-b border-[var(--brand-border)] pb-2.5 text-[0.8125rem] last:border-0 last:pb-0">
+    <div className="mera-row flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 border-b border-[var(--mera-hair)] pb-2.5 text-[0.8125rem] last:border-0 last:pb-0">
       <dt className="text-[var(--brand-ink-muted)]">{term}</dt>
       <dd className="text-end text-[var(--brand-ink)]">{children}</dd>
     </div>

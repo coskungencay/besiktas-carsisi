@@ -9,13 +9,15 @@ import Header from "@/themes/tesviye/sections/Header";
 import Hero from "@/themes/tesviye/sections/Hero";
 import Location from "@/themes/tesviye/sections/Location";
 import Menu from "@/themes/tesviye/sections/Menu";
+import MenuPage from "@/themes/tesviye/sections/MenuPage";
 import Testimonials from "@/themes/tesviye/sections/Testimonials";
 
 /**
  * Tesviye — teknik cizim paftasi.
  *
- * Her bolum kalin cerceveli tek bir kutu; kutunun basinda numarali monospace
- * kunye, ic bolmeler yine kalin cizgilerle ayrilmis. Gorsel kimligin kaynagi
+ * Sayfanin tamami kenardan kenara TEK bir izgara: bolumler arasinda bosluk
+ * yok, hepsi 2px cizgilerle ayrilmis. Her bolum solda 200px'lik numarali bir
+ * kunye rayiyla basliyor (bkz. parts.tsx > Plate). Gorsel kimligin kaynagi
  * src/themes/tesviye/tokens.css, ortak katmandan yalnizca MANTIK alinir.
  */
 const theme: ThemeDefinition = {
@@ -25,7 +27,7 @@ const theme: ThemeDefinition = {
   Header,
   /*
    * Sira paftalarin dosya numarasiyla ayni: 01 Hakkimizda ... 07 Iletisim.
-   * Yeni bir bolum araya girerse SheetHead'deki numaralar da guncellenmeli.
+   * Yeni bir bolum araya girerse Plate'e verilen numaralar da guncellenmeli.
    */
   sections: [
     { id: "hero", Component: Hero },
@@ -38,6 +40,11 @@ const theme: ThemeDefinition = {
     { id: "iletisim", Component: Contact },
   ],
   Footer,
+  /*
+   * Ayri menu sayfasinin govdesi. Ana sayfadaki "menu" bolumu vitrin olarak
+   * sections dizisinde KALIR; tam fiyat cetveli burada.
+   */
+  MenuPage,
   tokensPath: "src/themes/tesviye/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {

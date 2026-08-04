@@ -44,8 +44,13 @@ export default function Testimonials({ content }: SectionProps) {
         </Reveal>
 
         <Reveal delay={0.08}>
-          {/* items-stretch + h-full: yan yana kartlarin kenarliklari ayni boyda bitsin. */}
-          <ul className="mx-auto mt-12 grid max-w-5xl items-stretch gap-5 sm:grid-cols-2 sm:gap-[1.375rem] lg:grid-cols-3">
+          {/*
+            items-stretch + h-full: yan yana kartlarin kenarliklari ayni boyda
+            bitsin. Izgara galerinin genisligiyle AYNI: onceki max-w-5xl siniri
+            ayni sayfada kah kenardan kenara (galeri) kah ortalanmis dar
+            (yorumlar) iki farkli ritim uretiyordu.
+          */}
+          <ul className="mt-12 grid items-stretch gap-5 sm:grid-cols-2 sm:gap-[1.375rem] lg:grid-cols-3">
             {testimonials.map((item) => {
               /*
                * Panelden gelen puan tam sayi olmayabilir; hem yuvarlanip hem

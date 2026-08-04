@@ -238,6 +238,13 @@ html[data-theme="kirk-yil"] .ky-detail {
   line-height: 1.8;
 }
 
+/* Bolum kunyesi: 12px / .26-.3em — koyu menu bolumunde de kullanilir. */
+html[data-theme="kirk-yil"] .ky-eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.26em;
+  text-transform: var(--brand-eyebrow-transform);
+}
+
 /* Kunye serit: 13px / .18em */
 html[data-theme="kirk-yil"] .ky-strip {
   font-size: 0.8125rem;

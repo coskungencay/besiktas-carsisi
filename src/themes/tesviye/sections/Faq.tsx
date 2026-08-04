@@ -1,10 +1,10 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { paragraphs } from "@/themes/_shared/data";
 import {
-  Sheet,
-  SheetHead,
+  Plate,
   bodyTextSm,
-  edgeTop,
+  edgeBottom,
+  hair,
   mono,
   shell,
 } from "@/themes/tesviye/parts";
@@ -30,31 +30,28 @@ export default function Faq({ content }: SectionProps) {
       aria-labelledby="faq-title"
       className="bg-[var(--brand-surface)]"
     >
-      <div
-        className={`${shell} pb-[var(--brand-section-py)] sm:pb-[var(--brand-section-py-lg)]`}
-      >
-        <Sheet>
-          <Reveal>
-            <SheetHead
-              code="05"
-              eyebrow={t.faq.eyebrow}
-              title={t.faq.title}
-              titleId="faq-title"
-            />
-          </Reveal>
-
-          <Reveal delay={0.08}>
+      <div className={shell} style={edgeBottom}>
+        <Reveal>
+          <Plate
+            code="05"
+            eyebrow={t.faq.eyebrow}
+            title={t.faq.title}
+            titleId="faq-title"
+          >
             {faq.map((item, index) => (
               <details
                 key={item.id}
-                className="group"
-                style={index > 0 ? edgeTop : undefined}
+                /*
+                 * Ayrac Menu ile AYNI ince cizgi: SSS tasarimda ayri bir kutu
+                 * degil, fiyat cetvelinin devami gibi okunan bir liste.
+                 */
+                className={`group ${index > 0 ? hair : ""}`}
               >
                 {/*
                  * list-none + ::-webkit-details-marker: tarayicinin varsayilan
                  * ucgeni bu tasarima yabanci; yerine sagdaki arti isareti var.
                  */}
-                <summary className="flex cursor-pointer list-none items-baseline gap-4 px-4 py-[15px] transition-colors hover:bg-[var(--brand-surface-alt)] sm:px-[18px] [&::-webkit-details-marker]:hidden">
+                <summary className="flex cursor-pointer list-none items-baseline gap-4 px-4 py-[15px] transition-colors hover:bg-[var(--ts-row-hover)] sm:px-[18px] [&::-webkit-details-marker]:hidden">
                   {/* Sabit genislik: cevabin girintisi bu sutunla hizalaniyor. */}
                   <span
                     className={`${mono} w-7 shrink-0 tabular-nums text-[var(--brand-primary)]`}
@@ -98,8 +95,8 @@ export default function Faq({ content }: SectionProps) {
                 </div>
               </details>
             ))}
-          </Reveal>
-        </Sheet>
+          </Plate>
+        </Reveal>
       </div>
     </section>
   );

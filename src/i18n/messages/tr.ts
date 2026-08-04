@@ -25,6 +25,9 @@ const tr = {
     hoursNote: "Bayram günlerinde çalışma saatleri değişebilir.",
     placeholder: "{name} hakkında bilgi yakında eklenecek.",
   },
+  site: {
+    since: "Kuruluş",
+  },
   hours: {
     label: "Saat",
     closed: "Kapalı",
@@ -32,6 +35,8 @@ const tr = {
   menu: {
     eyebrow: "Menü",
     title: "Bugün tezgâhta ne var?",
+    viewAll: "Tüm menüyü gör",
+    pageIntro: "Fiyatlar ve tam liste",
     featured: "Öne çıkan",
   },
   gallery: {

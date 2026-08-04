@@ -1,28 +1,54 @@
+import Link from "next/link";
+
 import { Reveal } from "@/components/motion/Reveal";
-import { menuWithItems } from "@/themes/_shared/data";
-import { SectionHead, shell, surface } from "@/themes/vela/parts";
+import {
+  allMenuItems,
+  featuredItems,
+  hasMenu,
+  menuHref,
+} from "@/themes/_shared/data";
+import { ArrowIcon } from "@/themes/_shared/icons";
+import {
+  goldButtonOnAccent,
+  SectionHead,
+  sectionTop,
+  shell,
+  surface,
+} from "@/themes/vela/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Tasarimin menusu iki PANEL: biri koyu ve altin cerceveli, digeri krem
- * zeminli. Kategoriler sirayla bu iki panel arasinda donuyor; boylece kac
- * kategori olursa olsun kontrast korunuyor.
+ * Ana sayfadaki menu VITRINI — tam liste artik /<dil>/menu sayfasinda.
  *
- * Urunler satir halinde: solda ad ve aciklama, sagda fiyat, ayni taban
- * cizgisinde ve aralarinda sac teli ayraclar. Olculer tasarimdan: panel
- * dolgusu 64/60px, satir dolgusu 19px, ad 21px, fiyat 19px, aciklama 13px.
+ * NEDEN VITRIN: 30+ urunlu bir kart ana sayfayi okunmaz uzunluga cikariyordu.
+ * Burada yalnizca uc urun duruyor; karar veren zaten menu sayfasina geciyor.
  *
- * Urun gorselleri bilerek gosterilmiyor; bosluk bu tasarimin malzemesi.
+ * Tasarimin menu diline sadik kalindi: YAN YANA IKI PANEL, aralarinda bosluk
+ * yok, ayrim yalnizca renk kontrastindan geliyor.
+ *   - genis panel (koyu, altin cerceveli) — uc urun, satir satir
+ *   - dar panel (krem) — tam menuye giden cagri
+ * Olculer tasarimdan: panel dolgusu 64/60px, satir dolgusu 19px, urun adi
+ * 21px, fiyat 19px, aciklama 13px.
+ *
+ * Urun gorseli yok; bosluk bu tasarimin malzemesi.
  */
 export default function Menu({ content }: SectionProps) {
-  const categories = menuWithItems(content);
-  if (categories.length === 0) return null;
+  if (!hasMenu(content)) return null;
 
   const { t } = content;
 
+  /*
+   * Musteri hicbir urunu "one cikan" isaretlemediyse bolum bos kalmasin diye
+   * menunun ilk uc urunune duseriz. O durumda "One cikan" etiketi BASILMAZ —
+   * isaretlenmemis bir urunu one cikan gibi gostermek yalan olurdu.
+   */
+  const featured = featuredItems(content, 3);
+  const items = featured.length > 0 ? featured : allMenuItems(content).slice(0, 3);
+  if (items.length === 0) return null;
+
   return (
     <section id="menu" aria-labelledby="menu-title" className={surface}>
-      <div className={`${shell} brand-section`}>
+      <div className={`${shell} ${sectionTop}`}>
         <Reveal>
           <SectionHead
             eyebrow={t.menu.eyebrow}
@@ -32,86 +58,81 @@ export default function Menu({ content }: SectionProps) {
         </Reveal>
 
         {/*
-         * gap YOK: paneller tasarimda birbirine yapisik duruyor, aradaki
-         * ayrim renk kontrastindan geliyor.
+         * gap YOK: paneller tasarimda birbirine yapisik duruyor. Urun paneli
+         * daha genis (1.6fr), cagri paneli dar (1fr) — galeri izgarasiyla ayni
+         * oran. minmax(0,…) uzun urun adlarinin kolonu sismesini engeller.
          */}
-        <div
-          className={`mt-16 grid ${categories.length > 1 ? "lg:grid-cols-2" : ""}`}
-        >
-          {categories.map((category, index) => {
-            // Tek sayili kategoriler krem panele dusuyor (tasarimdaki sag blok).
-            const isLight = index % 2 === 1;
+        <div className="mt-16 grid lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+          <Reveal>
+            <div className="h-full border border-[var(--brand-frame-gold)] bg-[var(--brand-surface-alt)] px-6 py-12 sm:px-[3.75rem] sm:py-16">
+              {featured.length > 0 ? (
+                <h3 className="brand-body brand-eyebrow text-[0.6875rem] leading-[1.6] text-[var(--brand-primary)]">
+                  {t.menu.featured}
+                </h3>
+              ) : null}
 
-            const panel = isLight
-              ? "bg-[var(--brand-accent)] text-[var(--brand-surface)]"
-              : "bg-[var(--brand-surface-alt)] text-[var(--brand-ink)] border border-[var(--brand-frame-gold)]";
-            const eyebrowTone = isLight
-              ? "text-[var(--brand-primary-deep)]"
-              : "text-[var(--brand-primary)]";
-            const priceTone = eyebrowTone;
-            const ruleTone = isLight
-              ? "border-[var(--brand-rule-on-accent)]"
-              : "border-[var(--brand-rule-soft)]";
-            const descTone = isLight
-              ? "text-[var(--brand-ink-on-accent-muted)]"
-              : "text-[var(--brand-ink-muted)]";
-
-            return (
-              <Reveal key={category.id} delay={index === 0 ? 0 : 0.12}>
-                <div className={`${panel} h-full px-8 py-12 sm:px-[3.75rem] sm:py-16`}>
-                  <h3
-                    className={`brand-body brand-eyebrow text-[0.6875rem] leading-[1.6] ${eyebrowTone}`}
+              <ul className={featured.length > 0 ? "mt-[1.625rem]" : ""}>
+                {items.map((item, index) => (
+                  <li
+                    key={item.id}
+                    className={`flex items-baseline justify-between gap-6 py-[1.1875rem] sm:gap-8 ${
+                      index === items.length - 1
+                        ? ""
+                        : "border-b border-[var(--brand-rule-soft)]"
+                    }`}
                   >
-                    {category.name}
-                  </h3>
+                    {/* min-w-0: uzun urun adi sarsin, fiyatin uzerine binmesin. */}
+                    <div className="min-w-0">
+                      <p className="brand-display text-[1.3125rem] leading-[1.3] text-pretty">
+                        {item.name}
+                      </p>
 
-                  <ul className="mt-[1.625rem]">
-                    {category.items.map((item, itemIndex) => (
-                      <li
-                        key={item.id}
-                        className={`flex items-baseline justify-between gap-8 py-[1.1875rem] ${
-                          itemIndex === category.items.length - 1
-                            ? ""
-                            : `border-b ${ruleTone}`
-                        }`}
+                      {item.description ? (
+                        <p className="mt-[0.3125rem] text-[0.8125rem] leading-[1.6] text-pretty text-[var(--brand-ink-muted)]">
+                          {item.description}
+                        </p>
+                      ) : null}
+                    </div>
+
+                    {item.price ? (
+                      <p
+                        className="brand-display shrink-0 text-[1.1875rem] leading-[1.3] tabular-nums text-[var(--brand-primary)]"
+                        dir="ltr"
                       >
-                        <div className="min-w-0">
-                          <p className="brand-display text-[1.3125rem] leading-[1.3] text-pretty">
-                            {item.name}
-                          </p>
+                        {item.price}
+                      </p>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
 
-                          {item.isFeatured ? (
-                            <p
-                              className={`brand-body brand-eyebrow mt-[0.3125rem] text-[0.6875rem] leading-[1.6] ${eyebrowTone}`}
-                            >
-                              {t.menu.featured}
-                            </p>
-                          ) : null}
+          {/*
+           * Krem panel: tasarimdaki ikinci menu paneli, burada tek isi tam
+           * menuye gondermek. Dolu bir renk blogu oldugu icin sayfadaki en
+           * belirgin eylem cagrisi kendiliginden burasi oluyor.
+           */}
+          <Reveal delay={0.12}>
+            <div className="flex h-full flex-col justify-center gap-8 bg-[var(--brand-accent)] px-6 py-12 text-[var(--brand-surface)] sm:px-[3.75rem] sm:py-16">
+              <p className="brand-display text-[clamp(1.5rem,2.6vw,1.875rem)] leading-[1.35] text-pretty">
+                {t.menu.pageIntro}
+              </p>
 
-                          {item.description ? (
-                            <p
-                              className={`mt-[0.3125rem] text-[0.8125rem] leading-[1.6] text-pretty ${descTone}`}
-                            >
-                              {item.description}
-                            </p>
-                          ) : null}
-                        </div>
-
-                        {item.price ? (
-                          <p
-                            className={`brand-display shrink-0 text-[1.1875rem] leading-[1.3] tabular-nums ${priceTone}`}
-                            dir="ltr"
-                          >
-                            {item.price}
-                          </p>
-                        ) : null}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </Reveal>
-            );
-          })}
+              {/*
+               * Temanin tek buton bicimi, krem zemin varyanti. self-start:
+               * buton panelin genisligine yayilmasin, tasarimdaki gibi metin
+               * kadar yer kaplasin.
+               */}
+              <Link
+                href={menuHref(content)}
+                className={`${goldButtonOnAccent} self-start`}
+              >
+                {t.menu.viewAll}
+                <ArrowIcon className="size-3.5" />
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </div>
     </section>

@@ -47,12 +47,21 @@ export default function Hero({ content }: SectionProps) {
       id="hero"
       aria-labelledby="hero-title"
       /*
-       * Yukseklik tasarimda 780px; ust serit (Header) bizde ayri bir bolum
-       * oldugu icin onun payi dusuldu. flex + items-end yazinin her zaman
-       * alt kenara yaslanmasini saglar: fotograf uzasa da baslik ile alt
-       * kenar arasindaki 78px'lik bosluk sabit kalir.
+       * Tasarimda ust serit hero'nun ICINDE, fotografin uzerinde duruyor ve
+       * bolumun toplam yuksekligi 780px (48.75rem). Bizde Header ayri bir
+       * bilesen oldugu icin fotograf lg'de negatif ust bosluk ile seridin
+       * altina cekiliyor: 5.25rem = 30px + 30px dolgu + 24px marka satiri.
+       * Boylece Header + Hero toplami yine 780px oluyor ve marka adi
+       * tasarimdaki gibi fotografin uzerinde duruyor.
+       *
+       * Kucuk ekranlarda cekme YOK: orada serit sarabildigi icin yuksekligi
+       * degisken; fotografin altinda kalmasi daha guvenli.
+       *
+       * flex + items-end yazinin her zaman alt kenara yaslanmasini saglar:
+       * fotograf uzasa da baslik ile alt kenar arasindaki 78px'lik bosluk
+       * sabit kalir.
        */
-      className={`${surface} relative flex min-h-[32rem] items-end overflow-hidden lg:min-h-[43.125rem]`}
+      className={`${surface} relative flex min-h-[32rem] items-end overflow-hidden lg:-mt-[5.25rem] lg:min-h-[48.75rem]`}
     >
       {/*
        * Fotograf hafifce ic zoom yapiyor; sarmalayici overflow-hidden olmali
@@ -76,7 +85,13 @@ export default function Hero({ content }: SectionProps) {
        */}
       <div aria-hidden="true" className="vl-veil absolute inset-0" />
 
-      <div className={`${shell} relative w-full pt-24 pb-14 lg:pb-[4.875rem]`}>
+      {/*
+       * lg'de ust dolgu seridin yuksekliginden (5.25rem) buyuk: baslik cok
+       * uzasa bile nav'in altina girmez.
+       */}
+      <div
+        className={`${shell} relative w-full pt-24 pb-14 lg:pt-[7.5rem] lg:pb-[4.875rem]`}
+      >
         {/*
          * Cizgi tasarimda altindan saydama giden bir gecis; tek renk bir cubuk
          * degil. scaleX ile cizildigi icin transform-origin tokens.css'te.

@@ -1,12 +1,12 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
-import { hoursFromMonday, paragraphs } from "@/themes/_shared/data";
+import { paragraphs } from "@/themes/_shared/data";
 import {
+  balancedColumns,
   Hairline,
   label,
-  metaMuted,
-  proseFine,
   proseSm,
+  sectionTop,
   shell,
   surface,
 } from "@/themes/vela/parts";
@@ -18,23 +18,31 @@ import type { SectionProps } from "@/themes/types";
  * bilerek bozuk tutuyor — simetri bu tasarimda "kurumsal" durur.
  *
  * Paragraflar numaralanmis kartlara donusuyor (01, 02, 03…): tasarimda ic
- * icerik boyle bolunmus. Numara ve baslik serif, govde sans — kontrast
- * temanin ritmini kuruyor.
+ * icerik boyle bolunmus. Numara serif ve altin, govde sans — kontrast temanin
+ * ritmini kuruyor.
  *
- * Saatler ayri bir blok; gun adi kucuk ve genis harf arali, saatin kendisi
- * serif, cunku sayfada okunmasi gereken tek "veri" o.
+ * NEDEN BURADA CALISMA SAATLERI YOK: tasarimda saatler kapanis (rezervasyon)
+ * bolumunun orta kolonunda. Yedi satirlik bir tablo bu bolumu iki katina
+ * cikariyor ve "az masa, cok ozen" ritmini bozuyordu. Saatler artik
+ * Contact.tsx icinde.
  */
 export default function About({ content }: SectionProps) {
-  const { about, name, openingHours, t } = content;
-  if (!about && openingHours.length === 0) return null;
+  const { about, name, t } = content;
+  if (!about) return null;
 
   const body = paragraphs(about);
-  const hours = hoursFromMonday(openingHours);
   const cards = body.length > 0 ? body : [fill(t.about.placeholder, { name })];
+
+  /*
+   * Tasarimda uc kart var ve izgara tam doluyor. Kart sayisi icerikten
+   * geldigi icin degisken; kolon sayisi ona gore secilir (bkz.
+   * balancedColumns). Tek paragrafta izgara hic kurulmaz.
+   */
+  const columns = balancedColumns(cards.length);
 
   return (
     <section id="hakkimizda" aria-labelledby="about-title" className={surface}>
-      <div className={`${shell} brand-section`}>
+      <div className={`${shell} ${sectionTop}`}>
         <div className="grid gap-10 lg:grid-cols-[17.5rem_1fr] lg:gap-[4.375rem]">
           <Reveal>
             <p className={label}>{t.about.eyebrow}</p>
@@ -54,7 +62,9 @@ export default function About({ content }: SectionProps) {
 
             <Reveal delay={0.14}>
               {/* 58px ust bosluk ve 52px kolon araligi tasarimdan. */}
-              <div className="mt-[3.625rem] grid gap-x-[3.25rem] gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+              <div
+                className={`mt-[3.625rem] grid gap-x-[3.25rem] gap-y-12 ${columns}`}
+              >
                 {cards.map((paragraph, index) => (
                   <div key={index}>
                     <div className="brand-display text-[0.9375rem] tracking-[var(--brand-meta-tracking)] text-[var(--brand-primary)]">
@@ -69,40 +79,6 @@ export default function About({ content }: SectionProps) {
             </Reveal>
           </div>
         </div>
-
-        {hours.length > 0 ? (
-          <Reveal delay={0.12}>
-            <div className="mt-24">
-              <Hairline tone="gold" />
-
-              <h3 className={`${label} mt-10`}>{t.about.openingHours}</h3>
-
-              <dl className="mt-8 grid gap-x-[3.25rem] gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
-                {hours.map((hour) => (
-                  <div
-                    key={hour.dayOfWeek}
-                    className="flex flex-col gap-3 border-t border-[var(--brand-border)] pt-[1.1875rem]"
-                  >
-                    <dt className={metaMuted}>{hour.dayLabel}</dt>
-                    <dd className="brand-display text-[1.3125rem] leading-[1.3] tabular-nums">
-                      {hour.isClosed ? (
-                        <span className="text-[var(--brand-ink-muted)]">
-                          {t.hours.closed}
-                        </span>
-                      ) : (
-                        <span dir="ltr">
-                          {hour.openTime} — {hour.closeTime}
-                        </span>
-                      )}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-
-              <p className={`${proseFine} mt-10`}>{t.about.hoursNote}</p>
-            </div>
-          </Reveal>
-        ) : null}
       </div>
     </section>
   );

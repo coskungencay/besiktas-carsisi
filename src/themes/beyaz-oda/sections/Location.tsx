@@ -1,20 +1,13 @@
 import { Reveal } from "@/components/motion/Reveal";
-import {
-  closedDayLabels,
-  coordinateLabel,
-  hoursRange,
-} from "@/themes/_shared/data";
+import { placeStamp } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   SectionIndex,
-  meta,
   sectionGrid,
   sectionTop,
   surface,
 } from "@/themes/beyaz-oda/parts";
 import type { SectionProps } from "@/themes/types";
-
-type MetaRow = { term: string; value: string; ltr: boolean };
 
 /**
  * Konum.
@@ -26,15 +19,17 @@ type MetaRow = { term: string; value: string; ltr: boolean };
  * Harita yerine duran doku temanin kendi dilinden: 28px'lik hairline izgara
  * (.bo-plot) ve ortasinda cizgilerden kurulu bir nisan. Tamamen dekoratif,
  * bu yuzden aria-hidden — anlam tasiyan her sey yanindaki metinde.
+ *
+ * SAAT OZETI YOK: ayni iki satir ("Saat · 08–18", "Kapali · Pazar") hero'nun
+ * kunye blogunda zaten duruyor, gun gun tablo da hemen alttaki iletisim
+ * bolumunde. Ucuncu kez yazmak sayfayi uzatmaktan baska bir sey yapmiyordu.
  */
 export default function Location({ content }: SectionProps) {
   if (!content.isVisible("konum")) return null;
 
-  const { contact, openingHours, t } = content;
+  const { contact, t } = content;
 
-  const coords = coordinateLabel(contact.lat, contact.lng);
-  const range = hoursRange(openingHours);
-  const closed = closedDayLabels(openingHours);
+  const coords = placeStamp(content);
 
   /*
    * Yol tarifi hedefi, elde olan en kesin veriden secilir: musterinin girdigi
@@ -48,19 +43,6 @@ export default function Location({ content }: SectionProps) {
       : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
           contact.address,
         )}`);
-
-  /*
-   * Sagdaki kunye "ozet": Hakkimizda bolumunde zaten gun gun tablo var, burada
-   * tekrar etmek yerine araligi ve kapali gunleri tek satira indiriyoruz.
-   */
-  const rows: MetaRow[] = [
-    range && { term: t.hours.label, value: range, ltr: true },
-    closed.length > 0 && {
-      term: t.hours.closed,
-      value: closed.join(", "),
-      ltr: false,
-    },
-  ].filter((row): row is MetaRow => Boolean(row));
 
   return (
     <section id="konum" aria-labelledby="location-title" className={surface}>
@@ -134,27 +116,6 @@ export default function Location({ content }: SectionProps) {
                     </p>
                   ) : null}
                 </Reveal>
-
-                {rows.length > 0 ? (
-                  <Reveal delay={0.2}>
-                    <dl className="mt-8 flex flex-col">
-                      {rows.map((row) => (
-                        <div
-                          key={row.term}
-                          className={`${meta} flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-[var(--brand-border)] py-[13px]`}
-                        >
-                          <dt className="brand-eyebrow">{row.term}</dt>
-                          <dd
-                            className="tabular-nums text-[var(--brand-ink)]"
-                            {...(row.ltr ? { dir: "ltr" as const } : {})}
-                          >
-                            {row.value}
-                          </dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </Reveal>
-                ) : null}
               </div>
             </div>
           </SectionIndex>

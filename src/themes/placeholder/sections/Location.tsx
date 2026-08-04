@@ -7,7 +7,7 @@ import {
 } from "@/themes/placeholder/parts";
 import {
   closedDayLabels,
-  coordinateLabel,
+  placeStamp,
   hoursRange,
 } from "@/themes/_shared/data";
 import type { SectionProps } from "@/themes/types";
@@ -34,7 +34,7 @@ export default function Location({ content }: SectionProps) {
 
   const range = hoursRange(openingHours);
   const closed = closedDayLabels(openingHours);
-  const coordinates = coordinateLabel(contact.lat, contact.lng);
+  const coordinates = placeStamp(content);
 
   const rows: Row[] = [
     contact.address && {

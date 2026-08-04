@@ -9,6 +9,7 @@ import Header from "@/themes/vela/sections/Header";
 import Hero from "@/themes/vela/sections/Hero";
 import Location from "@/themes/vela/sections/Location";
 import Menu from "@/themes/vela/sections/Menu";
+import MenuPage from "@/themes/vela/sections/MenuPage";
 import Testimonials from "@/themes/vela/sections/Testimonials";
 
 /**
@@ -40,6 +41,11 @@ const theme: ThemeDefinition = {
     { id: "iletisim", Component: Contact },
   ],
   Footer,
+  /*
+   * Ana sayfadaki "menu" bolumu artik yalnizca vitrin (uc urun + tam menu
+   * baglantisi); kartin tamami bu ayri sayfada.
+   */
+  MenuPage,
   tokensPath: "src/themes/vela/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {

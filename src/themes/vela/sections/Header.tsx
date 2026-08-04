@@ -1,19 +1,30 @@
+import Link from "next/link";
+
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
-import { hasMenu } from "@/themes/_shared/data";
-import { metaMuted, shell, surface } from "@/themes/vela/parts";
+import { hasMenu, menuHref } from "@/themes/_shared/data";
+import { metaSoft, shell } from "@/themes/vela/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Otel lobisi seridi. Tasarimda marka adi ORTADA duruyor: iki yanindaki
- * 1fr kolonlar onu optik olarak ortalar (nav ne kadar uzarsa uzasin).
- * Yukseklik tasarimdaki 30px dikey bosluktan geliyor.
+ * Ust serit. Tasarimda bu serit AYRI BIR BANT DEGIL: hero fotografinin
+ * uzerinde duruyor (position:relative, zemin yok, alt cizgi yok) ve marka adi
+ * fotografin ortasina oturuyor. Koyu dolu bir serit + altin ayrac koymak
+ * tasarimin en gosterisli hamlesini — tabelanin fotograf uzerinde durmasini —
+ * yok ediyordu.
  *
- * Alt kenarda saydam altin bir cizgi var — bu yuzden border yerine ayri bir
- * mutlak konumlu cizgi kullanildi; border-color'a opaklik verilemiyor.
+ * Nav ISE IKI PARCA: marka adinin solunda ve saginda esit birer 1fr kolon.
+ * Boylece isim, nav ne kadar uzarsa uzasin optik olarak ortada kalir.
+ *
+ * Zemin YOK: kucuk ekranlarda serit hero'nun uzerine cikmadigi icin arkasinda
+ * sayfa zemini (--brand-surface) gorunur, yani gorunum yine tasarimdaki gibi
+ * koyu kalir. lg'de Hero kendini bu seridin altina cekiyor (bkz. Hero.tsx).
  *
  * vl-fade: acilista yalnizca opaklik degisir. Serit kaymasin diye bilerek
  * translate YOK; ust seritte hareket goz yorar.
  */
+/** `page: true` → ayri bir sayfaya gider (capa degil), yani next/link ile. */
+type NavLink = { href: string; label: string; page?: boolean };
+
 export default function Header({ content }: SectionProps) {
   const { name, t } = content;
 
@@ -22,39 +33,66 @@ export default function Header({ content }: SectionProps) {
    * yoksa musteri galeri yuklemeden yayina alinca link hicbir yere gitmez.
    */
   const links = [
-    (content.about || content.openingHours.length > 0) && {
-      href: "#hakkimizda",
-      label: t.about.title,
+    // Saatler artik iletisim bolumunde; "hakkimizda" sadece metne bagli.
+    content.about && { href: "#hakkimizda", label: t.about.title },
+    /*
+     * Menu artik ana sayfada bir capa degil, kendi sayfasi. Kosul yine
+     * hasMenu: urun yoksa ne sayfa var ne de link olmali.
+     */
+    hasMenu(content) && {
+      href: menuHref(content),
+      label: t.menu.eyebrow,
+      page: true,
     },
-    hasMenu(content) && { href: "#menu", label: t.menu.eyebrow },
     // isVisible: musteri galeriyi panelden kapatinca link de gitmeli.
     content.isVisible("galeri") && {
       href: "#galeri",
       label: t.gallery.eyebrow,
     },
     { href: "#iletisim", label: t.contact.eyebrow },
-  ].filter((link): link is { href: string; label: string } => Boolean(link));
+  ].filter((link): link is NavLink => Boolean(link));
+
+  /*
+   * Baglantilar ikiye bolunuyor. Tek sayida link varsa fazlalik SOLA gidiyor:
+   * sagda dil secici de durdugu icin denge boyle kuruluyor.
+   */
+  const split = Math.ceil(links.length / 2);
+  const leadingLinks = links.slice(0, split);
+  const trailingLinks = links.slice(split);
+
+  const navItem = (link: NavLink) => {
+    const className = `${metaSoft} transition-colors hover:text-[var(--brand-primary)]`;
+
+    return (
+      <li key={link.href}>
+        {/* Capa ayni sayfada kaydirir; menu ayri bir sayfa, istemci gecisi. */}
+        {link.page ? (
+          <Link href={link.href} className={className}>
+            {link.label}
+          </Link>
+        ) : (
+          <a href={link.href} className={className}>
+            {link.label}
+          </a>
+        )}
+      </li>
+    );
+  };
 
   return (
-    <header className={`${surface} vl-fade relative brand-body`}>
-      <div
-        className={`${shell} flex flex-wrap items-center justify-center gap-x-8 gap-y-4 py-[1.875rem] lg:grid lg:grid-cols-[1fr_auto_1fr]`}
+    <header className="vl-fade relative z-20 brand-body">
+      {/*
+       * Tek bir nav landmark: iki liste de ayni gezinmenin parcasi. Ikiye
+       * ayri <nav> koymak ekran okuyucuda ayni adla iki landmark uretirdi.
+       */}
+      <nav
+        aria-label={name}
+        className={`${shell} pe-14 sm:pe-0 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 py-[1.875rem] lg:grid lg:grid-cols-[1fr_auto_1fr]`}
       >
-        <nav aria-label={name} className="order-2 lg:order-none">
-          {/* Nav ogeleri arasi 34px — tasarimdaki deger. */}
-          <ul className="flex flex-wrap items-center justify-center gap-x-[2.125rem] gap-y-2 lg:justify-start">
-            {links.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  className={`${metaMuted} transition-colors hover:text-[var(--brand-primary)]`}
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {/* Nav ogeleri arasi 34px — tasarimdaki deger. */}
+        <ul className="order-2 flex flex-wrap items-center justify-center gap-x-[2.125rem] gap-y-2 lg:order-none lg:justify-start">
+          {leadingLinks.map(navItem)}
+        </ul>
 
         {/*
          * Marka adi: 24px Bodoni, .44em harf araligi.
@@ -68,20 +106,19 @@ export default function Header({ content }: SectionProps) {
           {name}
         </a>
 
-        {/* Tek dil aciksa secici hic basilmaz. */}
-        {content.locales.length > 1 ? (
-          <div className="order-3 flex items-center justify-center lg:order-none lg:justify-end">
-            <LocaleSwitcher content={content} />
-          </div>
-        ) : (
-          <div aria-hidden="true" className="order-3 hidden lg:block" />
-        )}
-      </div>
+        <div className="order-3 flex flex-wrap items-center justify-center gap-x-[2.125rem] gap-y-2 lg:justify-end">
+          {trailingLinks.length > 0 ? (
+            <ul className="flex flex-wrap items-center justify-center gap-x-[2.125rem] gap-y-2">
+              {trailingLinks.map(navItem)}
+            </ul>
+          ) : null}
 
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-px bg-[var(--brand-primary)] opacity-30"
-      />
+          {/* Tek dil aciksa secici hic basilmaz. */}
+          {content.locales.length > 1 ? (
+            <LocaleSwitcher content={content} />
+          ) : null}
+        </div>
+      </nav>
     </header>
   );
 }

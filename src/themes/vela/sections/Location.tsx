@@ -1,13 +1,15 @@
 import { Reveal } from "@/components/motion/Reveal";
 import {
   closedDayLabels,
-  coordinateLabel,
+  placeStamp,
   hoursRange,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
+  goldButton,
   metaMuted,
   SectionHead,
+  sectionTop,
   shell,
   surface,
 } from "@/themes/vela/parts";
@@ -31,7 +33,7 @@ export default function Location({ content }: SectionProps) {
 
   const { contact, openingHours, t } = content;
 
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
   const range = hoursRange(openingHours);
   const closed = closedDayLabels(openingHours);
 
@@ -59,7 +61,7 @@ export default function Location({ content }: SectionProps) {
 
   return (
     <section id="konum" aria-labelledby="location-title" className={surface}>
-      <div className={`${shell} brand-section`}>
+      <div className={`${shell} ${sectionTop}`}>
         <Reveal>
           <SectionHead
             eyebrow={t.location.eyebrow}
@@ -99,12 +101,8 @@ export default function Location({ content }: SectionProps) {
                 href={directionsHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                /*
-                 * Tasarimdaki tek "buton": ince altin cerceve, 15/32px dolgu,
-                 * uzerine gelince zemin altina donuyor. Radius yok — tema
-                 * genelinde kose yok.
-                 */
-                className="mt-9 inline-flex items-center gap-3 border border-[var(--brand-primary)] px-8 py-[0.9375rem] text-[0.71875rem] leading-[1.6] uppercase tracking-[var(--brand-meta-tracking)] text-[var(--brand-primary)] transition-colors hover:bg-[var(--brand-primary)] hover:text-[var(--brand-primary-contrast)]"
+                /* Temanin tek buton bicimi (bkz. parts.tsx: goldButton). */
+                className={`${goldButton} mt-9`}
               >
                 {t.location.directions}
                 <ArrowIcon className="size-3.5" />

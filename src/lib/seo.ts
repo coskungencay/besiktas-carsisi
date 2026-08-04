@@ -246,3 +246,68 @@ export function buildJsonLd(content: SiteContent): Record<string, unknown> {
 
   return { "@context": "https://schema.org", "@graph": graph };
 }
+
+/**
+ * Menu SAYFASI icin yapilandirilmis veri.
+ *
+ * Ana sayfadaki CafeOrCoffeeShop dugumu menuyu `hasMenu` altinda zaten
+ * tasiyor; burada menuyu SAYFANIN ANA VARLIGI olarak veriyoruz ve isletmeye
+ * @id ile bagliyoruz. Ayrica breadcrumb: arama sonucunda "Ana sayfa > Menu"
+ * yolunu gostermek icin.
+ */
+export function buildMenuJsonLd(content: SiteContent): Record<string, unknown> {
+  const base = appUrl();
+  const home = `${base}/${content.locale}`;
+
+  const sections = content.menu
+    .filter((category) => category.items.length > 0)
+    .map((category) => ({
+      "@type": "MenuSection",
+      name: category.name,
+      hasMenuItem: category.items.map((item) => ({
+        "@type": "MenuItem",
+        name: item.name,
+        description: item.description || undefined,
+        offers:
+          item.priceValue > 0
+            ? {
+                "@type": "Offer",
+                price: item.priceValue.toFixed(2),
+                priceCurrency: "TRY",
+              }
+            : undefined,
+      })),
+    }));
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Menu",
+        "@id": `${home}/menu#menu`,
+        name: `${content.name} — ${content.t.menu.eyebrow}`,
+        inLanguage: content.locale,
+        url: `${home}/menu`,
+        hasMenuSection: sections,
+        provider: { "@id": `${base}/#business` },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: content.name,
+            item: home,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: content.t.menu.eyebrow,
+            item: `${home}/menu`,
+          },
+        ],
+      },
+    ],
+  };
+}

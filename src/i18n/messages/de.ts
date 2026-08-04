@@ -18,6 +18,9 @@ const de: Messages = {
     hoursNote: "An Feiertagen können die Öffnungszeiten abweichen.",
     placeholder: "Informationen über {name} folgen in Kürze.",
   },
+  site: {
+    since: "Seit",
+  },
   hours: {
     label: "Zeiten",
     closed: "Geschlossen",
@@ -25,6 +28,8 @@ const de: Messages = {
   menu: {
     eyebrow: "Speisekarte",
     title: "Was gibt es heute an der Theke?",
+    viewAll: "Ganze Karte ansehen",
+    pageIntro: "Preise und vollständige Liste",
     featured: "Empfehlung",
   },
   gallery: {

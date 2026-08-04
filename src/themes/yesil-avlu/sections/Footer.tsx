@@ -1,4 +1,4 @@
-import { coordinateLabel } from "@/themes/_shared/data";
+import { placeStamp } from "@/themes/_shared/data";
 import { Sprig, eyebrow, shell, surface } from "@/themes/yesil-avlu/parts";
 import type { SectionProps } from "@/themes/types";
 
@@ -10,7 +10,7 @@ export default function Footer({ content }: SectionProps) {
   const { name, contact, socialLinks, t } = content;
   const year = new Date().getFullYear();
   // Koordinat ayri bir DB alani DEGIL; panelde girilen enlem/boylamdan turetilir.
-  const coords = coordinateLabel(contact.lat, contact.lng);
+  const coords = placeStamp(content);
 
   return (
     <footer className={surface}>
@@ -19,8 +19,13 @@ export default function Footer({ content }: SectionProps) {
       >
         <Sprig />
 
-        {/* Tasarimin kapanis satiri: italik serif, 19px. */}
-        <p className="brand-display ya-serif-book text-[1.1875rem] italic">{name}</p>
+        {/*
+          Tasarimin kapanis satiri: italik serif, 19px ve SOLUK (murekkep degil
+          etiket tonu). Kapanis burada bir vurgu degil, fisilti.
+        */}
+        <p className="brand-display ya-serif-book text-[1.1875rem] text-[var(--brand-ink-muted)] italic">
+          {name}
+        </p>
 
         {contact.locality ? <p className={eyebrow}>{contact.locality}</p> : null}
 
@@ -53,7 +58,8 @@ export default function Footer({ content }: SectionProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={link.label}
-                    className="ya-nav brand-body transition-colors hover:text-[var(--brand-accent)]"
+                    /* Hover rengi tema genelinde tanimli (tokens.css). */
+                    className="ya-nav brand-body transition-colors"
                   >
                     {link.label}
                   </a>

@@ -9,6 +9,7 @@ import Header from "@/themes/sicak-firin/sections/Header";
 import Hero from "@/themes/sicak-firin/sections/Hero";
 import Location from "@/themes/sicak-firin/sections/Location";
 import Menu from "@/themes/sicak-firin/sections/Menu";
+import MenuPage from "@/themes/sicak-firin/sections/MenuPage";
 import Testimonials from "@/themes/sicak-firin/sections/Testimonials";
 
 /**
@@ -27,6 +28,11 @@ const theme: ThemeDefinition = {
   sections: [
     { id: "hero", Component: Hero },
     { id: "hakkimizda", Component: About },
+    /*
+     * Ana sayfadaki menu artik VITRIN: uc urun + "tum menuyu gor". Tam liste
+     * MenuPage'de (/{dil}/menu). Bolum id'si "menu" kaliyor cunku panelin
+     * gorunurluk anahtari ve "menude urun var mi" mantigi buna bagli.
+     */
     { id: "menu", Component: Menu },
     { id: "galeri", Component: Gallery },
     /*
@@ -40,6 +46,7 @@ const theme: ThemeDefinition = {
     { id: "iletisim", Component: Contact },
   ],
   Footer,
+  MenuPage,
   tokensPath: "src/themes/sicak-firin/tokens.css",
   // tokens.css ile ayni tutulmali
   defaultColors: {

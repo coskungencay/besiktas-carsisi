@@ -17,14 +17,26 @@ const STEPS = [0, 1, 2, 3, 4];
 function QuoteCard({
   item,
   ratingLabel,
+  featured = false,
 }: {
   item: Testimonial;
   ratingLabel: string;
+  /**
+   * Tasarimda UCUNCU kart bordo dolu: ortalanmis, tekduze siranin tek
+   * kirilma noktasi. Ucten az yorum varsa hicbiri vurgulanmaz.
+   */
+  featured?: boolean;
 }) {
   const rating = item.rating;
 
   return (
-    <figure className="brand-frame flex h-full flex-col bg-[var(--brand-surface-alt)] px-7 py-8 text-center sm:px-8 sm:py-9">
+    <figure
+      className={`brand-frame flex h-full flex-col px-7 py-8 text-center sm:px-8 sm:py-9 ${
+        featured
+          ? "border-[var(--brand-primary)] bg-[var(--brand-primary)] text-[var(--brand-primary-contrast)]"
+          : "bg-[var(--brand-surface-alt)]"
+      }`}
+    >
       {/*
         Buyuk tirnak isareti tasarimin imzasi: Abril'in kendi glifi, altin
         renkte. Noktalama oldugu icin sozlukte yeri yok, ekran okuyucuya da
@@ -108,7 +120,11 @@ export default function Testimonials({ content }: SectionProps) {
               delay={Math.min(index, 2) * 0.08}
               className="w-full max-w-sm sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]"
             >
-              <QuoteCard item={item} ratingLabel={t.testimonials.ratingLabel} />
+              <QuoteCard
+                featured={index === 2}
+                item={item}
+                ratingLabel={t.testimonials.ratingLabel}
+              />
             </Reveal>
           ))}
         </ul>

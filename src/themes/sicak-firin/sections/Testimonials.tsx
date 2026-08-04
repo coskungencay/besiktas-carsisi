@@ -12,14 +12,14 @@ import type { SectionProps } from "@/themes/types";
 /**
  * Tezgaha birakilmis komsu notlari.
  *
- * Menu ve galeri gibi bir "vitrin" bolumu oldugu icin baslik ORTALI ve kucuk
- * olcekte (size="md") — anlatim bolumleri (hakkimizda, iletisim) satir basindan
- * hizali duruyor, bu ayrimi bozmuyoruz.
+ * Menu ve galeri gibi bir "vitrin" bolumu oldugu icin baslik kucuk olcekte
+ * (size="md"). Hiza sol kenardan: tasarimda ortalanmis metin hic yok.
  *
- * Tasarimin tekrar eden bir hamlesi var: bir izgarada hucrelerden BIRI koyu
- * zemine donuyor (program seridinde 3., "biz" seridinde ortadaki kart). Ayni el
- * burada da surduruluyor — ikinci kart firinin agzi gibi koyu. Grid basina tek
- * vurgu; her karti boyamak tasarimi satranc tahtasina cevirirdi.
+ * Tasarimin tekrar eden bir hamlesi var: bir izgarada hucrelerden BIRI dolu
+ * zemine donuyor (firin saatleri seridinde 3. kart marka renginde, "biz"
+ * seridinde ortadaki kart koyu). Ayni el burada da surduruluyor — ikinci kart
+ * firinin agzi gibi koyu. Grid basina tek vurgu; her karti boyamak tasarimi
+ * satranc tahtasina cevirirdi.
  */
 export default function Testimonials({ content }: SectionProps) {
   // Musteri panelden kapatmis ya da hic yorum yoksa bolum hic basilmaz.
@@ -35,12 +35,13 @@ export default function Testimonials({ content }: SectionProps) {
             eyebrow={t.testimonials.eyebrow}
             title={t.testimonials.title}
             titleId="testimonials-title"
-            align="center"
             size="md"
           />
         </Reveal>
 
-        <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Galeri ile ayni ritim: baslik ile izgara arasi 40px (tasarimdaki
+            deger), Tailwind varsayilani 48px degil. */}
+        <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((item, index) => {
             // Vurgulu hucre: tasarimdaki gibi izgarada tek bir koyu kart.
             const dark = index === 1;

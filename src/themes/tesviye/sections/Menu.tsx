@@ -1,28 +1,55 @@
+import Link from "next/link";
+
 import { Reveal } from "@/components/motion/Reveal";
-import { menuWithItems } from "@/themes/_shared/data";
 import {
-  Sheet,
-  SheetHead,
+  allMenuItems,
+  featuredItems,
+  hasMenu,
+  menuHref,
+} from "@/themes/_shared/data";
+import { ArrowIcon } from "@/themes/_shared/icons";
+import {
+  Plate,
+  actionLabel,
+  bodyTextSm,
+  cellEdge,
+  edgeBottom,
   edgeTop,
+  gridBleed,
+  gridClip,
   hair,
   label,
+  padSm,
   shell,
-  tableHead,
 } from "@/themes/tesviye/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Fiyat cetveli: tek pafta icinde kategori seritleri vurgu renginde zemin,
- * urunler ince cizgilerle ayrilmis satirlar, fiyatlar sagda hizali rakamlar.
+ * Ana sayfadaki menu VITRINI.
  *
- * Urun gorseli YOK: bu tasarim teknik bir liste; panelden yuklenen urun
- * gorselleri bu temada gosterilmez.
+ * NEDEN VITRIN: tam fiyat cetveli artik /[locale]/menu sayfasinda. 30+ satirlik
+ * cetvel ana sayfada okunmaz bir blok haline geliyordu; burada yalnizca birkac
+ * urun ve tam listeye giden belirgin bir baglanti var.
+ *
+ * NEDEN CETVEL DEGIL KUTU: uc satirlik bir cetvel cetvel gibi durmuyor —
+ * sutun basliklari ve kesintisiz numaralandirma anlamini yitiriyor. Onun
+ * yerine tasarimin diger imzasi kullanildi: 2px cizgilerle bolunmus esit
+ * hucreler (bkz. Hakkimizda'nin uc kutusu, Galeri'nin dort hucresi).
+ *
+ * Bolum id'si "menu" KALIR: nav capalari ve isVisible mantigi buna bagli.
  */
 export default function Menu({ content }: SectionProps) {
-  const categories = menuWithItems(content);
-  if (categories.length === 0) return null;
+  if (!hasMenu(content)) return null;
 
   const { t } = content;
+
+  /*
+   * Musteri hic urunu "one cikan" isaretlemediyse bolum bos kalmasin diye
+   * menunun ilk urunlerine duseriz.
+   */
+  const featured = featuredItems(content, 3);
+  const items =
+    featured.length > 0 ? featured : allMenuItems(content).slice(0, 3);
 
   return (
     <section
@@ -30,69 +57,93 @@ export default function Menu({ content }: SectionProps) {
       aria-labelledby="menu-title"
       className="bg-[var(--brand-surface)]"
     >
-      <div
-        className={`${shell} pb-[var(--brand-section-py)] sm:pb-[var(--brand-section-py-lg)]`}
-      >
-        <Sheet>
-          <Reveal>
-            <SheetHead
-              code="02"
-              eyebrow={t.menu.eyebrow}
-              title={t.menu.title}
-              titleId="menu-title"
-            />
-          </Reveal>
-
-          <Reveal delay={0.08}>
-            {categories.map((category, index) => (
-              <div key={category.id} style={index > 0 ? edgeTop : undefined}>
-                <h3
-                  className={`${tableHead} bg-[var(--brand-accent)] px-4 py-3 text-[var(--brand-primary-contrast)] sm:px-[18px]`}
-                >
-                  {category.name}
-                </h3>
-
-                <ul>
-                  {category.items.map((item) => (
-                    <li
-                      key={item.id}
-                      className={`${hair} flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 px-4 py-[15px] sm:px-[18px]`}
+      <div className={shell} style={edgeBottom}>
+        <Reveal>
+          <Plate
+            code="02"
+            eyebrow={t.menu.eyebrow}
+            title={t.menu.title}
+            titleId="menu-title"
+          >
+            {/*
+              gridClip/gridBleed: hucre adedi 1-3 arasinda degisebilir; splitGrid'in
+              zemin hilesi eksik satirda koyu bir blok birakirdi.
+            */}
+            <div className={gridClip}>
+              <ul className={`grid sm:grid-cols-2 lg:grid-cols-3 ${gridBleed}`}>
+                {items.map((item, index) => (
+                  <li
+                    key={item.id}
+                    className={`${padSm} flex flex-col gap-3`}
+                    style={cellEdge}
+                  >
+                    {/*
+                      Hucre kunyesi: tasarimda kutular "01 · Seffaflik" gibi
+                      numarali mavi etiketle acilir. Numara gorsel bir isaret,
+                      "one cikan" ise gercek bilgi — o yuzden ayri span'lar.
+                    */}
+                    <p
+                      className={`${label} flex flex-wrap items-baseline gap-x-2 text-[var(--brand-primary)]`}
                     >
-                      <div className="min-w-0 flex-1">
-                        {/* Tasarimda urun adi da Anton: liste bir cetvel gibi okunuyor. */}
-                        <p className="brand-display text-[length:var(--ts-item)] leading-[1.25] tracking-[0.01em] uppercase">
-                          {item.name}
-                          {item.isFeatured ? (
-                            <span
-                              className={`${label} ms-3 align-middle text-[var(--brand-primary)]`}
-                            >
-                              {t.menu.featured}
-                            </span>
-                          ) : null}
-                        </p>
+                      <span className="tabular-nums" aria-hidden="true">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      {item.isFeatured ? <span>{t.menu.featured}</span> : null}
+                    </p>
 
-                        {item.description ? (
-                          <p className="mt-1 text-[length:var(--ts-body-sm)] leading-[var(--ts-body-sm-leading)] font-light text-pretty text-[var(--brand-ink-muted)]">
-                            {item.description}
-                          </p>
-                        ) : null}
-                      </div>
+                    {/*
+                      Urun adi kart olcusunde (30px) Anton: cetveldeki 19px'lik
+                      satirdan buyuk, cunku burada urun tek basina duruyor.
+                    */}
+                    <h3 className="brand-display text-[length:var(--ts-card-title)] leading-[var(--ts-title-leading)] text-balance uppercase">
+                      {item.name}
+                    </h3>
 
-                      {item.price ? (
-                        <p
-                          className="text-[length:var(--ts-body)] font-medium tabular-nums"
-                          dir="ltr"
-                        >
-                          {item.price}
-                        </p>
-                      ) : null}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </Reveal>
-        </Sheet>
+                    {item.description ? (
+                      /*
+                       * line-clamp: vitrinde aciklama kisa tutulur, tam metin
+                       * menu sayfasinda. Ayni zamanda uc hucrenin yuksekligini
+                       * birbirine yaklastirir.
+                       */
+                      <p
+                        className={`${bodyTextSm} line-clamp-2 flex-1 text-[var(--brand-ink-muted)]`}
+                      >
+                        {item.description}
+                      </p>
+                    ) : null}
+
+                    {item.price ? (
+                      /*
+                       * Fiyat hucrenin ALTINA yaslanir (mt-auto): hucreler
+                       * farkli yukseklikte bile fiyatlar ayni hizada okunur.
+                       * Ince ayrac cetveldeki satir cizgisinin ayni kalemi.
+                       */
+                      <p
+                        className={`${hair} mt-auto pt-3 text-[length:var(--ts-body)] font-medium tabular-nums`}
+                        dir="ltr"
+                      >
+                        {item.price}
+                      </p>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/*
+              Bolumun asil isi: tam menuye gonderen cagri. Bicim hero'nun
+              altindaki mavi eylem hucresiyle AYNI — temada "ana buton" bu.
+            */}
+            <Link
+              href={menuHref(content)}
+              className={`${actionLabel} flex min-h-[4.5rem] items-center justify-center gap-2 bg-[var(--brand-primary)] px-4 text-center text-[var(--brand-primary-contrast)] transition-colors sm:min-h-[6rem] hover:bg-[var(--brand-accent)]`}
+              style={edgeTop}
+            >
+              {t.menu.viewAll}
+              <ArrowIcon className="size-3.5" />
+            </Link>
+          </Plate>
+        </Reveal>
       </div>
     </section>
   );
