@@ -73,7 +73,19 @@ export default function Header({ content }: SectionProps) {
           kucuk bir isaret olarak giriyor; yuklenmemisse satir tasarimdaki
           haliyle tek basina kaliyor.
         */}
-        <span className="ky-strip flex items-center gap-2.5 text-[var(--brand-ink-muted)]">
+        {/*
+          MOBILDE SIRA: marka seridi ve sag uc (telefon + dil secici) AYNI
+          satirda karsilikli, nav altlarinda tam genislikte.
+
+          Onceki halinde ucu de dogal akistaydi; dar ekranda nav sigmayinca
+          marka seridi tek basina bir satir kapliyor, saginda bos alan
+          kaliyor ve dil secici UCUNCU satira dusuyordu — serit "alt alta
+          dizilmis" gibi duruyordu.
+
+          DOM sirasi degismedi; yalnizca mobilde gorsel sira degistiriliyor.
+          Boylece masaustunde odak sirasi gorsel sirayla birebir ayni kaliyor.
+        */}
+        <span className="ky-strip order-1 flex items-center gap-2.5 text-[var(--brand-ink-muted)]">
           {logoUrl ? (
             <Image
               src={logoUrl}
@@ -86,7 +98,7 @@ export default function Header({ content }: SectionProps) {
           {contact.locality || content.tagline}
         </span>
 
-        <nav aria-label={name}>
+        <nav aria-label={name} className="order-3 w-full sm:order-2 sm:w-auto">
           <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
             {links.map((link) => (
               <li key={link.href}>
@@ -101,7 +113,7 @@ export default function Header({ content }: SectionProps) {
           </ul>
         </nav>
 
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+        <div className="order-2 flex flex-wrap items-center gap-x-6 gap-y-3 sm:order-3">
           {/* Sag uc: tasarimda telefon numarasi. Girilmemisse hic basilmaz. */}
           {contact.phone ? (
             <a

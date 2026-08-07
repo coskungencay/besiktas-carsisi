@@ -61,8 +61,13 @@ export const config = {
    * giriyor, dile yonlendiriliyor (/tr/opengraph-image) ve orada boyle bir
    * rota olmadigi icin 404 donuyordu — yani WhatsApp/X/LinkedIn onizlemesi
    * hicbir sitede calismiyordu. Ayni sey apple-icon icin de gecerli.
+   *
+   * `icon` (uzantisiz) da ayni sebeple burada: favicon artik statik bir
+   * icon.svg degil, marka renklerinden uretilen bir ROTA (src/app/icon.tsx).
+   * Listede eski dosya adi (icon.svg) kaldigi surece /icon dile yonlendirilip
+   * 404 donuyor ve sekmede hic ikon gorunmuyordu.
    */
   matcher: [
-    "/((?!admin|api|_next/static|_next/image|icon.svg|opengraph-image|apple-icon|placeholders|.*\\..*).*)",
+    "/((?!admin|api|_next/static|_next/image|icon|opengraph-image|apple-icon|placeholders|.*\\..*).*)",
   ],
 };

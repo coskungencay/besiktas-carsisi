@@ -62,8 +62,14 @@ export default function Footer({ content }: SectionProps) {
                       rel="noopener noreferrer"
                       aria-label={social.label}
                       /* Tasarimin global `a` kurali: marka renginde, ustune
-                         gelince mureekkebe doner. */
-                      className={`${labelStripBase} ${link} underline-offset-[6px] hover:underline`}
+                         gelince mureekkebe doner.
+
+                         inline-block + py/-my: serit 11px'lik kunye yazisi
+                         oldugu icin baglantinin kutusu 11px kaliyordu; dolgu
+                         dokunma alanini 25px'e cikarir, esit negatif marj
+                         seridin gorunen yuksekligini oldugu gibi birakir
+                         (WCAG 2.2 "Target Size"). */
+                      className={`${labelStripBase} ${link} inline-block py-[7px] -my-[7px] underline-offset-[6px] hover:underline`}
                     >
                       <Latin>{social.label}</Latin>
                     </a>

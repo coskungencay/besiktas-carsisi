@@ -31,6 +31,8 @@ const en: Messages = {
     viewAll: "View full menu",
     pageIntro: "Prices and the full list",
     featured: "Featured",
+    enlarge: "Enlarge photo of {name}",
+    closeImage: "Close",
   },
   gallery: {
     eyebrow: "Gallery",

@@ -31,6 +31,8 @@ const es: Messages = {
     viewAll: "Ver el menú completo",
     pageIntro: "Precios y lista completa",
     featured: "Destacado",
+    enlarge: "Ampliar la foto de {name}",
+    closeImage: "Cerrar",
   },
   gallery: {
     eyebrow: "Galería",

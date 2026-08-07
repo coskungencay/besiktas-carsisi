@@ -1,6 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 
+import { ImageZoom } from "@/components/site/ImageZoom";
+import { fill } from "@/i18n";
 import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
@@ -96,12 +97,18 @@ export default function Menu({ content }: SectionProps) {
                             className={`relative block size-12 shrink-0 overflow-hidden rounded-[var(--brand-radius)] sm:size-14 ${itemThumb(content, item) ? "bg-[var(--brand-surface-alt)]" : ""}`}
                           >
                             {itemThumb(content, item) ? (
-                              <Image
-                                src={itemThumb(content, item) as string}
-                                alt=""
-                                fill
+                              /*
+                                Kucuk kare TIKLANABILIR: bu boyuttan urunun neye benzedigi
+                                anlasilmiyor. ImageZoom yerinde bir <button> basar (kutu ayni
+                                kalir) ve tiklaninca tarayicinin kendi <dialog>'unda buyutur.
+                              */
+                              <ImageZoom
+                                thumbSrc={itemThumb(content, item) as string}
+                                fullSrc={item.imageUrl}
+                                alt={item.name}
+                                openLabel={fill(t.menu.enlarge, { name: item.name })}
+                                closeLabel={t.menu.closeImage}
                                 sizes="56px"
-                                className="object-cover"
                               />
                             ) : null}
                           </span>

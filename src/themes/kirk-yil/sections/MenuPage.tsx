@@ -214,6 +214,7 @@ export default function MenuPage({ content }: SectionProps) {
                               item={item}
                               featuredLabel={t.menu.featured}
                               thumb={itemThumb(content, item)}
+                                  messages={t}
                               reserveImage={anyItemHasImage(
                                 content,
                                 category.items,

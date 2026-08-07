@@ -1,7 +1,9 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 
+import { ImageZoom } from "@/components/site/ImageZoom";
 import { Latin } from "@/components/site/Latin";
+import { fill, type Messages } from "@/i18n";
 import type { MenuItem } from "@/themes/types";
 
 /**
@@ -92,9 +94,14 @@ export const labelStrip = `${labelStripBase} text-[var(--brand-ink-faint)]`;
  * ALT CIZGI. Menu sayfasina goturen baglantilar da ayni bicimi kullanir ki
  * sayfada iki farkli "buton dili" olusmasin.
  *
- * Ust bosluk verilmez: nerede kullanildigina cagiran karar verir.
+ * Ust MARJ verilmez: nerede kullanildigina cagiran karar verir.
+ *
+ * pt-[6px] ise sabittir ve gorsel degil ERISILEBILIRLIK icin: dokunma alanini
+ * 19px'ten 25px'e cikarir (WCAG 2.2 "Target Size (Minimum)" 24px istiyor).
+ * Dolgu yalnizca USTTEN veriliyor — alt cizgi bu tasarimin imzasi ve metne
+ * yapisik durmali; pb buyutulseydi cizgi metinden kopardi.
  */
-export const cta = `${labelBase} ${link} mera-caption inline-flex items-center gap-3 border-b border-[var(--brand-primary)] pb-1 text-[0.75rem]`;
+export const cta = `${labelBase} ${link} mera-caption inline-flex items-center gap-3 border-b border-[var(--brand-primary)] pt-[6px] pb-1 text-[0.75rem]`;
 
 /** Govde metni olcegi: tasarimda 15px / 1.7. */
 export const bodyText =
@@ -210,6 +217,7 @@ export function MenuLine({
   badge,
   thumb = null,
   reserveImage = false,
+  messages,
 }: {
   item: MenuItem;
   /** "One cikan" etiketi. Bos birakilirsa basilmaz. */
@@ -222,6 +230,12 @@ export function MenuLine({
    * farkli girintilerde baslar, liste kirik gorunur.
    */
   reserveImage?: boolean;
+  /**
+   * Arayuz sozlugu. Verilirse kucuk gorsel tiklanabilir olur ve buyutulebilir;
+   * verilmezse gorsel duz basilir (buton ve kapak metinleri sozluksuz
+   * uretilemez, sabit metin yazmak da temanin kuralina aykiri olurdu).
+   */
+  messages?: Messages;
 }) {
   const body = (
     <>
@@ -274,14 +288,33 @@ export function MenuLine({
           <div
             className={`relative size-14 shrink-0 overflow-hidden rounded-[var(--brand-radius)] sm:size-16 ${thumb ? "bg-[var(--mera-row-hover)]" : ""}`}
           >
+            {/*
+             * Kucuk kare TIKLANABILIR: 56-64px'lik bir kareden urunun neye
+             * benzedigi anlasilmiyordu, kullanici gorseli buyutmek istiyor.
+             * ImageZoom yerinde bir <button> basar (kutu ayni kalir) ve
+             * tiklaninca tarayicinin kendi <dialog>'unu acar.
+             *
+             * `messages` verilmediyse eski davranis: duz, tiklanamayan gorsel.
+             * Boylece bu parcayi kullanan eski cagrilar bozulmaz.
+             */}
             {thumb ? (
-              <Image
-                src={thumb}
-                alt=""
-                fill
-                sizes="64px"
-                className="object-cover"
-              />
+              messages ? (
+                <ImageZoom
+                  thumbSrc={thumb}
+                  fullSrc={item.imageUrl}
+                  alt={item.name}
+                  openLabel={fill(messages.menu.enlarge, { name: item.name })}
+                  closeLabel={messages.menu.closeImage}
+                />
+              ) : (
+                <Image
+                  src={thumb}
+                  alt=""
+                  fill
+                  sizes="64px"
+                  className="object-cover"
+                />
+              )
             ) : null}
           </div>
           <div className="min-w-0 flex-1">{body}</div>

@@ -38,6 +38,8 @@ const tr = {
     viewAll: "Tüm menüyü gör",
     pageIntro: "Fiyatlar ve tam liste",
     featured: "Öne çıkan",
+    enlarge: "{name} görselini büyüt",
+    closeImage: "Kapat",
   },
   gallery: {
     eyebrow: "Galeri",

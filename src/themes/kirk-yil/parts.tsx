@@ -1,7 +1,9 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 
+import { ImageZoom } from "@/components/site/ImageZoom";
 import { Latin } from "@/components/site/Latin";
+import { fill, type Messages } from "@/i18n";
 import type { MenuItem } from "@/themes/types";
 
 /**
@@ -225,6 +227,7 @@ export function PriceRow({
   featuredLabel,
   thumb = null,
   reserveImage = false,
+  messages,
 }: {
   item: MenuItem;
   featuredLabel?: string;
@@ -232,6 +235,12 @@ export function PriceRow({
   thumb?: string | null;
   /** Listedeki baska bir urunun fotografi varsa satirlar hizali kalsin diye. */
   reserveImage?: boolean;
+  /**
+   * Arayuz sozlugu. Verilirse kucuk gorsel tiklanabilir olur ve buyutulebilir;
+   * verilmezse gorsel duz basilir (buton ve kapak metinleri sozluksuz
+   * uretilemez, sabit metin yazmak da temanin kuralina aykiri olurdu).
+   */
+  messages?: Messages;
 }) {
   const body = (
     <>
@@ -293,14 +302,30 @@ export function PriceRow({
           <div
             className={`relative size-14 shrink-0 overflow-hidden rounded-[var(--brand-radius)] sm:size-16 ${thumb ? "border border-[var(--brand-accent)]/35 bg-[var(--brand-surface)]/10" : ""}`}
           >
+            {/*
+             * Kucuk kare TIKLANABILIR: bu boyuttan urunun neye benzedigi
+             * anlasilmiyor. ImageZoom yerinde bir <button> basar (kutu ayni
+             * kalir) ve tiklaninca tarayicinin kendi <dialog>'unda buyutur.
+             * `messages` verilmediyse eski davranis: duz, tiklanamayan gorsel.
+             */}
             {thumb ? (
-              <Image
-                src={thumb}
-                alt=""
-                fill
-                sizes="64px"
-                className="object-cover"
-              />
+              messages ? (
+                <ImageZoom
+                  thumbSrc={thumb}
+                  fullSrc={item.imageUrl}
+                  alt={item.name}
+                  openLabel={fill(messages.menu.enlarge, { name: item.name })}
+                  closeLabel={messages.menu.closeImage}
+                />
+              ) : (
+                <Image
+                  src={thumb}
+                  alt=""
+                  fill
+                  sizes="64px"
+                  className="object-cover"
+                />
+              )
             ) : null}
           </div>
           <div className="min-w-0 flex-1">{body}</div>

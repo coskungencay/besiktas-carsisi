@@ -31,6 +31,8 @@ const de: Messages = {
     viewAll: "Ganze Karte ansehen",
     pageIntro: "Preise und vollständige Liste",
     featured: "Empfehlung",
+    enlarge: "Foto von {name} vergrößern",
+    closeImage: "Schließen",
   },
   gallery: {
     eyebrow: "Galerie",

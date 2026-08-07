@@ -31,6 +31,8 @@ const ar: Messages = {
     viewAll: "عرض القائمة كاملة",
     pageIntro: "الأسعار والقائمة الكاملة",
     featured: "مميّز",
+    enlarge: "تكبير صورة {name}",
+    closeImage: "إغلاق",
   },
   gallery: {
     eyebrow: "معرض الصور",
