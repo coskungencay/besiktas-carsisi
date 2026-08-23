@@ -173,9 +173,13 @@ export default function Contact({ content }: SectionProps) {
                       {row.href ? (
                         /* Tasarimin global kurali: baglantilar marka renginde,
                            ustune gelince mureekkebe doner. */
+                        /* inline-block + py/-my: satirin gorunen yuksekligi
+                           degismeden dokunma alani 24px'e cikar (WCAG 2.2
+                           "Target Size"); dolgu icerigi asagi iter, esit
+                           negatif marj kutuyu geri ceker. */
                         <a
                           href={row.href}
-                          className={`${link} underline-offset-[6px] hover:underline`}
+                          className={`${link} inline-block py-[5px] -my-[5px] underline-offset-[6px] hover:underline`}
                           {...(row.href.startsWith("http")
                             ? {
                                 target: "_blank",

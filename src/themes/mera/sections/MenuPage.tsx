@@ -263,6 +263,7 @@ export default function MenuPage({ content }: SectionProps) {
                                       : undefined
                                   }
                                   thumb={itemThumb(content, item)}
+                                  messages={t}
                                   /* Sutun KATEGORI bazinda acilir: tatlilarin
                                      fotografi varken icecekler listesinde bos
                                      kare acmanin anlami yok. */

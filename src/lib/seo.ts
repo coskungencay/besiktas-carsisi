@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 
 import { LOCALE_META } from "@/i18n/config";
 import { appUrl } from "@/lib/env";
-import { SCHEMA_DAYS, thumbUrl } from "@/lib/format";
+import { SCHEMA_DAYS } from "@/lib/format";
 import type { SiteContent } from "@/themes/types";
 
 export function buildMetadata(content: SiteContent): Metadata {
@@ -65,20 +65,21 @@ export function buildMetadata(content: SiteContent): Metadata {
       googleBot: { index: true, follow: true, "max-image-preview": "large" },
     },
     /*
-     * Favicon musterinin logosundan gelir; logo yoksa Next dosya tabanli
-     * src/app/icon.svg'ye duser (metadata.icons verildiginde dosya kurali
-     * EZILIR, o yuzden burasi doluyken icon.svg basilmaz).
+     * BURADA `icons` YOK — bilerek.
      *
-     * KUCUK varyant kullaniliyor: ana gorsel 1920px genisliginde ve sekmedeki
-     * 16px'lik kare icin megabaytlarca veri indirmek anlamsiz. apple-icon da
-     * ayni kaynaktan; iOS ana ekrana eklendiginde logo gorunur.
+     * Onceki surumde favicon dogrudan musterinin logosuna baglaniyordu.
+     * Sorun sudur: musteri logolari cogunlukla YATAY kelime isaretidir ve
+     * tarayici sekmesindeki 16px'lik KAREYE sigdirildiginda okunaksiz bir
+     * kivrima doner.
+     *
+     * metadata.icons verildiginde Next'in DOSYA TABANLI ikon kurali ezilir;
+     * bu alan kaldirildigi icin artik src/app/icon.tsx ve apple-icon.tsx
+     * devreye giriyor. Ikisi de marka renginde kare bir alana isletmenin bas
+     * harfini basiyor: her boyutta okunur ve yine markanin kendi rengi.
+     *
+     * Logo, yeri olan yerlerde kullanilmaya devam ediyor: ust cubuk, sosyal
+     * onizleme gorseli (opengraph-image) ve web manifest.
      */
-    icons: content.logoUrl
-      ? {
-          icon: thumbUrl(content.logoUrl),
-          apple: thumbUrl(content.logoUrl),
-        }
-      : undefined,
   };
 }
 

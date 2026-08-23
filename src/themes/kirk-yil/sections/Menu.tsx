@@ -82,6 +82,7 @@ export default function Menu({ content }: SectionProps) {
                 key={item.id}
                 item={item}
                 thumb={itemThumb(content, item)}
+                                  messages={t}
                 reserveImage={anyItemHasImage(content, items)}
               />
             ))}

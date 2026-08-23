@@ -66,7 +66,7 @@ export default function Header({ content }: SectionProps) {
           METIN DEGIL — baseline'i yok. Blok baseline'da birakilinca logo
           asagi kayiyor, ad ona gore yukarida duruyordu.
         */}
-        <Link href={home} className="flex items-center gap-3">
+        <Link href={home} className="order-1 flex items-center gap-3">
           {/* Logo yoksa hic basilmaz: bu tasarimda marka adi zaten kunyenin
               kendisi, yer tutucu bir isaret ince seridi bozar. */}
           {logoUrl.trim() ? (
@@ -86,15 +86,32 @@ export default function Header({ content }: SectionProps) {
           </span>
         </Link>
 
-        <nav aria-label={name} className="min-w-0">
+        {/*
+          MOBILDE SIRA: logo ve dil secici AYNI satirda karsilikli, nav
+          altlarinda tam genislikte.
+
+          Onceki halinde ucu de dogal akistaydi; dar ekranda nav sigmayinca
+          logo tek basina bir satir kapliyor, saginda kocaman bir bosluk
+          kaliyor ve dil secici ucuncu satirda, saatin yaninda kaliyordu.
+
+          DOM sirasi degismedi; yalnizca mobilde gorsel sira degistiriliyor.
+          Boylece masaustunde odak sirasi gorsel sirayla birebir ayni kaliyor.
+        */}
+        <nav aria-label={name} className="order-3 w-full min-w-0 sm:order-2 sm:w-auto">
           <ul className="flex flex-wrap items-baseline gap-x-[2.125rem] gap-y-2">
             {links.map((item) => (
               <li key={item.href}>
                 {/* next/link: menu artik ayri bir sayfa, istemci tarafi gecis
                     sayfayi bastan yuklemez. Capalar icin de calisir. */}
+                {/*
+                 * inline-block + py/-my: baglantinin GORUNEN yeri degismeden
+                 * dokunma alani 12px'ten 24px'e cikar (WCAG 2.2 "Target Size").
+                 * Dolgu icerigi 6px asagi iter, esit negatif marj kutuyu 6px
+                 * yukari ceker; net yerlesim etkisi sifir.
+                 */}
                 <Link
                   href={item.href}
-                  className={`${labelBase} mera-nav text-[0.78rem] text-[var(--brand-ink-muted)] transition-colors hover:text-[var(--brand-ink)]`}
+                  className={`${labelBase} mera-nav inline-block py-[6px] -my-[6px] text-[0.78rem] text-[var(--brand-ink-muted)] transition-colors hover:text-[var(--brand-ink)]`}
                 >
                   {item.label}
                 </Link>
@@ -105,7 +122,7 @@ export default function Header({ content }: SectionProps) {
 
         {/* Dil secicinin kendi cercevesi var; saat metniyle taban cizgisinde
             degil, DIKEY ORTADA hizalanmasi gerekiyor. */}
-        <div className="flex items-center gap-5">
+        <div className="order-2 flex items-center gap-5 sm:order-3">
           {range ? (
             <p
               className="mera-time text-[0.78rem] text-[var(--brand-ink-muted)]"
