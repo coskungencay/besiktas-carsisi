@@ -261,6 +261,23 @@ html[data-theme="beyaz-oda"] .bo-index-sm {
 html[data-theme="beyaz-oda"] .bo-summary {
   list-style: none;
   cursor: pointer;
+  /*
+   * Kutuya arka arkaya tiklanirken (ac/kapa) metin secilip maviye
+   * boyanmasin — ac/kapa dugmesi gibi davranmali.
+   */
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Kutunun herhangi bir yeri tiklanabilir oldugu icin imlec de her yerde el. */
+html[data-theme="beyaz-oda"] .bo-faq {
+  cursor: pointer;
+}
+
+/* Cevabin icindeki metin yine secilebilir olmali (kopyalanabilsin). */
+html[data-theme="beyaz-oda"] .bo-answer {
+  cursor: auto;
+  user-select: text;
 }
 
 html[data-theme="beyaz-oda"] .bo-summary::-webkit-details-marker {

@@ -56,13 +56,27 @@ export default function Faq({ content }: SectionProps) {
                     variant="scale"
                     delay={Math.min(index, 5) * 0.05}
                   >
-                    <details className="bo-faq group h-full border border-[var(--brand-border)] px-6 py-5 transition-colors duration-300 open:border-[var(--brand-ink)] open:bg-[var(--brand-surface-alt)] sm:px-7 sm:py-6">
+                    {/*
+                      IC BOSLUK <details>'TE DEGIL <summary>'DE.
+
+                      Onceden dolgu kutunun kendisindeydi ve <summary> onun
+                      icinde kaliyordu: kutunun kenarlarina, sayinin soluna ya
+                      da "+" isaretinin sagindaki bosluga tiklamak hicbir sey
+                      yapmiyordu. Pratikte yalnizca yazinin ve artinin uzerinde
+                      calisiyordu.
+
+                      Dolgu summary'ye tasininca tiklanabilir alan kutunun
+                      TAMAMINI kapliyor. Acma/kapama hala tarayicinin kendi
+                      <details> davranisi — ek bir JavaScript yok, klavye ve
+                      ekran okuyucu destegi bedava geliyor.
+                    */}
+                    <details className="bo-faq group h-full border border-[var(--brand-border)] transition-colors duration-300 open:border-[var(--brand-ink)] open:bg-[var(--brand-surface-alt)]">
                       {/*
                         summary'nin icerigi TEK bir baslik elemani: HTML
                         summary'de ya duz metin ya da tek bir baslik kabul
                         ediyor. Bu yuzden izgarayi h3 tasiyor.
                       */}
-                      <summary className="bo-summary transition-colors hover:text-[var(--brand-accent)]">
+                      <summary className="bo-summary px-6 py-5 transition-colors hover:text-[var(--brand-accent)] sm:px-7 sm:py-6">
                         <h3 className="grid grid-cols-[28px_minmax(0,1fr)_11px] items-baseline gap-x-4 sm:gap-x-5">
                           <span className={rowNumber} aria-hidden="true">
                             {number}
@@ -80,8 +94,11 @@ export default function Faq({ content }: SectionProps) {
                         </h3>
                       </summary>
 
-                      {/* Cevap sorunun metin hizasindan basliyor (28+16px). */}
-                      <div className="bo-answer pt-4 ps-[44px] sm:ps-[48px]">
+                      {/*
+                        Cevap sorunun metin hizasindan basliyor (28+16px).
+                        Dolgu artik burada da acikca yazili: kutudan kalkti.
+                      */}
+                      <div className="bo-answer px-6 pb-5 ps-[68px] sm:px-7 sm:pb-6 sm:ps-[76px]">
                         <p className="text-[14.5px] leading-[1.8] text-pretty text-[var(--brand-ink-soft)]">
                           {item.answer}
                         </p>
