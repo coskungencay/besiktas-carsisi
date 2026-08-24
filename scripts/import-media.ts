@@ -24,7 +24,20 @@ import { SINGLETON_ID, db } from "../src/db";
 import { galleryImages, siteSettings, testimonials } from "../src/db/schema";
 import { deleteImage, storeImage } from "../src/lib/uploads";
 
-const GOOGLE_SRC = "/Users/camoka/sites/venue-scraper/output/buyuk-besiktas-carsisi/photos";
+/*
+ * Google Places'ten cekilmis fotograflarin bulundugu dizin.
+ *
+ * Bu dosyalar REPODA DEGIL ve olmamali: venue-scraper'in ciktisi, Google'in
+ * kendi lisansi altinda ve depoya konursa yeniden dagitim olur. Script
+ * yalnizca ilk yuklemede, gelistiricinin kendi makinesinde calisiyor;
+ * sunucuda calistirilmiyor (icerik /data biriminde duruyor).
+ *
+ * Yol artik SABIT DEGIL: public repoda "/Users/camoka/..." diye bir satir
+ * hem anlamsiz hem de baskasinin makinesinde sessizce patliyordu. Ortam
+ * degiskeniyle veriliyor, verilmemisse Google kaynakli isler atlaniyor ve
+ * carsinin kendi fotograflari yine de yukleniyor.
+ */
+const GOOGLE_SRC = process.env.GOOGLE_PHOTOS_DIR?.trim() ?? "";
 const OWN_SRC = join(import.meta.dirname, "assets");
 
 /* -------------------------------------------------------------------------- */
@@ -131,6 +144,17 @@ async function importPhotos() {
   let sortOrder = 0;
 
   for (const job of PHOTOS) {
+    /*
+     * Google kaynakli kareler ancak GOOGLE_PHOTOS_DIR verilmisse yuklenebilir
+     * (o dosyalar repoda degil — bkz. GOOGLE_SRC). Verilmemisse is atlaniyor
+     * ve carsinin KENDI fotograflari yine de yukleniyor; script yarida
+     * patlamak yerine ne yaptigini soyluyor.
+     */
+    if (job.source === "google" && GOOGLE_SRC === "") {
+      console.log(`[medya] ATLANDI (GOOGLE_PHOTOS_DIR tanimsiz): ${job.file}`);
+      continue;
+    }
+
     const stored = await storeImage(await toFile(job));
     db.insert(galleryImages)
       .values({ url: stored.url, alt: job.alt, sortOrder: sortOrder++ })
