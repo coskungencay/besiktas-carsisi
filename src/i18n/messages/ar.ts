@@ -7,9 +7,9 @@ const ar: Messages = {
     changeLanguage: "تغيير اللغة",
   },
   hero: {
-    viewMenu: "تصفّح القائمة",
+    viewMenu: "تصفّح المتاجر",
     logoAlt: "شعار {name}",
-    coverAlt: "صورة {name}",
+    coverAlt: "صورة سوق {name}",
   },
   about: {
     eyebrow: "قصتنا",
@@ -26,23 +26,23 @@ const ar: Messages = {
     closed: "مغلق",
   },
   menu: {
-    eyebrow: "القائمة",
-    title: "ماذا يوجد على الطاولة اليوم؟",
-    viewAll: "عرض القائمة كاملة",
-    pageIntro: "الأسعار والقائمة الكاملة",
+    eyebrow: "المتاجر",
+    title: "من يوجد في السوق؟",
+    viewAll: "عرض جميع المتاجر",
+    pageIntro: "الفئات ودليل المتاجر الكامل",
     featured: "مميّز",
     enlarge: "تكبير صورة {name}",
     closeImage: "إغلاق",
   },
   gallery: {
     eyebrow: "معرض الصور",
-    title: "لقطات من المكان",
+    title: "لقطات من السوق",
     imageAlt: "صورة {index} من معرض {name}",
   },
   contact: {
     eyebrow: "اتصل بنا",
     title: "تواصل معنا",
-    intro: "راسلنا أو اتصل بنا للحجز والمناسبات الخاصة والطلبات الكبيرة.",
+    intro: "راسل إدارة السوق أو اتصل بها للاستفسار عن الإيجار وطلبات المحلات.",
     formTitle: "اترك رسالة",
     address: "العنوان",
     phone: "الهاتف",
@@ -52,7 +52,7 @@ const ar: Messages = {
   },
   testimonials: {
     eyebrow: "التقييمات",
-    title: "ماذا يقول ضيوفنا",
+    title: "ماذا يقول زوّارنا",
     ratingLabel: "{rating} من 5 نجوم",
   },
   faq: {

@@ -27,8 +27,8 @@ const QUICK_LINKS = [
   },
   {
     href: "/admin/menu",
-    label: "Menü",
-    description: "Kategori ve ürünleri ekleyin, sıralayın, fiyat girin.",
+    label: "Mağazalar",
+    description: "Kategori ve mağazaları ekleyin, sıralayın, öne çıkarın.",
   },
   {
     href: "/admin/galeri",
@@ -89,8 +89,8 @@ export default function DashboardPage() {
   const stats = [
     { label: "Okunmamış mesaj", value: unread, highlight: unread > 0 },
     { label: "Toplam mesaj", value: totalMessages, highlight: false },
-    { label: "Menü kategorisi", value: categoryCount, highlight: false },
-    { label: "Menü ürünü", value: itemCount, highlight: false },
+    { label: "Mağaza kategorisi", value: categoryCount, highlight: false },
+    { label: "Mağaza", value: itemCount, highlight: false },
     { label: "Galeri görseli", value: galleryCount, highlight: false },
   ];
 

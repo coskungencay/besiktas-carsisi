@@ -35,9 +35,9 @@ export function MenuItemManager({
   if (categories.length === 0) {
     return (
       <section className={cardClass}>
-        <h2 className="text-lg font-semibold">Ürünler</h2>
+        <h2 className="text-lg font-semibold">Mağazalar</h2>
         <p className="mt-2 text-sm text-zinc-600">
-          Ürün eklemek için önce en az bir kategori oluşturun.
+          Mağaza eklemek için önce en az bir kategori oluşturun.
         </p>
       </section>
     );
@@ -46,7 +46,7 @@ export function MenuItemManager({
   return (
     <section className={cardClass} aria-labelledby="items-title">
       <h2 id="items-title" className="text-lg font-semibold">
-        Ürünler
+        Mağazalar
       </h2>
 
       <form
@@ -55,7 +55,7 @@ export function MenuItemManager({
         className="mt-4 space-y-4 rounded-lg bg-zinc-50 p-4"
       >
         <p className="text-sm font-semibold text-zinc-700">
-          {editing ? `Düzenleniyor: ${editing.name}` : "Yeni ürün ekle"}
+          {editing ? `Düzenleniyor: ${editing.name}` : "Yeni mağaza ekle"}
         </p>
 
         {editing ? <input type="hidden" name="id" value={editing.id} /> : null}
@@ -68,7 +68,7 @@ export function MenuItemManager({
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label htmlFor="item-name" className={labelClass}>
-              Ürün adı <span className="text-red-600">*</span>
+              Mağaza adı <span className="text-red-600">*</span>
             </label>
             <input
               id="item-name"
@@ -104,12 +104,13 @@ export function MenuItemManager({
 
           <div className="sm:col-span-2">
             <label htmlFor="item-description" className={labelClass}>
-              Açıklama
+              Kat / kapı no ve kısa açıklama
             </label>
             <textarea
               id="item-description"
               name="description"
               rows={2}
+              placeholder="Örn. Zemin kat, No: 42 — kadın ayakkabı ve aksesuar"
               maxLength={600}
               defaultValue={editing?.description ?? ""}
               className={`${inputClass} resize-y`}
@@ -117,24 +118,17 @@ export function MenuItemManager({
             <FieldError state={saveState} name="description" />
           </div>
 
-          <div>
-            <label htmlFor="item-price" className={labelClass}>
-              Fiyat (TL)
-            </label>
-            <input
-              id="item-price"
-              name="price"
-              type="number"
-              min={0}
-              step="0.01"
-              defaultValue={editing?.price ?? 0}
-              className={inputClass}
-            />
-            <p className="mt-1 text-xs text-zinc-500">
-              0 yazarsanız fiyat sitede gösterilmez.
-            </p>
-            <FieldError state={saveState} name="price" />
-          </div>
+          {/*
+            CARSI UYARLAMASI: sablonun "Fiyat (TL)" alani burada YOK.
+            Carsida kiralanan bagimsiz dukkanlar var; magazanin kendi fiyati
+            diye bir sey yok, olsa da carsi yonetimi onu bilmez.
+
+            Alan tamamen silinmedi, GIZLI olarak 0 gonderiliyor: sunucu semasi
+            (menuItemSchema.price) hala bir sayi bekliyor ve icerik katmani
+            0'i "fiyat gosterme" olarak okuyor (bkz. lib/format.ts formatPrice).
+            Boylece sablonla uyum bozulmadan alan aradan cikiyor.
+          */}
+          <input type="hidden" name="price" value="0" />
 
           <div>
             <label htmlFor="item-image" className={labelClass}>
@@ -162,7 +156,7 @@ export function MenuItemManager({
                 defaultChecked={editing?.isFeatured ?? false}
                 className="h-4 w-4 rounded border-zinc-300"
               />
-              Öne çıkan ürün
+              Ana sayfada öne çıkar
             </label>
             <label className="flex items-center gap-2 text-sm text-zinc-700">
               <input
@@ -177,7 +171,7 @@ export function MenuItemManager({
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <SubmitButton>{editing ? "Ürünü Güncelle" : "Ürünü Ekle"}</SubmitButton>
+          <SubmitButton>{editing ? "Mağazayı Güncelle" : "Mağaza Ekle"}</SubmitButton>
           {editing ? (
             <button
               type="button"
@@ -198,7 +192,7 @@ export function MenuItemManager({
       <div className="mt-4">
         <SortableList
           action={reorderItemsAction}
-          emptyText="Henüz ürün eklenmedi."
+          emptyText="Henüz mağaza eklenmedi."
           items={items.map((item) => {
             const category = categories.find((c) => c.id === item.categoryId);
             return {

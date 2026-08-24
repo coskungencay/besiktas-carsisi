@@ -5,7 +5,9 @@ import { fill } from "@/i18n";
 import { SQUARE_FALLBACK, imageOrFallback } from "@/themes/_shared/data";
 import {
   SectionIndex,
+  isSectionShown,
   sectionGrid,
+  sectionIndex,
   sectionTop,
   surface,
 } from "@/themes/beyaz-oda/parts";
@@ -18,7 +20,7 @@ import type { SectionProps } from "@/themes/types";
  * Galeri bossa ya da panelden kapatildiysa bolum hic basilmaz.
  */
 export default function Gallery({ content }: SectionProps) {
-  if (!content.isVisible("galeri")) return null;
+  if (!isSectionShown(content, "galeri")) return null;
 
   const { gallery, name, t } = content;
 
@@ -27,7 +29,7 @@ export default function Gallery({ content }: SectionProps) {
       <div className={sectionTop}>
         <div className={sectionGrid}>
           {/* Kisa etiket — gerekce Menu.tsx'te. */}
-          <SectionIndex index="03" title={t.gallery.eyebrow} titleId="gallery-title">
+          <SectionIndex index={sectionIndex(content, "galeri")} title={t.gallery.eyebrow} titleId="gallery-title">
             <ul className="grid grid-cols-2 gap-6 sm:grid-cols-3">
               {gallery.map((image, index) => {
                 const number = String(index + 1).padStart(2, "0");

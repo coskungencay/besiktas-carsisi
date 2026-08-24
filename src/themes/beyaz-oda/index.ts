@@ -28,7 +28,7 @@ const theme: ThemeDefinition = {
   sections: [
     { id: "hero", Component: Hero },
     { id: "hakkimizda", Component: About },
-    { id: "menu", Component: Menu },
+    { id: "magazalar", Component: Menu },
     { id: "galeri", Component: Gallery },
     /*
      * Yorumlar ve SSS menuden sonra: once ne sattigimiz, sonra guven ve

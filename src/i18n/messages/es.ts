@@ -7,9 +7,9 @@ const es: Messages = {
     changeLanguage: "Cambiar idioma",
   },
   hero: {
-    viewMenu: "Ver la carta",
+    viewMenu: "Ver las tiendas",
     logoAlt: "Logotipo de {name}",
-    coverAlt: "Foto de {name}",
+    coverAlt: "Foto del bazar {name}",
   },
   about: {
     eyebrow: "Nuestra historia",
@@ -26,24 +26,24 @@ const es: Messages = {
     closed: "Cerrado",
   },
   menu: {
-    eyebrow: "Carta",
-    title: "¿Qué hay hoy en la barra?",
-    viewAll: "Ver el menú completo",
-    pageIntro: "Precios y lista completa",
+    eyebrow: "Tiendas",
+    title: "¿Quién está en el bazar?",
+    viewAll: "Ver todas las tiendas",
+    pageIntro: "Categorías y directorio completo",
     featured: "Destacado",
     enlarge: "Ampliar la foto de {name}",
     closeImage: "Cerrar",
   },
   gallery: {
     eyebrow: "Galería",
-    title: "Momentos del local",
+    title: "Momentos del bazar",
     imageAlt: "Imagen {index} de la galería de {name}",
   },
   contact: {
     eyebrow: "Contacto",
     title: "Ponte en contacto",
     intro:
-      "Escríbenos o llámanos para reservas, celebraciones y pedidos grandes.",
+      "Escribe o llama a la administración del bazar para alquiler y solicitudes de local.",
     formTitle: "Déjanos un mensaje",
     address: "Dirección",
     phone: "Teléfono",
@@ -53,7 +53,7 @@ const es: Messages = {
   },
   testimonials: {
     eyebrow: "Opiniones",
-    title: "Lo que dicen nuestros clientes",
+    title: "Lo que dicen nuestros visitantes",
     ratingLabel: "{rating} de 5 estrellas",
   },
   faq: {

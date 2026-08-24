@@ -33,11 +33,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   if (!hasMenuItems) return home;
 
   const menuLanguages = Object.fromEntries(
-    locales.map((locale) => [locale, `${base}/${locale}/menu`]),
+    locales.map((locale) => [locale, `${base}/${locale}/magazalar`]),
   );
 
   const menu: MetadataRoute.Sitemap = locales.map((locale) => ({
-    url: `${base}/${locale}/menu`,
+    url: `${base}/${locale}/magazalar`,
     lastModified,
     changeFrequency: "weekly",
     priority: 0.9,

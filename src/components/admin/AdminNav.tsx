@@ -9,7 +9,7 @@ const LINKS = [
   { href: "/admin", label: "Panel" },
   { href: "/admin/genel", label: "Genel Bilgiler" },
   { href: "/admin/saatler", label: "Çalışma Saatleri" },
-  { href: "/admin/menu", label: "Menü" },
+  { href: "/admin/menu", label: "Mağazalar" },
   { href: "/admin/galeri", label: "Galeri" },
   { href: "/admin/yorumlar", label: "Yorumlar" },
   { href: "/admin/sss", label: "S.S.S." },

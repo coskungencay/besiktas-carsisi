@@ -5,15 +5,7 @@
  * Her tema kendi tokens.css'ini [data-theme="<slug>"] altinda tanimlar.
  * Yeni tema eklerken buraya BIR satir import eklenir. (bkz. THEMING.md)
  * -------------------------------------------------------------------------- */
-@import "../themes/placeholder/tokens.css";
-@import "../themes/mera/tokens.css";
-@import "../themes/patika/tokens.css";
-@import "../themes/yesil-avlu/tokens.css";
-@import "../themes/kirk-yil/tokens.css";
-@import "../themes/vela/tokens.css";
 @import "../themes/beyaz-oda/tokens.css";
-@import "../themes/tesviye/tokens.css";
-@import "../themes/sicak-firin/tokens.css";
 
 /* --------------------------------------------------------------------------
  * Varsayilan token degerleri

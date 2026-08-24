@@ -1,34 +1,15 @@
 import beyazOda from "./beyaz-oda";
-import kirkYil from "./kirk-yil";
-import mera from "./mera";
-import patika from "./patika";
-import placeholder from "./placeholder";
-import sicakFirin from "./sicak-firin";
-import tesviye from "./tesviye";
-import vela from "./vela";
-import yesilAvlu from "./yesil-avlu";
 import type { ThemeDefinition } from "./types";
 
 /**
- * Yeni tema ekleme:
- *  1) src/themes/<slug>/ klasorunu olustur (tokens.css + index.ts)
- *  2) asagiya bir satir ekle
- *  3) src/app/globals.css icine tokens.css import'unu ekle
- * Detay: THEMING.md
+ * Bu repo TEK musteri icindir: tema pinlenmistir ve panelden degistirilemez.
+ * Baska bir tema gerekiyorsa sablon repodan yeni bir kopya acin.
  */
 export const themeRegistry: Record<string, ThemeDefinition> = {
-  placeholder,
-  mera,
-  patika,
-  "yesil-avlu": yesilAvlu,
-  "kirk-yil": kirkYil,
-  vela,
   "beyaz-oda": beyazOda,
-  tesviye,
-  "sicak-firin": sicakFirin,
 };
 
-export const DEFAULT_THEME_SLUG = "placeholder";
+export const DEFAULT_THEME_SLUG = "beyaz-oda";
 
 export const themeSlugs = Object.keys(themeRegistry);
 
@@ -49,9 +30,9 @@ export function pinnedThemeSlug(): string | null {
 
 /**
  * Aktif tema cozumleme sirasi:
- *   1. NEXT_PUBLIC_THEME (gecerli bir slug ise)  -> imaja pinlenmis tema
- *   2. site_settings.themeSlug                   -> panelden secilen tema
- *   3. "placeholder"                             -> fallback
+ *   1. NEXT_PUBLIC_THEME (gecerli bir slug ise)
+ *   2. site_settings.themeSlug
+ *   3. DEFAULT_THEME_SLUG
  */
 export function resolveThemeSlug(dbSlug?: string | null): string {
   return pinnedThemeSlug() ?? (isThemeSlug(dbSlug) ? dbSlug : DEFAULT_THEME_SLUG);

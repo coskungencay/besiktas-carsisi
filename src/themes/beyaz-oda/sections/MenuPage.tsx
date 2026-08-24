@@ -15,7 +15,7 @@ import { meta, rowNumber } from "@/themes/beyaz-oda/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Tam menu SAYFASI (/tr/menu) — basili bir MENU KARTI olarak.
+ * Tam magazalar SAYFASI (/tr/magazalar) — basili bir MENU KARTI olarak.
  *
  * NEDEN kap: sayfanin geri kalani 2200px'e kadar acilan editoryal izgarayi
  * kullaniyor, ama 30+ urunluk bir listede o genislik okunmuyor; goz urun
@@ -60,7 +60,7 @@ export default function MenuPage({ content }: SectionProps) {
      * zemin uzerinde okunur. Iki renk de tokens.css'ten geliyor.
      */
     <section
-      id="menu"
+      id="magazalar"
       aria-labelledby="menu-page-title"
       className="bg-[var(--brand-surface-alt)] text-[var(--brand-ink)]"
     >

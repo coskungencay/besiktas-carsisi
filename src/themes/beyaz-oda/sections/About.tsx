@@ -3,10 +3,11 @@ import { fill } from "@/i18n";
 import { paragraphs } from "@/themes/_shared/data";
 import {
   SectionIndex,
-  hasAboutSection,
+  isSectionShown,
   meta,
   metaColumns,
   sectionGrid,
+  sectionIndex,
   sectionTop,
   surface,
 } from "@/themes/beyaz-oda/parts";
@@ -24,7 +25,7 @@ import type { SectionProps } from "@/themes/types";
  */
 export default function About({ content }: SectionProps) {
   const { about, name, t } = content;
-  if (!hasAboutSection(content)) return null;
+  if (!isSectionShown(content, "hakkimizda")) return null;
 
   const body = paragraphs(about);
   const stats = metaColumns(content).about;
@@ -36,7 +37,7 @@ export default function About({ content }: SectionProps) {
     <section id="hakkimizda" aria-labelledby="about-title" className={surface}>
       <div className={sectionTop}>
         <div className={sectionGrid}>
-          <SectionIndex index="01" title={t.about.title} titleId="about-title">
+          <SectionIndex index={sectionIndex(content, "hakkimizda")} title={t.about.title} titleId="about-title">
             <div className="grid gap-10 lg:grid-cols-10 lg:gap-6">
               <div className="lg:col-span-5">
                 <Reveal>

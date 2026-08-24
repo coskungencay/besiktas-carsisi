@@ -354,11 +354,11 @@ export function LocalesManager({
               </div>
             ) : null}
 
-            {/* Menü kategorileri */}
+            {/* Magaza kategorileri */}
             {base.categories.length > 0 ? (
               <div>
                 <h3 className="text-sm font-semibold tracking-wide text-zinc-700 uppercase">
-                  Menü kategorileri
+                  Mağaza kategorileri
                 </h3>
                 <div className="mt-3 space-y-3">
                   {base.categories.map((category) => (
@@ -382,11 +382,11 @@ export function LocalesManager({
               </div>
             ) : null}
 
-            {/* Menü ürünleri */}
+            {/* Magazalar */}
             {base.items.length > 0 ? (
               <div>
                 <h3 className="text-sm font-semibold tracking-wide text-zinc-700 uppercase">
-                  Menü ürünleri
+                  Mağazalar
                 </h3>
                 <div className="mt-3 space-y-5">
                   {base.items.map((item) => (
@@ -401,10 +401,10 @@ export function LocalesManager({
                         </span>
                       </p>
                       <input
-                        aria-label={`${item.name} — ürün adı çevirisi`}
+                        aria-label={`${item.name} — mağaza adı çevirisi`}
                         name={name("menu_item", item.id, "name")}
                         defaultValue={val("menu_item", item.id, "name")}
-                        placeholder="Ürün adı"
+                        placeholder="Mağaza adı"
                         className={inputClass}
                       />
                       {item.description ? (

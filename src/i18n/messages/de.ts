@@ -7,9 +7,9 @@ const de: Messages = {
     changeLanguage: "Sprache wechseln",
   },
   hero: {
-    viewMenu: "Zur Speisekarte",
+    viewMenu: "Zu den Geschäften",
     logoAlt: "Logo von {name}",
-    coverAlt: "Foto von {name}",
+    coverAlt: "Foto des Basars {name}",
   },
   about: {
     eyebrow: "Unsere Geschichte",
@@ -26,24 +26,24 @@ const de: Messages = {
     closed: "Geschlossen",
   },
   menu: {
-    eyebrow: "Speisekarte",
-    title: "Was gibt es heute an der Theke?",
-    viewAll: "Ganze Karte ansehen",
-    pageIntro: "Preise und vollständige Liste",
+    eyebrow: "Geschäfte",
+    title: "Wer ist im Basar?",
+    viewAll: "Alle Geschäfte ansehen",
+    pageIntro: "Kategorien und vollständiges Verzeichnis",
     featured: "Empfehlung",
     enlarge: "Foto von {name} vergrößern",
     closeImage: "Schließen",
   },
   gallery: {
     eyebrow: "Galerie",
-    title: "Eindrücke aus dem Laden",
+    title: "Eindrücke aus dem Basar",
     imageAlt: "Galeriebild {index} von {name}",
   },
   contact: {
     eyebrow: "Kontakt",
     title: "Kontakt aufnehmen",
     intro:
-      "Schreiben oder rufen Sie uns an — für Reservierungen, Anlässe und Großbestellungen.",
+      "Schreiben oder rufen Sie die Basarverwaltung an — für Miet- und Standanfragen.",
     formTitle: "Nachricht hinterlassen",
     address: "Adresse",
     phone: "Telefon",
@@ -53,7 +53,7 @@ const de: Messages = {
   },
   testimonials: {
     eyebrow: "Bewertungen",
-    title: "Was unsere Gäste sagen",
+    title: "Was unsere Besucher sagen",
     ratingLabel: "{rating} von 5 Sternen",
   },
   faq: {

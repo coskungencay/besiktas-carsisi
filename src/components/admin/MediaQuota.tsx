@@ -57,7 +57,7 @@ export async function MediaQuota() {
 
       {fullest >= 75 ? (
         <p className="mt-2 text-xs leading-relaxed text-zinc-600">
-          Alan dolmak üzere. Kullanmadığınız fotoğrafları galeriden veya menüden
+          Alan dolmak üzere. Kullanmadığınız fotoğrafları galeriden veya mağazalardan
           silerseniz yer açılır.
         </p>
       ) : null}

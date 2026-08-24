@@ -7,9 +7,9 @@ const en: Messages = {
     changeLanguage: "Change language",
   },
   hero: {
-    viewMenu: "View the Menu",
+    viewMenu: "Browse the Shops",
     logoAlt: "{name} logo",
-    coverAlt: "Photo of {name}",
+    coverAlt: "Photo of {name} bazaar",
   },
   about: {
     eyebrow: "Our Story",
@@ -26,24 +26,24 @@ const en: Messages = {
     closed: "Closed",
   },
   menu: {
-    eyebrow: "Menu",
-    title: "What's on the counter today?",
-    viewAll: "View full menu",
-    pageIntro: "Prices and the full list",
+    eyebrow: "Shops",
+    title: "Who's in the bazaar?",
+    viewAll: "See all shops",
+    pageIntro: "Categories and the full directory",
     featured: "Featured",
     enlarge: "Enlarge photo of {name}",
     closeImage: "Close",
   },
   gallery: {
     eyebrow: "Gallery",
-    title: "Moments from the shop",
+    title: "Moments from the bazaar",
     imageAlt: "{name} gallery image {index}",
   },
   contact: {
     eyebrow: "Contact",
     title: "Get in touch",
     intro:
-      "Write or call us for reservations, special occasions and bulk orders.",
+      "Write or call the bazaar management for leasing and tenancy enquiries.",
     formTitle: "Leave a message",
     address: "Address",
     phone: "Phone",
@@ -53,7 +53,7 @@ const en: Messages = {
   },
   testimonials: {
     eyebrow: "Reviews",
-    title: "What our guests say",
+    title: "What our visitors say",
     ratingLabel: "{rating} out of 5 stars",
   },
   faq: {

@@ -12,9 +12,9 @@ export default function MenuPage() {
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Menü</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Mağazalar</h1>
         <p className="mt-1 text-sm text-zinc-600">
-          Önce kategori oluşturun, ardından ürünleri ekleyin. Sıralamayı
+          Önce kategori oluşturun, ardından mağazaları ekleyin. Sıralamayı
           sürükleyerek veya ok tuşlarıyla değiştirebilirsiniz.
         </p>
       </header>

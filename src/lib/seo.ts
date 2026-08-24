@@ -123,15 +123,22 @@ export function buildJsonLd(content: SiteContent): Record<string, unknown> {
    * @graph'in altina giriyor ve baglam disarida tek kez tanimlaniyor.
    * Tek dugum kaldiginda asagida geri ekleniyor.
    */
+  /*
+   * CARSI UYARLAMASI: sablon burada `CafeOrCoffeeShop` uretiyordu. Bu site bir
+   * carsi oldugu icin dogru tip `ShoppingCenter` — schema.org'da LocalBusiness
+   * altinda ve "icinde bagimsiz magazalar barindiran yapi" anlamina geliyor.
+   * Kafe tipini birakmak arama motoruna yanlis isletme turu bildirirdi.
+   *
+   * `servesCuisine` ve `priceRange` de bu yuzden kaldirildi: ikisi de yeme-icme
+   * isletmesine ait alanlar, bir carsi icin anlamsiz.
+   */
   const jsonLd: Record<string, unknown> = {
-    "@type": "CafeOrCoffeeShop",
+    "@type": "ShoppingCenter",
     "@id": `${base}/#business`,
     name: content.name,
     url: `${base}/${content.locale}`,
     inLanguage: content.locale,
     description: content.tagline || content.about.slice(0, 300) || undefined,
-    servesCuisine: "Kahve",
-    priceRange: "₺₺",
   };
 
   if (content.logoUrl) jsonLd.logo = `${base}${content.logoUrl}`;
@@ -161,31 +168,23 @@ export function buildJsonLd(content: SiteContent): Record<string, unknown> {
     jsonLd.openingHoursSpecification = openingHoursSpecification;
   }
 
-  const menuItems = content.menu.flatMap((c) => c.items);
-  if (menuItems.length > 0) {
-    jsonLd.hasMenu = {
-      "@type": "Menu",
-      name: `${content.name} — ${content.t.menu.eyebrow}`,
-      inLanguage: content.locale,
-      hasMenuSection: content.menu
-        .filter((c) => c.items.length > 0)
-        .map((category) => ({
-          "@type": "MenuSection",
-          name: category.name,
-          hasMenuItem: category.items.map((item) => ({
-            "@type": "MenuItem",
-            name: item.name,
-            description: item.description || undefined,
-            offers:
-              item.priceValue > 0
-                ? {
-                    "@type": "Offer",
-                    price: item.priceValue.toFixed(2),
-                    priceCurrency: "TRY",
-                  }
-                : undefined,
-          })),
-        })),
+  /*
+   * CARSI UYARLAMASI: sablon burada tum menuyu `hasMenu` altinda basiyordu.
+   *
+   * Burada TAM magaza listesi BILEREK YOK. Ana sayfadaki magazalar bolumu
+   * yalnizca birkac one cikan esnafi gosteren bir vitrin; 92 magazanin
+   * tamami /<dil>/magazalar sayfasinda. Sablonun kendi kurali da bu:
+   * "yalnizca SAYFADA GORUNEN icerik isaretlenir". Tam listeyi burada da
+   * basmak, sayfada olmayan icerigi arama motoruna bildirmek olurdu.
+   *
+   * Magaza sayisi yine de degerli bir sinyal — onu veriyoruz.
+   */
+  const shopCount = content.menu.reduce((sum, c) => sum + c.items.length, 0);
+  if (shopCount > 0) {
+    jsonLd.additionalProperty = {
+      "@type": "PropertyValue",
+      name: content.t.menu.eyebrow,
+      value: shopCount,
     };
   }
 
@@ -263,48 +262,63 @@ export function buildJsonLd(content: SiteContent): Record<string, unknown> {
 }
 
 /**
- * Menu SAYFASI icin yapilandirilmis veri.
+ * MAGAZALAR SAYFASI icin yapilandirilmis veri.
  *
- * Ana sayfadaki CafeOrCoffeeShop dugumu menuyu `hasMenu` altinda zaten
- * tasiyor; burada menuyu SAYFANIN ANA VARLIGI olarak veriyoruz ve isletmeye
- * @id ile bagliyoruz. Ayrica breadcrumb: arama sonucunda "Ana sayfa > Menu"
- * yolunu gostermek icin.
+ * CARSI UYARLAMASI: sablon burada bir `Menu` + `MenuSection` agaci uretiyordu.
+ * Carsida satilan sey yemek degil, kiralanmis bagimsiz DUKKANLAR; dogru
+ * karsilik `ShoppingCenter.containsPlace` -> `Store`.
+ *
+ * Tam liste YALNIZCA burada uretilir cunku yalnizca bu sayfa 92 magazanin
+ * hepsini basiyor (ana sayfa sadece vitrin gosteriyor).
+ *
+ * Ayrica kategori sirasini ve magaza sirasini koruyan bir `ItemList`
+ * veriyoruz: `containsPlace` sirasiz bir kume, `ItemList` ise sayfadaki
+ * gercek sirayi tasiyor. Breadcrumb da arama sonucunda "Ana sayfa >
+ * Magazalar" yolunu gostermek icin.
  */
 export function buildMenuJsonLd(content: SiteContent): Record<string, unknown> {
   const base = appUrl();
   const home = `${base}/${content.locale}`;
 
-  const sections = content.menu
-    .filter((category) => category.items.length > 0)
-    .map((category) => ({
-      "@type": "MenuSection",
-      name: category.name,
-      hasMenuItem: category.items.map((item) => ({
-        "@type": "MenuItem",
-        name: item.name,
-        description: item.description || undefined,
-        offers:
-          item.priceValue > 0
-            ? {
-                "@type": "Offer",
-                price: item.priceValue.toFixed(2),
-                priceCurrency: "TRY",
-              }
-            : undefined,
-      })),
-    }));
+  const categories = content.menu.filter((category) => category.items.length > 0);
+
+  /*
+   * Her magaza bir `Store`. `department` alani hangi kategoride durdugunu
+   * tasiyor — carsida "kat/blok" karsiligi olarak okunabilir bir sinyal.
+   */
+  const stores = categories.flatMap((category) =>
+    category.items.map((item) => ({
+      "@type": "Store",
+      name: item.name,
+      description: item.description || undefined,
+      department: category.name,
+      image: item.imageUrl ? `${base}${item.imageUrl}` : undefined,
+      containedInPlace: { "@id": `${base}/#business` },
+    })),
+  );
 
   return {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "Menu",
-        "@id": `${home}/menu#menu`,
-        name: `${content.name} — ${content.t.menu.eyebrow}`,
+        "@type": "ShoppingCenter",
+        "@id": `${base}/#business`,
+        name: content.name,
+        url: `${home}/magazalar`,
         inLanguage: content.locale,
-        url: `${home}/menu`,
-        hasMenuSection: sections,
-        provider: { "@id": `${base}/#business` },
+        containsPlace: stores,
+      },
+      {
+        "@type": "ItemList",
+        "@id": `${home}/magazalar#liste`,
+        name: `${content.name} — ${content.t.menu.eyebrow}`,
+        numberOfItems: stores.length,
+        itemListOrder: "https://schema.org/ItemListOrderAscending",
+        itemListElement: stores.map((store, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: store.name,
+        })),
       },
       {
         "@type": "BreadcrumbList",
@@ -319,7 +333,7 @@ export function buildMenuJsonLd(content: SiteContent): Record<string, unknown> {
             "@type": "ListItem",
             position: 2,
             name: content.t.menu.eyebrow,
-            item: `${home}/menu`,
+            item: `${home}/magazalar`,
           },
         ],
       },

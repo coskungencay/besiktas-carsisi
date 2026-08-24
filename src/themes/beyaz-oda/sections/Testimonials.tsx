@@ -3,9 +3,11 @@ import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import {
   SectionIndex,
+  isSectionShown,
   meta,
   rowNumber,
   sectionGrid,
+  sectionIndex,
   sectionTop,
   surface,
 } from "@/themes/beyaz-oda/parts";
@@ -49,7 +51,7 @@ function Rating({ rating, label }: { rating: number; label: string }) {
  * ayrilir; sayfadaki diger listelerle ayni ritim.
  */
 export default function Testimonials({ content }: SectionProps) {
-  if (!content.isVisible("yorumlar")) return null;
+  if (!isSectionShown(content, "yorumlar")) return null;
 
   const { testimonials, t } = content;
 
@@ -63,7 +65,7 @@ export default function Testimonials({ content }: SectionProps) {
         <div className={sectionGrid}>
           {/* Kisa etiket — gerekce Menu.tsx'te. */}
           <SectionIndex
-            index="04"
+            index={sectionIndex(content, "yorumlar")}
             title={t.testimonials.eyebrow}
             titleId="testimonials-title"
           >

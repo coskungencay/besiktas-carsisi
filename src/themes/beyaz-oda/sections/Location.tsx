@@ -3,7 +3,9 @@ import { placeStamp } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   SectionIndex,
+  isSectionShown,
   sectionGrid,
+  sectionIndex,
   sectionTop,
   surface,
 } from "@/themes/beyaz-oda/parts";
@@ -25,7 +27,7 @@ import type { SectionProps } from "@/themes/types";
  * bolumunde. Ucuncu kez yazmak sayfayi uzatmaktan baska bir sey yapmiyordu.
  */
 export default function Location({ content }: SectionProps) {
-  if (!content.isVisible("konum")) return null;
+  if (!isSectionShown(content, "konum")) return null;
 
   const { contact, t } = content;
 
@@ -50,7 +52,7 @@ export default function Location({ content }: SectionProps) {
         <div className={sectionGrid}>
           {/* Kisa etiket — gerekce Menu.tsx'te. */}
           <SectionIndex
-            index="06"
+            index={sectionIndex(content, "konum")}
             title={t.location.eyebrow}
             titleId="location-title"
           >

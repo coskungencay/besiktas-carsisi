@@ -2,8 +2,10 @@ import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   SectionIndex,
+  isSectionShown,
   rowNumber,
   sectionGrid,
+  sectionIndex,
   sectionTop,
   surface,
 } from "@/themes/beyaz-oda/parts";
@@ -21,7 +23,7 @@ import type { SectionProps } from "@/themes/types";
  * isaret, ince alt cizgi. Cevap acilinca soru hizasindan devam eder.
  */
 export default function Faq({ content }: SectionProps) {
-  if (!content.isVisible("sss")) return null;
+  if (!isSectionShown(content, "sss")) return null;
 
   const { faq, t } = content;
 
@@ -30,7 +32,7 @@ export default function Faq({ content }: SectionProps) {
       <div className={sectionTop}>
         <div className={sectionGrid}>
           {/* Kisa etiket — gerekce Menu.tsx'te. */}
-          <SectionIndex index="05" title={t.faq.eyebrow} titleId="faq-title">
+          <SectionIndex index={sectionIndex(content, "sss")} title={t.faq.eyebrow} titleId="faq-title">
             <ul>
               {faq.map((item, index) => {
                 const number = String(index + 1).padStart(2, "0");

@@ -8,16 +8,17 @@ import {
   allMenuItems,
   anyItemHasImage,
   featuredItems,
-  hasMenu,
   itemThumb,
   menuHref,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   SectionIndex,
+  isSectionShown,
   meta,
   rowNumber,
   sectionGrid,
+  sectionIndex,
   sectionTop,
   surface,
 } from "@/themes/beyaz-oda/parts";
@@ -27,7 +28,7 @@ import type { SectionProps } from "@/themes/types";
 const SHOWCASE_COUNT = 3;
 
 /**
- * Ana sayfanin menu VITRINI — tam liste artik /<dil>/menu sayfasinda.
+ * Ana sayfanin menu VITRINI — tam liste artik /<dil>/magazalar sayfasinda.
  *
  * NEDEN: menu buyudukce (30+ urun) bu bolum sayfanin geri kalanini eziyordu.
  * Burada yalnizca birkac one cikan urun duruyor, tam liste kendi sayfasinda.
@@ -37,7 +38,7 @@ const SHOWCASE_COUNT = 3;
  * onunde kucuk bir kare belirir, eklemezse tasarimin sadeligi aynen kalir.
  */
 export default function Menu({ content }: SectionProps) {
-  if (!hasMenu(content)) return null;
+  if (!isSectionShown(content, "magazalar")) return null;
 
   const { t } = content;
 
@@ -52,7 +53,7 @@ export default function Menu({ content }: SectionProps) {
   const withImages = anyItemHasImage(content, items);
 
   return (
-    <section id="menu" aria-labelledby="menu-title" className={surface}>
+    <section id="magazalar" aria-labelledby="magazalar-title" className={surface}>
       <div className={sectionTop}>
         <div className={sectionGrid}>
           {/*
@@ -61,7 +62,7 @@ export default function Menu({ content }: SectionProps) {
             "Bugun tezgahta ne var?" orada dort satira bolunup ritmi bozardi.
             O cumle menu SAYFASININ basligi olarak kullaniliyor.
           */}
-          <SectionIndex index="02" title={t.menu.eyebrow} titleId="menu-title">
+          <SectionIndex index={sectionIndex(content, "magazalar")} title={t.menu.eyebrow} titleId="magazalar-title">
             <ul>
               {items.map((item, index) => {
                 const number = String(index + 1).padStart(2, "0");

@@ -31,14 +31,14 @@ export async function generateMetadata({
    */
   const languages: Record<string, string> = {};
   for (const option of content.locales) {
-    languages[option.locale] = `${base}/${option.locale}/menu`;
+    languages[option.locale] = `${base}/${option.locale}/magazalar`;
   }
 
   return {
     title: content.t.menu.eyebrow,
     description: `${content.name} — ${content.t.menu.pageIntro}`,
     alternates: {
-      canonical: `${base}/${locale}/menu`,
+      canonical: `${base}/${locale}/magazalar`,
       languages,
     },
   };
@@ -77,7 +77,7 @@ export default async function MenuRoute({
    */
   const Body =
     theme.MenuPage ??
-    theme.sections.find((section) => section.id === "menu")?.Component;
+    theme.sections.find((section) => section.id === "magazalar")?.Component;
 
   if (!Body) notFound();
 

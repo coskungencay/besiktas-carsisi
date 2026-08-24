@@ -45,14 +45,15 @@ export function menuWithItems(content: SiteContent): MenuCategory[] {
 }
 
 /**
- * Menu SAYFASININ adresi.
+ * MAGAZALAR sayfasinin adresi.
  *
- * Menu artik ana sayfada bir capa (#menu) degil, kendi sayfasi. Adres dile
- * bagli oldugu icin tek yerden uretiliyor; temalarda elle "/tr/menu" yazmak
- * dil degisince kirilirdi.
+ * Carsi uyarlamasi: sablonun "menu" alan adi korunuyor (DB tablolari ve
+ * upstream ile birlesme bozulmasin diye) ama kullaniciya gorunen her sey
+ * magaza dilinde. Adres dile bagli oldugu icin tek yerden uretiliyor;
+ * temalarda elle "/tr/magazalar" yazmak dil degisince kirilirdi.
  */
 export function menuHref(content: SiteContent): string {
-  return `/${content.locale}/menu`;
+  return `/${content.locale}/magazalar`;
 }
 
 export function hasMenu(content: SiteContent): boolean {

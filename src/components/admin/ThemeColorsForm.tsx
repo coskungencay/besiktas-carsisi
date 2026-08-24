@@ -122,7 +122,7 @@ export function ThemeColorsForm({
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <span className="rounded-lg bg-[var(--brand-primary)] px-4 py-2 text-sm font-semibold text-[var(--brand-primary-contrast)]">
-                  Menüyü İncele
+                  Mağazaları Gör
                 </span>
                 <span className="rounded-lg bg-[var(--brand-accent)] px-4 py-2 text-sm font-semibold text-[var(--brand-primary-contrast)]">
                   Öne çıkan

@@ -193,7 +193,7 @@ export type ThemeDefinition = {
   /** Sayfanin en alti. Tema istemezse hic footer olmaz. */
   Footer?: ComponentType<SectionProps>;
   /**
-   * AYRI menu sayfasinin govdesi (/tr/menu).
+   * AYRI magazalar sayfasinin govdesi (/tr/magazalar).
    *
    * Ana sayfadaki "menu" bolumu artik yalnizca one cikan birkac urunu ve
    * "tum menuyu gor" baglantisini tasiyor; tam liste burada. Tema bunu

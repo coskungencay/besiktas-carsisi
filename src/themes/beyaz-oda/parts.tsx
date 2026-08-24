@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { closedDayLabels, hoursRange } from "@/themes/_shared/data";
+import { closedDayLabels, hasMenu, hoursRange } from "@/themes/_shared/data";
 import type { Highlight, SiteContent } from "@/themes/types";
 
 /**
@@ -83,6 +83,42 @@ export function metaColumns(content: SiteContent): {
  */
 export function hasAboutSection(content: SiteContent): boolean {
   return content.about !== "" || metaColumns(content).about.length > 0;
+}
+
+/**
+ * Sayfada GERCEKTEN basilan bolumlerin sirasi — tema `index.ts`'teki dizinin
+ * aynisi, ama her birinin kendi gorunurluk kosuluyla birlikte.
+ *
+ * NEDEN TEK YERDE: bolum numaralari ("— 02") tasarimin imzasi. Once her bolum
+ * kendi numarasini SABIT tasiyordu; galeri bos ya da yorumlar kapaliyken sayfada
+ * "02 → 05" gibi atlayan numaralar kaliyordu ve bu bir hata gibi okunuyordu.
+ * Burasi tek dogruluk kaynagi: hem numara buradan uretiliyor hem de bolumun
+ * kendi `return null` kosulu buraya bakiyor, ikisi birbirinden kayamaz.
+ */
+const SECTION_GUARDS: { id: string; shown: (c: SiteContent) => boolean }[] = [
+  { id: "hero", shown: () => true },
+  { id: "hakkimizda", shown: hasAboutSection },
+  { id: "magazalar", shown: hasMenu },
+  { id: "galeri", shown: (c) => c.isVisible("galeri") },
+  { id: "yorumlar", shown: (c) => c.isVisible("yorumlar") },
+  { id: "sss", shown: (c) => c.isVisible("sss") },
+  { id: "konum", shown: (c) => c.isVisible("konum") },
+  { id: "iletisim", shown: () => true },
+];
+
+/** Bir bolum sayfada basiliyor mu? Bolumler kendi `return null` kararini buradan alir. */
+export function isSectionShown(content: SiteContent, id: string): boolean {
+  return SECTION_GUARDS.find((s) => s.id === id)?.shown(content) ?? true;
+}
+
+/**
+ * Bolumun sayfadaki SIRA numarasi ("00", "01", …) — yalnizca basilan bolumler
+ * sayilir, boylece numaralar her zaman kesintisiz akar.
+ */
+export function sectionIndex(content: SiteContent, id: string): string {
+  const shown = SECTION_GUARDS.filter((s) => s.shown(content));
+  const position = shown.findIndex((s) => s.id === id);
+  return String(position < 0 ? 0 : position).padStart(2, "0");
 }
 
 /**

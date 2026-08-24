@@ -96,7 +96,7 @@ export function CategoryManager({
                     <input type="hidden" name="id" value={category.id} />
                     <SubmitButton
                       variant="danger"
-                      confirm={`"${category.name}" kategorisi ve içindeki TÜM ürünler silinecek. Emin misiniz?`}
+                      confirm={`"${category.name}" kategorisi ve içindeki TÜM mağazalar silinecek. Emin misiniz?`}
                     >
                       Sil
                     </SubmitButton>

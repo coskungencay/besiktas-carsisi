@@ -14,9 +14,9 @@ const tr = {
     changeLanguage: "Dil değiştir",
   },
   hero: {
-    viewMenu: "Menüyü İncele",
+    viewMenu: "Mağazaları Gör",
     logoAlt: "{name} logosu",
-    coverAlt: "{name} mekân fotoğrafı",
+    coverAlt: "{name} çarşı fotoğrafı",
   },
   about: {
     eyebrow: "Hikâyemiz",
@@ -32,25 +32,40 @@ const tr = {
     label: "Saat",
     closed: "Kapalı",
   },
+  /*
+   * CARSI UYARLAMASI — neden anahtar hala "menu":
+   *
+   * Bu site bir kafe degil, 92 magazali bir carsi. Kullaniciya gorunen her sey
+   * (rota, baslik, JSON-LD) magaza dilinde; ama ANAHTAR ADLARI ve arkasindaki
+   * DB tablolari (menu_categories / menu_items) sablondaki adiyla birakildi.
+   *
+   * NEDEN: bu repo sablonu `upstream` remote olarak tutuyor ve kritik
+   * duzeltmeler cherry-pick ile cekiliyor (bkz. YENI-PROJE.md). Tablo ve
+   * anahtar adlarini yeniden adlandirmak her upstream birlesmesini catisma
+   * haline getirirdi — kazanci ise yalnizca kozmetik olurdu.
+   *
+   * Esleme:  menu kategorisi -> magaza kategorisi  ·  menu urunu -> magaza
+   *          price alani KULLANILMIYOR (0 = sitede gosterilmez)
+   */
   menu: {
-    eyebrow: "Menü",
-    title: "Bugün tezgâhta ne var?",
-    viewAll: "Tüm menüyü gör",
-    pageIntro: "Fiyatlar ve tam liste",
+    eyebrow: "Mağazalar",
+    title: "Çarşıda kimler var?",
+    viewAll: "Tüm mağazaları gör",
+    pageIntro: "Kategoriler ve tam esnaf listesi",
     featured: "Öne çıkan",
     enlarge: "{name} görselini büyüt",
     closeImage: "Kapat",
   },
   gallery: {
     eyebrow: "Galeri",
-    title: "Mekândan kareler",
+    title: "Çarşıdan kareler",
     imageAlt: "{name} galeri görseli {index}",
   },
   contact: {
     eyebrow: "İletişim",
     title: "Bize ulaşın",
     intro:
-      "Rezervasyon, özel gün ve toplu sipariş için yazabilir ya da arayabilirsiniz.",
+      "Çarşı yönetimine, kiralama ve esnaflık başvuruları için yazabilir ya da arayabilirsiniz.",
     formTitle: "Mesaj bırakın",
     address: "Adres",
     phone: "Telefon",
@@ -60,7 +75,7 @@ const tr = {
   },
   testimonials: {
     eyebrow: "Yorumlar",
-    title: "Müşterilerimiz ne diyor?",
+    title: "Ziyaretçilerimiz ne diyor?",
     ratingLabel: "{rating} / 5 yıldız",
   },
   faq: {
