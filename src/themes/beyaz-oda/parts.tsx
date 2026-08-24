@@ -163,7 +163,15 @@ export function SectionIndex({
         <p className="bo-index" aria-hidden="true">
           — {index}
         </p>
-        <p className="bo-index brand-eyebrow mt-1" aria-hidden="true">
+        {/*
+          Etiket mono DEGIL serif: mono kademe zaten ustteki "— 02" indeksinde
+          var; iki mono satir ust uste gelince baslik bir "kod blogu"nun
+          altinda duruyor gibiydi.
+        */}
+        <p
+          className="bo-serif mt-2 text-[12px] tracking-[0.24em] text-[var(--brand-ink-faint)] uppercase"
+          aria-hidden="true"
+        >
           {eyebrow}
         </p>
 
@@ -183,7 +191,13 @@ export function SectionIndex({
         </h2>
 
         {lead ? (
-          <p className="mt-6 text-[15px] leading-[1.75] text-pretty text-[var(--brand-ink-soft)] sm:text-[16.5px]">
+          /*
+            Giris cumlesi basligin ailesinden (bo-lead), govde grotesk'inden
+            DEGIL: onceden 15px grotesk'ti ve buyuk serif basligin altinda
+            baska bir sayfadan gelmis gibi duruyordu. Punto da buyudu —
+            17/19px, bu satirin bir "giris" oldugunu punto soyluyor.
+          */
+          <p className="bo-lead mx-auto mt-7 max-w-[52ch] text-[17px] leading-[1.7] text-pretty text-[var(--brand-ink-soft)] sm:text-[19px]">
             {lead}
           </p>
         ) : null}

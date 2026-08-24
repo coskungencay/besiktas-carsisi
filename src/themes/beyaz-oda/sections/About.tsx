@@ -77,7 +77,7 @@ export default function About({ content }: SectionProps) {
                     zaten genis yer kapliyor, dar bir olcude 200 karakterlik
                     giris cumlesi sekiz satira bolunup blok gibi duruyordu.
                   */
-                  className="bo-title mx-auto max-w-[34ch] text-center text-[clamp(1.5rem,2.9vw,2.5rem)] leading-[1.22] tracking-[-0.008em] text-balance">
+                  className="bo-statement mx-auto max-w-[34ch] text-center text-[clamp(1.5rem,2.9vw,2.5rem)] leading-[1.28] text-balance">
                   {lead || fill(t.about.placeholder, { name })}
                 </p>
               </Reveal>

@@ -56,7 +56,7 @@ html[data-theme="beyaz-oda"] {
    * Yigin sonundaki sistem serif'i ZORUNLU (Arapca glif yok).
    */
   --brand-font-title:
-    var(--font-instrument), "Iowan Old Style", Palatino, Georgia, serif;
+    var(--font-fraunces), "Iowan Old Style", Palatino, Georgia, serif;
   /*
    * Tasarim dosyasi 300 istiyor ama Schibsted Grotesk degisken fontunun
    * agirlik araligi 400-900; 300 tarayicida zaten 400'e kirpilir. Yanlis
@@ -579,8 +579,41 @@ html[data-theme="beyaz-oda"] .bo-header {
 }
 
 
-/* Bolum basligi yardimci sinifi. */
+/* --------------------------------------------------------------------------
+ * Bolum basligi ve giris cumlesi
+ *
+ * Fraunces degisken bir font; eksenler burada ayarlaniyor:
+ *   opsz 144 -> optik boyut DISPLAY: buyuk puntoda tirnaklar incelir,
+ *               kontrast artar. Metin optigi buyutuldugunde hantal duruyordu.
+ *   SOFT 30  -> koseler hafif yumusak; carsinin sicak tonuna denk dusuyor.
+ *   WONK 0   -> "wonk" ekseni KAPALI. Acikken bazi harflerin kuyruklari
+ *               bilincli olarak egriliyor; bir marka basliginda hos ama
+ *               Turkce'nin yogun aksanli metninde dagilmis gorunuyor.
+ * -------------------------------------------------------------------------- */
 html[data-theme="beyaz-oda"] .bo-title {
   font-family: var(--brand-font-title);
+  font-weight: 600;
+  font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 0;
+}
+
+/*
+ * Basligin altindaki giris cumlesi: AYNI aile, ince agirlik.
+ * Onceden govde grotesk'iydi ve basligin altinda kopuk duruyordu.
+ * opsz burada dusuk (metin optigi) — 17-19px'te okunakligi o veriyor.
+ */
+/*
+ * Buyuk "beyan" cumleleri (Hakkimizda girisi, Iletisim girisi).
+ * Baslik degil ama baslik olcusunde; 600 orada agir kaliyordu, 400 ile
+ * ayni ailenin sakin sesi oluyor.
+ */
+html[data-theme="beyaz-oda"] .bo-statement {
+  font-family: var(--brand-font-title);
   font-weight: 400;
+  font-variation-settings: "opsz" 96, "SOFT" 40, "WONK" 0;
+}
+
+html[data-theme="beyaz-oda"] .bo-lead {
+  font-family: var(--brand-font-title);
+  font-weight: 300;
+  font-variation-settings: "opsz" 24, "SOFT" 40, "WONK" 0;
 }

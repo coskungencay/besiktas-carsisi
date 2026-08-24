@@ -98,7 +98,7 @@ export default function Contact({ content }: SectionProps) {
             */}
             <div className="mx-auto max-w-[76rem]">
               <Reveal>
-                <p className="bo-title mx-auto max-w-[22ch] text-center text-[clamp(1.75rem,3.4vw,2.75rem)] leading-[1.18] tracking-[-0.01em] text-balance">
+                <p className="bo-statement mx-auto max-w-[26ch] text-center text-[clamp(1.5rem,2.9vw,2.375rem)] leading-[1.28] text-balance">
                   {fill(t.contact.intro, { name })}
                 </p>
               </Reveal>

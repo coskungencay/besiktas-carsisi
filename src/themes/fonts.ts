@@ -17,7 +17,7 @@
  */
 import {
   Cormorant_Garamond,
-  Instrument_Serif,
+  Fraunces,
   JetBrains_Mono,
   Schibsted_Grotesk,
 } from "next/font/google";
@@ -70,26 +70,25 @@ const cormorant = Cormorant_Garamond({
 });
 
 /*
- * BOLUM BASLIKLARININ fontu.
+ * BOLUM BASLIKLARININ ve giris cumlelerinin fontu.
  *
- * NEDEN DORDUNCU FONT: bolum basliklari Schibsted Grotesk 900 ile
- * basiliyordu — hero'nun kelime-markasiyla AYNI ses. Hero'da o agirlik
- * marka beyani olarak dogru, ama sayfanin her bolumunde tekrar edince
- * tasarim "kalin grotesk" tek notasina siksti ve ucuz durmaya basladi.
+ * NEDEN INSTRUMENT SERIF DEGIL: o fontun TEK agirligi var (400). Bolum
+ * basliklari 4rem'e kadar buyuyor ve 400 o olcude ince kalip "varsayilan
+ * serif" gibi okunuyordu — karakteri olmayan bir Times izlenimi.
  *
- * Instrument Serif yuksek kontrastli, modern bir editoryal display serif:
- * buyuk puntoda ince tirnaklariyla nefes aliyor, gezintideki Cormorant ile
- * ayni serif ailesinden konusuyor ama daha genis ve daha "bugun". Govde
- * metni grotesk kaliyor — okunakligi orada tutuyor.
+ * Fraunces DEGISKEN bir serif: agirlik 100-900, ayrica optik boyut (opsz),
+ * yumusaklik (SOFT) ve "wonk" eksenleri var. Buyuk puntoda 600 agirlikla hem
+ * dolu hem zarif duruyor; giris cumlelerinde 300'e inince ayni ailenin ince
+ * sesi oluyor. Tek font, iki gorev — sayfada tipografik birlik kuruyor.
  *
- * Tek agirligi var (400): display serif'te kalinlik degil PUNTO ve bosluk
- * hiyerarsi kurar.
+ * Neden bu carsiya uygun: Fraunces'in sicak, hafif duzensiz tirnaklari
+ * 1985'ten kalma bir mahalle carsisiyla ortusuyor; steril bir grotesk ya da
+ * soguk bir didone o tonu vermiyordu.
  */
-const instrumentSerif = Instrument_Serif({
+const fraunces = Fraunces({
   subsets: ["latin-ext"],
-  weight: ["400"],
-  style: ["normal", "italic"],
-  variable: "--font-instrument",
+  axes: ["SOFT", "WONK", "opsz"],
+  variable: "--font-fraunces",
   display: "swap",
   preload: false,
 });
@@ -98,5 +97,5 @@ export const themeFontClassNames = [
   schibsted.variable,
   jetbrainsMono.variable,
   cormorant.variable,
-  instrumentSerif.variable,
+  fraunces.variable,
 ].join(" ");
