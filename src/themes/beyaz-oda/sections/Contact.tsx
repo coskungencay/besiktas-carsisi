@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import { hoursFromMonday } from "@/themes/_shared/data";
@@ -26,7 +28,7 @@ type Row = { term: string; value: string; href: string };
  * ayni hizadan baslayan ayri bir satira yerlesiyor.
  */
 export default function Contact({ content }: SectionProps) {
-  const { contact, name, openingHours, t } = content;
+  const { contact, name, openingHours, logoUrl, t } = content;
 
   const hours = hoursFromMonday(openingHours);
 
@@ -222,6 +224,29 @@ export default function Contact({ content }: SectionProps) {
                         </li>
                       ))}
                     </ul>
+
+                    {/*
+                      Amblem sutunun BOSLUGUNU dolduruyor.
+
+                      Uclu seritte sutunlar ayni yukseklikte ama icerikleri
+                      degil: calisma saatleri yedi satir, iletisim uc satir.
+                      Bu sutunun altinda yarim ekranlik bos alan kaliyordu ve
+                      serit dengesiz duruyordu. Amblem hem o bosluga oturuyor
+                      hem de seridin kapanisini markaya baglıyor.
+
+                      `mt-auto` DEGIL sabit bosluk: sutun flex degil, sabit
+                      bosluk her ekran genisliginde ayni ritmi veriyor.
+                    */}
+                    {logoUrl ? (
+                      <Image
+                        src={logoUrl}
+                        alt=""
+                        aria-hidden="true"
+                        width={112}
+                        height={112}
+                        className="mx-auto mt-12 size-16 object-contain opacity-70 sm:size-20"
+                      />
+                    ) : null}
                   </Reveal>
                 </div>
               ) : null}
