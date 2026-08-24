@@ -172,7 +172,7 @@ export function buildJsonLd(content: SiteContent): Record<string, unknown> {
    * CARSI UYARLAMASI: sablon burada tum menuyu `hasMenu` altinda basiyordu.
    *
    * Burada TAM magaza listesi BILEREK YOK. Ana sayfadaki magazalar bolumu
-   * yalnizca birkac one cikan esnafi gosteren bir vitrin; 92 magazanin
+   * yalnizca birkac one cikan esnafi gosteren bir vitrin; 87 magazanin
    * tamami /<dil>/magazalar sayfasinda. Sablonun kendi kurali da bu:
    * "yalnizca SAYFADA GORUNEN icerik isaretlenir". Tam listeyi burada da
    * basmak, sayfada olmayan icerigi arama motoruna bildirmek olurdu.
@@ -199,7 +199,6 @@ export function buildJsonLd(content: SiteContent): Record<string, unknown> {
    * yorumlar gerekir; onlar bu alandan bagimsizdir.
    */
   const reviews = content.isVisible("yorumlar") ? content.testimonials : [];
-  const rated = reviews.filter((review) => review.rating !== null);
 
   if (reviews.length > 0) {
     jsonLd.review = reviews.map((review) => ({
@@ -220,13 +219,21 @@ export function buildJsonLd(content: SiteContent): Record<string, unknown> {
     }));
   }
 
-  if (rated.length > 0) {
-    const total = rated.reduce((sum, review) => sum + (review.rating ?? 0), 0);
+  /*
+   * AggregateRating, sitede GOSTERILEN yorumlardan DEGIL, isletmenin GERCEK
+   * Google ortalamasindan uretiliyor.
+   *
+   * NEDEN: sitede 10 secilmis yorum var ve ortalamalari 4,5 cikiyor; carsinin
+   * 7.568 degerlendirmeden gercek ortalamasi ise 4,3. Secilmis bir alt kumenin
+   * ortalamasini isletmenin puani diye bildirmek, sayiyi yukari cekmek icin
+   * yorum secmek anlamina gelirdi. Panelde puan girilmemisse (null) hic
+   * aggregateRating basilmaz — uydurma bir sayi uretmektense hic vermemek dogru.
+   */
+  if (content.googleRating !== null && content.googleRatingCount !== null) {
     jsonLd.aggregateRating = {
       "@type": "AggregateRating",
-      // Bir ondalik yeter; 4.6666… gibi degerler hem cirkin hem gereksiz.
-      ratingValue: Number((total / rated.length).toFixed(1)),
-      reviewCount: rated.length,
+      ratingValue: content.googleRating,
+      reviewCount: content.googleRatingCount,
       bestRating: 5,
       worstRating: 1,
     };

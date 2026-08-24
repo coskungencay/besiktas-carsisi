@@ -5,7 +5,7 @@ import { Latin } from "@/components/site/Latin";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { SchemeToggle } from "@/components/site/SchemeToggle";
 import { placeStamp, hasMenu, menuHref } from "@/themes/_shared/data";
-import { hasAboutSection, shell, surface } from "@/themes/beyaz-oda/parts";
+import { hasAboutSection, shell } from "@/themes/beyaz-oda/parts";
 import type { SectionProps } from "@/themes/types";
 
 type NavLink = {
@@ -65,15 +65,34 @@ export default function Header({ content }: SectionProps) {
     { href: `${home}#iletisim`, label: t.contact.eyebrow },
   ].filter((link): link is NavLink => Boolean(link));
 
+  /*
+   * Gezinti baglantilari: serif, buyuk punto, genis harf araligi ve alttan
+   * cizilen ince bir vurgu. Onceki hali 12.5px grotesk'ti ve seridi
+   * dolduramiyordu.
+   */
   const navLinkClass =
-    "underline-offset-4 transition-colors hover:text-[var(--brand-accent)]";
+    "bo-serif relative py-1 text-[clamp(1rem,1.5vw,1.1875rem)] tracking-[0.04em] transition-colors hover:text-[var(--brand-accent)] " +
+    "after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-center after:scale-x-0 after:bg-[var(--brand-accent)] " +
+    "after:transition-transform after:duration-300 hover:after:scale-x-100 motion-reduce:after:transition-none";
 
+  /*
+   * YAPISKAN SERIT. Onceden sayfa kayinca gozden kayboluyordu; 87 magazali
+   * bir sitede gezinti her an elin altinda olmali.
+   *
+   * Zemin tam opak DEGIL, hafif saydam + blur (bkz. tokens.css .bo-header):
+   * hero'nun fotografi seridin altindan gecerken tamamen kesilmiyor, ama yazi
+   * her zaman okunur kaliyor.
+   */
   return (
-    <header
-      className={`${surface} bo-fade border-b border-[var(--brand-border)]`}
-    >
+    <header className="bo-header bo-fade sticky top-0 z-50 border-b border-[var(--brand-border)]">
       <div
-        className={`${shell} flex flex-wrap items-center justify-between gap-x-8 gap-y-3 py-[28px] lg:grid lg:grid-cols-12 lg:gap-6`}
+        /*
+          12 KOLONLUK IZGARA KALDIRILDI. Serif yazilar buyuyunce hucreler
+          tasiyor, mod dugmesi alt satira dusuyor ve serit iki sira
+          yuksekliginde kaliyordu. Basit bir flex satiri her genislikte
+          dogru davraniyor: marka solda, kunye ortada, gezinti sagda.
+        */
+        className={`${shell} flex items-center justify-between gap-6 py-4 sm:py-5`}
       >
         <a
           /* Capalarla ayni gerekce: menu sayfasindan da ana sayfaya donmeli. */
@@ -84,7 +103,7 @@ export default function Header({ content }: SectionProps) {
             icin vurgu rengi burada da EL ILE veriliyor; yoksa sayfadaki tek
             hover'siz baglanti bu olurdu.
           */
-          className="brand-display flex items-center gap-2.5 text-[13px] font-medium tracking-[0.02em] transition-colors hover:text-[var(--brand-accent)] lg:col-span-4"
+          className="bo-serif flex items-center gap-3.5 text-[clamp(1.0625rem,1.7vw,1.375rem)] font-medium tracking-[0.06em] transition-colors hover:text-[var(--brand-accent)] shrink-0"
         >
           {/*
             Logo yuklendiyse kelime-markanin ONUNDE kucuk bir kare olarak
@@ -97,9 +116,13 @@ export default function Header({ content }: SectionProps) {
             <Image
               src={logoUrl}
               alt=""
-              width={20}
-              height={20}
-              className="size-5 shrink-0 object-contain"
+              width={48}
+              height={48}
+              /*
+                20px'ten 44px'e cikti. Amblemin kaynagi 185px oldugu icin
+                2x ekranda 44px hala keskin; daha buyugu bulaniklasir.
+              */
+              className="size-9 shrink-0 object-contain sm:size-11"
             />
           ) : null}
           <Latin>{name}</Latin>
@@ -112,16 +135,27 @@ export default function Header({ content }: SectionProps) {
               KOYU (#8A8F94); ust seritte marka ile nav arasinda kaybolmasin
               diye. Karsiligi --brand-ink-dim.
             */
-            className="bo-mono order-3 w-full font-light text-[11px] tracking-[0.02em] text-[var(--brand-ink-dim)] sm:order-none sm:w-auto lg:col-span-4"
+            /*
+              Kunye yalnizca GENIS ekranda: dar ekranda marka ile gezinti
+              arasina sikisip ikisini de daraltiyordu.
+            */
+            className="bo-serif hidden shrink-0 text-[13px] tracking-[0.16em] text-[var(--brand-ink-dim)] uppercase xl:block"
             dir="ltr"
           >
             {coords}
           </p>
         ) : null}
 
-        <div className="flex flex-wrap items-center justify-end gap-x-[26px] gap-y-3 lg:col-span-4 lg:col-start-9">
+        <div className="flex shrink-0 items-center justify-end gap-x-5">
           <nav aria-label={name}>
-            <ul className="flex flex-wrap items-center gap-x-[26px] gap-y-2 text-[12.5px] text-[var(--brand-ink-muted)]">
+            {/*
+              Dar ekranda gezinti gizleniyor. Sayfa TEK sayfa oldugu ve tum
+              bolumler asagida sirayla geldigi icin mobilde capa listesi
+              tasimanin degeri yok; ayrica dort serif baglanti seridi tek
+              basina dolduruyordu. Magazalar sayfasina giden yol yine var:
+              hero'daki "Magazalari Gor" ve her bolumun kendi baglantisi.
+            */}
+            <ul className="hidden items-center gap-x-8 text-[var(--brand-ink-muted)] md:flex">
               {links.map((link) => (
                 <li key={link.href}>
                   {/*

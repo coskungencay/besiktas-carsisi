@@ -16,6 +16,7 @@
  * (beyaz-oda/tokens.css icinde html[lang="ar"] istisnasi tanimli.)
  */
 import {
+  Cormorant_Garamond,
   JetBrains_Mono,
   Schibsted_Grotesk,
 } from "next/font/google";
@@ -46,7 +47,29 @@ const jetbrainsMono = JetBrains_Mono({
  * Tek aktif tema beyaz-oda: Schibsted Grotesk (govde+baslik) + JetBrains Mono
  * (kunye/etiket satirlari).
  */
+/*
+ * Ust seridin ve bolum etiketlerinin fontu.
+ *
+ * NEDEN UCUNCU BIR FONT: gezinti baglantilari govde grotesk'iyle yaziliyordu
+ * ve 12.5px'te sayfanin geri kalanindan ayrismiyordu — ust serit "menu" gibi
+ * degil, kucuk bir metin blogu gibi duruyordu. Cormorant Garamond kaligrafik
+ * kokenli, ince ve asil bir serif; buyuk puntoda ve genis harf araligiyla
+ * basildiginda seride hem agirlik hem incelik veriyor.
+ *
+ * Grotesk'le CAKISMIYOR, tamamliyor: sayfadaki buyuk basliklar (hero, bolum
+ * baslıklari) kalin grotesk kaliyor — klasik editoryal esleme.
+ */
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin-ext"],
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-cormorant",
+  display: "swap",
+  preload: false,
+});
+
 export const themeFontClassNames = [
   schibsted.variable,
   jetbrainsMono.variable,
+  cormorant.variable,
 ].join(" ");

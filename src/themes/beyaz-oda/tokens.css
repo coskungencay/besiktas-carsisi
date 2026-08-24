@@ -45,6 +45,13 @@ html[data-theme="beyaz-oda"] {
   --brand-font-mono:
     var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", Consolas, monospace;
   /*
+   * Ust seridin ve gezinti baglantilarinin fontu — kaligrafik kokenli,
+   * ince bir serif. Yigin sonundaki sistem serif'i ZORUNLU: Cormorant'ta
+   * Arapca glif yok.
+   */
+  --brand-font-serif:
+    var(--font-cormorant), "Iowan Old Style", Palatino, Georgia, serif;
+  /*
    * Tasarim dosyasi 300 istiyor ama Schibsted Grotesk degisken fontunun
    * agirlik araligi 400-900; 300 tarayicida zaten 400'e kirpilir. Yanlis
    * beklenti yaratmamak icin gercek deger yaziliyor.
@@ -192,6 +199,7 @@ html[lang="ar"][data-theme="beyaz-oda"] {
   --brand-font-body: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
   --brand-font-display: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
   --brand-font-mono: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+  --brand-font-serif: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
 }
 
 /* --------------------------------------------------------------------------
@@ -536,4 +544,29 @@ html[data-theme="beyaz-oda"] .line-clamp-8 {
   -webkit-line-clamp: 8;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+
+/* Ust serit / gezinti icin serif yardimci sinifi. */
+html[data-theme="beyaz-oda"] .bo-serif {
+  font-family: var(--brand-font-serif);
+}
+
+
+/* --------------------------------------------------------------------------
+ * Yapiskan ust serit
+ *
+ * Saydam zemin + blur: hero fotografi seridin altindan gecerken tamamen
+ * kesilmiyor. `@supports` olmayan tarayicida zemin TAM OPAK olur — yoksa
+ * beyaz yazi acik bir fotografin uzerinde kaybolurdu.
+ * -------------------------------------------------------------------------- */
+html[data-theme="beyaz-oda"] .bo-header {
+  background: var(--brand-surface);
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  html[data-theme="beyaz-oda"] .bo-header {
+    background: color-mix(in srgb, var(--brand-surface) 86%, transparent);
+    backdrop-filter: blur(14px) saturate(1.4);
+  }
 }

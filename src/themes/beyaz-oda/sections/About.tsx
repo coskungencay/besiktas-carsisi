@@ -39,17 +39,26 @@ export default function About({ content }: SectionProps) {
         <div className={sectionGrid}>
           <SectionIndex index={sectionIndex(content, "hakkimizda")} eyebrow={t.about.eyebrow}
             title={t.about.title} titleId="about-title">
-            <div className="grid gap-10 lg:grid-cols-10 lg:gap-6">
-              <div className="lg:col-span-5">
+            {/*
+              ORTALANMIS METIN BLOGU. Onceden iki kolonluk sol hizali bir
+              duzendi ve ortalanmis bolum basliginin altinda "iki farkli
+              tasarim" gibi duruyordu. Simdi giris cumlesi ve govde ortada,
+              kunye tablosu onlarin altinda dar bir sutun olarak duruyor.
+
+              max-w-[68ch]: ortalanmis metin satiri uzarsa okunmaz; olcu satir
+              uzunlugunu insan gozunun rahat takip ettigi araliga sabitliyor.
+            */}
+            <div className="mx-auto max-w-[68ch]">
+              <div>
                 <Reveal variant="scale">
-                  <p className="brand-display text-[clamp(1.25rem,2vw,1.6875rem)] leading-[1.42] tracking-[-0.015em] text-pretty">
+                  <p className="brand-display text-center text-[clamp(1.375rem,2.4vw,2rem)] leading-[1.38] tracking-[-0.02em] text-balance">
                     {lead || fill(t.about.placeholder, { name })}
                   </p>
                 </Reveal>
 
                 {rest.length > 0 ? (
                   <Reveal delay={0.09}>
-                    <div className="mt-[26px] flex max-w-[460px] flex-col gap-4 text-[15px] leading-[1.8] text-pretty text-[var(--brand-ink-soft)]">
+                    <div className="mt-9 flex flex-col gap-5 text-center text-[15px] leading-[1.85] text-pretty text-[var(--brand-ink-soft)] sm:text-[16px]">
                       {rest.map((paragraph, index) => (
                         <p key={index}>{paragraph}</p>
                       ))}
@@ -59,7 +68,7 @@ export default function About({ content }: SectionProps) {
               </div>
 
               {stats.length > 0 ? (
-                <div className="lg:col-span-4 lg:col-start-7">
+                <div className="mx-auto mt-14 max-w-[30rem]">
                   <Reveal delay={0.16}>
                     {/*
                       Tasarimda bu tablonun USTUNDE baslik yok: etiketlerin

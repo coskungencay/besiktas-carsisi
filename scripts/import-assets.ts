@@ -17,7 +17,7 @@ import { join } from "node:path";
 import { eq } from "drizzle-orm";
 
 import { SINGLETON_ID, db } from "../src/db";
-import { menuCategories, siteSettings } from "../src/db/schema";
+import { menuCategories, menuItems, siteSettings } from "../src/db/schema";
 import { deleteImage, storeImage } from "../src/lib/uploads";
 
 const ASSETS = join(import.meta.dirname, "assets");
@@ -65,6 +65,7 @@ async function main() {
   console.log(`[varlik] Kapak   -> ${hero.url}`);
 
   await importCategoryCovers();
+  await importShopPhotos();
   console.log("[varlik] Tamamlandi.");
 }
 
@@ -102,6 +103,52 @@ const CATEGORY_COVERS: Record<string, string> = {
   "Para Transferi": "sender.jpg",
   "Kamu Hizmetleri": "ptt.jpg",
 };
+
+/**
+ * Belirli MAGAZALARIN kendi fotograflari.
+ *
+ * Eski sitedeki kategori kareleri aslinda tek tek dukkanlarin cephesi ve
+ * uclerinde dukkanin ADI tabelada okunuyor — o ucu dogrudan o magazaya
+ * atiyoruz. Kategorisinde birden fazla magaza olanlari sectik: tek magazali
+ * bir kategoride ayni fotograf hem bolum basliginda hem kartta cikip
+ * tekrar olurdu.
+ *
+ * Dosya kategori kapagiyla AYNI olsa da AYRI yukleniyor (ayri uuid): tek bir
+ * dosyayi iki kayit paylassaydi birini silmek digerinin gorselini de
+ * goturur.
+ */
+const SHOP_PHOTOS: { shop: string; file: string }[] = [
+  { shop: "Terzi Zeki", file: "terzi.jpg" }, // tabelada "TERZI ZEKI" yaziyor
+  { shop: "Studio 2000 Kaset & CD", file: "muzik.jpg" }, // vitrinde "Studio"
+  { shop: "PTT Beşiktaş Şubesi", file: "ptt.jpg" },
+];
+
+async function importShopPhotos() {
+  let done = 0;
+  for (const entry of SHOP_PHOTOS) {
+    const row = db
+      .select()
+      .from(menuItems)
+      .where(eq(menuItems.name, entry.shop))
+      .get();
+    if (!row) {
+      console.log(`[varlik] Magaza bulunamadi, atlandi: ${entry.shop}`);
+      continue;
+    }
+    if (row.imageUrl) await deleteImage(row.imageUrl);
+
+    const buffer = readFileSync(join(ASSETS, "kategori", entry.file));
+    const stored = await storeImage(
+      new File([new Uint8Array(buffer)], entry.file, { type: "image/jpeg" }),
+    );
+    db.update(menuItems)
+      .set({ imageUrl: stored.url })
+      .where(eq(menuItems.id, row.id))
+      .run();
+    done += 1;
+  }
+  console.log(`[varlik] ${done} magazaya kendi fotografi atandi.`);
+}
 
 async function importCategoryCovers() {
   const rows = db.select().from(menuCategories).all();

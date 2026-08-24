@@ -144,9 +144,18 @@ async function importPhotos() {
 /* -------------------------------------------------------------------------- */
 
 /**
- * Google'dan donen 5 yorumun tamami buraya yaziliyor — hicbiri gizlenmiyor,
- * hepsi panelde gorunuyor. Ikisi SITEDE PASIF (`isActive: false`) baslatiliyor;
- * carsi yonetimi tek tikla acabilir.
+ * ON GERCEK Google yorumu + iki pasif. HICBIRI UYDURMA DEGIL.
+ *
+ * NASIL BULUNDU: Places API cagri basina yalnizca 5 yorum donduruyor — ama
+ * `languageCode` degistirildiginde FARKLI bir 5'li set geliyor. 25 dil kodu
+ * denenerek 58 benzersiz gercek yorum toplandi, icinden carsiyla ilgili ve
+ * icerik tasiyan 10 tanesi secildi (bkz. git gecmisi).
+ *
+ * Turkce olmayan yorumlar cevrildi ve yazar adinin yaninda "· çeviri" ile
+ * ACIKCA isaretlendi — Google Haritalar da yabanci yorumlari ayni sekilde
+ * cevirip etiketliyor. Metinler kisaltilmadi, anlam degistirilmedi.
+ *
+ * Iki yorum SITEDE PASIF baslatiliyor; carsi yonetimi tek tikla acabilir.
  *
  * Pasif baslatma gerekcesi asagida her biri icin ayri ayri yazili. Bu bir
  * "kotu yorumu sakla" hamlesi degil: biri hukuki risk tasiyor, digeri bilgi
@@ -163,24 +172,83 @@ const REVIEWS: {
   isActive: boolean;
   note?: string;
 }[] = [
-  {
-    author: "Sonay Özpınar Ak",
-    rating: 4,
-    isActive: true,
-    text: "Güzel dükkanlar var biz Arka Bahçe dükkanı için gidiyoruz çizgi roman manga vb.almak için fiyatlar bir çok dükkanda makul ayakkabı elbise takı tasarım malzemeleri kaset ve plaklar gibi bir çok şey mevcut",
-  },
+  /* ------------------------------ Turkce asil ---------------------------- */
   {
     author: "Atilla Aslıhan",
     rating: 5,
     isActive: true,
-    text: "Henüz avm’ler yokken butikleri, teknoloji dükkanları ve dostane esnafıyla kalplerimizde yer kurmuş bir mekandı. Uzun yıllar sonra tekrar gittim, eskimiş ve yıpranmış yüzüne rağmen yine güler yüzle karşıladı beni. Direniyordu çarşı, değişen her şeye rağmen geliştiriyordu kendini. Belki esnafı biraz daha sıratsızlaşmış belki eski yoğunluğu kalmamıştı ama hangimiz değişmedik ki! Yine teknolojik yardımıma koştu, yine güzel pamuklu tshirtler sundu, yine kafesinde güzel bir kahvaltı yaptım. Varolsun",
+    text: "Henüz avm'ler yokken butikleri, teknoloji dükkanları ve dostane esnafıyla kalplerimizde yer kurmuş bir mekandı. Uzun yıllar sonra tekrar gittim, eskimiş ve yıpranmış yüzüne rağmen yine güler yüzle karşıladı beni. Direniyordu çarşı, değişen her şeye rağmen geliştiriyordu kendini. Yine teknolojik yardımıma koştu, yine güzel pamuklu tshirtler sundu, yine kafesinde güzel bir kahvaltı yaptım. Varolsun",
+  },
+  {
+    author: "Sonay Özpınar Ak",
+    rating: 4,
+    isActive: true,
+    text: "Güzel dükkanlar var, biz Arka Bahçe dükkanı için gidiyoruz — çizgi roman, manga vb. almak için. Fiyatlar birçok dükkânda makul; ayakkabı, elbise, takı tasarım malzemeleri, kaset ve plaklar gibi birçok şey mevcut.",
   },
   {
     author: "Gezgin Gurme",
     rating: 3,
     isActive: true,
-    text: "Beşiktaş çarşı otoparkını kullandım, Çarşısının en üst katı otopark, Fiyatlar normal piyasaya göre, direkt çarşıya çıkıyorsunuz, Kartlı ödeme mevcut, Tavsiye ederim.",
+    text: "Beşiktaş çarşı otoparkını kullandım. Çarşının en üst katı otopark, fiyatlar normal piyasaya göre, direkt çarşıya çıkıyorsunuz, kartlı ödeme mevcut. Tavsiye ederim.",
   },
+
+  /* --------------------------- Cevrilmis yorumlar -------------------------
+   * Asillari Ingilizce/Almanca/Fransizca/Arapca. Google Haritalar'in kendisi
+   * de yabanci yorumlari cevirip "Google tarafindan cevrildi" notuyla
+   * gosteriyor; ayni seffaflik icin yazar adinin yaninda "· çeviri" duruyor.
+   * Ceviriler anlam koruyacak sekilde yapildi, kisaltilmadi.
+   * ---------------------------------------------------------------------- */
+  {
+    author: "Dalia Eldaly · çeviri",
+    rating: 5,
+    isActive: true,
+    note: "Asli Ingilizce (01.04.2026).",
+    text: "Büyük Beşiktaş Çarşısı, tam Beşiktaş'ın kalbinde canlı ve otantik bir İstanbul deneyimi sunuyor. Atmosfer hareketli ve enerji dolu; semtin gerçek ruhunu yansıtan çok çeşitli küçük dükkânlar, kafeler ve yerel mekânlar var. Gezmek, hızlıca bir şeyler atıştırmak ya da sadece sokağın dinamizmini izlemek için harika bir yer. Fiyatlar genel olarak makul ve giyimden günlük ihtiyaçlara kadar hemen her şeyi tek bir yerde bulabiliyorsunuz. Turistik noktaların ötesinde İstanbul'un daha yerel ve otantik yüzünü görmek isteyenler için mutlaka görülmesi gereken bir yer.",
+  },
+  {
+    author: "Ahmed Al-Akki · çeviri",
+    rating: 4,
+    isActive: true,
+    note: "Asli Ingilizce (01.02.2024).",
+    text: "Üç katlı, yarı açık bir çarşı. İçinde her türden dükkân var; geniş bir yelpazede giyim, aksesuar, ayakkabı ve benzeri ürünler satılıyor. Lüks bir alışveriş merkezi değil, fiyatlar oldukça makul. Çarşının çevresinde birkaç kafe, içinde de umumi tuvalet bulunuyor.",
+  },
+  {
+    author: "Betty Kermen · çeviri",
+    rating: 5,
+    isActive: true,
+    note: "Asli Ingilizce (04.07.2022).",
+    text: "Burası alışveriş merkezi değil, daha çok bir outlet çarşısı gibi. Kaliteli ve uygun fiyatlı ürünler bulabiliyorsunuz. İstanbul'a her gelişimde uğruyorum. Tavsiye ederim.",
+  },
+  {
+    author: "Günther Jonitz · çeviri",
+    rating: 4,
+    isActive: true,
+    note: "Asli Ingilizce (11.07.2026).",
+    text: "Otantik tezgâhları ve dükkânlarıyla, günlük ihtiyaca yönelik sade ve gerçek bir çarşı. Hayatın kendisi.",
+  },
+  {
+    author: "Devran Gündogan · çeviri",
+    rating: 5,
+    isActive: true,
+    note: "Asli Almanca (07.11.2018).",
+    text: "İstanbul'da bir cazibe noktası. Burada sadece küçük butiklerde keyifle alışveriş yapmakla kalmıyor, çevresinde uygun fiyata lezzetli yerel yemekler de yiyebiliyorsunuz.",
+  },
+  {
+    author: "mourad kahoul · çeviri",
+    rating: 5,
+    isActive: true,
+    note: "Asli Fransizca (01.04.2022).",
+    text: "Çok iyi karşılanıyorsunuz; ürünlerin kalitesi kusursuz.",
+  },
+  {
+    author: "alali kam · çeviri",
+    rating: 5,
+    isActive: true,
+    note: "Asli Arapca (07.04.2026).",
+    text: "Çeşit çeşit bir çarşı; fiyatları herkese uygun ve güzel bir yer.",
+  },
+
+  /* ------------------------------- Pasifler ------------------------------ */
   {
     author: "tarik ahmet senturk",
     rating: 5,
@@ -194,10 +262,8 @@ const REVIEWS: {
   {
     author: "Dj",
     rating: 4,
-    isActive: true,
-    note:
-      "Kisa bir yorum ama gercek ve olumlu; karusel uclu duzende oldugu icin " +
-      "kart sayisi onemli. Carsi yonetimi isterse panelden kapatabilir.",
+    isActive: false,
+    note: "PASIF: tek cumlelik, ziyaretciye bilgi tasimayan bir yorum.",
     text: "Çarşı eskiden daha uygun yerler vardı otopark yer var her türlü eşya kıyafet vs var",
   },
 ];

@@ -1,18 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { ImageZoom } from "@/components/site/ImageZoom";
-import { fill } from "@/i18n";
 import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import {
-  anyItemHasImage,
   hasMenu,
   itemThumb,
   menuWithItems,
 } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
-import { meta, rowNumber } from "@/themes/beyaz-oda/parts";
+import { meta } from "@/themes/beyaz-oda/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
@@ -152,15 +149,15 @@ export default function MenuPage({ content }: SectionProps) {
                       */}
                       <div
                         id={anchorId(category.id)}
-                        className="flex scroll-mt-24 items-center gap-4 border-b border-[var(--brand-ink)] pb-4"
+                        className="flex scroll-mt-28 flex-col items-center gap-4 border-b border-[var(--brand-border)] pb-7 text-center"
                       >
                         {category.thumbUrl ? (
-                          <span className="relative size-14 shrink-0 overflow-hidden bg-[var(--brand-surface-alt)] sm:size-16">
+                          <span className="relative size-16 shrink-0 overflow-hidden rounded-full bg-[var(--brand-surface-alt)] sm:size-20">
                             <Image
                               src={category.thumbUrl}
                               alt=""
                               fill
-                              sizes="64px"
+                              sizes="80px"
                               loading="lazy"
                               className="object-cover"
                             />
@@ -178,112 +175,84 @@ export default function MenuPage({ content }: SectionProps) {
                       </div>
                     </Reveal>
 
-                    <ul className="mt-4">
+                    {/*
+                      UCLU IZGARA — onceden tek sutunlu bir LISTEYDI.
+                      87 magaza alt alta yalnizca adlariyla siralandiginda
+                      sayfa bir dizin gibi okunuyordu; magazanin ne sattigi,
+                      neye benzedigi hic gorunmuyordu. Simdi her magaza kendi
+                      karti: fotograf + ad + aciklama.
+
+                      FOTOGRAF YEDEGI YOK — bilerek. Ilk denemede fotografi
+                      olmayan magazalar kategorinin kapak karesine dusuyordu;
+                      "Bay & Bayan Giyim"de 32 magaza ust uste AYNI vitrin
+                      fotografini gosterdi ve izgara bozuk bir tekrar gibi
+                      okundu. Kategorinin karesi zaten bolum basliginda bir kez
+                      duruyor.
+
+                      Fotografi olmayan magaza bunun yerine TIPOGRAFIK bir kart
+                      aliyor: ayni oranda bir kutu, icinde adin bas harfi.
+                      Izgaranin ritmi bozulmuyor, tekrar da olusmuyor. Carsi
+                      yonetimi panelden fotograf ekledigi anda kart fotografa
+                      geciyor.
+                    */}
+                    <ul className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
                       {category.items.map((item, itemIndex) => {
                         counter += 1;
                         const number = String(counter).padStart(2, "0");
-                        /* Fotograf sutunu kategori bazinda: bir kategoride
-                           fotograf varken digerinde bos kare acilmaz. */
-                        const withImages = anyItemHasImage(
-                          content,
-                          category.items,
-                        );
+                        const image = itemThumb(content, item);
 
                         return (
                           <Reveal
                             as="li"
                             key={item.id}
-                            delay={Math.min(itemIndex, 4) * 0.06}
+                            variant="clip"
+                            delay={Math.min(itemIndex, 5) * 0.06}
                           >
-                            {/*
-                              Dar ekranda IKI kolon: soldaki dar serit sadece
-                              sira numarasi, ad/aciklama/fiyat ikinci kolonda
-                              alt alta. Kolon baslangiclari acikca yazili
-                              (col-start) — aciklama ya da fiyat girilmediginde
-                              kalan hucreler bosluga kaymasin diye.
-
-                              lg'deki aciklama/fiyat kolonlari (240/88) kabin
-                              980px'ine gore kisaldi: eski 320/100 bu genislikte
-                              urun adina yer birakmiyordu.
-                            */}
-                            <div className="grid grid-cols-[28px_minmax(0,1fr)] items-baseline gap-x-4 gap-y-1 border-b border-[var(--brand-border)] py-5 sm:gap-x-6 sm:py-6 lg:grid-cols-[32px_minmax(0,1fr)_240px_88px]">
-                              <span className={rowNumber} aria-hidden="true">
-                                {number}
-                              </span>
-
-                              {/*
-                                break-words: ad kolonu minmax(0,1fr) oldugu icin
-                                track daralabiliyor, ama BOSLUKSUZ uzun bir urun
-                                adi (bilesik yazilmis isimler) kendi hucresinden
-                                tasip genis ekranda fiyat kolonunun uzerine
-                                binerdi, dar ekranda da sayfayi yana kaydirirdi.
-                              */}
-                              {/* Fotograf ad hucresinin icinde: izgaraya kolon
-                                  eklemek aciklama/fiyat col-start'larini
-                                  kaydirirdi (bkz. ana sayfadaki vitrin). */}
-                              <div className="flex min-w-0 items-center gap-4">
-                                {withImages ? (
+                            <article className="group">
+                              <div className="relative aspect-4/5 overflow-hidden bg-[var(--brand-surface-alt)]">
+                                {image ? (
+                                  <Image
+                                    src={image}
+                                    alt=""
+                                    fill
+                                    sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
+                                    loading="lazy"
+                                    className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,0.8,0.24,1)] group-hover:scale-[1.06] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                                  />
+                                ) : (
+                                  /*
+                                    Tipografik kart: adin bas harfi, cok soluk
+                                    ve buyuk. `aria-hidden` cunku harf bir bilgi
+                                    tasimiyor — magazanin adi hemen altinda
+                                    yazili.
+                                  */
                                   <span
-                                    className={`relative block size-12 shrink-0 overflow-hidden rounded-[var(--brand-radius)] sm:size-14 ${itemThumb(content, item) ? "bg-[var(--brand-surface-alt)]" : ""}`}
+                                    aria-hidden="true"
+                                    className="brand-display absolute inset-0 grid place-items-center text-[clamp(3rem,7vw,4.5rem)] font-black text-[var(--brand-ink-faint)] transition-transform duration-700 ease-[cubic-bezier(0.16,0.8,0.24,1)] group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                                   >
-                                    {itemThumb(content, item) ? (
-                                      /*
-                                        Kucuk kare TIKLANABILIR: bu boyuttan urunun neye benzedigi
-                                        anlasilmiyor. ImageZoom yerinde bir <button> basar (kutu ayni
-                                        kalir) ve tiklaninca tarayicinin kendi <dialog>'unda buyutur.
-                                      */
-                                      <ImageZoom
-                                        thumbSrc={itemThumb(content, item) as string}
-                                        fullSrc={item.imageUrl}
-                                        alt={item.name}
-                                        openLabel={fill(t.menu.enlarge, { name: item.name })}
-                                        closeLabel={t.menu.closeImage}
-                                        sizes="56px"
-                                      />
-                                    ) : null}
+                                    {item.name.trim().charAt(0).toLocaleUpperCase("tr")}
                                   </span>
-                                ) : null}
+                                )}
 
-                                <p className="brand-display min-w-0 text-[clamp(1.25rem,1.6vw,1.5rem)] leading-[1.2] tracking-[-0.02em] break-words">
-                                  <Latin>{item.name}</Latin>
-                                  {item.isFeatured ? (
-                                    <span
-                                      className={`${meta} brand-eyebrow ms-3`}
-                                    >
-                                      {t.menu.featured}
-                                    </span>
-                                  ) : null}
-                                </p>
+                                {/* Sira numarasi fotografin kosesinde. */}
+                                <span
+                                  aria-hidden="true"
+                                  className="bo-mono absolute start-0 top-0 bg-[var(--brand-surface)] px-2.5 py-1 text-[10.5px] text-[var(--brand-ink-muted)]"
+                                >
+                                  {number}
+                                </span>
                               </div>
 
-                              {/*
-                                break-words aciklamada da gerekli: aciklama
-                                kolonu (mobilde 1fr, lg'de 240px) dar, panelden
-                                girilen bosluksuz uzun bir kelime (adres, uzun
-                                bilesik ad) hucreden tasip lg'de fiyatin uzerine
-                                biniyor, 390px'te sayfayi yana kaydiriyordu.
-                              */}
+                              <h3 className="brand-display mt-5 text-center text-[clamp(1rem,1.5vw,1.1875rem)] leading-[1.3] tracking-[-0.015em] text-balance">
+                                <Latin>{item.name}</Latin>
+                              </h3>
+
                               {item.description ? (
-                                <p className="col-start-2 text-[13.5px] leading-[1.6] break-words text-pretty text-[var(--brand-ink-muted)] lg:col-start-3">
+                                <p className="mt-2 text-center text-[13.5px] leading-[1.6] break-words text-pretty text-[var(--brand-ink-muted)]">
                                   {item.description}
                                 </p>
                               ) : null}
-
-                              {/*
-                                Fiyat her zaman soldan saga okunur (₺185,00),
-                                ama yon ISARETI paragrafin KENDISINE verilemez:
-                                o zaman text-end de "ltr sonu" = SAG olur ve
-                                Arapca'da fiyat, satirin sonuna (sol kenar)
-                                degil aciklama kolonuna yaslanirdi. Yon sadece
-                                sayiyi saran bdi'ye veriliyor; hizalama
-                                paragrafta mantiksal kaliyor.
-                              */}
-                              {item.price ? (
-                                <p className="bo-mono col-start-2 text-[14px] tabular-nums lg:col-start-4 lg:text-end">
-                                  <bdi dir="ltr">{item.price}</bdi>
-                                </p>
-                              ) : null}
-                            </div>
+                            </article>
                           </Reveal>
                         );
                       })}
