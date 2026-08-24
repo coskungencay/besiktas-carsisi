@@ -1,9 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { signOutAction } from "@/actions/account";
+import { SchemeToggle } from "@/components/site/SchemeToggle";
 
 const LINKS = [
   { href: "/admin", label: "Panel" },
@@ -22,20 +24,55 @@ export function AdminNav({
   siteName,
   userEmail,
   unread,
+  logoUrl,
 }: {
   siteName: string;
   userEmail: string;
   unread: number;
+  /** Carsinin amblemi; panelde de sitenin markasi gorunsun diye. */
+  logoUrl: string;
 }) {
   const pathname = usePathname();
 
   return (
     <aside className="lg:w-60 lg:shrink-0">
       <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
-        <p className="truncate text-sm font-semibold">{siteName}</p>
-        <p className="mt-0.5 truncate text-xs text-zinc-500">{userEmail}</p>
+        {/*
+          Marka bloğu: amblem + isletme adi + oturum acan hesap.
+          Amblem paneli sitenin markasina bagliyor; sablonda panel tamamen
+          markasizdi ve hangi sitenin paneli oldugu yalnizca yazidan
+          anlasiliyordu.
+        */}
+        {/*
+          Amblem ve mod dugmesi ustte, isim ALTTA.
+          Uc ogeyi tek satira dizmek 240px'lik yan seritte isletme adina
+          ~130px birakiyordu ve "Büyük Beşikt…" diye kirpiliyordu.
+        */}
+        <div className="flex items-start justify-between gap-2">
+          {logoUrl ? (
+            <Image
+              src={logoUrl}
+              alt=""
+              width={80}
+              height={80}
+              className="size-11 shrink-0 object-contain"
+            />
+          ) : (
+            <span />
+          )}
+          {/*
+            Mod dugmesi sitedekiyle AYNI bilesen ve AYNI localStorage anahtari:
+            panelde koyu moda gecen biri siteyi actiginda da koyu goruyor.
+          */}
+          <SchemeToggle label="Açık / koyu modu değiştir" />
+        </div>
 
-        <nav aria-label="Panel menüsü" className="mt-4">
+        <p className="mt-3 text-sm leading-snug font-semibold text-balance">
+          {siteName}
+        </p>
+        <p className="mt-1 truncate text-xs text-zinc-500">{userEmail}</p>
+
+        <nav aria-label="Panel menüsü" className="mt-5">
           <ul className="flex flex-wrap gap-1 lg:flex-col">
             {LINKS.map((link) => {
               const active =

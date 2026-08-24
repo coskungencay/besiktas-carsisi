@@ -32,6 +32,7 @@ export default async function PanelLayout({
         siteName={settings.name || "Yönetim Paneli"}
         userEmail={user.email}
         unread={unreadCount()}
+        logoUrl={settings.logoUrl}
       />
       <main className="min-w-0 flex-1 pb-12">{children}</main>
     </div>

@@ -114,15 +114,156 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/*
- * Yonetim paneli tema token'larindan ETKILENMEZ.
- * body{font-family:var(--brand-font-body)} kurali paneli de sarardi; boylece
- * monospace bir tema secildiginde panel de monospace olurdu.
- */
+/* --------------------------------------------------------------------------
+ * YONETIM PANELI
+ *
+ * Sablonda panel tema token'larindan TAMAMEN yalitilmisti; gerekcesi
+ * suydu: musteri monospace bir tema secerse panel de monospace olur, kotu
+ * bir renk secimi de paneli okunamaz hale getirebilir.
+ *
+ * Bu musteri repo'sunda gerekce yarim gecerli:
+ *   - TEMA PINLI (NEXT_PUBLIC_THEME=beyaz-oda). Font riski yok, o yuzden
+ *     panel artik sitenin YAZI TIPLERINI kullaniyor — iki yuz ayni dili
+ *     konusuyor.
+ *   - RENK riski duruyor: musteri hala panelden marka rengi degistirebiliyor.
+ *     Bu yuzden panel renkleri marka token'larina BAGLANMADI; kendi notr
+ *     olcegini kullaniyor (asagida). Kotu bir marka rengi paneli hala
+ *     okunamaz hale getiremez.
+ * -------------------------------------------------------------------------- */
 .admin-shell {
-  font-family:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--brand-font-body);
   letter-spacing: normal;
+}
+
+/* Panel basliklari sitenin display serif'iyle. */
+.admin-shell h1,
+.admin-shell h2 {
+  font-family: var(--brand-font-title);
+  font-weight: 600;
+  font-variation-settings: "opsz" 96, "SOFT" 30, "WONK" 0;
+  letter-spacing: -0.01em;
+}
+
+/* Kucuk buyuk-harf etiketler sitedeki gibi mono. */
+.admin-shell .admin-eyebrow {
+  font-family: var(--brand-font-mono);
+  font-weight: 300;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+ * Panelde KOYU MOD
+ *
+ * Tailwind v4 renkleri CSS degiskeni olarak uretiyor
+ * (`.bg-zinc-100 { background-color: var(--color-zinc-100) }`), yani olcegi
+ * `.admin-shell` kapsaminda yeniden tanimlamak panelin TAMAMINI cevirir.
+ * Alternatif, 31 dosyadaki ~250 sinifi tek tek `dark:` varyantiyla yazmakti;
+ * hem devasa hem de her yeni bilesende unutulmaya acik.
+ *
+ * Olcek TERSINE cevriliyor: zinc-100 sayfa zemini (beyaz -> siyah),
+ * `white` kart zemini (beyaz -> koyu). `bg-zinc-900 text-white` olan birincil
+ * buton da bu sayede dogru donuyor: beyaz zemin + koyu yazi.
+ * -------------------------------------------------------------------------- */
+html[data-scheme="dark"] .admin-shell {
+  color-scheme: dark;
+  /* Zemin ve yuzeyler */
+  --color-white: #0e0f10;
+  --color-zinc-50: #17181a;
+  --color-zinc-100: #000000;
+  --color-zinc-200: #26282c;
+  --color-zinc-300: #34373c;
+  /* Metin kademeleri (acikligi artan) */
+  --color-zinc-400: #6c7176;
+  --color-zinc-500: #878d93;
+  --color-zinc-600: #9aa0a6;
+  --color-zinc-700: #b7bcc1;
+  --color-zinc-800: #d6dade;
+  --color-zinc-900: #ffffff;
+  --color-zinc-950: #ffffff;
+
+  /* Durum renkleri: koyu zeminde zemin koyu tint, yazi acik ton */
+  --color-red-50: #2a1416;
+  --color-red-300: #5c2b30;
+  --color-red-700: #ff9ba3;
+  --color-red-800: #ffb3b9;
+  --color-emerald-50: #0f2620;
+  --color-emerald-800: #7fe3c0;
+  --color-amber-50: #2a2110;
+  --color-amber-200: #4a3a17;
+  --color-amber-900: #f5d493;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-scheme]) .admin-shell {
+    color-scheme: dark;
+  /* Zemin ve yuzeyler */
+  --color-white: #0e0f10;
+  --color-zinc-50: #17181a;
+  --color-zinc-100: #000000;
+  --color-zinc-200: #26282c;
+  --color-zinc-300: #34373c;
+  /* Metin kademeleri (acikligi artan) */
+  --color-zinc-400: #6c7176;
+  --color-zinc-500: #878d93;
+  --color-zinc-600: #9aa0a6;
+  --color-zinc-700: #b7bcc1;
+  --color-zinc-800: #d6dade;
+  --color-zinc-900: #ffffff;
+  --color-zinc-950: #ffffff;
+
+  /* Durum renkleri: koyu zeminde zemin koyu tint, yazi acik ton */
+  --color-red-50: #2a1416;
+  --color-red-300: #5c2b30;
+  --color-red-700: #ff9ba3;
+  --color-red-800: #ffb3b9;
+  --color-emerald-50: #0f2620;
+  --color-emerald-800: #7fe3c0;
+  --color-amber-50: #2a2110;
+  --color-amber-200: #4a3a17;
+  --color-amber-900: #f5d493;
+  }
+}
+
+/*
+ * Giris ekraninin zemin dokusu — sitedeki fikrin panel olcegindeki karsiligi:
+ * ince nokta izgarasi + ustten gelen yumusak aydinlanma. `currentColor`
+ * kullanilmiyor, panelin kendi notr olceginden besleniyor ki marka rengi
+ * degistiginde giris ekrani da degismesin.
+ */
+.admin-shell .admin-login-bg {
+  background-image:
+    radial-gradient(
+      110% 70% at 50% 0%,
+      color-mix(in srgb, var(--color-zinc-900) 4%, transparent) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      circle at 1px 1px,
+      color-mix(in srgb, var(--color-zinc-900) 8%, transparent) 1px,
+      transparent 0
+    );
+  background-size:
+    100% 100%,
+    22px 22px;
+  background-repeat: no-repeat, repeat;
+}
+
+/* Mod degisiminde panel de yumusak gecsin. */
+.admin-shell,
+.admin-shell * {
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-shell,
+  .admin-shell * {
+    transition: none;
+  }
 }
 
 /* Klavye kullanicilari icin gorunur odak halkasi. */

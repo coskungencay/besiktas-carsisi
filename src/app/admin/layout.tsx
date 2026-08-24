@@ -13,8 +13,14 @@ export default function AdminRootLayout({
 }: {
   children: ReactNode;
 }) {
-  // Panel, sitenin marka renklerinden bagimsiz sabit bir arayuz kullanir;
-  // musterinin sectigi renkler paneli asla okunamaz hale getiremez.
+  /*
+   * Panel sitenin YAZI TIPLERINI kullanir ama RENKLERINI kullanmaz.
+   *
+   * Font riski yok: tema pinli (NEXT_PUBLIC_THEME), musteri font
+   * degistiremiyor. Renk riski duruyor — musteri panelden marka rengini
+   * degistirebiliyor — bu yuzden panel kendi notr olcegini kullanir ve kotu
+   * bir marka rengi paneli okunamaz hale getiremez. (bkz. globals.css)
+   */
   return (
     <div className="admin-shell min-h-screen bg-zinc-100 text-zinc-900">
       {children}
