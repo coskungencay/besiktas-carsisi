@@ -73,42 +73,79 @@ export default function Location({ content }: SectionProps) {
               adresi okuyorsun, sonra yol tarifini aliyorsun.
             */}
             <div className="mx-auto max-w-[62rem]">
+              {/*
+                HARITA CERCEVESI.
+
+                Onceki hali duz bir dikdortgendi ve sayfaya "yapistirilmis"
+                gibi duruyordu. Simdi uc katman var:
+                  1. disarida ince bir kenarlik ve ic bosluk — harita bir
+                     belge gibi cerceveleniyor, sayfaya degil cerceveye ait
+                  2. koselerde ince cizgi parcalari — temanin kendi dilinden
+                     bir nisan (hairline), harita ustune "isaret konmus" hissi
+                  3. uzerine gelince harita hafifce yaklasiyor ve alt seritte
+                     "yol tarifi al" beliriyor
+
+                Cerceve ile harita arasindaki bosluk zemin renginde: koyu
+                modda cerceve de koyulasiyor, harita da (bo-map filtresi).
+              */}
               <Reveal variant="clip">
-                {/*
-                  Haritanin TAMAMI yol tarifi baglantisi — ziyaretcinin
-                  beklentisi bu. Cerceve icinde hafifce yaklasarak tepki
-                  veriyor; disari tasmasin diye overflow-hidden.
-                */}
-                <a
-                  href={directionsHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={t.location.directions}
-                  className="group relative block aspect-16/10 w-full overflow-hidden border border-[var(--brand-border)] sm:aspect-2/1"
-                >
-                  <Image
-                    src="/harita/konum.png"
-                    alt={fill(t.location.mapAlt, { name: content.name })}
-                    fill
-                    sizes="(min-width: 1024px) 62rem, 100vw"
-                    loading="lazy"
-                    className="bo-map object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.16,0.8,0.24,1)] group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                  />
+                <div className="relative border border-[var(--brand-border)] bg-[var(--brand-surface)] p-2 sm:p-3">
+                  {/* Kose nisanlari — tamamen dekoratif. */}
+                  {(
+                    [
+                      "start-0 top-0 border-t border-s",
+                      "end-0 top-0 border-t border-e",
+                      "start-0 bottom-0 border-b border-s",
+                      "end-0 bottom-0 border-b border-e",
+                    ] as const
+                  ).map((corner) => (
+                    <span
+                      key={corner}
+                      aria-hidden="true"
+                      className={`pointer-events-none absolute size-5 border-[var(--brand-ink)] ${corner}`}
+                    />
+                  ))}
 
-                  {/*
-                    Uzerine gelince hafif bir perde: haritanin tikanabilir
-                    oldugunu belli ediyor. Kapali dururken hicbir sey ortmuyor.
-                  */}
-                  <span
-                    aria-hidden="true"
-                    className="absolute inset-0 bg-[var(--brand-ink)] opacity-0 transition-opacity duration-500 group-hover:opacity-[0.07] motion-reduce:transition-none"
-                  />
+                  <a
+                    href={directionsHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={t.location.directions}
+                    className="group relative block aspect-16/10 w-full overflow-hidden sm:aspect-2/1"
+                  >
+                    <Image
+                      src="/harita/konum.png"
+                      alt={fill(t.location.mapAlt, { name: content.name })}
+                      fill
+                      sizes="(min-width: 1024px) 62rem, 100vw"
+                      loading="lazy"
+                      className="bo-map object-cover transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,0.8,0.24,1)] group-hover:scale-[1.07] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                    />
 
-                  {/* Atif — ODbL geregi zorunlu. */}
-                  <span className="bo-mono absolute end-0 bottom-0 bg-[color-mix(in_srgb,var(--brand-surface)_82%,transparent)] px-2 py-1 text-[9.5px] text-[var(--brand-ink-muted)]">
-                    © OpenStreetMap
-                  </span>
-                </a>
+                    {/* Uzerine gelince koyulasan ince perde. */}
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-0 bg-[var(--brand-ink)] opacity-0 transition-opacity duration-500 group-hover:opacity-[0.12] motion-reduce:transition-none"
+                    />
+
+                    {/*
+                      Alt serit: kapaliyken asagida bekliyor, uzerine gelince
+                      yukari kayiyor. Haritanin tiklanabilir oldugunu
+                      soyleyen tek isaret bu.
+                    */}
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-x-0 bottom-0 flex translate-y-full items-center justify-center gap-2 bg-[var(--brand-primary)] py-3 text-[13px] font-medium text-[var(--brand-primary-contrast)] transition-transform duration-500 ease-[cubic-bezier(0.16,0.8,0.24,1)] group-hover:translate-y-0 motion-reduce:transition-none"
+                    >
+                      {t.location.directions}
+                    </span>
+
+                    {/* Atif — ODbL geregi zorunlu. */}
+                    <span className="bo-mono absolute end-0 top-0 bg-[color-mix(in_srgb,var(--brand-surface)_82%,transparent)] px-2 py-1 text-[9.5px] text-[var(--brand-ink-muted)]">
+                      © OpenStreetMap
+                    </span>
+                  </a>
+                </div>
               </Reveal>
 
               <Reveal delay={0.12}>

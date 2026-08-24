@@ -167,9 +167,17 @@ export function SectionIndex({
           {eyebrow}
         </p>
 
+        {/*
+          Baslik display SERIF (bo-title) — kalin grotesk DEGIL.
+          Gerekce fonts.ts icinde: kalinlik her bolumde tekrar edince sayfa
+          tek notaya dusuyordu. Hiyerarsi artik puntodan ve bosluktan geliyor,
+          agirliktan degil; bu yuzden tracking de negatif degil hafif pozitif
+          (yuksek kontrastli serif sikisik dizildiginde tirnaklari birbirine
+          giriyor).
+        */}
         <h2
           id={titleId}
-          className="brand-display mt-5 text-[clamp(1.875rem,4.2vw,3.25rem)] leading-[1.06] font-black tracking-[-0.03em] text-balance"
+          className="bo-title mt-5 text-[clamp(2.25rem,5vw,4rem)] leading-[1.04] tracking-[-0.012em] text-balance"
         >
           {title}
         </h2>

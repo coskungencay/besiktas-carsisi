@@ -94,7 +94,7 @@ const tr = {
   },
   location: {
     eyebrow: "Konum",
-    title: "Bizi burada bulabilirsiniz",
+    title: "Buradayız",
     directions: "Yol tarifi al",
     mapAlt: "{name} konumunu gösteren harita",
   },

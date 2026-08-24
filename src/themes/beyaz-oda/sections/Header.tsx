@@ -103,7 +103,7 @@ export default function Header({ content }: SectionProps) {
             icin vurgu rengi burada da EL ILE veriliyor; yoksa sayfadaki tek
             hover'siz baglanti bu olurdu.
           */
-          className="bo-serif flex items-center gap-3.5 text-[clamp(1.0625rem,1.7vw,1.375rem)] font-medium tracking-[0.06em] transition-colors hover:text-[var(--brand-accent)] shrink-0"
+          className="bo-serif flex shrink-0 items-center gap-3.5 text-[clamp(0.9375rem,1.5vw,1.25rem)] tracking-[0.14em] uppercase transition-colors hover:text-[var(--brand-accent)]"
         >
           {/*
             Logo yuklendiyse kelime-markanin ONUNDE kucuk bir kare olarak

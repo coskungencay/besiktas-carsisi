@@ -149,26 +149,26 @@ export default function MenuPage({ content }: SectionProps) {
                       */}
                       <div
                         id={anchorId(category.id)}
-                        className="flex scroll-mt-28 flex-col items-center gap-4 border-b border-[var(--brand-border)] pb-7 text-center"
+                        className="flex scroll-mt-28 flex-col items-center border-b border-[var(--brand-border)] pb-7 text-center"
                       >
-                        {category.thumbUrl ? (
-                          <span className="relative size-16 shrink-0 overflow-hidden rounded-full bg-[var(--brand-surface-alt)] sm:size-20">
-                            <Image
-                              src={category.thumbUrl}
-                              alt=""
-                              fill
-                              sizes="80px"
-                              loading="lazy"
-                              className="object-cover"
-                            />
-                          </span>
-                        ) : null}
+                        {/*
+                          KATEGORI KAPAK GORSELI KALDIRILDI. Kategori
+                          basliginin yanindaki yuvarlak kare, altindaki kart
+                          izgarasiyla ayni fotograf ailesinden oldugu icin
+                          sayfada iki kez ayni goruntuyu tekrar ediyordu ve
+                          basligin onune geciyordu. Kategori artik yalnizca
+                          adiyla ve magaza sayisiyla duruyor.
+
+                          Gorseller SILINMEDI: veritabaninda duruyor ve ana
+                          sayfadaki vitrin kartlari onlari kullanmaya devam
+                          ediyor; panelden de yonetilebiliyorlar.
+                        */}
 
                         <div className="min-w-0">
-                          <h2 className="brand-display text-[clamp(1.125rem,2vw,1.5rem)] leading-[1.2] tracking-[-0.02em]">
+                          <h2 className="bo-title text-[clamp(1.75rem,3.4vw,2.75rem)] leading-[1.08] tracking-[-0.01em]">
                             <Latin>{category.name}</Latin>
                           </h2>
-                          <p className={`${meta} brand-eyebrow mt-1`}>
+                          <p className={`${meta} brand-eyebrow mt-2`}>
                             {category.items.length}
                           </p>
                         </div>

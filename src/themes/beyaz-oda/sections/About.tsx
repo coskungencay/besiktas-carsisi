@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
 import { paragraphs } from "@/themes/_shared/data";
@@ -24,7 +26,7 @@ import type { SectionProps } from "@/themes/types";
  * Ne metin ne kunye varsa bolum hic basilmaz.
  */
 export default function About({ content }: SectionProps) {
-  const { about, name, t } = content;
+  const { about, name, logoUrl, t } = content;
   if (!isSectionShown(content, "hakkimizda")) return null;
 
   const body = paragraphs(about);
@@ -40,57 +42,85 @@ export default function About({ content }: SectionProps) {
           <SectionIndex index={sectionIndex(content, "hakkimizda")} eyebrow={t.about.eyebrow}
             title={t.about.title} titleId="about-title">
             {/*
-              ORTALANMIS METIN BLOGU. Onceden iki kolonluk sol hizali bir
-              duzendi ve ortalanmis bolum basliginin altinda "iki farkli
-              tasarim" gibi duruyordu. Simdi giris cumlesi ve govde ortada,
-              kunye tablosu onlarin altinda dar bir sutun olarak duruyor.
+              GENIS YAYILAN DUZEN — dar bir metin sutunu DEGIL.
 
-              max-w-[68ch]: ortalanmis metin satiri uzarsa okunmaz; olcu satir
-              uzunlugunu insan gozunun rahat takip ettigi araliga sabitliyor.
+              Onceki iki hali de calismadi: once iki kolonlu sol hizali duzendi
+              (ortalanmis basligin altinda kopuk duruyordu), sonra 68ch'lik dar
+              bir ortalanmis sutun oldu (bu sefer sayfanin ortasinda ince bir
+              serit gibi kaldi, saglar sollar bombos).
+
+              Simdi: amblem ustte ortada, metin ONUN altinda IKI KOLONA
+              yayiliyor ve kunye tablosu genis bir serit olarak en altta.
+              Icerik ortalanmis ama sayfanin genisligini gercekten kullaniyor.
             */}
-            <div className="mx-auto max-w-[68ch]">
-              <div>
+            <div className="mx-auto max-w-[76rem]">
+              {logoUrl ? (
                 <Reveal variant="scale">
-                  <p className="brand-display text-center text-[clamp(1.375rem,2.4vw,2rem)] leading-[1.38] tracking-[-0.02em] text-balance">
-                    {lead || fill(t.about.placeholder, { name })}
-                  </p>
+                  <Image
+                    src={logoUrl}
+                    alt=""
+                    aria-hidden="true"
+                    width={128}
+                    height={128}
+                    /*
+                      Amblemin kaynagi 185px; 112px'te 2x ekranda hala keskin.
+                      Daha buyugu bulaniklasir (bkz. scripts/assets/README.md).
+                    */
+                    className="mx-auto mb-12 size-20 object-contain sm:size-28"
+                  />
                 </Reveal>
+              ) : null}
 
-                {rest.length > 0 ? (
-                  <Reveal delay={0.09}>
-                    <div className="mt-9 flex flex-col gap-5 text-center text-[15px] leading-[1.85] text-pretty text-[var(--brand-ink-soft)] sm:text-[16px]">
-                      {rest.map((paragraph, index) => (
-                        <p key={index}>{paragraph}</p>
-                      ))}
-                    </div>
-                  </Reveal>
-                ) : null}
-              </div>
+              <Reveal variant="scale">
+                <p /*
+                    max-w OLCUSU 24ch DEGIL 34ch: display serif buyuk puntoda
+                    zaten genis yer kapliyor, dar bir olcude 200 karakterlik
+                    giris cumlesi sekiz satira bolunup blok gibi duruyordu.
+                  */
+                  className="bo-title mx-auto max-w-[34ch] text-center text-[clamp(1.5rem,2.9vw,2.5rem)] leading-[1.22] tracking-[-0.008em] text-balance">
+                  {lead || fill(t.about.placeholder, { name })}
+                </p>
+              </Reveal>
+
+              {rest.length > 0 ? (
+                <Reveal delay={0.1}>
+                  {/*
+                    Govde IKI KOLON: tek sutunda satirlar ya cok uzuyor ya da
+                    sayfanin ortasinda dar bir serit kaliyordu. Iki kolonda
+                    satir uzunlugu okunur kaliyor ve blok genisligi doluyor.
+                    Dar ekranda tek kolona duser.
+                  */}
+                  <div className="mt-14 columns-1 gap-12 text-[15px] leading-[1.9] text-pretty text-[var(--brand-ink-soft)] sm:text-[16px] md:columns-2">
+                    {rest.map((paragraph, index) => (
+                      <p key={index} className="mb-5 break-inside-avoid last:mb-0">
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                </Reveal>
+              ) : null}
 
               {stats.length > 0 ? (
-                <div className="mx-auto mt-14 max-w-[30rem]">
-                  <Reveal delay={0.16}>
-                    {/*
-                      Tasarimda bu tablonun USTUNDE baslik yok: etiketlerin
-                      kendisi (MENU KALEMI, METREKARE) zaten sutunu acikliyor.
-                      Son satirda alt cizgi de yok — tablo bosluga acik biter.
-                    */}
-                    <dl className="flex flex-col">
-                      {stats.map((row, index) => (
-                        <div
-                          key={`${row.label}-${index}`}
-                          className={`${meta} flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-[var(--brand-border)] py-[13px] last:border-b-0`}
-                        >
-                          <dt className="brand-eyebrow">{row.label}</dt>
-                          {/* Deger koyu: tasarimda tablonun tek vurgusu bu. */}
-                          <dd className="tabular-nums text-[var(--brand-ink)]">
-                            {row.value}
-                          </dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </Reveal>
-                </div>
+                <Reveal delay={0.18}>
+                  {/*
+                    Kunye artik alt alta bir tablo degil, genis bir SERIT:
+                    dort deger yan yana, aralarinda dikey ayirac. Sayfanin
+                    en altini kapatan yatay bir ritim.
+                  */}
+                  <dl className="mt-16 grid grid-cols-2 gap-px border-t border-[var(--brand-border)] bg-[var(--brand-border)] sm:mt-20 sm:grid-cols-4">
+                    {stats.map((row, index) => (
+                      <div
+                        key={`${row.label}-${index}`}
+                        className="flex flex-col items-center gap-2 bg-[var(--brand-surface)] px-4 py-8 text-center"
+                      >
+                        <dt className={`${meta} brand-eyebrow`}>{row.label}</dt>
+                        <dd className="bo-title text-[clamp(1.375rem,2.4vw,1.875rem)] leading-none tabular-nums text-[var(--brand-ink)]">
+                          {row.value}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                </Reveal>
               ) : null}
             </div>
           </SectionIndex>

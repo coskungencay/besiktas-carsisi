@@ -17,6 +17,7 @@
  */
 import {
   Cormorant_Garamond,
+  Instrument_Serif,
   JetBrains_Mono,
   Schibsted_Grotesk,
 } from "next/font/google";
@@ -68,8 +69,34 @@ const cormorant = Cormorant_Garamond({
   preload: false,
 });
 
+/*
+ * BOLUM BASLIKLARININ fontu.
+ *
+ * NEDEN DORDUNCU FONT: bolum basliklari Schibsted Grotesk 900 ile
+ * basiliyordu — hero'nun kelime-markasiyla AYNI ses. Hero'da o agirlik
+ * marka beyani olarak dogru, ama sayfanin her bolumunde tekrar edince
+ * tasarim "kalin grotesk" tek notasina siksti ve ucuz durmaya basladi.
+ *
+ * Instrument Serif yuksek kontrastli, modern bir editoryal display serif:
+ * buyuk puntoda ince tirnaklariyla nefes aliyor, gezintideki Cormorant ile
+ * ayni serif ailesinden konusuyor ama daha genis ve daha "bugun". Govde
+ * metni grotesk kaliyor — okunakligi orada tutuyor.
+ *
+ * Tek agirligi var (400): display serif'te kalinlik degil PUNTO ve bosluk
+ * hiyerarsi kurar.
+ */
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin-ext"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+  variable: "--font-instrument",
+  display: "swap",
+  preload: false,
+});
+
 export const themeFontClassNames = [
   schibsted.variable,
   jetbrainsMono.variable,
   cormorant.variable,
+  instrumentSerif.variable,
 ].join(" ");

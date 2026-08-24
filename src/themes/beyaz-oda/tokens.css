@@ -52,6 +52,12 @@ html[data-theme="beyaz-oda"] {
   --brand-font-serif:
     var(--font-cormorant), "Iowan Old Style", Palatino, Georgia, serif;
   /*
+   * Bolum basliklari — yuksek kontrastli modern display serif.
+   * Yigin sonundaki sistem serif'i ZORUNLU (Arapca glif yok).
+   */
+  --brand-font-title:
+    var(--font-instrument), "Iowan Old Style", Palatino, Georgia, serif;
+  /*
    * Tasarim dosyasi 300 istiyor ama Schibsted Grotesk degisken fontunun
    * agirlik araligi 400-900; 300 tarayicida zaten 400'e kirpilir. Yanlis
    * beklenti yaratmamak icin gercek deger yaziliyor.
@@ -200,6 +206,7 @@ html[lang="ar"][data-theme="beyaz-oda"] {
   --brand-font-display: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
   --brand-font-mono: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
   --brand-font-serif: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+  --brand-font-title: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
 }
 
 /* --------------------------------------------------------------------------
@@ -569,4 +576,11 @@ html[data-theme="beyaz-oda"] .bo-header {
     background: color-mix(in srgb, var(--brand-surface) 86%, transparent);
     backdrop-filter: blur(14px) saturate(1.4);
   }
+}
+
+
+/* Bolum basligi yardimci sinifi. */
+html[data-theme="beyaz-oda"] .bo-title {
+  font-family: var(--brand-font-title);
+  font-weight: 400;
 }

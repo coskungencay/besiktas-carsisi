@@ -67,6 +67,13 @@ export default function Contact({ content }: SectionProps) {
     },
   ].filter((row): row is Row => Boolean(row));
 
+  /*
+   * Uclu seritte GERCEKTEN basilacak sutun sayisi — izgara buna gore
+   * 2 ya da 3 kolona kuruluyor; bos bir sutun basilmiyor.
+   */
+  const columnCount =
+    (showAddress ? 1 : 0) + (hours.length > 0 ? 1 : 0) + (rows.length > 0 ? 1 : 0);
+
   return (
     <section id="iletisim" aria-labelledby="contact-title" className={surface}>
       {/*
@@ -80,17 +87,38 @@ export default function Contact({ content }: SectionProps) {
           {/* Indeks sayfadaki SIRAYI gosterir; iletisim artik son bolum. */}
           <SectionIndex index={sectionIndex(content, "iletisim")} eyebrow={t.contact.eyebrow}
             title={t.contact.title} titleId="contact-title">
-            <div className="grid gap-10 lg:grid-cols-10 lg:gap-6">
-              <div className="lg:col-span-4">
-                <Reveal>
-                  <p className="brand-display text-[clamp(1.75rem,3vw,2.5rem)] leading-[1.2] tracking-[-0.025em] text-balance">
-                    {fill(t.contact.intro, { name })}
-                  </p>
-                </Reveal>
+            {/*
+              ORTALANMIS AMA GENIS. Onceki hali sol hizali uc kolondu ve
+              ortalanmis basligin altinda kopuk duruyordu; dar bir ortalanmis
+              sutuna almak da sayfayi ince bir seride cevirirdi.
 
+              Simdi: giris cumlesi ortada, altinda UC ESIT SUTUN (adres /
+              saatler / baglanti) sayfanin genisligine yayiliyor ve her
+              sutunun kendi icerigi ortalanmis. Aralarinda hairline ayirac.
+            */}
+            <div className="mx-auto max-w-[76rem]">
+              <Reveal>
+                <p className="bo-title mx-auto max-w-[22ch] text-center text-[clamp(1.75rem,3.4vw,2.75rem)] leading-[1.18] tracking-[-0.01em] text-balance">
+                  {fill(t.contact.intro, { name })}
+                </p>
+              </Reveal>
+
+              {/*
+                Sutun sayisi ICERIGE gore. Adres sutunu cogu zaman BOS kalir:
+                Konum bolumu gorunurken adres orada zaten buyuk buyuk yaziyor
+                ve burada tekrar edilmiyor (showAddress). Sutunu yine de
+                basmak, ortada bos bir "ADRES" basligi birakiyordu.
+              */}
+              <div
+                className={`mt-16 grid gap-px border-y border-[var(--brand-border)] bg-[var(--brand-border)] sm:mt-20 ${
+                  columnCount >= 3 ? "lg:grid-cols-3" : "lg:grid-cols-2"
+                }`}
+              >
                 {showAddress ? (
+                  <div className="bg-[var(--brand-surface)] px-6 py-10 text-center">
+                  <h3 className="bo-index-sm brand-eyebrow">{t.contact.address}</h3>
                   <Reveal delay={0.08}>
-                    <p className="mt-[26px] text-[15px] leading-[1.85] text-pretty text-[var(--brand-ink-soft)]">
+                    <p className="mt-4 text-[15px] leading-[1.85] text-pretty text-[var(--brand-ink-soft)]">
                       {contact.address}
                     </p>
 
@@ -101,13 +129,13 @@ export default function Contact({ content }: SectionProps) {
                         rel="noopener noreferrer"
                         className="mt-6 inline-flex items-center gap-2 border-b border-[var(--brand-ink)] pb-[3px] text-[13px] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
                       >
-                        <span>{t.contact.address}</span>
+                        <span>{t.location.directions}</span>
                         <ArrowIcon className="size-3.5" />
                       </a>
                     ) : null}
                   </Reveal>
+                  </div>
                 ) : null}
-              </div>
 
               {/*
                 Orta kolon — CALISMA SAATLERI.
@@ -115,9 +143,8 @@ export default function Contact({ content }: SectionProps) {
                 bu ic izgara 3. kolondan basladigi icin karsiligi 5. kolon.
               */}
               {hours.length > 0 ? (
-                <div className="lg:col-span-3 lg:col-start-5">
+                <div className="bg-[var(--brand-surface)] px-6 py-10 text-center">
                   <Reveal delay={0.1}>
-                    {/* Tasarimda blok basliklari ("SAATLER") 10.5px mono. */}
                     <h3 className="bo-index-sm brand-eyebrow">
                       {t.about.openingHours}
                     </h3>
@@ -128,7 +155,7 @@ export default function Contact({ content }: SectionProps) {
                       Mono/BUYUK harf bicimi tasarimda yalnizca 11.5px'lik
                       kunye tablosunda kullaniliyor.
                     */}
-                    <dl className="mt-4 flex flex-col text-[14px]">
+                    <dl className="mx-auto mt-4 flex max-w-[18rem] flex-col text-[14px]">
                       {hours.map((hour) => (
                         <div
                           key={hour.dayOfWeek}
@@ -165,13 +192,13 @@ export default function Contact({ content }: SectionProps) {
                 kolonluk dar serit; satirlar etiketsiz, sadece baglanti.
               */}
               {rows.length > 0 ? (
-                <div className="lg:col-span-2 lg:col-start-9">
+                <div className="bg-[var(--brand-surface)] px-6 py-10 text-center">
                   <Reveal delay={0.16}>
                     <h3 className="bo-index-sm brand-eyebrow">
-                      {t.contact.title}
+                      {t.contact.eyebrow}
                     </h3>
 
-                    <ul className="mt-4 text-[14px] leading-[2.1]">
+                    <ul className="mx-auto mt-4 max-w-[18rem] text-[15px] leading-[2.1]">
                       {rows.map((row, index) => (
                         <li key={`${row.term}-${index}`}>
                           {/*
@@ -198,22 +225,21 @@ export default function Contact({ content }: SectionProps) {
                   </Reveal>
                 </div>
               ) : null}
+              </div>
             </div>
 
             {/*
-              Form tasarimda YOK; kolonlarin arasina sikistirmak yerine altta
-              kendi satirinda duruyor. Saatler kolonuyla ayni hizadan (5.)
-              baslar ki bolumun uclu ritmi bozulmasin.
+              Form uclu seridin ALTINDA, ortalanmis ve dar. Sutunlarin arasina
+              sikistirmak formu okunmaz genislige dusuruyordu; kendi satirinda
+              durunca alanlar rahat nefes aliyor.
             */}
-            <div className="mt-16 grid lg:grid-cols-10 lg:gap-6">
-              <div className="lg:col-span-6 lg:col-start-5">
-                <Reveal delay={0.1}>
-                  <h3 className="bo-index-sm brand-eyebrow">{t.contact.formTitle}</h3>
-                  <div className="mt-6">
-                    <ContactForm locale={content.locale} messages={t} />
-                  </div>
-                </Reveal>
-              </div>
+            <div className="mx-auto mt-20 max-w-[46rem] text-center">
+              <Reveal delay={0.1}>
+                <h3 className="bo-index-sm brand-eyebrow">{t.contact.formTitle}</h3>
+                <div className="mt-6 text-start">
+                  <ContactForm locale={content.locale} messages={t} />
+                </div>
+              </Reveal>
             </div>
           </SectionIndex>
         </div>
