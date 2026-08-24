@@ -73,9 +73,13 @@ export function buildMetadata(content: SiteContent): Metadata {
      * kivrima doner.
      *
      * metadata.icons verildiginde Next'in DOSYA TABANLI ikon kurali ezilir;
-     * bu alan kaldirildigi icin artik src/app/icon.tsx ve apple-icon.tsx
-     * devreye giriyor. Ikisi de marka renginde kare bir alana isletmenin bas
-     * harfini basiyor: her boyutta okunur ve yine markanin kendi rengi.
+     * bu alan kaldirildigi icin artik src/app/icon.png ve apple-icon.png
+     * devreye giriyor.
+     *
+     * CARSI NOTU: sablonun "logo favicon olmaz" gerekcesi (yatay kelime
+     * isareti 16px karede okunmaz) burada GECERSIZ — carsinin amblemi zaten
+     * dairesel bir monogram ve sari zemini sekme cubugunda hemen seciliyor.
+     * Ikonlar ondan uretiliyor (scripts/build-icons.ts).
      *
      * Logo, yeri olan yerlerde kullanilmaya devam ediyor: ust cubuk, sosyal
      * onizleme gorseli (opengraph-image) ve web manifest.

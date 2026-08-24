@@ -16,8 +16,17 @@ import type { Highlight, SiteContent } from "@/themes/types";
 /** Tasarimin ic kenar boslugu — tum bolumlerde ayni. */
 export const shell = "mx-auto w-full max-w-[var(--brand-container)] px-6 sm:px-12";
 
-/** Bolum kabugu: zemin + govde yazi tipi. */
-export const surface = "bg-[var(--brand-surface)] text-[var(--brand-ink)]";
+/**
+ * Bolum kabugu.
+ *
+ * Zemin ARTIK OPAK DEGIL: govdeye ince bir doku (nokta izgarasi + yumusak
+ * degrade) eklendi ve her bolume opak beyaz basmak o dokuyu tamamen
+ * ortuyordu. `.bo-surface` saydam bir zemin ve ustunde soluk bir gecis
+ * cizgisi veriyor (bkz. tokens.css).
+ *
+ * `relative`: gecis cizgisi ::before ile mutlak konumlaniyor.
+ */
+export const surface = "bo-surface relative text-[var(--brand-ink)]";
 
 /**
  * Monospace kunye yazisi (SAAT · 08–18 gibi) — tasarimda 11.5px / 300.
@@ -129,6 +138,38 @@ export function sectionIndex(content: SiteContent, id: string): string {
 }
 
 /**
+ * Bolum etiketinin iki yanindaki sussleme.
+ *
+ * Duz bir cizgi degil: ince bir yatay hairline, dis ucunda yukari dogru
+ * hafifce kivriliyor ve bir nokta ile bitiyor. Iki taraf birbirinin aynasi
+ * (`flip` ile cevriliyor), boylece etiket iki kavisin arasinda duruyor.
+ *
+ * `currentColor` ile ciziliyor: rengi cagiran taraf verir, koyu/acik modda
+ * kendiliginden dogru tona geciyor. Tamamen dekoratif -> aria-hidden.
+ */
+function TitleFlourish({ flip = false }: { flip?: boolean }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 72 12"
+      fill="none"
+      stroke="currentColor"
+      className={`h-3 w-[3.25rem] shrink-0 sm:w-[4.5rem] ${flip ? "-scale-x-100" : ""}`}
+    >
+      {/* Govde: duz hairline, sonuna dogru yukari kiviriliyor. */}
+      <path
+        d="M0 6h44c8 0 12-1.6 16-4.4"
+        strokeWidth="1"
+        strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
+      />
+      {/* Ucundaki nokta — cizgiyi "bitiren" isaret. */}
+      <circle cx="66" cy="1.6" r="1.5" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+/**
  * Bolum basligi — ortalanmis, uc kademeli.
  *
  *   — 02            (mono indeks, cok soluk)
@@ -167,13 +208,21 @@ export function SectionIndex({
           Etiket mono DEGIL serif: mono kademe zaten ustteki "— 02" indeksinde
           var; iki mono satir ust uste gelince baslik bir "kod blogu"nun
           altinda duruyor gibiydi.
+
+          Iki yanindaki kavisli hairline'lar etiketi bir "kunye" haline
+          getiriyor — sayfadaki her bolumun ayni toreni tekrar etmesi
+          tasarima ritim veriyor.
         */}
-        <p
-          className="bo-serif mt-2 text-[12px] tracking-[0.24em] text-[var(--brand-ink-faint)] uppercase"
+        <div
+          className="mt-2 flex items-center justify-center gap-4 text-[var(--brand-ink-faint)]"
           aria-hidden="true"
         >
-          {eyebrow}
-        </p>
+          <TitleFlourish />
+          <p className="bo-serif text-[12px] tracking-[0.24em] whitespace-nowrap uppercase">
+            {eyebrow}
+          </p>
+          <TitleFlourish flip />
+        </div>
 
         {/*
           Baslik display SERIF (bo-title) — kalin grotesk DEGIL.

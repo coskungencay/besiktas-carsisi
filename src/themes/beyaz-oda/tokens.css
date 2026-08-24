@@ -617,3 +617,77 @@ html[data-theme="beyaz-oda"] .bo-lead {
   font-weight: 300;
   font-variation-settings: "opsz" 24, "SOFT" 40, "WONK" 0;
 }
+
+
+/* --------------------------------------------------------------------------
+ * SAYFA DOKUSU
+ *
+ * Zemin dumduz beyaz (ya da koyu modda dumduz siyah) oldugunda sayfa "bos bir
+ * kagit" gibi duruyordu; bolumler arasi gecis de hissedilmiyordu. Uc katman
+ * ekleniyor, hepsi COK dusuk siddette:
+ *
+ *   1. ince nokta izgarasi — 22px araliklarla, neredeyse gorunmez. Sayfaya
+ *      elle tutulur bir yuzey veriyor.
+ *   2. ust ve alttan gelen yumusak degrade — bolumun kendi zemini icinde
+ *      hafif bir derinlik.
+ *   3. koselerden gelen genis radyal aydinlanma — merkezi one cikariyor.
+ *
+ * Hepsi TOKEN'lardan besleniyor: koyu modda noktalar acik gri yerine koyu gri
+ * olur, degrade de ters yone calisir. Panelden renk degistirildiginde doku da
+ * birlikte kayar.
+ *
+ * `background-attachment: fixed` KULLANILMADI: iOS Safari'de bozuk calisiyor
+ * ve kaydirmada tirmalamaya yol aciyor.
+ * -------------------------------------------------------------------------- */
+html[data-theme="beyaz-oda"] body {
+  background-color: var(--brand-surface);
+  background-image:
+    /* 3. genis radyal aydinlanma */
+    radial-gradient(
+      120% 80% at 50% 0%,
+      color-mix(in srgb, var(--brand-ink) 3.5%, transparent) 0%,
+      transparent 60%
+    ),
+    /* 1. nokta izgarasi */
+    radial-gradient(
+      circle at 1px 1px,
+      color-mix(in srgb, var(--brand-ink) 7%, transparent) 1px,
+      transparent 0
+    );
+  background-size:
+    100% 100%,
+    22px 22px;
+  background-repeat: no-repeat, repeat;
+}
+
+/*
+ * Bolum zeminleri SAYDAM: `surface` yardimci sinifi her bolume opak bir zemin
+ * basiyordu ve gövdedeki dokuyu tamamen ortuyordu. Artik bolumler dokunun
+ * uzerinde duruyor.
+ *
+ * Hero ve ust serit BU KURALIN DISINDA: hero'nun kendi fotografi, ust seridin
+ * kendi blur'lu zemini var.
+ */
+html[data-theme="beyaz-oda"] .bo-surface {
+  background-color: transparent;
+}
+
+/*
+ * Bolumler arasi ince gecis: her bolumun ustunde soluk bir yatay isik.
+ * Cizgi degil, 1px'lik degrade — bolum siniri hissediliyor ama cizilmiyor.
+ */
+html[data-theme="beyaz-oda"] .bo-surface::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in srgb, var(--brand-ink) 8%, transparent) 20%,
+    color-mix(in srgb, var(--brand-ink) 8%, transparent) 80%,
+    transparent
+  );
+  pointer-events: none;
+}

@@ -18,7 +18,8 @@
  * ATIF ZORUNLU: OpenStreetMap katkida bulunanlar. Konum bolumu bu atfi basiyor;
  * kaldirmayin (ODbL).
  */
-import { mkdirSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { eq } from "drizzle-orm";
 import sharp from "sharp";
@@ -27,14 +28,36 @@ import type { OverlayOptions } from "sharp";
 import { SINGLETON_ID, db } from "../src/db";
 import { siteSettings } from "../src/db/schema";
 
-const ZOOM = 17;
+/*
+ * ZOOM 17 -> 16 ve izgara 4x3 -> 6x3.
+ *
+ * NEDEN: zoom 17'de kare yalnizca carsinin sokaklarini gosteriyordu; Besiktas'i
+ * Besiktas yapan BOGAZ cerceveye hic girmiyordu ve harita "herhangi bir mahalle
+ * plani" gibi duruyordu. Zoom 16'da piksel basina ~1,8 m dusuyor; 1536px
+ * genislik ~2,8 km ediyor. Carsi ortada dururken sahil (dogusunda ~400 m) ve
+ * Besiktas iskelesi cerceveye giriyor.
+ *
+ * Oran da 2:1'e yaklasiyor (1536x768) — bolumdeki genis serit kutusuyla ayni.
+ */
+const ZOOM = 16;
 const TILE = 256;
-/** Karo izgarasi: 4x3 = 1024x768, ardindan 3:2 orana kirpiliyor. */
-const COLS = 4;
+const COLS = 6;
 const ROWS = 3;
 
 const OUT_DIR = join(process.cwd(), "public", "harita");
-const OUT_FILE = "konum.png";
+/**
+ * Bilesenin okudugu yol buraya yaziliyor.
+ *
+ * NEDEN SABIT "konum.png" DEGIL: dosya adi sabit kalinca harita yeniden
+ * uretildiginde Next'in gorsel onbellegi (ve tarayici/CDN) ESKI kareyi
+ * servis etmeye devam ediyor — koordinat ya da zoom degistiginde sayfada
+ * hicbir sey degismiyor gibi gorunuyor. Bu bir kez yasandi: zoom 17'den
+ * 16'ya gecildi ama sayfada hala eski dar kare duruyordu.
+ *
+ * Dosya adi artik ICERIK OZETINI tasiyor; icerik degisince ad da degisiyor
+ * ve onbellek kendiliginden gecersizlesiyor.
+ */
+const ASSET_MODULE = join(process.cwd(), "src", "themes", "beyaz-oda", "map-asset.ts");
 
 /** OSM kullanim politikasi: gercek bir User-Agent zorunlu. */
 const USER_AGENT =
@@ -130,9 +153,37 @@ async function main() {
     .toBuffer();
 
   mkdirSync(OUT_DIR, { recursive: true });
-  writeFileSync(join(OUT_DIR, OUT_FILE), image);
 
-  console.log(`[harita] public/harita/${OUT_FILE} yazildi (${width}x${height}).`);
+  const hash = createHash("sha256").update(image).digest("hex").slice(0, 10);
+  const fileName = `konum-${hash}.png`;
+
+  // Eski karelerimizi birak etme; public/ sismesin.
+  for (const entry of readdirSync(OUT_DIR)) {
+    if (entry.startsWith("konum") && entry !== fileName) {
+      rmSync(join(OUT_DIR, entry), { force: true });
+    }
+  }
+
+  writeFileSync(join(OUT_DIR, fileName), image);
+
+  writeFileSync(
+    ASSET_MODULE,
+    `/**
+ * OTOMATIK URETILDI — elle duzenlemeyin.
+ * Kaynak: scripts/build-map.ts  (pnpm tsx --conditions=react-server scripts/build-map.ts)
+ *
+ * Dosya adi haritanin icerik ozetini tasir: koordinat ya da zoom degisip
+ * harita yeniden uretildiginde ad da degisir ve onbellek gecersizlesir.
+ */
+export const MAP_IMAGE = "/harita/${fileName}";
+export const MAP_WIDTH = ${width};
+export const MAP_HEIGHT = ${height};
+`,
+    "utf8",
+  );
+
+  console.log(`[harita] public/harita/${fileName} yazildi (${width}x${height}).`);
+  console.log("[harita] src/themes/beyaz-oda/map-asset.ts guncellendi.");
   console.log("[harita] Atif zorunlu: © OpenStreetMap katkida bulunanlar.");
 }
 

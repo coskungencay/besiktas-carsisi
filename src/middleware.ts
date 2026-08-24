@@ -62,10 +62,12 @@ export const config = {
    * rota olmadigi icin 404 donuyordu — yani WhatsApp/X/LinkedIn onizlemesi
    * hicbir sitede calismiyordu. Ayni sey apple-icon icin de gecerli.
    *
-   * `icon` (uzantisiz) da ayni sebeple burada: favicon artik statik bir
-   * icon.svg degil, marka renklerinden uretilen bir ROTA (src/app/icon.tsx).
-   * Listede eski dosya adi (icon.svg) kaldigi surece /icon dile yonlendirilip
-   * 404 donuyor ve sekmede hic ikon gorunmuyordu.
+   * `icon` / `apple-icon` (uzantisiz) listede KALIYOR. Bu sitede ikonlar
+   * artik src/app/icon.png ve apple-icon.png (carsinin ambleminden uretildi,
+   * bkz. scripts/build-icons.ts), yani uzantilari var ve zaten `.*\..*`
+   * kalibina takiliyorlar. Yine de silinmedi: sablon upstream'de ikonu bir
+   * ROTA olarak uretmeye devam ediyor ve oradan bir duzeltme cherry-pick
+   * edildiginde bu satirlarin eksikligi sessizce 404'e yol acardi.
    */
   matcher: [
     "/((?!admin|api|_next/static|_next/image|icon|opengraph-image|apple-icon|placeholders|.*\\..*).*)",

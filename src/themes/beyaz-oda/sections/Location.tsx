@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { Reveal } from "@/components/motion/Reveal";
+import { MAP_IMAGE } from "@/themes/beyaz-oda/map-asset";
 import { fill } from "@/i18n";
 import { placeStamp } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
@@ -114,7 +115,7 @@ export default function Location({ content }: SectionProps) {
                     className="group relative block aspect-16/10 w-full overflow-hidden sm:aspect-2/1"
                   >
                     <Image
-                      src="/harita/konum.png"
+                      src={MAP_IMAGE}
                       alt={fill(t.location.mapAlt, { name: content.name })}
                       fill
                       sizes="(min-width: 1024px) 62rem, 100vw"
@@ -127,18 +128,6 @@ export default function Location({ content }: SectionProps) {
                       aria-hidden="true"
                       className="absolute inset-0 bg-[var(--brand-ink)] opacity-0 transition-opacity duration-500 group-hover:opacity-[0.12] motion-reduce:transition-none"
                     />
-
-                    {/*
-                      Alt serit: kapaliyken asagida bekliyor, uzerine gelince
-                      yukari kayiyor. Haritanin tiklanabilir oldugunu
-                      soyleyen tek isaret bu.
-                    */}
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-x-0 bottom-0 flex translate-y-full items-center justify-center gap-2 bg-[var(--brand-primary)] py-3 text-[13px] font-medium text-[var(--brand-primary-contrast)] transition-transform duration-500 ease-[cubic-bezier(0.16,0.8,0.24,1)] group-hover:translate-y-0 motion-reduce:transition-none"
-                    >
-                      {t.location.directions}
-                    </span>
 
                     {/* Atif — ODbL geregi zorunlu. */}
                     <span className="bo-mono absolute end-0 top-0 bg-[color-mix(in_srgb,var(--brand-surface)_82%,transparent)] px-2 py-1 text-[9.5px] text-[var(--brand-ink-muted)]">

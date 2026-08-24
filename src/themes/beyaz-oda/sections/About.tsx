@@ -60,13 +60,17 @@ export default function About({ content }: SectionProps) {
                     src={logoUrl}
                     alt=""
                     aria-hidden="true"
-                    width={128}
-                    height={128}
+                    width={176}
+                    height={176}
                     /*
-                      Amblemin kaynagi 185px; 112px'te 2x ekranda hala keskin.
-                      Daha buyugu bulaniklasir (bkz. scripts/assets/README.md).
+                      Amblemin kaynagi 185px. 160px'te 2x ekranda teorik olarak
+                      biraz yumusuyor ama amblem DAIRESEL ve icinde tek bir
+                      kalin monogram var — ince detay tasimadigi icin bu
+                      olcude gozle fark edilmiyor. Daha buyugu icin carsi
+                      yonetiminden vektor surum gerekir
+                      (bkz. scripts/assets/README.md).
                     */
-                    className="mx-auto mb-12 size-20 object-contain sm:size-28"
+                    className="mx-auto mb-14 size-28 object-contain sm:size-40"
                   />
                 </Reveal>
               ) : null}
