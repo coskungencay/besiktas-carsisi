@@ -101,7 +101,7 @@ export default function Hero({ content }: SectionProps) {
         ) : null}
 
         {meta.length > 0 ? (
-          <ul className="bo-hero-meta bo-mono brand-eyebrow mt-10 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[11px] font-light text-[var(--bo-hero-ink-soft)]">
+          <ul className="bo-hero-meta bo-mono brand-eyebrow mt-10 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[12px] font-light text-[var(--bo-hero-ink-soft)] sm:text-[11px]">
             {meta.map((entry, index) => (
               <li key={entry} className="flex items-center gap-4">
                 {index > 0 ? (
@@ -122,7 +122,11 @@ export default function Hero({ content }: SectionProps) {
         */}
         <a
           href={menuHref(content)}
-          className="bo-hero-cue mt-12 inline-flex items-center gap-2 border-b border-[var(--bo-hero-line)] pb-1 text-[14px] text-[var(--bo-hero-ink)] transition-colors hover:border-[var(--bo-hero-ink)] motion-reduce:animate-none"
+          /*
+            bo-tap: hero'nun tek eylemi bu ve telefonda 26px yuksekligindeydi.
+            Gorunmez dokunma alani icin bkz. tokens.css.
+          */
+          className="bo-hero-cue bo-tap mt-12 inline-flex items-center gap-2 border-b border-[var(--bo-hero-line)] pb-1 text-[14px] text-[var(--bo-hero-ink)] transition-colors hover:border-[var(--bo-hero-ink)] motion-reduce:animate-none"
         >
           <span>{t.hero.viewMenu}</span>
           <ArrowIcon className="size-3.5" />

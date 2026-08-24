@@ -92,7 +92,12 @@ export function SortableList({
                 onClick={() => move(index, index - 1)}
                 disabled={index === 0 || pending}
                 aria-label={`${index + 1}. kaydı yukarı taşı`}
-                className="rounded border border-zinc-300 px-2 py-0.5 text-xs text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
+                /*
+                  Telefonda 36px, isaretci cihazda tasarimin kendi olcusu.
+                  Iki dugme ust uste duruyor ve her biri 22px yuksekligindeydi;
+                  parmakla "yukari" yerine "asagi" tasimak cok kolaydi.
+                */
+                className="rounded border border-zinc-300 px-3 py-2 text-sm leading-none text-zinc-700 hover:bg-zinc-50 disabled:opacity-40 sm:px-2 sm:py-0.5 sm:text-xs"
               >
                 ↑
               </button>
@@ -101,7 +106,7 @@ export function SortableList({
                 onClick={() => move(index, index + 1)}
                 disabled={index === order.length - 1 || pending}
                 aria-label={`${index + 1}. kaydı aşağı taşı`}
-                className="rounded border border-zinc-300 px-2 py-0.5 text-xs text-zinc-700 hover:bg-zinc-50 disabled:opacity-40"
+                className="rounded border border-zinc-300 px-3 py-2 text-sm leading-none text-zinc-700 hover:bg-zinc-50 disabled:opacity-40 sm:px-2 sm:py-0.5 sm:text-xs"
               >
                 ↓
               </button>

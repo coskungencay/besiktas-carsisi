@@ -124,7 +124,7 @@ export default function Menu({ content }: SectionProps) {
               <div className="mt-16 text-center">
                 <Link
                   href={menuHref(content)}
-                  className="inline-flex items-center gap-2 border-b border-[var(--brand-ink)] pb-[3px] text-[14px] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
+                  className="bo-tap inline-flex items-center gap-2 border-b border-[var(--brand-ink)] pb-[3px] text-[14px] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
                 >
                   <span>{t.menu.viewAll}</span>
                   <ArrowIcon className="size-3.5" />

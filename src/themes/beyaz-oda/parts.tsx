@@ -31,16 +31,28 @@ export const surface = "bo-surface relative text-[var(--brand-ink)]";
 /**
  * Monospace kunye yazisi (SAAT · 08–18 gibi) — tasarimda 11.5px / 300.
  * Agirlik burada yaziliyor cunku .bo-mono bilerek agirliksiz (bkz. tokens.css).
+ *
+ * TELEFONDA BIR KADEME BUYUK. Tasarimin 11.5px'i genis ekranda dogru: yazi
+ * uzak bir mesafeden degil, kollarin uzunlugundan okunuyor ve harf araligi
+ * genis oldugu icin ferah duruyor. Telefonda ayni satir ele yakin ama ekran
+ * kucuk; 11.5px monospace + 0.2em aralik burada okunabilirligin altina
+ * dusuyordu (sayfada 40'tan fazla yerde geciyor: kunye satirlari, istatistik
+ * etiketleri, galeri altyazilari). 12.5px tasarimin oranini bozmadan bu esigin
+ * ustune cikariyor; sm'den itibaren tasarimin kendi olcusune donuyor.
  */
-export const meta = "bo-mono font-light text-[11.5px] text-[var(--brand-ink-muted)]";
+export const meta =
+  "bo-mono font-light text-[12.5px] sm:text-[11.5px] text-[var(--brand-ink-muted)]";
 
 /**
  * Liste satirlarinin bastaki sira numarasi (menu 01, 02...).
  *
  * .bo-index DEGIL: tasarimda bolum indeksleri ("— 01") acikca 300, buna karsilik
  * liste numaralari agirlik yazmadigi icin 400. Iki kademe ayni mono ailede.
+ *
+ * Telefonda bir kademe buyuk — gerekcesi `meta` ile ayni.
  */
-export const rowNumber = "bo-mono text-[11px] text-[var(--brand-ink-faint)]";
+export const rowNumber =
+  "bo-mono text-[12px] sm:text-[11px] text-[var(--brand-ink-faint)]";
 
 /**
  * Bolum ust boslugu. Tasarimda bolumler 118px bosluk sonrasi ince bir cizgiyle

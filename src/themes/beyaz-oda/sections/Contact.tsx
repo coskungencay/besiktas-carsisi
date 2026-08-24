@@ -129,7 +129,7 @@ export default function Contact({ content }: SectionProps) {
                         href={contact.mapsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-6 inline-flex items-center gap-2 border-b border-[var(--brand-ink)] pb-[3px] text-[13px] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
+                        className="bo-tap mt-6 inline-flex items-center gap-2 border-b border-[var(--brand-ink)] pb-[3px] text-[13px] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
                       >
                         <span>{t.location.directions}</span>
                         <ArrowIcon className="size-3.5" />
@@ -200,7 +200,15 @@ export default function Contact({ content }: SectionProps) {
                       {t.contact.eyebrow}
                     </h3>
 
-                    <ul className="mx-auto mt-4 max-w-[18rem] text-[15px] leading-[2.1]">
+                    {/*
+                      Satir araligi telefonda aciliyor (2.1 -> 2.75, yani
+                      31px -> 41px). bo-tap her satirin ustune/altina 10'ar
+                      piksel ekliyor; 31px'lik aralikta telefon ile e-posta
+                      hedefleri UST USTE BINIYORDU ve numaranin biraz altina
+                      dokunan biri e-posta uygulamasini aciyordu. Yanlis
+                      hedefi acmak, hedefi isabetsiz kacirmaktan daha kotu.
+                    */}
+                    <ul className="mx-auto mt-4 max-w-[18rem] text-[15px] leading-[2.75] sm:leading-[2.1]">
                       {rows.map((row, index) => (
                         <li key={`${row.term}-${index}`}>
                           {/*
@@ -211,7 +219,8 @@ export default function Contact({ content }: SectionProps) {
                           <a
                             href={row.href}
                             aria-label={`${row.term}: ${row.value}`}
-                            className="underline-offset-4 transition-colors hover:text-[var(--brand-accent)] hover:underline"
+                            /* bo-tap: 19px'lik satirlar telefonda hedef degil. */
+                            className="bo-tap underline-offset-4 transition-colors hover:text-[var(--brand-accent)] hover:underline"
                             {...(row.href.startsWith("http")
                               ? { target: "_blank", rel: "noopener noreferrer" }
                               : {})}

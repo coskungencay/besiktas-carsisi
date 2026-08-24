@@ -12,8 +12,20 @@ import { meta } from "@/themes/beyaz-oda/parts";
  * bu tasarima ait isaretleme var.
  */
 
+/*
+ * Alan bicimi.
+ *
+ * PUNTO TELEFONDA 16px OLMAK ZORUNDA. iOS Safari, punto 16px'in ALTINDA olan
+ * bir alana odaklanildiginda sayfayi kendiliginden yakinlastirir; kullanici
+ * "Ad Soyad"a dokununca sayfa buyuyor, yazip bitirince geri donmuyor ve
+ * formun geri kalanini yatay kaydirarak dolduruyordu. Tasarimin 14px'i
+ * sm'den itibaren geri geliyor — orada boyle bir davranis yok.
+ *
+ * Dikey dolgu da telefonda bir tik acildi: 45px'lik bir alan parmakla
+ * isabetli ama dar; 52px rahat.
+ */
 const field =
-  "w-full border-0 border-b border-[var(--brand-border)] bg-transparent py-3 text-sm outline-none transition-colors placeholder:text-[var(--brand-ink-muted)] focus:border-[var(--brand-ink)]";
+  "w-full border-0 border-b border-[var(--brand-border)] bg-transparent py-3.5 text-base outline-none transition-colors placeholder:text-[var(--brand-ink-muted)] focus:border-[var(--brand-ink)] sm:py-3 sm:text-sm";
 
 export function ContactForm({
   locale,

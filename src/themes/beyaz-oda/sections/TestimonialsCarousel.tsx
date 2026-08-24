@@ -290,7 +290,7 @@ export function TestimonialsCarousel({
                     {item.text}
                   </blockquote>
 
-                  <div className="bo-mono brand-eyebrow border-t border-[var(--brand-border)] pt-5 text-[11.5px] font-light text-[var(--brand-ink-muted)]">
+                  <div className="bo-mono brand-eyebrow border-t border-[var(--brand-border)] pt-5 text-[12.5px] font-light text-[var(--brand-ink-muted)] sm:text-[11.5px]">
                     <Latin>{item.author}</Latin>
                   </div>
                 </Card>
@@ -300,33 +300,75 @@ export function TestimonialsCarousel({
         </ul>
       </div>
 
+      {/*
+        KONTROL SATIRI.
+
+        ONCEKI HALI ve NEDEN DEGISTI: ok - 10 nokta - ok tek satirda duruyordu
+        ve satirin en dar hali 376px'ti. 320-360px'lik telefonlarda bu satir
+        SAYFAYI yatay kaydiriyor, iki ok da ekranin disina tasip yariya
+        kirpiliyordu. Ustelik noktalar 3px yuksekliginde: parmakla isabet
+        ettirilecek bir hedef degil, ve 10 nokta zaten "kacinci yorumdayim"
+        sorusunu telefon olceginde cevaplamiyordu.
+
+        Telefonda noktalarin yerine KONUM SAYACI ("03 / 10") geliyor: hem
+        satiri 200px'in altina indiriyor hem de kac yorum oldugunu acikca
+        soyluyor. Noktalar sm'den itibaren geri geliyor; orada hem yer var
+        hem de isaretci ile 3px'lik bir seride isabet etmek mumkun.
+      */}
       {count > 1 ? (
-        <div className="mt-10 flex items-center justify-center gap-6">
+        <div className="mt-10 flex items-center justify-center gap-4 sm:gap-6">
           <button
             type="button"
             onClick={() => go(-1)}
             aria-label={t.previous}
-            className="brand-frame grid size-10 place-items-center transition-colors hover:border-[var(--brand-ink)] hover:text-[var(--brand-accent)]"
+            className="brand-frame grid size-11 shrink-0 place-items-center transition-colors hover:border-[var(--brand-ink)] hover:text-[var(--brand-accent)] sm:size-10"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-4 rtl:-scale-x-100">
               <path d="M15 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
 
-          <ul className="flex items-center gap-2">
+          {/*
+            Sayac. `aria-hidden`: her yorum kartinin kendi metni zaten
+            okunuyor ve oklarin etiketleri var; ekran okuyucuya ayrica
+            "3 bolu 10" demek gurultu olurdu. tabular-nums: rakam
+            genisligi sabit, sayac ilerlerken oklar yerinden oynamiyor.
+          */}
+          <p
+            aria-hidden="true"
+            dir="ltr"
+            className="bo-mono w-[72px] shrink-0 text-center text-[13px] font-light tracking-[0.14em] tabular-nums text-[var(--brand-ink-muted)] sm:hidden"
+          >
+            <span className="text-[var(--brand-ink)]">
+              {String(activeReal + 1).padStart(2, "0")}
+            </span>
+            {" / "}
+            {String(count).padStart(2, "0")}
+          </p>
+
+          <ul className="hidden items-center gap-2 sm:flex">
             {items.map((item, i) => (
               <li key={item.id}>
+                {/*
+                  Cizgi 3px kaliyor ama DOKUNMA ALANI 36px: dis dugme
+                  yuksekligi verip cizgiyi icine ortaliyoruz. Gorunum
+                  degismiyor, hedef buyuyor.
+                */}
                 <button
                   type="button"
                   onClick={() => setIndex(start + i)}
                   aria-label={fill(t.goTo, { index: String(i + 1) })}
                   aria-current={i === activeReal ? "true" : undefined}
-                  className={`block h-[3px] transition-all duration-300 ${
-                    i === activeReal
-                      ? "w-8 bg-[var(--brand-ink)]"
-                      : "w-4 bg-[var(--brand-border)] hover:bg-[var(--brand-ink-muted)]"
-                  }`}
-                />
+                  className="group flex h-9 items-center"
+                >
+                  <span
+                    className={`block h-[3px] transition-all duration-300 ${
+                      i === activeReal
+                        ? "w-8 bg-[var(--brand-ink)]"
+                        : "w-4 bg-[var(--brand-border)] group-hover:bg-[var(--brand-ink-muted)]"
+                    }`}
+                  />
+                </button>
               </li>
             ))}
           </ul>
@@ -335,7 +377,7 @@ export function TestimonialsCarousel({
             type="button"
             onClick={() => go(1)}
             aria-label={t.next}
-            className="brand-frame grid size-10 place-items-center transition-colors hover:border-[var(--brand-ink)] hover:text-[var(--brand-accent)]"
+            className="brand-frame grid size-11 shrink-0 place-items-center transition-colors hover:border-[var(--brand-ink)] hover:text-[var(--brand-accent)] sm:size-10"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-4 rtl:-scale-x-100">
               <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />

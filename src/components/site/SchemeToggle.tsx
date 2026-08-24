@@ -46,7 +46,12 @@ export function SchemeToggle({ label }: { label: string }) {
   };
 
   // Yer tutucu: dugme sonradan belirince ust seridin duzeni kaymasin.
-  if (!mounted) return <span aria-hidden="true" className="block size-9" />;
+  /*
+   * Baglanmadan once AYNI olcude bos yer tutuluyor; yoksa dugme belirdigi
+   * anda seridin sag ucu kayiyor.
+   */
+  if (!mounted)
+    return <span aria-hidden="true" className="block size-11 sm:size-9" />;
 
   return (
     <button
@@ -55,7 +60,14 @@ export function SchemeToggle({ label }: { label: string }) {
       aria-label={label}
       title={label}
       aria-pressed={scheme === "dark"}
-      className="grid size-9 shrink-0 place-items-center text-[var(--brand-ink-muted)] transition-colors hover:text-[var(--brand-ink)]"
+      /*
+       * TELEFONDA 44px. Ikonun kendisi 18px kaliyor — buyuyen sey yalnizca
+       * dokunma alani. 36px'lik hedef parmak ucuyla isabetli degil; bu dugme
+       * seridin en sagindaki tek dokunma noktasi oldugu icin isabetsiz her
+       * dokunus dogrudan "calismiyor" hissi veriyordu. Isaretci cihazda
+       * (sm+) tasarimin kendi 36px'ine donuyor.
+       */
+      className="grid size-11 shrink-0 place-items-center text-[var(--brand-ink-muted)] transition-colors hover:text-[var(--brand-ink)] sm:size-9"
     >
       {scheme === "dark" ? (
         /* Koyu moddayken GUNES gosteriyoruz: dugme "ne olacagini" anlatir. */

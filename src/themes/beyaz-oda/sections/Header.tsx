@@ -103,7 +103,23 @@ export default function Header({ content }: SectionProps) {
             icin vurgu rengi burada da EL ILE veriliyor; yoksa sayfadaki tek
             hover'siz baglanti bu olurdu.
           */
-          className="bo-serif flex shrink-0 items-center gap-3.5 text-[clamp(0.9375rem,1.5vw,1.25rem)] tracking-[0.14em] uppercase transition-colors hover:text-[var(--brand-accent)]"
+          /*
+            DAR EKRANDA KUCULEBILIR. Onceden `shrink-0` idi ve kelime-marka
+            tek satirda 272px tutuyordu; mod dugmesiyle birlikte serit 376px
+            genisliginde kalip 320-360px'lik telefonlarda SAYFAYI yatay
+            kaydiriyordu (marka + dugme sigmayinca flex kutuyu buyutuyor).
+
+            Simdi `min-w-0`: kutu kuculebiliyor ve sigmadigi noktada
+            kelime-marka iki satira sariyor ("BÜYÜK BEŞİKTAŞ / ÇARŞISI").
+            Sarma noktasi kendiliginden olusuyor, kirilma noktasi
+            yazilmadi — isletme adi panelden degistiginde de dogru davranir.
+            Iki satirlik hali amblemden (36px) daha yuksek olmadigi icin
+            seridin yuksekligi degismiyor.
+
+            Harf araligi telefonda 0.14em'den 0.09em'e iniyor: 22 harflik
+            bir adda 0.14em tek basina ~30px yer tutuyor.
+          */
+          className="bo-serif flex min-w-0 items-center gap-3 text-[clamp(0.9375rem,1.5vw,1.25rem)] leading-[1.25] tracking-[0.09em] uppercase transition-colors hover:text-[var(--brand-accent)] sm:gap-3.5 sm:tracking-[0.14em]"
         >
           {/*
             Logo yuklendiyse kelime-markanin ONUNDE kucuk bir kare olarak
@@ -146,7 +162,7 @@ export default function Header({ content }: SectionProps) {
           </p>
         ) : null}
 
-        <div className="flex shrink-0 items-center justify-end gap-x-5">
+        <div className="flex shrink-0 items-center justify-end gap-x-3 sm:gap-x-5">
           <nav aria-label={name}>
             {/*
               Dar ekranda gezinti gizleniyor. Sayfa TEK sayfa oldugu ve tum

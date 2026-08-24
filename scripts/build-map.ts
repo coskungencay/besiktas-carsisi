@@ -41,25 +41,38 @@ import { siteSettings } from "../src/db/schema";
  */
 const ZOOM = 16;
 const TILE = 256;
-/** Kirpilmis son olcu — bolumdeki genis kutuyla ayni oran (2:1). */
-const OUT_W = 1600;
-const OUT_H = 800;
 
 /*
- * Izgara, KIRPMA PENCERESINE gore kuruluyor — merkeze gore degil.
+ * IKI KARE URETILIYOR — telefon icin AYRI bir harita.
  *
- * Once dunya piksel uzayinda istenen pencerenin sol/ust kosesi bulunuyor
- * (carsi tam ortada kalacak sekilde), sonra o kosenin dustugu karodan
- * baslaniyor. Boylece pencere HER ZAMAN izgaranin icinde kaliyor ve
- * isaretci tam merkeze oturuyor.
+ * Tek kare vardi (1600x800) ve telefonda 342px genisligindeki kutuya
+ * sigdiriliyordu: yani harita %32 olcekte basiliyor, OSM'nin sokak adlari
+ * 3-4 piksele iniyor ve harita "gri bir doku"ya donuyordu. Ustelik oran
+ * telefonda 4:3, kaynak 2:1 oldugu icin object-cover kenarlardan da
+ * kirpiyordu — yani indirilen 651 KB'lik karenin cogu hic gorunmuyordu.
  *
- * Onceki surumde izgara merkeze gore kuruluyordu ve pencere kenara dayanip
- * kirpiliyordu: isaretci merkezden 130px kayik duruyordu.
+ * Cozum zoom'u degistirmek DEGIL (o sokak adlarini da buyutur, cerceveyi de
+ * daraltir): ayni zoom'da DAHA KUCUK BIR PENCERE almak. 800x600'luk kare
+ * ~1,4 km x 1,05 km ediyor — Bogaz ve iskele hala cercevede, cunku carsi
+ * kiyiya ~400 m. Telefonda 342 CSS px = 684 aygit pikseli; 800px'lik kaynak
+ * neredeyse 1:1 basiliyor ve sokak adlari okunuyor.
  *
- * Gereken karo sayisi: pencere + bir karoluk tasma payi.
+ * `aspect` degeri Location.tsx'teki kutuyla ayni olmali; yoksa object-cover
+ * yine kirpar.
  */
-const COLS = Math.ceil(OUT_W / TILE) + 1;
-const ROWS = Math.ceil(OUT_H / TILE) + 1;
+type Variant = {
+  /** Dosya adi oneki. */
+  key: string;
+  width: number;
+  height: number;
+  /** Isaretci boyu — kucuk karede oransal olarak kucuk kalmali. */
+  marker: number;
+};
+
+const VARIANTS: Variant[] = [
+  { key: "genis", width: 1600, height: 800, marker: 54 },
+  { key: "dar", width: 800, height: 600, marker: 46 },
+];
 
 const OUT_DIR = join(process.cwd(), "public", "harita");
 /**
@@ -128,24 +141,45 @@ async function main() {
     return;
   }
 
-  const centerX = lngToTileX(settings.lng, ZOOM);
-  const centerY = latToTileY(settings.lat, ZOOM);
+  /*
+   * Karolar BIR KEZ indiriliyor.
+   *
+   * Iki kare de ayni zoom'da ve ayni merkezde; dar kare genis karenin tam
+   * ortasinda kalan bir alt pencere. Yani en genis pencereyi kaplayan tek bir
+   * izgara ikisine de yetiyor. Varyant basina ayri indirme, OSM'nin karo
+   * sunucusuna iki kat gereksiz yuk bindirirdi.
+   */
+  const gridW = Math.max(...VARIANTS.map((v) => v.width));
+  const gridH = Math.max(...VARIANTS.map((v) => v.height));
 
-  // Carsinin dunya piksel konumu ve istenen pencerenin sol ust kosesi.
-  const centerPxX = centerX * TILE;
-  const centerPxY = centerY * TILE;
-  const windowX = centerPxX - OUT_W / 2;
-  const windowY = centerPxY - OUT_H / 2;
+  const centerPxX = lngToTileX(settings.lng, ZOOM) * TILE;
+  const centerPxY = latToTileY(settings.lat, ZOOM) * TILE;
 
-  // Pencerenin sol ust kosesinin dustugu karo — izgara buradan basliyor.
+  /*
+   * Izgara, KIRPMA PENCERESINE gore kuruluyor — merkeze gore degil.
+   *
+   * Once dunya piksel uzayinda en genis pencerenin sol/ust kosesi bulunuyor
+   * (carsi tam ortada kalacak sekilde), sonra o kosenin dustugu karodan
+   * baslaniyor. Boylece pencere HER ZAMAN izgaranin icinde kaliyor ve
+   * isaretci tam merkeze oturuyor.
+   *
+   * Onceki surumde izgara merkeze gore kuruluyordu ve pencere kenara dayanip
+   * kirpiliyordu: isaretci merkezden 130px kayik duruyordu.
+   */
+  const windowX = centerPxX - gridW / 2;
+  const windowY = centerPxY - gridH / 2;
   const startX = Math.floor(windowX / TILE);
   const startY = Math.floor(windowY / TILE);
 
-  console.log(`[harita] ${COLS * ROWS} karo indiriliyor (zoom ${ZOOM})…`);
+  // Pencere + bir karoluk tasma payi.
+  const cols = Math.ceil(gridW / TILE) + 1;
+  const rows = Math.ceil(gridH / TILE) + 1;
+
+  console.log(`[harita] ${cols * rows} karo indiriliyor (zoom ${ZOOM})…`);
 
   const composites: OverlayOptions[] = [];
-  for (let row = 0; row < ROWS; row += 1) {
-    for (let col = 0; col < COLS; col += 1) {
+  for (let row = 0; row < rows; row += 1) {
+    for (let col = 0; col < cols; col += 1) {
       const tile = await fetchTile(startX + col, startY + row, ZOOM);
       composites.push({ input: tile, left: col * TILE, top: row * TILE });
       // OSM'ye nazik davran: karolar arasinda kisa bekleme.
@@ -153,55 +187,75 @@ async function main() {
     }
   }
 
-  const gridW = COLS * TILE;
-  const gridH = ROWS * TILE;
-
   // Once yalnizca karolari birlestir (isaretci kirpmadan SONRA basilacak).
   const grid = await sharp({
-    create: { width: gridW, height: gridH, channels: 3, background: "#e8e4dd" },
+    create: { width: cols * TILE, height: rows * TILE, channels: 3, background: "#e8e4dd" },
   })
     .composite(composites)
     .png()
     .toBuffer();
 
-  /*
-   * Pencerenin izgara icindeki konumu. Insaat geregi 0 <= left < TILE
-   * oldugu icin kirpma her zaman izgaranin icinde kaliyor.
-   */
-  const left = Math.round(windowX - startX * TILE);
-  const top = Math.round(windowY - startY * TILE);
-
-  const MARKER = 54;
-  const image = await sharp(grid)
-    .extract({ left, top, width: OUT_W, height: OUT_H })
-    .composite([
-      {
-        input: markerSvg(MARKER),
-        // Carsi kirpilmis karenin TAM ORTASINDA.
-        left: Math.round(OUT_W / 2 - MARKER / 2),
-        // Isaretcinin UCU koordinati gostermeli, merkezi degil.
-        top: Math.round(OUT_H / 2 - MARKER),
-      },
-    ])
-    .png()
-    .toBuffer();
-
-  const width = OUT_W;
-  const height = OUT_H;
+  // Carsinin izgara icindeki piksel konumu.
+  const centerInGridX = centerPxX - startX * TILE;
+  const centerInGridY = centerPxY - startY * TILE;
 
   mkdirSync(OUT_DIR, { recursive: true });
 
-  const hash = createHash("sha256").update(image).digest("hex").slice(0, 10);
-  const fileName = `konum-${hash}.png`;
+  const written: { key: string; file: string; width: number; height: number }[] = [];
+
+  for (const variant of VARIANTS) {
+    /*
+     * Her varyantin penceresi carsi MERKEZDE kalacak sekilde kirpiliyor.
+     * Yuvarlama sonrasi pencere izgaranin disina tasmasin diye sinirlaniyor;
+     * pratikte tasmiyor (izgara en genis pencereden bir karo buyuk).
+     */
+    const left = Math.round(centerInGridX - variant.width / 2);
+    const top = Math.round(centerInGridY - variant.height / 2);
+
+    const image = await sharp(grid)
+      .extract({ left, top, width: variant.width, height: variant.height })
+      .composite([
+        {
+          input: markerSvg(variant.marker),
+          // Carsi kirpilmis karenin TAM ORTASINDA.
+          left: Math.round(variant.width / 2 - variant.marker / 2),
+          // Isaretcinin UCU koordinati gostermeli, merkezi degil.
+          top: Math.round(variant.height / 2 - variant.marker),
+        },
+      ])
+      /*
+       * WEBP, PNG DEGIL.
+       *
+       * Onceki tek kare 651 KB'lik bir PNG'ydi ve Next'in gorsel
+       * iyilestiricisinden geciyordu. Iki kare uretince ikisini de <picture>
+       * ile sunmak gerekiyor (Next/Image sanat yonlendirmesi yapmiyor), yani
+       * iyilestirici devrede degil — sikistirma artik BIZIM isimiz.
+       * Karo grafiginde webp/q82 gozle ayirt edilemiyor ve dosya ~5 kat
+       * kuculuyor.
+       */
+      .webp({ quality: 82 })
+      .toBuffer();
+
+    const hash = createHash("sha256").update(image).digest("hex").slice(0, 10);
+    const fileName = `konum-${variant.key}-${hash}.webp`;
+    writeFileSync(join(OUT_DIR, fileName), image);
+    written.push({ key: variant.key, file: fileName, width: variant.width, height: variant.height });
+
+    const kb = Math.round(image.byteLength / 1024);
+    console.log(`[harita] public/harita/${fileName} (${variant.width}x${variant.height}, ${kb} KB)`);
+  }
 
   // Eski karelerimizi birak etme; public/ sismesin.
+  const keep = new Set(written.map((w) => w.file));
   for (const entry of readdirSync(OUT_DIR)) {
-    if (entry.startsWith("konum") && entry !== fileName) {
+    if (entry.startsWith("konum") && !keep.has(entry)) {
       rmSync(join(OUT_DIR, entry), { force: true });
+      console.log(`[harita] eski kare silindi: ${entry}`);
     }
   }
 
-  writeFileSync(join(OUT_DIR, fileName), image);
+  const wide = written.find((w) => w.key === "genis")!;
+  const narrow = written.find((w) => w.key === "dar")!;
 
   writeFileSync(
     ASSET_MODULE,
@@ -211,15 +265,26 @@ async function main() {
  *
  * Dosya adi haritanin icerik ozetini tasir: koordinat ya da zoom degisip
  * harita yeniden uretildiginde ad da degisir ve onbellek gecersizlesir.
+ *
+ * IKI KARE: genis (masaustu, 2:1) ve dar (telefon, 4:3). Gerekcesi
+ * build-map.ts icinde yazili — ozeti: tek kare telefonda %32 olcekte
+ * basiliyor ve sokak adlari okunmuyordu.
  */
-export const MAP_IMAGE = "/harita/${fileName}";
-export const MAP_WIDTH = ${width};
-export const MAP_HEIGHT = ${height};
+export const MAP_WIDE = {
+  src: "/harita/${wide.file}",
+  width: ${wide.width},
+  height: ${wide.height},
+} as const;
+
+export const MAP_NARROW = {
+  src: "/harita/${narrow.file}",
+  width: ${narrow.width},
+  height: ${narrow.height},
+} as const;
 `,
     "utf8",
   );
 
-  console.log(`[harita] public/harita/${fileName} yazildi (${width}x${height}).`);
   console.log("[harita] src/themes/beyaz-oda/map-asset.ts guncellendi.");
   console.log("[harita] Atif zorunlu: © OpenStreetMap katkida bulunanlar.");
 }

@@ -232,6 +232,38 @@ html[data-scheme="dark"] .admin-shell {
  * kullanilmiyor, panelin kendi notr olceginden besleniyor ki marka rengi
  * degistiginde giris ekrani da degismesin.
  */
+/*
+ * TELEFONDA PANEL.
+ *
+ * 1) ALAN PUNTOSU 16px. iOS Safari, punto 16px'in ALTINDA olan bir alana
+ *    odaklanildiginda sayfayi kendiliginden yakinlastirir. Panelin tamami
+ *    14px'lik alanlardan olusuyordu; carsi yonetimi telefondan bir magaza
+ *    adi girmeye kalktiginda sayfa her alanda buyuyor, geri donmuyor ve
+ *    formun devami ekranin disinda kaliyordu.
+ *
+ *    Neden burada, tek noktada: alan siniflari 31 dosyaya dagilmis durumda
+ *    ve ortak bir `field` sabiti yok. Her birine `sm:` varyanti yazmak hem
+ *    devasa hem her yeni alanda unutulmaya acik olurdu. Onay kutulari ve
+ *    radyolar disarida — onlarda punto zaten metni etkilemiyor.
+ *
+ * 2) DOKUNMA HEDEFLERI. Onay kutulari 16px, satir eylemleri 22-30px
+ *    yuksekligindeydi. Kutunun kendi olcusu buyutulmuyor (izgara bozulur),
+ *    yalnizca dokunma alani aciliyor.
+ */
+@media (max-width: 639px) {
+  .admin-shell input:not([type="checkbox"]):not([type="radio"]):not([type="color"]),
+  .admin-shell textarea,
+  .admin-shell select {
+    font-size: 16px;
+  }
+
+  .admin-shell input[type="checkbox"],
+  .admin-shell input[type="radio"] {
+    inline-size: 1.15rem;
+    block-size: 1.15rem;
+  }
+}
+
 .admin-shell .admin-login-bg {
   background-image:
     radial-gradient(

@@ -1,7 +1,5 @@
-import Image from "next/image";
-
 import { Reveal } from "@/components/motion/Reveal";
-import { MAP_IMAGE } from "@/themes/beyaz-oda/map-asset";
+import { MAP_NARROW, MAP_WIDE } from "@/themes/beyaz-oda/map-asset";
 import { fill } from "@/i18n";
 import { placeStamp } from "@/themes/_shared/data";
 import { ArrowIcon } from "@/themes/_shared/icons";
@@ -21,8 +19,8 @@ import type { SectionProps } from "@/themes/types";
  *
  * HARITA GERCEK, AMA GOMULU DEGIL: sagdaki kare artik soyut bir doku degil,
  * carsinin bulundugu sokaklarin gercek haritasi. `scripts/build-map.ts` OSM
- * karolarini BIR KEZ indirip tek bir PNG'ye birlestiriyor ve
- * `public/harita/konum.png` olarak sakliyor.
+ * karolarini BIR KEZ indirip birlestiriyor ve `public/harita/` altinda
+ * sakliyor — biri masaustu (genis), biri telefon (dar) icin iki kare.
  *
  * NEDEN BOYLE: gomulu bir iframe her ziyaretciyi ucuncu tarafa tanitirdi
  * (KVKK'da acik riza) ve sayfanin en agir parcasi olurdu; Google Static Maps
@@ -120,14 +118,44 @@ export default function Location({ content }: SectionProps) {
                     aria-label={t.location.directions}
                     className="group relative block aspect-4/3 w-full overflow-hidden sm:aspect-2/1"
                   >
-                    <Image
-                      src={MAP_IMAGE}
-                      alt={fill(t.location.mapAlt, { name: content.name })}
-                      fill
-                      sizes="(min-width: 1024px) 62rem, 100vw"
-                      loading="lazy"
-                      className="bo-map object-cover transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,0.8,0.24,1)] group-hover:scale-[1.07] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                    />
+                    {/*
+                      IKI FARKLI KARE, TEK INDIRME.
+
+                      Telefon ve masaustu ayni haritayi kullanamiyor: kutu
+                      telefonda 4:3 ve ~342px, masaustunde 2:1 ve ~992px.
+                      Tek kare (1600x800) telefonda %32 olcekte basiliyordu;
+                      OSM'nin sokak adlari 3-4 piksele iniyor ve harita gri
+                      bir dokuya donuyordu. Artik telefona ayni zoom'da ama
+                      DAHA DAR bir pencere (800x600) gidiyor — sokak adlari
+                      okunuyor, Bogaz hala cercevede.
+
+                      `next/image` DEGIL, duz <picture>: Next/Image sanat
+                      yonlendirmesi (breakpoint'e gore FARKLI gorsel)
+                      yapamiyor; `hidden`/`sm:hidden` ile iki Image basmak da
+                      ikisini birden indirtirdi. <picture> ile tarayici tek
+                      bir kare indiriyor. Sikistirma bu yuzden uretim
+                      asamasinda yapildi (webp, bkz. scripts/build-map.ts).
+
+                      `sizes` yok cunku tek bir aday var; genislik/yukseklik
+                      yazili ki yerlesim kaymasin (CLS).
+                    */}
+                    <picture>
+                      <source
+                        media="(min-width: 640px)"
+                        srcSet={MAP_WIDE.src}
+                        width={MAP_WIDE.width}
+                        height={MAP_WIDE.height}
+                      />
+                      <img
+                        src={MAP_NARROW.src}
+                        width={MAP_NARROW.width}
+                        height={MAP_NARROW.height}
+                        alt={fill(t.location.mapAlt, { name: content.name })}
+                        loading="lazy"
+                        decoding="async"
+                        className="bo-map absolute inset-0 size-full object-cover transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,0.8,0.24,1)] group-hover:scale-[1.07] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                      />
+                    </picture>
 
                     {/* Uzerine gelince koyulasan ince perde. */}
                     <span

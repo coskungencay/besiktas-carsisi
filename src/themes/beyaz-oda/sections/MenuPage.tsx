@@ -124,7 +124,14 @@ export default function MenuPage({ content }: SectionProps) {
                     satir basina dusmuyor.
                   */}
                   <ul
-                    className={`${meta} flex flex-wrap items-center justify-center gap-x-4 gap-y-2`}
+                    /*
+                      Satir araligi telefonda 20px: bo-tap her baglantinin
+                      ustune/altina 10'ar piksel ekliyor, yani hedefler tam
+                      bitisik doseniyor ve UST USTE BINMIYOR. Daha dar bir
+                      aralikta bir kategoriye dokunurken ustundekinin hedef
+                      alanina denk gelmek mumkun olurdu.
+                    */
+                    className={`${meta} flex flex-wrap items-center justify-center gap-x-4 gap-y-5 sm:gap-y-2`}
                   >
                     {categories.map((category) => (
                       <li
@@ -138,7 +145,14 @@ export default function MenuPage({ content }: SectionProps) {
                         */}
                         <a
                           href={`#${anchorId(category.id)}`}
-                          className="brand-eyebrow border-b border-transparent pb-[2px] break-words transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
+                          /*
+                            bo-tap: fihristteki 20 kategori 18px yuksekligindeydi
+                            ve yan yana diziliydi; telefonda birine dokunmaya
+                            calisirken komsusu aciliyordu. Gorunmez katman
+                            hedefi ~38px'e cikariyor, satir araligi (gap-y-2 ->
+                            gap-y-3) da acildigi icin hedefler ust uste binmiyor.
+                          */
+                          className="bo-tap brand-eyebrow border-b border-transparent pb-[2px] break-words transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
                         >
                           <Latin>{category.name}</Latin>
                         </a>
@@ -164,10 +178,17 @@ export default function MenuPage({ content }: SectionProps) {
 
                         scroll-mt: capa ile gelindiginde baslik ekranin en ust
                         pikseline yapismasin.
+
+                        DEGER 28'DEN 3'E INDI: yapiskan seridin payi artik
+                        tema genelinde `scroll-padding-top` ile veriliyor
+                        (bkz. tokens.css). Ikisi TOPLANIYOR; 112px + 84px ile
+                        kategori basligi ekranin ortasina dusuyor ve ustunde
+                        bir ekran boyu bosluk kaliyordu. Burada kalan tek is
+                        seridin altina bir nefes payi birakmak.
                       */}
                       <div
                         id={anchorId(category.id)}
-                        className="flex scroll-mt-28 flex-col items-center border-b border-[var(--brand-border)] pb-7 text-center"
+                        className="flex scroll-mt-3 flex-col items-center border-b border-[var(--brand-border)] pb-7 text-center"
                       >
                         {/*
                           KATEGORI KAPAK GORSELI KALDIRILDI. Kategori
@@ -215,7 +236,25 @@ export default function MenuPage({ content }: SectionProps) {
                       yonetimi panelden fotograf ekledigi anda kart fotografa
                       geciyor.
                     */}
-                    <ul className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+                    {/*
+                      TELEFONDA DA IKILI. Onceden dar ekranda tek sutundu ve
+                      87 magazanin 84'unun fotografi henuz yok; her biri tam
+                      genislikte, 4:5 oraninda, icinde yalnizca bir bas harf
+                      olan ~440px'lik gri bir kutuya donuyordu. Sayfa telefonda
+                      44.000 piksel uzunluguna cikiyor ve neredeyse tamami bos
+                      kutulardan olusuyordu — kategori fihristi olmasa dibine
+                      inmek dakikalar suruyordu.
+
+                      Ikili izgarada ayni kutu ~160px'e iniyor, sayfa ucte
+                      birine kadar kisaliyor ve izgara "vitrin" gibi okunuyor.
+                      Fotografi olan magaza da bundan zarar gormuyor: 160px
+                      telefon icin yeterli bir vitrin karesi.
+
+                      Yatay bosluk telefonda daraliyor (24px iki sutun
+                      arasinda cok yer yiyordu), sm'den itibaren tasarimin
+                      kendi olcusune donuyor.
+                    */}
+                    <ul className="mt-8 grid grid-cols-2 gap-x-3.5 gap-y-8 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-3">
                       {category.items.map((item, itemIndex) => {
                         counter += 1;
                         const number = String(counter).padStart(2, "0");
@@ -257,18 +296,18 @@ export default function MenuPage({ content }: SectionProps) {
                                 {/* Sira numarasi fotografin kosesinde. */}
                                 <span
                                   aria-hidden="true"
-                                  className="bo-mono absolute start-0 top-0 bg-[var(--brand-surface)] px-2.5 py-1 text-[10.5px] text-[var(--brand-ink-muted)]"
+                                  className="bo-mono absolute start-0 top-0 bg-[var(--brand-surface)] px-2 py-1 text-[11px] text-[var(--brand-ink-muted)] sm:px-2.5 sm:text-[10.5px]"
                                 >
                                   {number}
                                 </span>
                               </div>
 
-                              <h3 className="bo-title mt-5 text-center text-[clamp(1.0625rem,1.6vw,1.25rem)] leading-[1.3] text-balance">
+                              <h3 className="bo-title mt-4 text-center text-[clamp(0.9375rem,1.6vw,1.25rem)] leading-[1.3] text-balance sm:mt-5">
                                 <Latin>{item.name}</Latin>
                               </h3>
 
                               {item.description ? (
-                                <p className="mt-2 text-center text-[13.5px] leading-[1.6] break-words text-pretty text-[var(--brand-ink-muted)]">
+                                <p className="mt-2 text-center text-[12.5px] leading-[1.55] break-words text-pretty text-[var(--brand-ink-muted)] sm:text-[13.5px] sm:leading-[1.6]">
                                   {item.description}
                                 </p>
                               ) : null}
@@ -291,7 +330,7 @@ export default function MenuPage({ content }: SectionProps) {
             <div className="mt-12 border-t border-[var(--brand-border)] pt-8">
               <Link
                 href={`/${content.locale}`}
-                className="inline-flex items-center gap-2 border-b border-[var(--brand-ink)] pb-[3px] text-[13px] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
+                className="bo-tap inline-flex items-center gap-2 border-b border-[var(--brand-ink)] pb-[3px] text-[13px] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
               >
                 {/* Uygun sozluk anahtari yok; isletme adi baglantiyi anlatiyor. */}
                 <span>{content.name}</span>

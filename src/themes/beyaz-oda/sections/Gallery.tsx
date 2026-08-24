@@ -31,7 +31,18 @@ export default function Gallery({ content }: SectionProps) {
           {/* Kisa etiket — gerekce Menu.tsx'te. */}
           <SectionIndex index={sectionIndex(content, "galeri")} eyebrow={t.gallery.eyebrow}
             title={t.gallery.title} titleId="gallery-title">
-            <ul className="grid grid-cols-2 gap-6 sm:grid-cols-3">
+            {/*
+              TELEFONDA TEK SUTUN. Ikili izgarada her kare ~170px genisligindeydi
+              ve altyazi BUYUK harf monospace: "01 / ÇARŞININ ÜÇ KAT GALERİ VE
+              ORTASINDAN YÜKSELEN AĞAÇ" dort satira boluniyor, kare kadar yer
+              tutuyor ve fotografla altyazi birbirini bogyordu. Ustelik 170px
+              bir vitrin fotografini gostermek icin fazla kucuk — galerinin
+              tek isi zaten fotografi GOSTERMEK.
+
+              Tek sutunda kare tam genislige cikiyor, altyazi iki satira
+              iniyor. Sayfa uzuyor ama bu bolumde uzunluk zaten beklenen sey.
+            */}
+            <ul className="grid gap-6 sm:grid-cols-3">
               {gallery.map((image, index) => {
                 const number = String(index + 1).padStart(2, "0");
                 const alt =
@@ -50,7 +61,7 @@ export default function Gallery({ content }: SectionProps) {
                       cercevesinin ICINDE hafifce yaklasiyor. Cerceve sabit
                       kaldigi icin izgara ritmi bozulmuyor.
                     */}
-                    <div className="group relative h-[200px] overflow-hidden bg-[var(--brand-surface-alt)] sm:h-[300px]">
+                    <div className="group relative h-[260px] overflow-hidden bg-[var(--brand-surface-alt)] sm:h-[300px]">
                       <Image
                         src={imageOrFallback(
                           image.thumbUrl || image.url,

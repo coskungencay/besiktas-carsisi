@@ -62,15 +62,30 @@ export default function Testimonials({ content }: SectionProps) {
                   Tasarimda dolgulu kutu yok — blok, ustundeki kalin cizgiyle
                   ve genis bosluklarla ayriliyor.
                 */}
-                <div className="mb-12 flex flex-wrap items-end justify-between gap-x-10 gap-y-6 border-b border-[var(--brand-border)] pb-9">
-                  <div className="flex items-center gap-5">
+                {/*
+                  TELEFONDA ORTALANIR. Sayfanin tamami ortali bir duzen;
+                  bu blok tek basina sola dayaliydi ve bolum basliginin
+                  hemen altinda goz hizasini kiriyordu. Genis ekranda ise
+                  sola dayali kalmali: orada puan solda, Google baglantisi
+                  sagda, aralarindaki bosluk bilgiyi ayiriyor.
+                */}
+                <div className="mb-12 flex flex-col items-center gap-y-6 border-b border-[var(--brand-border)] pb-9 text-center sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:gap-x-10 sm:text-start">
+                  {/*
+                    Telefonda UC SATIR: puan / yildizlar / etiket. Yan yana
+                    dizildiginde "4,3" tek basina ~160px yiyor ve geriye kalan
+                    yerde "GOOGLE PUANI · 7.568 DEĞERLENDİRME" iki satira
+                    boluniyor, ikinci satir da ortalanmis olarak asili
+                    kaliyordu. Alt alta gelince etiket tam genisligi buluyor
+                    ve tek satirda okunuyor.
+                  */}
+                  <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-5">
                     <p
                       className="brand-display text-[clamp(2.75rem,6vw,4.25rem)] leading-[0.9] font-black tracking-[-0.04em] tabular-nums"
                       dir="ltr"
                     >
                       {ratingText}
                     </p>
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col items-center gap-2 sm:items-start">
                       <Stars
                         value={googleRating}
                         label={fill(t.testimonials.ratingLabel, { rating: ratingText })}
@@ -89,7 +104,14 @@ export default function Testimonials({ content }: SectionProps) {
                       href={googleReviewsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 border-b border-[var(--brand-ink)] pb-[3px] text-[14px] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
+                      /*
+                        Dokunma alani GORUNMEZ bir katmanla buyutuluyor
+                        (`bo-tap`, bkz. tokens.css): metnin ust ve altina
+                        10'ar piksel ekliyor, 25px'lik hedef 45px'e cikiyor.
+                        Dolgu vermek olmazdi — alt cizgi bu tasarimin
+                        baglanti isareti ve dolguyla metinden kopardi.
+                      */
+                      className="bo-tap inline-flex items-center gap-2 border-b border-[var(--brand-ink)] pb-[3px] text-[14px] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
                     >
                       <span>{t.testimonials.readOnGoogle}</span>
                       <ArrowIcon className="size-3.5" />

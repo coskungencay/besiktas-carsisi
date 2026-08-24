@@ -235,11 +235,19 @@ html[data-theme="beyaz-oda"] .bo-mono {
   font-family: var(--brand-font-mono);
 }
 
-/* Bolum indeksi / cok soluk etiket — tasarimda 11px, #A2A7AC. */
+/*
+ * Bolum indeksi / cok soluk etiket — tasarimda 11px, #A2A7AC.
+ *
+ * Telefonda 12px. Bu iki sinif tasarimin en kucuk kademesi ve ayni zamanda
+ * en SOLUK rengi (--brand-ink-faint): kucuk punto ile dusuk kontrast ust
+ * uste geldiginde telefonda okunmuyor. Galeri altyazilari (10.5px, BUYUK
+ * harf, monospace, ustelik iki sutunlu izgarada ~170px genislikte) en cok
+ * zarar goren yerdi. Genis ekranda tasarimin kendi kademesi geri geliyor.
+ */
 html[data-theme="beyaz-oda"] .bo-index {
   font-family: var(--brand-font-mono);
   font-weight: 300;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--brand-ink-faint);
 }
 
@@ -247,8 +255,18 @@ html[data-theme="beyaz-oda"] .bo-index {
 html[data-theme="beyaz-oda"] .bo-index-sm {
   font-family: var(--brand-font-mono);
   font-weight: 300;
-  font-size: 10.5px;
+  font-size: 11.5px;
   color: var(--brand-ink-faint);
+}
+
+@media (min-width: 640px) {
+  html[data-theme="beyaz-oda"] .bo-index {
+    font-size: 11px;
+  }
+
+  html[data-theme="beyaz-oda"] .bo-index-sm {
+    font-size: 10.5px;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -578,6 +596,40 @@ html[data-theme="beyaz-oda"] .bo-serif {
 
 
 /* --------------------------------------------------------------------------
+ * Gorunmez dokunma alani
+ *
+ * Bu tasarimda birincil eylemler "buton" degil: alt cizgili metin + ok
+ * ("Magazalari Gor", "Yol tarifi al", "Tumunu Google'da oku") ya da duz
+ * baglanti (telefon, e-posta). Bicim dogru — ama satir yuksekligi 19-26px
+ * ve parmak ucu icin onerilen hedef 44px. Telefonda bu baglantilara
+ * dokunmak nisan almak gibiydi.
+ *
+ * Dolgu vermek cozum DEGIL: alt cizgi bu dilde baglanti isaretidir ve dolgu
+ * onu metinden koparir; ok ile metin arasi da acilir. Bunun yerine metnin
+ * ustune ve altina GORUNMEZ bir katman koyuluyor. Gorunum bir piksel bile
+ * degismiyor, hedef ~45px oluyor.
+ *
+ * KOSUL GENISLIK, `hover: none` DEGIL. Ilk hali dokunmatik sorgusuna
+ * bagliydi; iki sorunu vardi: (1) dokunmatik ekranli bir dizustu `hover:
+ * hover` bildirir ve parmakla kullanildiginda hedefi buyumezdi, (2) sorgu
+ * tarayici emulasyonunda taklit edilemedigi icin dogrulanamiyordu. Genislik
+ * sinifi hem kesin hem sitenin geri kalanindaki `sm:` esigiyle ayni.
+ * -------------------------------------------------------------------------- */
+@media (max-width: 639px) {
+  html[data-theme="beyaz-oda"] .bo-tap {
+    position: relative;
+  }
+
+  html[data-theme="beyaz-oda"] .bo-tap::after {
+    content: "";
+    position: absolute;
+    inset-inline: -0.25rem;
+    inset-block: -0.625rem;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
  * Yapiskan ust serit
  *
  * Saydam zemin + blur: hero fotografi seridin altindan gecerken tamamen
@@ -586,6 +638,32 @@ html[data-theme="beyaz-oda"] .bo-serif {
  * -------------------------------------------------------------------------- */
 html[data-theme="beyaz-oda"] .bo-header {
   background: var(--brand-surface);
+}
+
+/*
+ * Capa hedeflerini seridin ALTINDAN baslat.
+ *
+ * Serit `position: sticky` oldugu icin belge akisindan cikmiyor ama capaya
+ * gidildiginde hedefin ustunu ORTUYOR: "#galeri"ye tiklayan biri bolum
+ * basligini degil, basligin altindan devam eden metni goruyordu. Telefonda
+ * serit 69px ve bolum indeksi ("— 03") + sussu + baslik tam o araliga
+ * denk geliyor; yani kaybolan sey bolumun kimligiydi.
+ *
+ * Cozum tek satir: kaydirma kabina (html) ust dolgu vermek. Alternatif her
+ * bolume `scroll-mt-*` yazmakti — ayni sonucu sekiz yerde tekrarlayan ve
+ * yeni bolumde unutulmaya acik bir hal.
+ *
+ * Deger seridin yuksekligi + bir nefes payi. Serit sm'den itibaren buyudugu
+ * icin deger de orada artiyor.
+ */
+html[data-theme="beyaz-oda"] {
+  scroll-padding-top: 5.25rem;
+}
+
+@media (min-width: 640px) {
+  html[data-theme="beyaz-oda"] {
+    scroll-padding-top: 6.5rem;
+  }
 }
 
 @supports (backdrop-filter: blur(1px)) {
