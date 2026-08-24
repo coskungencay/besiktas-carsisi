@@ -1,15 +1,38 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Kapak görseli yer tutucusu">
   <!--
-    NOTR gri: yer tutucu temanin rengini TASIMAMALI. Onceki kahverengi gradyan
-    9 temanin 8'inde yabanci duruyor, musteri gorseli yuklemeden once siteyi
-    ucuz gosteriyordu. Gri hem acik hem koyu temada "bos gorsel alani" okunur.
+    CARSI UYARLAMASI: sablonun yer tutucusu bir KAHVE FINCANIYDI. Bu site bir
+    carsi; musteri kapak fotografini yuklemeden once sayfanin en buyuk gorseli
+    "kafe" diyordu. Yerine carsinin kendi motifi kondu: ust katlarin baktigi
+    bir avlu ve altinda tenteli dukkan cepheleri — Buyuk Besiktas Carsisi'nin
+    yari acik mimarisinin en sade hali.
+
+    NOTR gri korundu: yer tutucu temanin rengini TASIMAMALI, yoksa musteri
+    panelden renk degistirdiginde burasi geride kalir.
   -->
   <rect width="1600" height="900" fill="#ECECEC"/>
   <g fill="none" stroke="#C2C2C2" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M660 400h230v130a115 115 0 0 1-115 115h0a115 115 0 0 1-115-115z"/>
-    <path d="M890 430h55a55 55 0 0 1 0 110h-55"/>
-    <path d="M700 330c0-30 30-30 30-60"/>
-    <path d="M775 330c0-30 30-30 30-60"/>
-    <path d="M620 700h330"/>
+    <!-- Ust kat korkulugu: avluya bakan galeri -->
+    <path d="M300 250h1000"/>
+    <path d="M300 250v90M1300 250v90"/>
+    <path d="M300 340h1000"/>
+    <path d="M380 250v90M460 250v90M540 250v90M620 250v90M700 250v90M780 250v90M860 250v90M940 250v90M1020 250v90M1100 250v90M1180 250v90M1260 250v90"/>
+
+    <!-- Zemin kat: uc dukkan cephesi, tenteleriyle -->
+    <path d="M330 470h300v250H330z"/>
+    <path d="M650 470h300v250H650z"/>
+    <path d="M970 470h300v250H970z"/>
+
+    <!-- Tenteler -->
+    <path d="M310 470h340l-40-70H350z"/>
+    <path d="M630 470h340l-40-70H670z"/>
+    <path d="M950 470h340l-40-70H990z"/>
+
+    <!-- Vitrinler -->
+    <path d="M380 540h200v120H380z"/>
+    <path d="M700 540h200v120H700z"/>
+    <path d="M1020 540h200v120h-200z"/>
+
+    <!-- Zemin cizgisi -->
+    <path d="M240 720h1120"/>
   </g>
 </svg>
