@@ -41,9 +41,15 @@ export default function Gallery({ content }: SectionProps) {
                   <Reveal
                     as="li"
                     key={image.id}
-                    delay={Math.min(index, 5) * 0.1}
+                    variant="clip"
+                    delay={Math.min(index, 5) * 0.09}
                   >
-                    <div className="relative h-[200px] bg-[var(--brand-surface-alt)] sm:h-[300px]">
+                    {/*
+                      overflow-hidden + group: fotograf uzerine gelindiginde
+                      cercevesinin ICINDE hafifce yaklasiyor. Cerceve sabit
+                      kaldigi icin izgara ritmi bozulmuyor.
+                    */}
+                    <div className="group relative h-[200px] overflow-hidden bg-[var(--brand-surface-alt)] sm:h-[300px]">
                       <Image
                         src={imageOrFallback(
                           image.thumbUrl || image.url,
@@ -53,7 +59,7 @@ export default function Gallery({ content }: SectionProps) {
                         fill
                         sizes="(min-width: 640px) 33vw, 50vw"
                         loading="lazy"
-                        className="object-cover"
+                        className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,0.8,0.24,1)] group-hover:scale-[1.06] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                       />
                     </div>
 

@@ -55,6 +55,12 @@ const de: Messages = {
     eyebrow: "Bewertungen",
     title: "Was unsere Besucher sagen",
     ratingLabel: "{rating} von 5 Sternen",
+    googleLabel: "Google-Bewertung",
+    ratingCount: "{count} Bewertungen",
+    readOnGoogle: "Alle auf Google lesen",
+    previous: "Vorherige Bewertung",
+    next: "Nächste Bewertung",
+    goTo: "Zu Bewertung {index}",
   },
   faq: {
     eyebrow: "Häufige Fragen",

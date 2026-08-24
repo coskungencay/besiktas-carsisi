@@ -54,6 +54,12 @@ const ar: Messages = {
     eyebrow: "التقييمات",
     title: "ماذا يقول زوّارنا",
     ratingLabel: "{rating} من 5 نجوم",
+    googleLabel: "تقييم جوجل",
+    ratingCount: "{count} تقييم",
+    readOnGoogle: "اقرأ جميع التقييمات على جوجل",
+    previous: "التقييم السابق",
+    next: "التقييم التالي",
+    goTo: "الانتقال إلى التقييم {index}",
   },
   faq: {
     eyebrow: "الأسئلة الشائعة",

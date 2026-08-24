@@ -84,6 +84,22 @@ export const siteSettingsSchema = z.object({
   heroImageUrl: optionalText(400),
   founded: optionalText(10),
   announcement: optionalText(200),
+  /*
+   * Google puani: bos birakilabilir (null). "" -> null cevrimi lazim cunku
+   * bos bir number input'u FormData'da bos STRING olarak gelir.
+   */
+  googleRating: z
+    .union([z.literal(""), z.coerce.number().min(0).max(5)])
+    .optional()
+    .transform((v) => (v === "" || v === undefined ? null : Number(v))),
+  googleRatingCount: z
+    .union([z.literal(""), z.coerce.number().int().min(0).max(10_000_000)])
+    .optional()
+    .transform((v) => (v === "" || v === undefined ? null : Number(v))),
+  googleReviewsUrl: z
+    .union([z.literal(""), z.string().trim().url("Geçerli bir URL girin")])
+    .optional()
+    .transform((v) => v ?? ""),
 });
 
 export type SiteSettingsInput = z.infer<typeof siteSettingsSchema>;

@@ -1,116 +1,106 @@
-import { Latin } from "@/components/site/Latin";
 import { Reveal } from "@/components/motion/Reveal";
 import { fill } from "@/i18n";
+import { ArrowIcon } from "@/themes/_shared/icons";
 import {
   SectionIndex,
   isSectionShown,
   meta,
-  rowNumber,
   sectionGrid,
   sectionIndex,
   sectionTop,
   surface,
 } from "@/themes/beyaz-oda/parts";
-import type { SectionProps, Testimonial } from "@/themes/types";
-
-/** Puanin gorsel karsiligi: bes hucreli hairline serit. */
-const RATING_CELLS = [1, 2, 3, 4, 5];
+import {
+  Stars,
+  TestimonialsCarousel,
+} from "@/themes/beyaz-oda/sections/TestimonialsCarousel";
+import type { SectionProps } from "@/themes/types";
 
 /**
- * Puan gostergesi.
+ * Yorumlar — Google puan rozeti + karusel.
  *
- * Tasarimda hicbir yerde ikon/glif yok — her sey 1px cizgi ve dolu kutu. Bu
- * yuzden yildiz karakteri yerine bes hucreli bir serit ciziliyor: dolu hucreler
- * ink, bos hucreler yalnizca cerceve. Serit tamamen dekoratif (aria-hidden);
- * ekran okuyucu yanindaki sr-only metni okur, boylece puan iki kez duyulmaz.
- */
-function Rating({ rating, label }: { rating: number; label: string }) {
-  return (
-    <span className="inline-flex items-center gap-2">
-      <span className="flex items-center gap-[3px]" aria-hidden="true">
-        {RATING_CELLS.map((cell) => (
-          <span
-            key={cell}
-            className={
-              cell <= rating
-                ? "size-[7px] bg-[var(--brand-ink)]"
-                : "size-[7px] border border-[var(--brand-border)]"
-            }
-          />
-        ))}
-      </span>
-      <span className="sr-only">{label}</span>
-    </span>
-  );
-}
-
-/**
- * Yorumlar: menu listesiyle AYNI satir bicimi — 36px indeks / metin / kunye.
- * Yorum metni tasarimin orta punto kademesinde (menu urun adiyla ayni aile),
- * yazar adi ve puan sagda mono kunye olarak durur. Satirlar ince alt cizgiyle
- * ayrilir; sayfadaki diger listelerle ayni ritim.
+ * ONCEKI HALI ve NEDEN DEGISTI: yorumlar menu satirlarinin aynisi bir liste
+ * halinde alt alta duruyordu; sayfadaki diger uc listeyle (magazalar, galeri,
+ * SSS) ayni ritimde oldugu icin goz onlari atliyordu. Yorum, carsiya
+ * gitmemis birine "burasi nasil bir yer" diyen tek bolum — kendi bicimini
+ * hak ediyor.
+ *
+ * Rozet ile karusel AYRI iki seyi anlatiyor:
+ *   - rozet   : Google'daki GENEL puan (4,3 / 7.568 degerlendirme)
+ *   - karusel : sitede gosterilmek uzere secilmis birkac yorum
+ * Ikisini karistirmamak onemli; secilmis uc yorumun ortalamasini "Google
+ * puani" diye sunmak yaniltici olurdu.
  */
 export default function Testimonials({ content }: SectionProps) {
   if (!isSectionShown(content, "yorumlar")) return null;
 
-  const { testimonials, t } = content;
+  const { testimonials, googleRating, googleRatingCount, googleReviewsUrl, t } =
+    content;
+
+  /* Sayilar ziyaretcinin diliyle: tr'de "4,3" ve "7.568". */
+  const ratingText =
+    googleRating !== null ? googleRating.toLocaleString(content.locale) : "";
+  const countText =
+    googleRatingCount !== null
+      ? googleRatingCount.toLocaleString(content.locale)
+      : "";
 
   return (
-    <section
-      id="yorumlar"
-      aria-labelledby="testimonials-title"
-      className={surface}
-    >
+    <section id="yorumlar" aria-labelledby="testimonials-title" className={surface}>
       <div className={sectionTop}>
         <div className={sectionGrid}>
-          {/* Kisa etiket — gerekce Menu.tsx'te. */}
           <SectionIndex
             index={sectionIndex(content, "yorumlar")}
             title={t.testimonials.eyebrow}
             titleId="testimonials-title"
           >
-            <ul>
-              {testimonials.map((item: Testimonial, index) => {
-                const number = String(index + 1).padStart(2, "0");
+            {googleRating !== null ? (
+              <Reveal>
+                {/*
+                  Rozet: buyuk puan / yildizlar / degerlendirme sayisi.
+                  Tasarimda dolgulu kutu yok — blok, ustundeki kalin cizgiyle
+                  ve genis bosluklarla ayriliyor.
+                */}
+                <div className="mb-12 flex flex-wrap items-end justify-between gap-x-10 gap-y-6 border-b border-[var(--brand-border)] pb-9">
+                  <div className="flex items-center gap-5">
+                    <p
+                      className="brand-display text-[clamp(2.75rem,6vw,4.25rem)] leading-[0.9] font-black tracking-[-0.04em] tabular-nums"
+                      dir="ltr"
+                    >
+                      {ratingText}
+                    </p>
+                    <div className="flex flex-col gap-2">
+                      <Stars
+                        value={googleRating}
+                        label={fill(t.testimonials.ratingLabel, { rating: ratingText })}
+                      />
+                      <p className={`${meta} brand-eyebrow`}>
+                        {t.testimonials.googleLabel}
+                        {countText
+                          ? ` · ${fill(t.testimonials.ratingCount, { count: countText })}`
+                          : ""}
+                      </p>
+                    </div>
+                  </div>
 
-                return (
-                  <Reveal
-                    as="li"
-                    key={item.id}
-                    delay={Math.min(index, 4) * 0.06}
-                  >
-                    <figure className="grid items-baseline gap-x-6 gap-y-3 border-b border-[var(--brand-border)] py-[26px] lg:grid-cols-[36px_minmax(0,1fr)_240px]">
-                      <span className={rowNumber} aria-hidden="true">
-                        {number}
-                      </span>
+                  {googleReviewsUrl ? (
+                    <a
+                      href={googleReviewsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 border-b border-[var(--brand-ink)] pb-[3px] text-[14px] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
+                    >
+                      <span>{t.testimonials.readOnGoogle}</span>
+                      <ArrowIcon className="size-3.5" />
+                    </a>
+                  ) : null}
+                </div>
+              </Reveal>
+            ) : null}
 
-                      <blockquote className="brand-display text-[clamp(1.0625rem,1.5vw,1.375rem)] leading-[1.5] tracking-[-0.015em] text-pretty">
-                        {item.text}
-                      </blockquote>
-
-                      {/*
-                        Yazar ve puan tek kunye hucresinde: tasarimda sag kolon
-                        her zaman mono ve kucuk puntolu (menude fiyat, galeride
-                        numara). Puan yoksa hucre sadece adi tasir.
-                      */}
-                      <figcaption
-                        className={`${meta} flex flex-wrap items-center gap-x-4 gap-y-2 lg:justify-end`}
-                      >
-                        <span className="brand-eyebrow"><Latin>{item.author}</Latin></span>
-                        {item.rating ? (
-                          <Rating
-                            rating={item.rating}
-                            label={fill(t.testimonials.ratingLabel, {
-                              rating: String(item.rating),
-                            })}
-                          />
-                        ) : null}
-                      </figcaption>
-                    </figure>
-                  </Reveal>
-                );
-              })}
-            </ul>
+            <Reveal delay={0.1}>
+              <TestimonialsCarousel items={testimonials} messages={t} />
+            </Reveal>
           </SectionIndex>
         </div>
       </div>

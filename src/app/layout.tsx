@@ -68,7 +68,7 @@ export default async function RootLayout({
           ve sayfa BOS gorunur. Bu kural yalnizca JS kapaliyken devreye girer.
         */}
         <noscript>
-          <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
+          <style>{`[data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important}`}</style>
         </noscript>
         {children}
       </body>

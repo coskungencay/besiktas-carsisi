@@ -154,7 +154,14 @@ export function SectionIndex({
         </h2>
       </div>
 
-      <div className="lg:col-span-10 lg:col-start-3">{children}</div>
+      {/*
+        min-w-0 ZORUNLU: bu hucre bir grid ogesi ve grid ogelerinin varsayilan
+        `min-width: auto` degeri, iceride yatay kayan bir serit (yorum karuseli)
+        oldugunda hucrenin icerigin altina DARALMASINI engelliyor. Sonuc:
+        dar ekranda sayfa 390px yerine 417px genisliginde kaliyor ve yatay
+        kaydirma cikiyordu.
+      */}
+      <div className="min-w-0 lg:col-span-10 lg:col-start-3">{children}</div>
     </>
   );
 }

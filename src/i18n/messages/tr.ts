@@ -77,6 +77,13 @@ const tr = {
     eyebrow: "Yorumlar",
     title: "Ziyaretçilerimiz ne diyor?",
     ratingLabel: "{rating} / 5 yıldız",
+    /* Google Haritalar'daki GENEL puan — sitedeki yorumların ortalaması değil. */
+    googleLabel: "Google puanı",
+    ratingCount: "{count} değerlendirme",
+    readOnGoogle: "Tümünü Google'da oku",
+    previous: "Önceki yorum",
+    next: "Sonraki yorum",
+    goTo: "{index}. yoruma git",
   },
   faq: {
     eyebrow: "Sıkça sorulanlar",

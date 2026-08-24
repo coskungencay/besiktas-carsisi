@@ -73,6 +73,25 @@ html[data-theme="beyaz-oda"] {
    * Buradaki deger bir "tasarim sinir" degil, 4K ekranlarda satir uzunlugu
    * okunamaz hale gelmesin diye birakilan ust siniridir.
    */
+  /* --- Hero: fotograf uzerindeki koyu blok ---
+   * Tema acik (beyaz) ama hero bir FOTOGRAFIN uzerinde duruyor; oradaki
+   * metin rengi marka renginden bagimsiz olarak beyaz olmak ZORUNDA.
+   * Sabit hex yazmamak icin kendi token'larini aliyor: panelden renk
+   * degistirildiginde hero okunakligi bozulmaz.
+   */
+  /* Yildiz rengi: carsinin kendi amblem sarisindan turetildi, ama beyaz
+     zeminde okunur kalmasi icin bir tik koyulastirildi (saf sari #FFE400
+     1px'lik glif olarak zeminde kayboluyor). */
+  --bo-star: #d9a318;
+  --bo-star-empty: color-mix(in srgb, var(--brand-ink-muted) 28%, var(--brand-surface));
+
+  --bo-hero-ink: #ffffff;
+  --bo-hero-ink-soft: color-mix(in srgb, #ffffff 74%, transparent);
+  --bo-hero-line: color-mix(in srgb, #ffffff 38%, transparent);
+  --bo-hero-veil-top: color-mix(in srgb, #0a0b0c 74%, transparent);
+  --bo-hero-veil-mid: color-mix(in srgb, #0a0b0c 44%, transparent);
+  --bo-hero-veil-bottom: color-mix(in srgb, #0a0b0c 82%, transparent);
+
   --brand-container: 2200px;
   --brand-section-py: 4.5rem; /* 72px — dar ekran */
   --brand-section-py-lg: 7.375rem; /* 118px — tasarimdaki gercek deger */
@@ -290,4 +309,99 @@ html[data-theme="beyaz-oda"] .bo-rule {
 
 html[dir="rtl"][data-theme="beyaz-oda"] .bo-rule {
   transform-origin: 100% 50%;
+}
+
+
+/* --------------------------------------------------------------------------
+ * Hero: kelime-marka acilisi
+ *
+ * Tasarim karari: hero artik sol hizali kucuk bir baslik degil, fotografin
+ * uzerinde ORTALANMIS buyuk bir kelime-marka. Acilis Reveal ile DEGIL CSS
+ * keyframe'iyle yapiliyor — hero ilk ekranda ve scroll gozlemcisi burada
+ * gec kaliyor (bkz. THEMING.md, Animasyonlar).
+ * -------------------------------------------------------------------------- */
+
+@keyframes boHeroVeil {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Fotograf cok hafif iceri dogru yaklasir: sabit bir kare yerine "nefes alan"
+   bir acilis. Sadece transform degistigi icin layout kaymasi olmaz. */
+@keyframes boHeroZoom {
+  from { transform: scale(1.08); }
+  to   { transform: scale(1); }
+}
+
+@keyframes boHeroRise {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes boHeroSeal {
+  from { opacity: 0; transform: scale(0.82); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes boHeroRule {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes boHeroCue {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50%      { transform: translateY(7px); opacity: 1; }
+}
+
+html[data-theme="beyaz-oda"] .bo-hero-photo {
+  animation: boHeroZoom 2.4s cubic-bezier(0.16, 0.8, 0.24, 1) both;
+}
+html[data-theme="beyaz-oda"] .bo-hero-veil {
+  animation: boHeroVeil 1.2s both;
+}
+html[data-theme="beyaz-oda"] .bo-hero-seal {
+  animation: boHeroSeal 1s 0.15s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+html[data-theme="beyaz-oda"] .bo-hero-word {
+  animation: boHeroRise 1.1s 0.35s cubic-bezier(0.16, 0.8, 0.24, 1) both;
+}
+html[data-theme="beyaz-oda"] .bo-hero-rule {
+  transform-origin: 50% 50%;
+  animation: boHeroRule 1.2s 0.75s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+html[data-theme="beyaz-oda"] .bo-hero-sub {
+  animation: boHeroRise 1s 0.95s cubic-bezier(0.16, 0.8, 0.24, 1) both;
+}
+html[data-theme="beyaz-oda"] .bo-hero-meta {
+  animation: boHeroRise 1s 1.15s cubic-bezier(0.16, 0.8, 0.24, 1) both;
+}
+html[data-theme="beyaz-oda"] .bo-hero-cue {
+  animation:
+    boHeroRise 0.8s 1.5s both,
+    boHeroCue 2.6s 2.3s ease-in-out infinite;
+}
+
+
+/* --------------------------------------------------------------------------
+ * Yorum karuseli seridi
+ *
+ * Kaydirma cubugu gizleniyor: serit zaten noktalar ve oklarla yonetiliyor,
+ * altta duran gri bir cubuk tasarimin sadeligini bozuyordu. Kaydirmanin
+ * KENDISI acik kaliyor — dokunmatik cihazda parmakla, klavyede ok tuslariyla
+ * calismaya devam ediyor.
+ * -------------------------------------------------------------------------- */
+html[data-theme="beyaz-oda"] .bo-track {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+}
+
+html[data-theme="beyaz-oda"] .bo-track::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="beyaz-oda"] .bo-track {
+    scroll-behavior: auto;
+  }
 }

@@ -55,6 +55,12 @@ const es: Messages = {
     eyebrow: "Opiniones",
     title: "Lo que dicen nuestros visitantes",
     ratingLabel: "{rating} de 5 estrellas",
+    googleLabel: "Valoración en Google",
+    ratingCount: "{count} valoraciones",
+    readOnGoogle: "Leerlas todas en Google",
+    previous: "Opinión anterior",
+    next: "Opinión siguiente",
+    goTo: "Ir a la opinión {index}",
   },
   faq: {
     eyebrow: "Preguntas frecuentes",

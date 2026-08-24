@@ -146,6 +146,14 @@ export type SiteContent = {
   socialLinks: SocialLink[];
   /** Kurulus yili, orn. "2015". Bos olabilir. */
   founded: string;
+  /**
+   * Google Haritalar'daki GENEL puan — sitede gosterilen birkac yorumun
+   * ortalamasi DEGIL. Girilmemisse null; tema rozeti hic basmaz.
+   */
+  googleRating: number | null;
+  googleRatingCount: number | null;
+  /** "Tum yorumlari Google'da oku" adresi. Bos olabilir. */
+  googleReviewsUrl: string;
   /** Sayfanin en ustundeki duyuru; bos olabilir. */
   announcement: string;
   /**

@@ -10,9 +10,13 @@
  * yazilir (once silinir). site_settings, saatler ve SSS de guncellenir.
  * Panelden girilen galeri gorselleri ve mesajlar ASLA silinmez.
  *
- * KAYNAK: buyukbesiktascarsi.com (mevcut Joomla sitesi, 2022) + Vikipedi.
- * Magaza adlari oradaki kayitlardan alindi; carsi yonetimi panelden
- * guncelleyecek.
+ * KAYNAK: magaza listesi buyukbesiktascarsi.com'dan (Joomla, 2022); adres,
+ * koordinat ve saatler Google Places'ten (24.08.2026 — daha guncel).
+ * Carsi yonetimi panelden guncelleyecek.
+ *
+ * CALISTIRMA SIRASI:  1) load-carsi.ts   2) import-google.ts
+ * Bu script ornek yorumlari siler, digeri gercek yorumlari ve fotograflari
+ * yazar. Ters sirada calistirirsaniz yorumlar silinir.
  */
 import { eq } from "drizzle-orm";
 
@@ -164,7 +168,7 @@ const FAQ: { question: string; answer: string }[] = [
   {
     question: "Çarşı hangi saatlerde açık?",
     answer:
-      "Çarşı her gün 07:00 – 22:00 arasında açıktır. Mağazaların kendi açılış saatleri bu aralık içinde farklılık gösterebilir; belirli bir esnafa gidecekseniz aramanızı öneririz.",
+      "Çarşı her gün 08:00 – 22:30 arasında açıktır. Mağazaların kendi açılış saatleri bu aralık içinde farklılık gösterebilir; belirli bir esnafa gidecekseniz aramanızı öneririz.",
   },
   {
     question: "Otopark var mı?",
@@ -228,24 +232,35 @@ function loadSettings() {
       phone: "0212 227 74 40",
       whatsapp: "",
       email: "bilgi@buyukbesiktascarsi.com",
-      address:
-        "Sinanpaşa Mah., Köyiçi Cad. No:11, 34353 Beşiktaş / İstanbul",
-      lat: 41.042806,
-      lng: 29.00525,
-      mapsUrl: "https://www.google.com/maps/search/?api=1&query=41.042806,29.005250",
+      /*
+       * Adres, koordinat ve harita linki GOOGLE PLACES kaydindan (24.08.2026).
+       * Eski site "Köyiçi Cad. No:11" diyordu, Vikipedi de baska bir koordinat
+       * veriyordu; insanlar yol tarifini Google'dan aldigi icin sitedeki bilgi
+       * onunla ayni olmali. Carsi yonetimi yine de dogrulamali — bina iki
+       * caddeye birden bakiyor olabilir.
+       */
+      address: "Ortabahçe Cad. No:10-1, Sinanpaşa Mah. 34353, Beşiktaş / İstanbul",
+      lat: 41.0429855,
+      lng: 29.0059742,
+      mapsUrl: "https://maps.google.com/?cid=15207902532096296803",
       instagram: "buyukbesiktascarsisi",
+      /*
+       * Google Haritalar genel puani (24.08.2026). ELLE guncellenir; canli
+       * cekmek her sayfa acilisinda ucretli Places cagrisi demek olurdu.
+       * Panelden de degistirilebilir (Genel Bilgiler -> Google puani).
+       */
+      googleRating: 4.3,
+      googleRatingCount: 7568,
+      googleReviewsUrl: "https://maps.google.com/?cid=15207902532096296803",
       socialLinks: [
         { platform: "instagram", url: "https://www.instagram.com/buyukbesiktascarsisi/" },
         { platform: "facebook", url: "https://www.facebook.com/buyukbesiktascarsisi/" },
       ],
       announcement: "",
       themeSlug: "beyaz-oda",
-      /*
-       * Yorumlar KAPALI: carsinin dogrulanmis musteri yorumu henuz yok ve
-       * uydurma yorum yazmak hem etik disi hem schema.org ihlali olurdu.
-       * Google yorumlari cekildiginde panelden acilacak.
-       */
-      hiddenSections: ["yorumlar"],
+      // Gizlenen bolum yok; yorumlar artik gercek Google yorumlariyla dolu
+      // (bkz. scripts/import-google.ts).
+      hiddenSections: [],
       updatedAt: new Date(),
     })
     .where(eq(siteSettings.id, SINGLETON_ID))
@@ -254,17 +269,21 @@ function loadSettings() {
 }
 
 function loadHours() {
-  // Eski sitede tek aralik veriliyor: 07.00 - 22.00, gun ayrimi yok.
+  /*
+   * Saatler GOOGLE'dan. Eski site (2022) 07.00-22.00 diyordu; Google Maps
+   * kaydi 08:00-22:30 gosteriyor ve insanlar saati oradan bakiyor.
+   * Carsi yonetimi dogrulamali.
+   */
   for (let day = 0; day < 7; day += 1) {
     db.insert(openingHours)
-      .values({ dayOfWeek: day, openTime: "07:00", closeTime: "22:00", isClosed: false })
+      .values({ dayOfWeek: day, openTime: "08:00", closeTime: "22:30", isClosed: false })
       .onConflictDoUpdate({
         target: openingHours.dayOfWeek,
-        set: { openTime: "07:00", closeTime: "22:00", isClosed: false },
+        set: { openTime: "08:00", closeTime: "22:30", isClosed: false },
       })
       .run();
   }
-  console.log("[carsi] Calisma saatleri: her gun 07:00-22:00.");
+  console.log("[carsi] Calisma saatleri: her gun 08:00-22:30.");
 }
 
 function loadShops() {
@@ -312,11 +331,12 @@ function loadFaq() {
 
 function clearSampleTestimonials() {
   /*
-   * Seed'in ornek yorumlari SILINIR. Uydurma musteri yorumu yayinlamak
-   * yaniltici; gercek yorumlar Google'dan cekilip panelden girilecek.
+   * Seed'in ORNEK yorumlari silinir — uydurma musteri yorumu yayinlanmaz.
+   * Gercek yorumlar Google'dan geliyor: scripts/import-google.ts.
+   * Bu yuzden calistirma sirasi onemli:  load-carsi  ->  import-google
    */
   const removed = db.delete(testimonials).returning().all();
-  console.log(`[carsi] ${removed.length} ornek yorum silindi (bolum kapali).`);
+  console.log(`[carsi] ${removed.length} ornek yorum silindi (gercekleri import-google yaziyor).`);
 }
 
 function main() {

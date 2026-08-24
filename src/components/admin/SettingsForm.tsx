@@ -204,6 +204,72 @@ export function SettingsForm({ settings }: { settings: SiteSettingsRow }) {
         </section>
 
         <section className={cardClass}>
+          <h2 className="text-lg font-semibold">Google puanı</h2>
+          <p className="mt-1 text-sm text-zinc-600">
+            Yorumlar bölümünün başındaki rozette görünür. Google Haritalar&apos;daki
+            <strong> genel</strong> puanınızdır — sitede gösterdiğiniz yorumların
+            ortalaması değil. Boş bırakırsanız rozet hiç görünmez.
+          </p>
+
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="googleRating" className={labelClass}>
+                Puan (0–5)
+              </label>
+              <input
+                id="googleRating"
+                name="googleRating"
+                type="number"
+                min={0}
+                max={5}
+                step="0.1"
+                defaultValue={settings.googleRating ?? ""}
+                placeholder="4.3"
+                className={inputClass}
+              />
+              <FieldError state={state} name="googleRating" />
+            </div>
+
+            <div>
+              <label htmlFor="googleRatingCount" className={labelClass}>
+                Değerlendirme sayısı
+              </label>
+              <input
+                id="googleRatingCount"
+                name="googleRatingCount"
+                type="number"
+                min={0}
+                step="1"
+                defaultValue={settings.googleRatingCount ?? ""}
+                placeholder="7568"
+                className={inputClass}
+              />
+              <FieldError state={state} name="googleRatingCount" />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="googleReviewsUrl" className={labelClass}>
+                Google yorumları bağlantısı
+              </label>
+              <input
+                id="googleReviewsUrl"
+                name="googleReviewsUrl"
+                type="url"
+                maxLength={400}
+                defaultValue={settings.googleReviewsUrl}
+                placeholder="https://maps.google.com/?cid=..."
+                className={inputClass}
+              />
+              <p className="mt-1 text-xs text-zinc-500">
+                Boş bırakırsanız &quot;Tümünü Google&apos;da oku&quot; bağlantısı
+                gösterilmez.
+              </p>
+              <FieldError state={state} name="googleReviewsUrl" />
+            </div>
+          </div>
+        </section>
+
+        <section className={cardClass}>
           <h2 className="text-lg font-semibold">Duyuru şeridi</h2>
           <p className="mt-1 text-sm text-zinc-600">
             Sayfanın en üstünde tek satır olarak görünür. Boş bırakırsanız

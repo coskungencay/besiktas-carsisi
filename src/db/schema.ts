@@ -177,6 +177,22 @@ export const siteSettings = sqliteTable("site_settings", {
     .notNull()
     .$type<string[]>()
     .default([]),
+  /**
+   * Google Haritalar'daki genel puan ve degerlendirme sayisi.
+   *
+   * NEDEN AYRI ALAN (testimonials'tan hesaplamak yerine): sitede gosterilen
+   * birkac yorumun ortalamasi ile isletmenin GERCEK Google ortalamasi ayri
+   * seylerdir. Carsinin 7.568 degerlendirmeden 4,3'u var; sitede 3 yorum
+   * gosteriliyor. Ziyaretciye gosterilmesi gereken sayi birincisi.
+   *
+   * Bos (null) birakilirsa yorumlar bolumundeki Google rozeti hic basilmaz.
+   * Elle guncellenir — canli cekmek her sayfa acilisinda ucretli API cagrisi
+   * demek olurdu.
+   */
+  googleRating: real("google_rating"),
+  googleRatingCount: integer("google_rating_count"),
+  /** "Tum yorumlari Google'da oku" baglantisi. Bos = baglanti gosterilmez. */
+  googleReviewsUrl: text("google_reviews_url").notNull().default(""),
   updatedAt: integer("updated_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),

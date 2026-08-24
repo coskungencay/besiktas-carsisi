@@ -40,7 +40,7 @@ export default function About({ content }: SectionProps) {
           <SectionIndex index={sectionIndex(content, "hakkimizda")} title={t.about.title} titleId="about-title">
             <div className="grid gap-10 lg:grid-cols-10 lg:gap-6">
               <div className="lg:col-span-5">
-                <Reveal>
+                <Reveal variant="scale">
                   <p className="brand-display text-[clamp(1.25rem,2vw,1.6875rem)] leading-[1.42] tracking-[-0.015em] text-pretty">
                     {lead || fill(t.about.placeholder, { name })}
                   </p>

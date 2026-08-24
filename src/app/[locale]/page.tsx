@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { AnnouncementBar } from "@/components/site/AnnouncementBar";
 import { FloatingWhatsApp } from "@/components/site/FloatingWhatsApp";
+import { IntroSplash } from "@/components/site/IntroSplash";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { isLocale } from "@/i18n/config";
 import { getSiteContent } from "@/lib/content";
@@ -33,6 +34,13 @@ export default async function HomePage({
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
       />
+
+      {/*
+        Acilis ekrani YALNIZCA ana sayfada. Magazalar sayfasinda da olsaydi
+        siteyi gezen biri her gecis icin perde izlerdi. Bilesen tamamen
+        istemci tarafli — JS yoksa hic basilmaz (bkz. IntroSplash).
+      */}
+      <IntroSplash name={content.name} logoUrl={content.logoUrl} />
 
       <a href="#main" className="skip-link">
         {content.t.nav.skipToContent}

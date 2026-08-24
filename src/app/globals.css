@@ -151,8 +151,104 @@ body {
   font-weight: 600;
   transition: top 150ms ease;
 }
-.skip-link:focus {
+/*
+ * :focus DEGIL :focus-visible.
+ *
+ * `:focus` ile serit FAREYLE tiklandiginda da beliriyordu — bir baglantiya
+ * tiklayip geri donuldugunde sol ustte "Icerige gec" kutusu aciliyor ve
+ * tasarimin onunde duruyordu. `:focus-visible` yalnizca KLAVYE ile
+ * gezinildiginde devreye girer.
+ *
+ * Baglanti tamamen KALDIRILMADI: ekran okuyucu ve klavye kullanicilari icin
+ * 87 magazalik nav'i her sayfada tek tek gecmemeyi saglayan tek sey bu
+ * (WCAG 2.4.1). Fareyle kullanan hic gormeyecek.
+ */
+.skip-link:focus-visible {
   top: 0.75rem;
+}
+
+/* --------------------------------------------------------------------------
+ * Acilis ekrani (IntroSplash)
+ *
+ * Site kromu — tema token'larindan besleniyor, tema klasorune ait degil.
+ * Bilesen TAMAMEN istemci tarafli oldugu icin bu kurallar JS calismazsa
+ * hicbir zaman devreye girmez (perde DOM'a hic basilmaz).
+ * -------------------------------------------------------------------------- */
+.intro-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: var(--brand-surface);
+  animation: introIn 0.35s ease both;
+}
+
+/* Cikis: yukari suzulerek soluyor — sayfa "arkasindan acilmis" gibi. */
+.intro-splash[data-leaving] {
+  animation: introOut 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+  pointer-events: none;
+}
+
+@keyframes introIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes introOut {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: translateY(-1.5rem); }
+}
+
+.intro-splash__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 2rem;
+}
+
+.intro-splash__seal {
+  inline-size: 4.5rem;
+  block-size: 4.5rem;
+  object-fit: contain;
+  animation: introSeal 0.9s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+@keyframes introSeal {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: none; }
+}
+
+.intro-splash__word {
+  font-family: var(--brand-font-display);
+  font-weight: 700;
+  font-size: clamp(0.8rem, 2.6vw, 1rem);
+  letter-spacing: 0.34em;
+  /* Sagdaki harf araligi metni optik olarak sola kaydirir; telafi ediliyor. */
+  text-indent: 0.34em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--brand-ink);
+  animation: introWord 0.8s 0.3s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+@keyframes introWord {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.intro-splash__rule {
+  inline-size: 4rem;
+  block-size: 1px;
+  background: var(--brand-ink-muted);
+  transform-origin: 50% 50%;
+  animation: introRule 0.9s 0.45s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+@keyframes introRule {
+  from { transform: scaleX(0); opacity: 0; }
+  to   { transform: scaleX(1); opacity: 1; }
 }
 
 /* --------------------------------------------------------------------------

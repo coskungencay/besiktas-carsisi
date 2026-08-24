@@ -64,6 +64,9 @@ const EMPTY_SETTINGS: SiteSettingsRow = {
   announcement: "",
   socialLinks: [],
   hiddenSections: [],
+  googleRating: null,
+  googleRatingCount: null,
+  googleReviewsUrl: "",
   updatedAt: new Date(0),
 };
 
@@ -391,6 +394,9 @@ export function getSiteContent(locale: Locale = DEFAULT_LOCALE): SiteContent {
       answer: tr(map, "faq", item.id, "answer", item.answer),
     })),
     founded: settings.founded,
+    googleRating: settings.googleRating,
+    googleRatingCount: settings.googleRatingCount,
+    googleReviewsUrl: settings.googleReviewsUrl,
     socialLinks: socialLinks,
     announcement: tr(map, "settings", 0, "announcement", settings.announcement),
     isVisible,
