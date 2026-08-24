@@ -97,6 +97,88 @@ html[data-theme="beyaz-oda"] {
   --brand-section-py-lg: 7.375rem; /* 118px — tasarimdaki gercek deger */
 }
 
+/* --------------------------------------------------------------------------
+ * KOYU MOD
+ *
+ * Iki secici, ayni blok:
+ *   [data-scheme="dark"]  -> ziyaretcinin ACIKCA sectigi mod (ThemeToggle)
+ *   :not([data-scheme])   -> secim yapilmamis, isletim sistemi koyu
+ *
+ * Ikisini ayirmak sart: kullanici sistem koyuyken ACIK modu sectiyse
+ * media query onu ezmemeli.
+ *
+ * Renkler saf: zemin #000000, yazi #FFFFFF. Aradaki kademeler ink-muted'dan
+ * TURETILIYOR (acik moddaki gibi), boylece admin panelinden renk
+ * degistirildiginde koyu mod da birlikte kayiyor.
+ * -------------------------------------------------------------------------- */
+
+html[data-theme="beyaz-oda"][data-scheme="dark"] {
+  color-scheme: dark;
+
+  --brand-primary: #ffffff;
+  --brand-primary-contrast: #000000;
+  --brand-accent: #8fb3c4;
+  --brand-surface: #000000;
+  --brand-surface-alt: #0e0f10;
+  --brand-ink: #ffffff;
+  --brand-ink-muted: #9aa0a6;
+  --brand-border: #24262a;
+
+  /* Koyu zeminde "soluk" ton zemine dogru gider, yaziya dogru degil. */
+  --brand-ink-soft: color-mix(in srgb, var(--brand-ink-muted) 60%, var(--brand-ink));
+  --brand-ink-dim: color-mix(in srgb, var(--brand-ink-muted) 74%, var(--brand-surface));
+  --brand-ink-faint: color-mix(in srgb, var(--brand-ink-muted) 52%, var(--brand-surface));
+
+  /* Sari amblem koyu zeminde zaten parliyor; yildizi da bir tik acilir. */
+  --bo-star: #f0bd2e;
+  --bo-star-empty: color-mix(in srgb, var(--brand-ink-muted) 34%, var(--brand-surface));
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-theme="beyaz-oda"]:not([data-scheme]) {
+    color-scheme: dark;
+
+    --brand-primary: #ffffff;
+    --brand-primary-contrast: #000000;
+    --brand-accent: #8fb3c4;
+    --brand-surface: #000000;
+    --brand-surface-alt: #0e0f10;
+    --brand-ink: #ffffff;
+    --brand-ink-muted: #9aa0a6;
+    --brand-border: #24262a;
+
+    --brand-ink-soft: color-mix(in srgb, var(--brand-ink-muted) 60%, var(--brand-ink));
+    --brand-ink-dim: color-mix(in srgb, var(--brand-ink-muted) 74%, var(--brand-surface));
+    --brand-ink-faint: color-mix(in srgb, var(--brand-ink-muted) 52%, var(--brand-surface));
+
+    --bo-star: #f0bd2e;
+    --bo-star-empty: color-mix(in srgb, var(--brand-ink-muted) 34%, var(--brand-surface));
+  }
+}
+
+/*
+ * Zemin/yazi gecisi: mod degistirilince sayfa aniden ziplamasin.
+ * Yalnizca renk gecisi — layout'a dokunmuyor.
+ */
+html[data-theme="beyaz-oda"] body,
+html[data-theme="beyaz-oda"] section,
+html[data-theme="beyaz-oda"] header,
+html[data-theme="beyaz-oda"] footer {
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    border-color 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="beyaz-oda"] body,
+  html[data-theme="beyaz-oda"] section,
+  html[data-theme="beyaz-oda"] header,
+  html[data-theme="beyaz-oda"] footer {
+    transition: none;
+  }
+}
+
 /*
  * Arapca istisnasi.
  *
@@ -404,4 +486,54 @@ html[data-theme="beyaz-oda"] .bo-track::-webkit-scrollbar {
   html[data-theme="beyaz-oda"] .bo-track {
     scroll-behavior: auto;
   }
+}
+
+
+/* --------------------------------------------------------------------------
+ * Harita: koyu mod uyarlamasi
+ *
+ * OSM karolari acik renkli. Koyu modda bembeyaz bir dikdortgen sayfanin
+ * ortasinda goz aliyordu. invert + hue-rotate ciftinin etkisi: aydinlik
+ * degerler tersine doner (beyaz zemin koyulasir) ama renk tonlari korunur —
+ * yesil park yine yesil, deniz yine mavi kalir. Haritalar icin yerlesik bir
+ * yontem; ayri bir koyu karo saglayicisina bagimlilik getirmiyor.
+ * -------------------------------------------------------------------------- */
+html[data-theme="beyaz-oda"][data-scheme="dark"] .bo-map {
+  filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.95);
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-theme="beyaz-oda"]:not([data-scheme]) .bo-map {
+    filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.95);
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+ * Yorum karuseli: kart genisligi
+ *
+ * Tek degisken, iki kirilim. Bileşen `translateX(calc(index * var(--bo-card-w)))`
+ * ile kayiyor; kart genisligini CSS'ten okumasi, JS'in ekran genisligini
+ * olcmesini gereksiz kiliyor (ve yeniden boyutlamada bozulmuyor).
+ * -------------------------------------------------------------------------- */
+html[data-theme="beyaz-oda"] {
+  --bo-card-w: 100%;
+  /* Aktif kartin soldan kac kart iceride duracagi. Mobilde tek kart var. */
+  --bo-card-offset: 0;
+}
+
+@media (min-width: 640px) {
+  html[data-theme="beyaz-oda"] {
+    --bo-card-w: 33.3333%;
+    /* Uc kart gorunuyor: aktif olan ortadaki, yani bir kart iceride. */
+    --bo-card-offset: 1;
+  }
+}
+
+/* Uzun yorumlar karti sismesin; tamami Google baglantisinda. */
+html[data-theme="beyaz-oda"] .line-clamp-8 {
+  display: -webkit-box;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

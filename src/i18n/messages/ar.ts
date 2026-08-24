@@ -5,6 +5,7 @@ const ar: Messages = {
     skipToContent: "الانتقال إلى المحتوى",
     languageLabel: "اللغة",
     changeLanguage: "تغيير اللغة",
+    toggleScheme: "تبديل الوضع الفاتح / الداكن",
   },
   hero: {
     viewMenu: "تصفّح المتاجر",
@@ -31,6 +32,7 @@ const ar: Messages = {
     viewAll: "عرض جميع المتاجر",
     pageIntro: "الفئات ودليل المتاجر الكامل",
     featured: "مميّز",
+    lead: "{shops} متجرًا مستقلًا في {categories} فئة — من الملابس والأحذية إلى الخياطين والقصص المصوّرة والحلاقين ومكتب البريد.",
     enlarge: "تكبير صورة {name}",
     closeImage: "إغلاق",
   },

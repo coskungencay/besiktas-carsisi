@@ -62,6 +62,23 @@ export default async function RootLayout({
       className={themeFontClassNames}
       style={brandStyle}
     >
+      <head>
+        {/*
+          Mod SCRIPTI <body>'den ONCE, senkron calisir.
+          NEDEN: ziyaretci koyu modu secmisse ve bu satir olmasaydi, sayfa once
+          BEYAZ boyanip sonra siyaha donerdi — her acilista goze carpan bir
+          yanip sonme (FOUC). Script `data-scheme`'i ilk boyamadan once koyuyor.
+
+          try/catch: gizli sekmede localStorage erisimi hata verebilir; hata
+          yakalanmazsa script durur ve sayfa hic boyanmaz.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var s=localStorage.getItem('bbc:scheme');if(s==='dark'||s==='light')document.documentElement.setAttribute('data-scheme',s)}catch(e){}",
+          }}
+        />
+      </head>
       <body>
         {/*
           JavaScript kapaliysa animasyonlu bolumler opacity:0 ile gomulu kalir

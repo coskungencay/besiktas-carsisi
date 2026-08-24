@@ -78,7 +78,8 @@ export default function Contact({ content }: SectionProps) {
         <div className={sectionGrid}>
           {/* Kisa etiket — gerekce Menu.tsx'te. */}
           {/* Indeks sayfadaki SIRAYI gosterir; iletisim artik son bolum. */}
-          <SectionIndex index={sectionIndex(content, "iletisim")} title={t.contact.eyebrow} titleId="contact-title">
+          <SectionIndex index={sectionIndex(content, "iletisim")} eyebrow={t.contact.eyebrow}
+            title={t.contact.title} titleId="contact-title">
             <div className="grid gap-10 lg:grid-cols-10 lg:gap-6">
               <div className="lg:col-span-4">
                 <Reveal>

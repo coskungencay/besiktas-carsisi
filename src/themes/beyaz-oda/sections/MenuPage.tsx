@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { ImageZoom } from "@/components/site/ImageZoom";
@@ -137,15 +138,44 @@ export default function MenuPage({ content }: SectionProps) {
                   <div key={category.id}>
                     <Reveal delay={categoryIndex === 0 ? 0 : 0.06}>
                       {/*
-                        scroll-mt: capa ile gelindiginde kategori basligi
-                        ekranin en ust pikseline yapismasin.
+                        Kategori basligi + kapak karesi.
+
+                        NEDEN GORSEL: 20 kategori alt alta yalnizca kucuk mono
+                        etiketlerle ayriliyordu; sayfa 87 satirlik tek bir liste
+                        gibi okunuyordu. Carsinin elinde her kategori icin
+                        gercek bir vitrin karesi var (eski resmi sitesinden) —
+                        kategoriyi hem ayiriyor hem ne satildigini bir bakista
+                        anlatiyor. Gorsel yoksa baslik tek basina basilir.
+
+                        scroll-mt: capa ile gelindiginde baslik ekranin en ust
+                        pikseline yapismasin.
                       */}
-                      <h2
+                      <div
                         id={anchorId(category.id)}
-                        className={`${meta} brand-eyebrow scroll-mt-24`}
+                        className="flex scroll-mt-24 items-center gap-4 border-b border-[var(--brand-ink)] pb-4"
                       >
-                        <Latin>{category.name}</Latin>
-                      </h2>
+                        {category.thumbUrl ? (
+                          <span className="relative size-14 shrink-0 overflow-hidden bg-[var(--brand-surface-alt)] sm:size-16">
+                            <Image
+                              src={category.thumbUrl}
+                              alt=""
+                              fill
+                              sizes="64px"
+                              loading="lazy"
+                              className="object-cover"
+                            />
+                          </span>
+                        ) : null}
+
+                        <div className="min-w-0">
+                          <h2 className="brand-display text-[clamp(1.125rem,2vw,1.5rem)] leading-[1.2] tracking-[-0.02em]">
+                            <Latin>{category.name}</Latin>
+                          </h2>
+                          <p className={`${meta} brand-eyebrow mt-1`}>
+                            {category.items.length}
+                          </p>
+                        </div>
+                      </div>
                     </Reveal>
 
                     <ul className="mt-4">

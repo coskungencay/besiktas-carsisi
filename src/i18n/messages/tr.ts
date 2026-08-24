@@ -12,6 +12,7 @@ const tr = {
     skipToContent: "İçeriğe geç",
     languageLabel: "Dil",
     changeLanguage: "Dil değiştir",
+    toggleScheme: "Açık / koyu modu değiştir",
   },
   hero: {
     viewMenu: "Mağazaları Gör",
@@ -53,6 +54,8 @@ const tr = {
     viewAll: "Tüm mağazaları gör",
     pageIntro: "Kategoriler ve tam esnaf listesi",
     featured: "Öne çıkan",
+    /* Sayilar icerikten gelir; burada yalnizca kalip var. */
+    lead: "{categories} kategoride {shops} esnaf — giyimden ayakkabıya, terziden çizgi romana, kuaförden PTT'ye.",
     enlarge: "{name} görselini büyüt",
     closeImage: "Kapat",
   },

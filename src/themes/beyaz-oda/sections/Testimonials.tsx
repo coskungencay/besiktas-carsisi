@@ -51,7 +51,8 @@ export default function Testimonials({ content }: SectionProps) {
         <div className={sectionGrid}>
           <SectionIndex
             index={sectionIndex(content, "yorumlar")}
-            title={t.testimonials.eyebrow}
+            eyebrow={t.testimonials.eyebrow}
+            title={t.testimonials.title}
             titleId="testimonials-title"
           >
             {googleRating !== null ? (
@@ -99,7 +100,9 @@ export default function Testimonials({ content }: SectionProps) {
             ) : null}
 
             <Reveal delay={0.1}>
-              <TestimonialsCarousel items={testimonials} messages={t} />
+              <TestimonialsCarousel items={testimonials} messages={t} dir={content.dir}
+                reviewsUrl={googleReviewsUrl || undefined}
+              />
             </Reveal>
           </SectionIndex>
         </div>

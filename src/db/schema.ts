@@ -252,6 +252,15 @@ export const menuCategories = sqliteTable(
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
     name: text("name").notNull(),
+    /**
+     * Kategorinin kapak gorseli — magazalar sayfasinda kategori basliginin
+     * yaninda duruyor.
+     *
+     * NEDEN KATEGORIDE: 87 magazanin her birine ayri fotograf beklemek
+     * gercekci degil; carsinin elinde kategori basina bir vitrin karesi var.
+     * Bos birakilirsa kategori yalnizca basligiyla basilir.
+     */
+    imageUrl: text("image_url").notNull().default(""),
     sortOrder: integer("sort_order").notNull().default(0),
   },
   (t) => [index("menu_categories_sort_idx").on(t.sortOrder)],

@@ -5,6 +5,7 @@ const de: Messages = {
     skipToContent: "Zum Inhalt springen",
     languageLabel: "Sprache",
     changeLanguage: "Sprache wechseln",
+    toggleScheme: "Hellen / dunklen Modus wechseln",
   },
   hero: {
     viewMenu: "Zu den Geschäften",
@@ -31,6 +32,7 @@ const de: Messages = {
     viewAll: "Alle Geschäfte ansehen",
     pageIntro: "Kategorien und vollständiges Verzeichnis",
     featured: "Empfehlung",
+    lead: "{shops} eigenständige Geschäfte in {categories} Kategorien — von Kleidung und Schuhen über Schneider und Comics bis zu Friseur und Post.",
     enlarge: "Foto von {name} vergrößern",
     closeImage: "Schließen",
   },

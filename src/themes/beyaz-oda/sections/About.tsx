@@ -37,7 +37,8 @@ export default function About({ content }: SectionProps) {
     <section id="hakkimizda" aria-labelledby="about-title" className={surface}>
       <div className={sectionTop}>
         <div className={sectionGrid}>
-          <SectionIndex index={sectionIndex(content, "hakkimizda")} title={t.about.title} titleId="about-title">
+          <SectionIndex index={sectionIndex(content, "hakkimizda")} eyebrow={t.about.eyebrow}
+            title={t.about.title} titleId="about-title">
             <div className="grid gap-10 lg:grid-cols-10 lg:gap-6">
               <div className="lg:col-span-5">
                 <Reveal variant="scale">

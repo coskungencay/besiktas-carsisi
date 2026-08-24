@@ -41,9 +41,16 @@ export const rowNumber = "bo-mono text-[11px] text-[var(--brand-ink-faint)]";
 export const sectionTop =
   `${shell} pt-[var(--brand-section-py)] sm:pt-[var(--brand-section-py-lg)]`;
 
-/** Cizgi + 34px + 12 kolonluk izgara. */
-export const sectionGrid =
-  "grid gap-6 border-t border-[var(--brand-border)] pt-[34px] lg:grid-cols-12";
+/**
+ * Bolum govdesi. Artik 12 kolonluk sol-indeksli izgara DEGIL.
+ *
+ * NEDEN DEGISTI: tasarim sol kenarda kucuk bir mono etiket ("— 02 MAGAZALAR")
+ * ve sagda icerik seklindeydi. Hero'nun ortalanmis, buyuk kelime-markasindan
+ * sonra sayfanin geri kalani bu duzende "sonmus" duruyordu — ust ustte iki
+ * farkli sayfa gibi. Simdi her bolum de hero gibi: ortada kucuk etiket,
+ * altinda buyuk baslik, altinda icerik.
+ */
+export const sectionGrid = "border-t border-[var(--brand-border)] pt-[34px]";
 
 /**
  * Kunye satirlarinin hero ile hakkimizda arasinda paylastirilmasi.
@@ -122,46 +129,64 @@ export function sectionIndex(content: SiteContent, id: string): string {
 }
 
 /**
- * Bolum indeksi + baslik.
+ * Bolum basligi — ortalanmis, uc kademeli.
  *
- * Tasarimda bolumun basligi sol kenardaki iki satirlik mono etiketten ibaret:
- * "— 01" ustte, bolum adi altta. Buyuk puntolu baslik YOK; sayfadaki tek buyuk
- * tipografi hero (60px) ve iletisim (40px) metnidir. h2 semantik olarak burada
- * duruyor (aria-labelledby ona bagli), gorsel olarak kucuk mono etiket.
+ *   — 02            (mono indeks, cok soluk)
+ *   MAGAZALAR       (kucuk buyuk-harf etiket)
+ *   Carsida kimler var?   (buyuk display baslik)
+ *   [istege bagli tek satirlik giris]
+ *
+ * `title` semantik h2; gorsel olarak da artik GERCEKTEN baslik. Kucuk etiket
+ * (`eyebrow`) onun ustunde dekoratif bir kademe.
  */
 export function SectionIndex({
   index,
+  eyebrow,
   title,
   titleId,
+  lead,
   children,
 }: {
   index: string;
+  /** Kucuk buyuk-harf etiket, orn. "MAGAZALAR". */
+  eyebrow: string;
+  /** Buyuk baslik, orn. "Carsida kimler var?". */
   title: string;
   titleId: string;
+  /** Basligin altinda tek paragraflik giris. Bos birakilabilir. */
+  lead?: string;
   children?: ReactNode;
 }) {
   return (
     <>
-      {/*
-        Harf araligi YOK: tasarimda bolum indeksleri ("— 01 / HAKKINDA") duz
-        mono, yalnizca hero'nun "— 00" satiri .04em tasiyor. Bolum adi kendi
-        brand-eyebrow'undan araligini aliyor (Arapca'da sifirlanan tek yer).
-      */}
-      <div className="bo-index lg:col-span-2">
-        <p aria-hidden="true">— {index}</p>
-        <h2 id={titleId} className="brand-eyebrow">
+      <div className="mx-auto max-w-[62ch] text-center">
+        <p className="bo-index" aria-hidden="true">
+          — {index}
+        </p>
+        <p className="bo-index brand-eyebrow mt-1" aria-hidden="true">
+          {eyebrow}
+        </p>
+
+        <h2
+          id={titleId}
+          className="brand-display mt-5 text-[clamp(1.875rem,4.2vw,3.25rem)] leading-[1.06] font-black tracking-[-0.03em] text-balance"
+        >
           {title}
         </h2>
+
+        {lead ? (
+          <p className="mt-6 text-[15px] leading-[1.75] text-pretty text-[var(--brand-ink-soft)] sm:text-[16.5px]">
+            {lead}
+          </p>
+        ) : null}
       </div>
 
       {/*
-        min-w-0 ZORUNLU: bu hucre bir grid ogesi ve grid ogelerinin varsayilan
-        `min-width: auto` degeri, iceride yatay kayan bir serit (yorum karuseli)
-        oldugunda hucrenin icerigin altina DARALMASINI engelliyor. Sonuc:
-        dar ekranda sayfa 390px yerine 417px genisliginde kaliyor ve yatay
-        kaydirma cikiyordu.
+        min-w-0 ZORUNLU: iceride yatay kayan bir serit (yorum karuseli) varken
+        bu kutunun icerigin altina daralabilmesi gerekiyor; yoksa dar ekranda
+        sayfa 390px yerine 417px genisleyip yatay kayiyordu.
       */}
-      <div className="min-w-0 lg:col-span-10 lg:col-start-3">{children}</div>
+      <div className="mt-14 min-w-0 sm:mt-16">{children}</div>
     </>
   );
 }

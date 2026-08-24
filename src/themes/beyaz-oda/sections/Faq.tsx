@@ -32,7 +32,8 @@ export default function Faq({ content }: SectionProps) {
       <div className={sectionTop}>
         <div className={sectionGrid}>
           {/* Kisa etiket — gerekce Menu.tsx'te. */}
-          <SectionIndex index={sectionIndex(content, "sss")} title={t.faq.eyebrow} titleId="faq-title">
+          <SectionIndex index={sectionIndex(content, "sss")} eyebrow={t.faq.eyebrow}
+            title={t.faq.title} titleId="faq-title">
             <ul>
               {faq.map((item, index) => {
                 const number = String(index + 1).padStart(2, "0");

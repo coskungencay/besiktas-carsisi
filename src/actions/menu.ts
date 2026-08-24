@@ -90,7 +90,15 @@ export async function deleteCategoryAction(
     .where(eq(menuItems.categoryId, id))
     .all();
 
+  const category = db
+    .select({ imageUrl: menuCategories.imageUrl })
+    .from(menuCategories)
+    .where(eq(menuCategories.id, id))
+    .get();
+
   db.delete(menuCategories).where(eq(menuCategories.id, id)).run();
+
+  if (category?.imageUrl) await deleteImage(category.imageUrl);
 
   await purgeTranslations("menu_category", id);
   for (const item of itemIds) await purgeTranslations("menu_item", item.id);

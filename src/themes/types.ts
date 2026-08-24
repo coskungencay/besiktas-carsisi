@@ -37,6 +37,10 @@ export type MenuItem = {
 export type MenuCategory = {
   id: number;
   name: string;
+  /** Kategori kapak gorseli; girilmemisse bos string. */
+  imageUrl: string;
+  /** Ayni gorselin 400px onizlemesi. */
+  thumbUrl: string;
   items: MenuItem[];
 };
 

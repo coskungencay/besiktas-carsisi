@@ -5,6 +5,7 @@ const es: Messages = {
     skipToContent: "Ir al contenido",
     languageLabel: "Idioma",
     changeLanguage: "Cambiar idioma",
+    toggleScheme: "Cambiar modo claro / oscuro",
   },
   hero: {
     viewMenu: "Ver las tiendas",
@@ -31,6 +32,7 @@ const es: Messages = {
     viewAll: "Ver todas las tiendas",
     pageIntro: "Categorías y directorio completo",
     featured: "Destacado",
+    lead: "{shops} tiendas independientes en {categories} categorías — de ropa y calzado a sastres, cómics, peluquerías y la oficina de correos.",
     enlarge: "Ampliar la foto de {name}",
     closeImage: "Cerrar",
   },

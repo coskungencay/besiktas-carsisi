@@ -17,7 +17,7 @@ import { join } from "node:path";
 import { eq } from "drizzle-orm";
 
 import { SINGLETON_ID, db } from "../src/db";
-import { siteSettings } from "../src/db/schema";
+import { menuCategories, siteSettings } from "../src/db/schema";
 import { deleteImage, storeImage } from "../src/lib/uploads";
 
 const ASSETS = join(import.meta.dirname, "assets");
@@ -63,7 +63,74 @@ async function main() {
 
   console.log(`[varlik] Amblem  -> ${logo.url}`);
   console.log(`[varlik] Kapak   -> ${hero.url}`);
+
+  await importCategoryCovers();
   console.log("[varlik] Tamamlandi.");
+}
+
+/* -------------------------------------------------------------------------- */
+/*                          Kategori kapak gorselleri                          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Her kategoriye eski resmi sitedeki vitrin karesi.
+ *
+ * Bunlar carsinin GERCEK dukkan cepheleri (1020x1094, net kamera kareleri) —
+ * Google'dan gelen kullanici fotograflarindan belirgin sekilde kaliteli ve
+ * dogrudan o kategoriyi anlatiyorlar. Anahtar, kategorinin ADI: script
+ * kategoriyi adiyla bulur, boylece panelden sira degistirilse de calisir.
+ */
+const CATEGORY_COVERS: Record<string, string> = {
+  "Bay & Bayan Giyim": "bay-bayan.jpg",
+  "Ayakkabı": "ayakkabi.jpg",
+  "Çanta & Valiz": "canta.jpg",
+  "İç Giyim": "icgiyim-on.jpg",
+  "Bebe Giyim": "bebegiyim.jpg",
+  "Altın, Gümüş & Saat": "altn-saat-gumus.jpg",
+  "Bujiteri & Peruk": "bujiteri-peruk.jpg",
+  "Terzi": "terzi.jpg",
+  "Kitap, Çizgi Roman & Müzik": "muzik.jpg",
+  "Reklam & Baskı": "reklam.jpg",
+  "Elektronik & Telefon": "elektrik-elektronik.jpg",
+  "Kuaför": "kuafr.jpg",
+  "SPA & Güzellik": "spa.jpg",
+  "Kuru Temizleme": "kurutemizleme.jpg",
+  "Evcil Hayvan": "evcilhayvanlar-pets.jpg",
+  "Oyuncak & Parti": "oyuncaki.jpg",
+  "Gıda": "gida.jpg",
+  "Kafeterya & Çay": "kafe.jpg",
+  "Para Transferi": "sender.jpg",
+  "Kamu Hizmetleri": "ptt.jpg",
+};
+
+async function importCategoryCovers() {
+  const rows = db.select().from(menuCategories).all();
+  let done = 0;
+  const missing: string[] = [];
+
+  for (const row of rows) {
+    const file = CATEGORY_COVERS[row.name];
+    if (!file) {
+      missing.push(row.name);
+      continue;
+    }
+    if (row.imageUrl) await deleteImage(row.imageUrl);
+
+    const buffer = readFileSync(join(ASSETS, "kategori", file));
+    const stored = await storeImage(
+      new File([new Uint8Array(buffer)], file, { type: "image/jpeg" }),
+    );
+    db.update(menuCategories)
+      .set({ imageUrl: stored.url })
+      .where(eq(menuCategories.id, row.id))
+      .run();
+    done += 1;
+  }
+
+  console.log(`[varlik] ${done}/${rows.length} kategoriye kapak gorseli yazildi.`);
+  if (missing.length > 0) {
+    console.log(`[varlik] Gorseli olmayan kategoriler: ${missing.join(", ")}`);
+  }
 }
 
 void main();

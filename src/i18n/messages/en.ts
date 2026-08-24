@@ -5,6 +5,7 @@ const en: Messages = {
     skipToContent: "Skip to content",
     languageLabel: "Language",
     changeLanguage: "Change language",
+    toggleScheme: "Toggle light / dark mode",
   },
   hero: {
     viewMenu: "Browse the Shops",
@@ -31,6 +32,7 @@ const en: Messages = {
     viewAll: "See all shops",
     pageIntro: "Categories and the full directory",
     featured: "Featured",
+    lead: "{shops} independent shops across {categories} categories — from clothing and shoes to tailors, comics, hairdressers and the post office.",
     enlarge: "Enlarge photo of {name}",
     closeImage: "Close",
   },

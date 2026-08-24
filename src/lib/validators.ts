@@ -170,6 +170,7 @@ export const openingHoursSchema = z.object({
 export const menuCategorySchema = z.object({
   id: z.coerce.number().int().positive().optional(),
   name: trimmed(80).min(1, "Kategori adı zorunlu"),
+  imageUrl: optionalText(400),
 });
 
 export const menuItemSchema = z.object({

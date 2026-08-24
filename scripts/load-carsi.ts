@@ -21,6 +21,7 @@
 import { eq } from "drizzle-orm";
 
 import { SINGLETON_ID, db } from "../src/db";
+import { deleteImage } from "../src/lib/uploads";
 import {
   faqs,
   menuCategories,
@@ -226,7 +227,7 @@ function loadSettings() {
       highlights: [
         { label: "Kuruluş", value: "1985" },
         { label: "Bağımsız bölüm", value: "184" },
-        { label: "Kayıtlı esnaf", value: "92 mağaza" },
+        { label: "Kayıtlı esnaf", value: "87 mağaza" },
         { label: "Otopark", value: "Çatı katı" },
       ],
       phone: "0212 227 74 40",
@@ -286,7 +287,22 @@ function loadHours() {
   console.log("[carsi] Calisma saatleri: her gun 08:00-22:30.");
 }
 
-function loadShops() {
+async function loadShops() {
+  /*
+   * ONCE DISKI TEMIZLE, SONRA SATIRLARI SIL.
+   *
+   * Bu sira onemli: satirlar gidince gorsel URL'lerine bir daha ulasilamaz ve
+   * dosyalar diskte OKSUZ kalir. Ilk surumde bu atlanmisti; script birkac kez
+   * calistirilinca /data/uploads 28 medya yerine 48 medya tasiyordu ve
+   * musterinin medya kotasi bosuna doluyordu.
+   */
+  for (const row of db.select().from(menuCategories).all()) {
+    if (row.imageUrl) await deleteImage(row.imageUrl);
+  }
+  for (const row of db.select().from(menuItems).all()) {
+    if (row.imageUrl) await deleteImage(row.imageUrl);
+  }
+
   // Kategoriyi silmek icindeki magazalari da siler (onDelete: cascade).
   db.delete(menuCategories).run();
   db.delete(menuItems).run();
@@ -339,13 +355,13 @@ function clearSampleTestimonials() {
   console.log(`[carsi] ${removed.length} ornek yorum silindi (gercekleri import-google yaziyor).`);
 }
 
-function main() {
+async function main() {
   loadSettings();
   loadHours();
-  loadShops();
+  await loadShops();
   loadFaq();
   clearSampleTestimonials();
   console.log("[carsi] Tamamlandi.");
 }
 
-main();
+void main();

@@ -29,7 +29,8 @@ export default function Gallery({ content }: SectionProps) {
       <div className={sectionTop}>
         <div className={sectionGrid}>
           {/* Kisa etiket — gerekce Menu.tsx'te. */}
-          <SectionIndex index={sectionIndex(content, "galeri")} title={t.gallery.eyebrow} titleId="gallery-title">
+          <SectionIndex index={sectionIndex(content, "galeri")} eyebrow={t.gallery.eyebrow}
+            title={t.gallery.title} titleId="gallery-title">
             <ul className="grid grid-cols-2 gap-6 sm:grid-cols-3">
               {gallery.map((image, index) => {
                 const number = String(index + 1).padStart(2, "0");

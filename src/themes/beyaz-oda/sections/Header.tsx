@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { Latin } from "@/components/site/Latin";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
+import { SchemeToggle } from "@/components/site/SchemeToggle";
 import { placeStamp, hasMenu, menuHref } from "@/themes/_shared/data";
 import { hasAboutSection, shell, surface } from "@/themes/beyaz-oda/parts";
 import type { SectionProps } from "@/themes/types";
@@ -144,6 +145,8 @@ export default function Header({ content }: SectionProps) {
 
           {/* Tek dil aciksa secici hic basilmaz. */}
           {content.locales.length > 1 ? <LocaleSwitcher content={content} /> : null}
+
+          <SchemeToggle label={t.nav.toggleScheme} />
         </div>
       </div>
     </header>

@@ -353,6 +353,8 @@ export function getSiteContent(locale: Locale = DEFAULT_LOCALE): SiteContent {
     menu: categories.map((category) => ({
       id: category.id,
       name: tr(map, "menu_category", category.id, "name", category.name),
+      imageUrl: category.imageUrl,
+      thumbUrl: thumbUrl(category.imageUrl),
       items: items
         .filter((item) => item.categoryId === category.id && item.isActive)
         .map((item) => ({

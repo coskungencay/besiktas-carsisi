@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useActionState, useState } from "react";
 
 import {
@@ -17,6 +18,7 @@ import {
 } from "@/components/admin/ui";
 import type { MenuCategoryRow } from "@/db/schema";
 import { IDLE } from "@/lib/action-result";
+import { thumbUrl } from "@/lib/format";
 
 export function CategoryManager({
   categories,
@@ -42,6 +44,9 @@ export function CategoryManager({
           <input type="hidden" name="id" value={editing.id} />
         ) : null}
 
+        {/* Yeni dosya secilmezse mevcut kapak korunsun. */}
+        <input type="hidden" name="imageUrl" value={editing?.imageUrl ?? ""} />
+
         <div className="min-w-56 flex-1">
           <label htmlFor="category-name" className={labelClass}>
             {editing ? "Kategori adını düzenle" : "Yeni kategori adı"}
@@ -52,9 +57,26 @@ export function CategoryManager({
             required
             maxLength={80}
             defaultValue={editing?.name ?? ""}
-            placeholder="Sıcak İçecekler"
+            placeholder="Ayakkabı"
             className={inputClass}
           />
+        </div>
+
+        <div className="min-w-56 flex-1">
+          <label htmlFor="category-image" className={labelClass}>
+            Kapak görseli
+          </label>
+          <input
+            id="category-image"
+            type="file"
+            name="imageFile"
+            accept="image/*"
+            className="block w-full text-sm text-zinc-600 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-white"
+          />
+          <p className="mt-1 text-xs text-zinc-500">
+            Mağazalar sayfasında kategori başlığının yanında görünür.
+            {editing?.imageUrl ? " Yeni dosya seçmezseniz mevcut görsel kalır." : ""}
+          </p>
         </div>
 
         <SubmitButton>{editing ? "Güncelle" : "Ekle"}</SubmitButton>
@@ -83,7 +105,22 @@ export function CategoryManager({
             id: category.id,
             content: (
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="font-medium">{category.name}</span>
+                <div className="flex min-w-0 items-center gap-3">
+                  {category.imageUrl ? (
+                    <Image
+                      src={thumbUrl(category.imageUrl)}
+                      alt=""
+                      width={40}
+                      height={40}
+                      className="size-10 shrink-0 rounded-md object-cover"
+                    />
+                  ) : (
+                    <span className="grid size-10 shrink-0 place-items-center rounded-md border border-dashed border-zinc-300 text-[10px] text-zinc-400">
+                      yok
+                    </span>
+                  )}
+                  <span className="truncate font-medium">{category.name}</span>
+                </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"

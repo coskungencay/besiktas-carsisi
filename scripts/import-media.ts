@@ -42,6 +42,10 @@ const OWN_SRC = join(import.meta.dirname, "assets");
  *   google-03  magaza ici          — TANINABILIR COCUK YUZU + telefon filigrani
  *   google-07  koridor             — karenin 2/3'u zemin, bulanik
  *   google-08  acik pazar tezgahi  — bina degil, ustelik bakimsiz gorunuyor
+ *   google-06  antika vitrini      — net ama cok kalabalik; ustelik uzerinde
+ *                                    kirpilmasi gereken bir tarih damgasi var.
+ *                                    6 gorsel 3'lu izgarada tam iki satir;
+ *                                    yedincisi son satiri tek basina birakiyordu.
  */
 type PhotoJob = {
   file: string;
@@ -53,16 +57,19 @@ type PhotoJob = {
 };
 
 /*
- * Sira ZIYARETCININ carsiyi taniyis sirasi: once disaridan giris, sonra avlu,
- * sonra ic koridorlar ve dukkanlar. 6 gorsel = 3'lu izgarada tam iki satir;
- * 4 gorselde son satir tek basina kaliyordu.
+ * Sira ZIYARETCININ carsiyi taniyis sirasi: once avlu, sonra ic koridorlar ve
+ * tek tek dukkanlar. 6 gorsel = 3'lu izgarada tam iki satir.
+ *
+ * KALITE ELEMESI: `cephe-tabela.jpg` galeriden CIKARILDI — 1920x850 olmasina
+ * ragmen bir VIDEO KARESI, yani yumusak. Yanindaki 1200-1600px'lik kamera
+ * kareleriyle yan yana durunca fark aciktan belli oluyordu. Ayni binanin
+ * keskin bir karesi zaten hero'da (cephe-giris.jpg).
+ *
+ * Buna karsilik eski sitenin KATEGORI kareleri (1020x1094, net kamera
+ * cekimleri) galeriye alindi: carsinin gercek dukkanlarini gosteriyorlar ve
+ * Google'dan gelen kullanici fotograflarindan daha temizler.
  */
 const PHOTOS: PhotoJob[] = [
-  {
-    file: "cephe-tabela.jpg",
-    source: "own",
-    alt: "Çarşının Beşiktaş meydanına bakan cephesi ve çatısındaki tabela",
-  },
   {
     file: "google-09.jpg",
     source: "google",
@@ -74,21 +81,24 @@ const PHOTOS: PhotoJob[] = [
     alt: "Gümüş ve antika dükkânlarının sıralandığı koridor; tavanda asılı bakır kaplar",
   },
   {
+    file: "kategori/muzik.jpg",
+    source: "own",
+    alt: "Studio 2000: çarşının kaset ve plak dükkânının vitrini",
+  },
+  {
     file: "google-05.jpg",
     source: "google",
     alt: "Arkabahçe Kitap & Çizgi Roman'ın raflarında çizgi roman ve manga",
   },
   {
+    file: "kategori/terzi.jpg",
+    source: "own",
+    alt: "Terzi Zeki'nin dükkânında çalışan iki terzi",
+  },
+  {
     file: "google-10.jpg",
     source: "google",
     alt: "Çarşının üst katlarındaki giyim, ayakkabı ve takı mağazaları",
-  },
-  {
-    // Alt sol kosede tarih damgasi var; alttan %6 kirpinca temizleniyor.
-    file: "google-06.jpg",
-    source: "google",
-    cropBottom: 0.06,
-    alt: "Antika ve koleksiyon eşyalarıyla dolu bir çarşı vitrini",
   },
 ];
 
@@ -184,8 +194,10 @@ const REVIEWS: {
   {
     author: "Dj",
     rating: 4,
-    isActive: false,
-    note: "PASIF: tek cumlelik, ziyaretciye bilgi tasimayan bir yorum.",
+    isActive: true,
+    note:
+      "Kisa bir yorum ama gercek ve olumlu; karusel uclu duzende oldugu icin " +
+      "kart sayisi onemli. Carsi yonetimi isterse panelden kapatabilir.",
     text: "Çarşı eskiden daha uygun yerler vardı otopark yer var her türlü eşya kıyafet vs var",
   },
 ];

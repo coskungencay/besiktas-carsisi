@@ -27,11 +27,8 @@ function StarRow({ className = "" }: { className?: string }) {
  * Kesirli puan gostergesi (orn. 4,3 -> dort tam, besincisi %30 dolu).
  *
  * Iki kat: altta bos yildizlar, ustte dolu yildizlarin YUZDEYLE kirpilmis
- * kopyasi. Gradyan/mask yerine `overflow:hidden` + genislik kullaniliyor —
- * tarayici destegi tam ve tek bir id catismasi riski yok.
- *
- * `dir="ltr"`: yildiz seridi Arapca sayfada da soldan saga okunur; sablon
- * telefon ve saat araligi icin de ayni istisnayi uyguluyor.
+ * kopyasi. `dir="ltr"`: yildiz seridi Arapca sayfada da soldan saga okunur;
+ * sablon telefon ve saat araligi icin de ayni istisnayi uyguluyor.
  */
 function Stars({ value, label }: { value: number; label: string }) {
   const percent = Math.max(0, Math.min(100, (value / 5) * 100));
@@ -50,110 +47,172 @@ function Stars({ value, label }: { value: number; label: string }) {
 }
 
 /* -------------------------------------------------------------------------- */
+/*                                    Kart                                     */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Yorum karti. `href` verilmisse baglanti, verilmemisse duz bir kutu.
+ *
+ * NEDEN KOSULLU: yorumlar Google'dan geliyor ve tam metni orada. Karta
+ * tiklayinca Google'daki yorumlar sayfasi acilir. Ama carsi yonetimi panele
+ * Google baglantisi girmediyse tiklanabilir gorunen ama hicbir yere gitmeyen
+ * bir kart birakmak yanlis olurdu.
+ *
+ * `interactive` false iken (yandaki yarim kartlar) baglanti klavye sirasindan
+ * ve ekran okuyucudan cikarilir: gorunmeyen bir seye Tab ile gidilmemeli.
+ */
+function Card({
+  href,
+  label,
+  interactive,
+  className,
+  children,
+}: {
+  href?: string;
+  label: string;
+  interactive: boolean;
+  className: string;
+  children: React.ReactNode;
+}) {
+  if (!href) return <figure className={className}>{children}</figure>;
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      tabIndex={interactive ? undefined : -1}
+      className={className}
+    >
+      {children}
+    </a>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /*                                  Karusel                                    */
 /* -------------------------------------------------------------------------- */
 
-const AUTOPLAY_MS = 7000;
+const AUTOPLAY_MS = 5500;
+/** Parmakla kaydirmanin slayt degistirmesi icin gereken en az mesafe (px). */
+const SWIPE_THRESHOLD = 45;
 
 /**
- * Yorum karuseli.
+ * Yorum karuseli — uclu kart, ortadaki one cikar, SONSUZ dongu.
  *
- * NEDEN scroll-snap: kaydirmayi TARAYICI yapiyor. Dokunmatik cihazda parmakla
- * kaydirma, klavyede ok tuslari ve RTL yon cevrimi bedava geliyor; JS yalnizca
- * hangi yorumun ortada oldugunu izliyor ve butonlari o slayta goturuyor.
- * Elle transform hesaplayan bir karusel bunlarin ucunu de tek tek yazmayi
- * gerektirirdi ve Arapca'da ters calisirdi.
+ * SONSUZ DONGU NASIL: liste UC KEZ basiliyor ve karusel ortadaki kopyada
+ * basliyor. Kullanici saga ya da sola giderken hep dolu bir serit goruyor;
+ * indeks bir kopyanin sinirini gecince, gecis animasyonu KAPATILIP ayni
+ * gorsel konuma denk gelen orta kopyaya sessizce donuluyor. Ziyaretci
+ * hicbir zaman "basa sardi" hissi yasamaz.
  *
- * Otomatik gecis, kullanici uzerine geldiginde / odaklandiginda ve
- * `prefers-reduced-motion` acikken DURUR.
+ * NEDEN scroll-snap DEGIL: onceki surum tarayicinin kaydirmasini kullaniyordu;
+ * bedava dokunmatik destegi geliyordu ama son slayttan ilkine donerken serit
+ * gozle gorulur sekilde geri sariyordu. Sonsuz his icin konum kontrolu
+ * bizde olmali.
+ *
+ * Dokunmatik: pointer olaylariyla yatay surukleme. Dikey kaydirma
+ * ENGELLENMIYOR — parmak agirlikli olarak dikey hareket ediyorsa surukleme
+ * hic baslamiyor, yoksa sayfayi asagi kaydirmak imkansiz olurdu.
  */
 export function TestimonialsCarousel({
   items,
   messages,
+  dir,
+  reviewsUrl,
 }: {
   items: Testimonial[];
   messages: Messages;
+  /** Sayfanin yonu; RTL'de serit ters yone kayar. */
+  dir: "ltr" | "rtl";
+  /** Doluysa her kart Google yorumlarina giden bir baglanti olur. */
+  reviewsUrl?: string;
 }) {
   const t = messages.testimonials;
-  const trackRef = useRef<HTMLUListElement>(null);
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const count = items.length;
+
   /*
-   * Serit yuksekligi AKTIF slayta gore ayarlaniyor.
-   *
-   * NEDEN: flex serit dogal olarak EN UZUN slayt kadar yukselir. Yorumlarin
-   * uzunlugu 165 ile 500 karakter arasinda degisiyor; kisa bir yorum
-   * gosterilirken altinda yarim ekranlik bos alan kaliyordu. Yukseklik
-   * gecisli oldugu icin kutu icerikle birlikte "nefes aliyor".
-   *
-   * null iken hic stil verilmez — JS calismazsa serit dogal (en uzun)
-   * yuksekliginde kalir ve hicbir yorum kirpilmaz.
+   * Uc kopya: [0..n-1][0..n-1][0..n-1]. Orta kopyanin ilk ogesinden basliyoruz.
+   * Tek slayt varsa dongunun anlami yok — kopya da cikarilmiyor.
    */
-  const [trackHeight, setTrackHeight] = useState<number | null>(null);
+  const looped = count > 1 ? [...items, ...items, ...items] : items;
+  const start = count > 1 ? count : 0;
 
-  /* Ortadaki slaydi izle — parmakla kaydirinca da noktalar guncellensin. */
+  const [index, setIndex] = useState(start);
+  const [animate, setAnimate] = useState(true);
+  const [paused, setPaused] = useState(false);
+  const trackRef = useRef<HTMLUListElement>(null);
+  const dragStart = useRef<{ x: number; y: number } | null>(null);
+  const dragging = useRef(false);
+
+  const sign = dir === "rtl" ? 1 : -1;
+
+  /* Sinira gelince gecisi kapatip orta kopyaya sessizce don. */
   useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
+    if (count < 2) return;
+    if (index >= start && index < start + count) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          const index = Number((entry.target as HTMLElement).dataset.index);
-          if (!Number.isNaN(index)) setActive(index);
-        }
-      },
-      { root: track, threshold: 0.6 },
-    );
+    const timer = window.setTimeout(() => {
+      setAnimate(false);
+      setIndex((i) => ((i % count) + count) % count + start);
+    }, 620); // gecis suresiyle ayni
 
-    for (const slide of track.children) observer.observe(slide);
-    return () => observer.disconnect();
-  }, [items.length]);
+    return () => window.clearTimeout(timer);
+  }, [index, count, start]);
 
-  /* Aktif slaydin yuksekligini olc; yaziyaz akisi degisirse (yeniden boyutlama,
-     font yuklenmesi) tekrar olc. */
+  /* Sessiz sicramadan sonra gecisi tekrar ac. */
   useEffect(() => {
-    const track = trackRef.current;
-    const slide = track?.children[active] as HTMLElement | undefined;
-    if (!track || !slide) return;
+    if (animate) return;
+    const raf = requestAnimationFrame(() => setAnimate(true));
+    return () => cancelAnimationFrame(raf);
+  }, [animate]);
 
-    const measure = () => setTrackHeight(slide.scrollHeight);
-    measure();
-
-    const observer = new ResizeObserver(measure);
-    observer.observe(slide);
-    return () => observer.disconnect();
-  }, [active, items.length]);
-
-  const goTo = useCallback((index: number) => {
-    const track = trackRef.current;
-    const slide = track?.children[index] as HTMLElement | undefined;
-    if (!slide) return;
-    /*
-     * block:"nearest" ZORUNLU: yoksa tarayici slaydi dikeyde de ortalamaya
-     * calisir ve sayfa yorum bolumune ziplar.
-     */
-    slide.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-  }, []);
+  const go = useCallback((delta: number) => setIndex((i) => i + delta), []);
 
   /* Otomatik gecis. */
   useEffect(() => {
-    if (paused || items.length < 2) return;
+    if (paused || count < 2) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const timer = window.setInterval(() => {
-      setActive((current) => {
-        const next = (current + 1) % items.length;
-        goTo(next);
-        return next;
-      });
-    }, AUTOPLAY_MS);
-
+    const timer = window.setInterval(() => go(1), AUTOPLAY_MS);
     return () => window.clearInterval(timer);
-  }, [paused, items.length, goTo]);
+  }, [paused, count, go]);
 
-  if (items.length === 0) return null;
+  /* --------------------------- dokunmatik surukleme ------------------------ */
+
+  const onPointerDown = (event: React.PointerEvent) => {
+    if (event.pointerType === "mouse") return; // farede oklar var
+    dragStart.current = { x: event.clientX, y: event.clientY };
+    dragging.current = false;
+  };
+
+  const onPointerMove = (event: React.PointerEvent) => {
+    const origin = dragStart.current;
+    if (!origin) return;
+    const dx = event.clientX - origin.x;
+    const dy = event.clientY - origin.y;
+    // Dikey agirlikli hareket = sayfayi kaydirmak istiyor; karisma.
+    if (!dragging.current && Math.abs(dy) > Math.abs(dx)) {
+      dragStart.current = null;
+      return;
+    }
+    if (Math.abs(dx) > 8) dragging.current = true;
+  };
+
+  const onPointerUp = (event: React.PointerEvent) => {
+    const origin = dragStart.current;
+    dragStart.current = null;
+    if (!origin || !dragging.current) return;
+    const dx = event.clientX - origin.x;
+    if (Math.abs(dx) < SWIPE_THRESHOLD) return;
+    // Sola surukleme (dx<0) LTR'de ileri, RTL'de geri.
+    go(dx < 0 ? -sign : sign);
+  };
+
+  if (count === 0) return null;
+
+  /** Ekranda kac kart var — CSS ile ayni deger (mobil 1, sm+ 3). */
+  const activeReal = ((index % count) + count) % count;
 
   return (
     <div
@@ -161,58 +220,109 @@ export function TestimonialsCarousel({
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
+      aria-roledescription="carousel"
+      aria-label={t.eyebrow}
     >
-      <ul
-        ref={trackRef}
-        /*
-         * scrollbar gizli: serit zaten noktalarla ve oklarla yonetiliyor,
-         * altta duran bir cubuk tasarimin sadeligini bozuyordu.
-         */
-        className="bo-track flex snap-x snap-mandatory gap-6 overflow-x-auto overflow-y-hidden pb-2 transition-[height] duration-500 ease-[cubic-bezier(0.16,0.8,0.24,1)] motion-reduce:transition-none"
-        style={trackHeight !== null ? { height: trackHeight } : undefined}
-      >
-        {items.map((item, index) => (
-          <li
-            key={item.id}
-            data-index={index}
-            className="w-full shrink-0 snap-center self-start"
-            aria-roledescription="slide"
-            aria-label={`${index + 1} / ${items.length}`}
+      {/*
+        Serit tasan kartlari GIZLEMEZ, kirpar: uclu duzende yandaki kartlarin
+        yarisi gorunsun diye kap genisliginden tasan kisim overflow-hidden ile
+        kesiliyor.
+      */}
+      <div className="overflow-hidden">
+        <ul
+          ref={trackRef}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={() => (dragStart.current = null)}
+          className={`flex touch-pan-y ${animate ? "transition-transform duration-[620ms] ease-[cubic-bezier(0.16,0.8,0.24,1)] motion-reduce:transition-none" : ""}`}
+          style={{
+            /*
+             * Kart genisligi ve ORTALAMA KAYMASI CSS'ten geliyor:
+             *   mobil : 1 kart gorunur, kayma 0  -> aktif kart tam ekran
+             *   sm+   : 3 kart gorunur, kayma 1  -> aktif kart ORTADA
+             * JS ekran genisligi olcmuyor; yeniden boyutlamada bozulmuyor.
+             */
+            transform: `translateX(calc(${sign} * (${index} - var(--bo-card-offset)) * var(--bo-card-w)))`,
+          }}
+        >
+          {looped.map((item, i) => {
+            const isActive = i === index;
+            return (
+              <li
+                key={`${item.id}-${i}`}
+                aria-hidden={!isActive}
+                className="w-[var(--bo-card-w)] shrink-0 px-3"
+              >
+                {/*
+                  ORTADAKI KART one cikar: tam opaklik, kalin cerceve, hafif
+                  buyume. Yanlardakiler geride durur — goz nereye bakacagini
+                  bilir.
+                */}
+                <Card
+                  href={reviewsUrl}
+                  label={t.readOnGoogle}
+                  /*
+                    ORTADAKI KART one cikar: tam opaklik, kalin cerceve, hafif
+                    buyume. Yanlardakiler geride durur — goz nereye bakacagini
+                    bilir. Yalnizca ORTADAKI kart tiklanabilir/odaklanabilir;
+                    yarim gorunen kartlar klavye sirasina girmemeli.
+                  */
+                  interactive={isActive}
+                  className={`flex h-full flex-col gap-6 border p-7 transition-all duration-500 sm:p-8 ${
+                    isActive
+                      ? "border-[var(--brand-ink)] bg-[var(--brand-surface)] opacity-100 hover:border-[var(--brand-accent)] sm:scale-100"
+                      : "border-[var(--brand-border)] bg-[var(--brand-surface-alt)] opacity-55 sm:scale-[0.94]"
+                  } motion-reduce:transition-none motion-reduce:scale-100 motion-reduce:opacity-100`}
+                >
+                  {item.rating ? (
+                    <Stars
+                      value={item.rating}
+                      label={fill(t.ratingLabel, { rating: String(item.rating) })}
+                    />
+                  ) : null}
+
+                  {/*
+                    Kart yuksekligi esitlenmeli ama uzun yorum kirpilmamali:
+                    line-clamp ile 8 satirda duruyor, tamami Google'da.
+                  */}
+                  <blockquote className="line-clamp-8 flex-1 text-[15px] leading-[1.68] text-pretty text-[var(--brand-ink-soft)] sm:text-[15.5px]">
+                    {item.text}
+                  </blockquote>
+
+                  <div className="bo-mono brand-eyebrow border-t border-[var(--brand-border)] pt-5 text-[11.5px] font-light text-[var(--brand-ink-muted)]">
+                    <Latin>{item.author}</Latin>
+                  </div>
+                </Card>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      {count > 1 ? (
+        <div className="mt-10 flex items-center justify-center gap-6">
+          <button
+            type="button"
+            onClick={() => go(-1)}
+            aria-label={t.previous}
+            className="brand-frame grid size-10 place-items-center transition-colors hover:border-[var(--brand-ink)] hover:text-[var(--brand-accent)]"
           >
-            <figure className="flex flex-col items-start gap-7 border-t border-[var(--brand-ink)] pt-8">
-              <blockquote className="brand-display max-w-[46ch] text-[clamp(1.25rem,2.3vw,1.875rem)] leading-[1.42] tracking-[-0.02em] text-pretty">
-                {item.text}
-              </blockquote>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-4 rtl:-scale-x-100">
+              <path d="M15 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
 
-              <figcaption className="flex flex-wrap items-center gap-x-5 gap-y-2">
-                <span className="bo-mono brand-eyebrow text-[11.5px] font-light text-[var(--brand-ink-muted)]">
-                  <Latin>{item.author}</Latin>
-                </span>
-                {item.rating ? (
-                  <Stars
-                    value={item.rating}
-                    label={fill(t.ratingLabel, { rating: String(item.rating) })}
-                  />
-                ) : null}
-              </figcaption>
-            </figure>
-          </li>
-        ))}
-      </ul>
-
-      {items.length > 1 ? (
-        <div className="mt-8 flex items-center justify-between gap-6">
-          {/* Noktalar */}
           <ul className="flex items-center gap-2">
-            {items.map((item, index) => (
+            {items.map((item, i) => (
               <li key={item.id}>
                 <button
                   type="button"
-                  onClick={() => goTo(index)}
-                  aria-label={fill(t.goTo, { index: String(index + 1) })}
-                  aria-current={index === active ? "true" : undefined}
+                  onClick={() => setIndex(start + i)}
+                  aria-label={fill(t.goTo, { index: String(i + 1) })}
+                  aria-current={i === activeReal ? "true" : undefined}
                   className={`block h-[3px] transition-all duration-300 ${
-                    index === active
+                    i === activeReal
                       ? "w-8 bg-[var(--brand-ink)]"
                       : "w-4 bg-[var(--brand-border)] hover:bg-[var(--brand-ink-muted)]"
                   }`}
@@ -221,29 +331,16 @@ export function TestimonialsCarousel({
             ))}
           </ul>
 
-          {/* Oklar */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => goTo((active - 1 + items.length) % items.length)}
-              aria-label={t.previous}
-              className="brand-frame grid size-10 place-items-center transition-colors hover:border-[var(--brand-ink)] hover:text-[var(--brand-accent)]"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-4 rtl:-scale-x-100">
-                <path d="M15 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              onClick={() => goTo((active + 1) % items.length)}
-              aria-label={t.next}
-              className="brand-frame grid size-10 place-items-center transition-colors hover:border-[var(--brand-ink)] hover:text-[var(--brand-accent)]"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-4 rtl:-scale-x-100">
-                <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => go(1)}
+            aria-label={t.next}
+            className="brand-frame grid size-10 place-items-center transition-colors hover:border-[var(--brand-ink)] hover:text-[var(--brand-accent)]"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-4 rtl:-scale-x-100">
+              <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
         </div>
       ) : null}
     </div>
