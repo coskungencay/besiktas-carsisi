@@ -136,21 +136,28 @@ export function ContactForm({
         />
       </div>
 
-      <button
-        type="submit"
-        disabled={form.pending}
-        className="mt-8 inline-flex items-center gap-2 bg-[var(--brand-primary)] px-6 py-3 text-sm text-[var(--brand-primary-contrast)] transition-opacity hover:opacity-85 disabled:opacity-60"
-      >
-        <span>
-          {form.pending ? messages.form.submitting : messages.form.submit}
-        </span>
-        <ArrowIcon />
-      </button>
+      {/*
+        Buton ORTADA. Form alanlari sola hizali (okuma yonu boyle), ama
+        gonderme eylemi formun kapanisi — bolumun geri kalani ortalanmisken
+        tek basina sola yaslanmasi seridi bozuyordu.
+      */}
+      <div className="mt-10 text-center">
+        <button
+          type="submit"
+          disabled={form.pending}
+          className="brand-rounded inline-flex items-center gap-2.5 bg-[var(--brand-primary)] px-7 py-3.5 text-sm font-medium text-[var(--brand-primary-contrast)] transition-transform duration-300 hover:-translate-y-0.5 disabled:opacity-60 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+        >
+          <span>
+            {form.pending ? messages.form.submitting : messages.form.submit}
+          </span>
+          <ArrowIcon />
+        </button>
+      </div>
 
       <p
         role="status"
         aria-live="polite"
-        className={`mt-4 text-sm ${
+        className={`mt-4 text-center text-sm ${
           form.state.status === "error"
             ? "text-[var(--brand-accent)]"
             : "text-[var(--brand-ink)]"
@@ -159,7 +166,7 @@ export function ContactForm({
         {form.state.message}
       </p>
 
-      <p className="mt-2 text-xs leading-relaxed text-[var(--brand-ink-muted)]">
+      <p className="mx-auto mt-3 max-w-[44ch] text-center text-xs leading-relaxed text-[var(--brand-ink-muted)]">
         {messages.form.consent}
       </p>
     </form>

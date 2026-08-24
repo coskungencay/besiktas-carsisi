@@ -32,6 +32,7 @@ const de: Messages = {
     viewAll: "Alle Geschäfte ansehen",
     pageIntro: "Kategorien und vollständiges Verzeichnis",
     featured: "Empfehlung",
+    shopCount: "{count} Geschäfte",
     lead: "{shops} eigenständige Geschäfte in {categories} Kategorien — von Kleidung und Schuhen über Schneider und Comics bis zu Friseur und Post.",
     enlarge: "Foto von {name} vergrößern",
     closeImage: "Schließen",

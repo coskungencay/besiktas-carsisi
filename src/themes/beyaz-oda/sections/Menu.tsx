@@ -105,7 +105,7 @@ export default function Menu({ content }: SectionProps) {
                         {category?.name ?? t.menu.eyebrow}
                       </p>
 
-                      <p className="brand-display mt-2 text-center text-[clamp(1.125rem,1.8vw,1.5rem)] leading-[1.25] tracking-[-0.02em] text-balance transition-colors group-hover:text-[var(--brand-accent)]">
+                      <p className="bo-title mt-2 text-center text-[clamp(1.125rem,1.9vw,1.5rem)] leading-[1.25] text-balance transition-colors group-hover:text-[var(--brand-accent)]">
                         <Latin>{item.name}</Latin>
                       </p>
 

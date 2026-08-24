@@ -54,6 +54,7 @@ const tr = {
     viewAll: "Tüm mağazaları gör",
     pageIntro: "Kategoriler ve tam esnaf listesi",
     featured: "Öne çıkan",
+    shopCount: "{count} mağaza",
     /* Sayilar icerikten gelir; burada yalnizca kalip var. */
     lead: "{categories} kategoride {shops} esnaf — giyimden ayakkabıya, terziden çizgi romana, kuaförden PTT'ye.",
     enlarge: "{name} görselini büyüt",

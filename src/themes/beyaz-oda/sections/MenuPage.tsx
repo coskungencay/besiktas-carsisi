@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Latin } from "@/components/site/Latin";
+import { fill } from "@/i18n";
 import { Reveal } from "@/components/motion/Reveal";
 import {
   hasMenu,
@@ -109,10 +110,27 @@ export default function MenuPage({ content }: SectionProps) {
                   yerine alt satira sarmak tercih edildi — kaydirilabilir serit
                   gizli kalan kategorileri kullaniciya hic gostermiyor.
                 */
-                <nav aria-label={t.menu.eyebrow} className="pb-9 sm:pb-11">
-                  <ul className={`${meta} flex flex-wrap gap-x-5 gap-y-2`}>
+                <nav aria-label={t.menu.eyebrow} className="pb-10 sm:pb-12">
+                  {/*
+                    Kategoriler arasina AYRAC kondu ve fihrist ortalandi.
+                    Onceden yalnizca bosluk vardi; "BAY & BAYAN GIYIM AYAKKABI
+                    CANTA & VALIZ" seklinde birbirine giriyor ve nerede bir
+                    kategorinin bitip digerinin basladigi okunmuyordu — cogu
+                    kategori adi zaten iki kelimeli.
+
+                    Ayrac ayri bir <li> DEGIL, her ogenin oncesine `before`
+                    ile basiliyor: boylece liste anlamsal olarak temiz kaliyor
+                    (ekran okuyucu ayraclari okumaz) ve satir sarmasinda ayrac
+                    satir basina dusmuyor.
+                  */}
+                  <ul
+                    className={`${meta} flex flex-wrap items-center justify-center gap-x-4 gap-y-2`}
+                  >
                     {categories.map((category) => (
-                      <li key={category.id}>
+                      <li
+                        key={category.id}
+                        className="before:me-4 before:text-[var(--brand-ink-faint)] before:content-['·'] first:before:hidden"
+                      >
                         {/*
                           Sayfa ici capa: next/link degil duz <a>. Ayni sayfada
                           kaldigimiz icin yonlendirmeye gerek yok, tarayicinin
@@ -169,7 +187,9 @@ export default function MenuPage({ content }: SectionProps) {
                             <Latin>{category.name}</Latin>
                           </h2>
                           <p className={`${meta} brand-eyebrow mt-2`}>
-                            {category.items.length}
+                            {fill(t.menu.shopCount, {
+                              count: String(category.items.length),
+                            })}
                           </p>
                         </div>
                       </div>
@@ -243,7 +263,7 @@ export default function MenuPage({ content }: SectionProps) {
                                 </span>
                               </div>
 
-                              <h3 className="brand-display mt-5 text-center text-[clamp(1rem,1.5vw,1.1875rem)] leading-[1.3] tracking-[-0.015em] text-balance">
+                              <h3 className="bo-title mt-5 text-center text-[clamp(1.0625rem,1.6vw,1.25rem)] leading-[1.3] text-balance">
                                 <Latin>{item.name}</Latin>
                               </h3>
 

@@ -1,89 +1,109 @@
+import Image from "next/image";
+
 import { Latin } from "@/components/site/Latin";
 import { placeStamp } from "@/themes/_shared/data";
+import { SocialIcon, hasSocialIcon } from "@/themes/_shared/icons";
 import { shell, surface } from "@/themes/beyaz-oda/parts";
 import type { SectionProps } from "@/themes/types";
 
 /**
- * Tasarimin kapanis seridi: 12 kolona yayilan uc kucuk mono hucre —
- * marka, koordinat, telif. Ust boslugu 80px, cizgiden sonra 20px.
+ * Kapanis blogu.
  *
- * Sosyal baglantilar seridin USTUNDE, sayfanin her yerinde tekrarlanan
- * 2 + 10 kolonluk (etiket / icerik) ritimle duruyor. Baglanti girilmemisse
- * blok hic basilmaz, serit tek basina kalir.
+ * ONCEKI HALI ve NEDEN DEGISTI: 12 kolonluk bir izgaraya dagilmis uc mono
+ * hucre vardi (marka solda, kunye ortada, telif sagda) ve ustunde ayri bir
+ * "bizi takip edin" satiri duruyordu. Hucreler icerik uzunluguna gore
+ * kaydigi icin serit hicbir zaman hizali gorunmuyordu — asimetrik ve dagilmis
+ * duruyordu.
+ *
+ * Simdi tamamen ORTALANMIS ve simetrik bir kule: amblem, kelime-marka, sosyal
+ * ikonlar, ince ayrac, en altta tek satirlik kunye. Her oge kendi satirinda
+ * ortada; icerik degisse de hiza bozulmuyor.
  */
 export default function Footer({ content }: SectionProps) {
-  const { name, socialLinks, t } = content;
+  const { name, logoUrl, socialLinks, t } = content;
   const year = new Date().getFullYear();
   const coords = placeStamp(content);
 
   return (
     <footer className={surface}>
-      <div className={shell}>
+      <div className={`${shell} pt-20 pb-16 text-center sm:pt-24`}>
+        {logoUrl ? (
+          <Image
+            src={logoUrl}
+            alt=""
+            aria-hidden="true"
+            width={96}
+            height={96}
+            className="mx-auto size-14 object-contain sm:size-16"
+          />
+        ) : null}
+
+        <p className="bo-serif mt-6 text-[clamp(0.9375rem,1.6vw,1.25rem)] tracking-[0.16em] uppercase">
+          <Latin>{name}</Latin>
+        </p>
+
         {socialLinks.length > 0 ? (
-          <div className="mt-20 grid gap-x-6 gap-y-3 border-t border-[var(--brand-border)] pt-5 sm:grid-cols-12">
-            <h2 id="social-title" className="bo-index-sm brand-eyebrow sm:col-span-2">
+          <>
+            <h2 id="social-title" className="sr-only">
               {t.social.title}
             </h2>
-
-            <nav
-              aria-labelledby="social-title"
-              className="sm:col-span-10 sm:col-start-3"
-            >
-              <ul className="flex flex-wrap gap-x-8 gap-y-3">
+            <nav aria-labelledby="social-title" className="mt-8">
+              <ul className="flex flex-wrap items-center justify-center gap-3">
                 {socialLinks.map((link) => (
                   <li key={`${link.platform}-${link.url}`}>
                     {/*
-                      Ikon yok — tasarimda hicbir marka glifi yok, baglantilar
-                      da diger her sey gibi mono etiket. Renk/boyut Tailwind
-                      utility'sinden geliyor; bo-index-sm kullanilsaydi kendi
-                      rengi (0,2,1 ozgullugu) hover'i ezerdi.
+                      IKON + kare cerceve. Tasarimda baska hicbir yerde marka
+                      glifi yok, ama sosyal medya baglantisi metin olarak
+                      ("INSTAGRAM  FACEBOOK") seride yapisiyor ve tiklanabilir
+                      oldugu anlasilmiyordu. Kare cerceve temanin kendi
+                      dilinden: ayni hairline, ayni radius.
+
+                      Bilinmeyen bir platform gelirse (panelden yeni bir
+                      satir) glif yok demektir; o zaman metne dusuyoruz.
                     */}
                     <a
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={link.label}
-                      className="bo-mono brand-eyebrow border-b border-transparent pb-[3px] font-light text-[10.5px] text-[var(--brand-ink-muted)] transition-colors hover:border-[var(--brand-accent)] hover:text-[var(--brand-accent)]"
+                      title={link.label}
+                      className="brand-frame grid size-11 place-items-center text-[var(--brand-ink-muted)] transition-colors duration-300 hover:border-[var(--brand-ink)] hover:text-[var(--brand-ink)]"
                     >
-                      <Latin>{link.label}</Latin>
+                      {hasSocialIcon(link.platform) ? (
+                        <SocialIcon platform={link.platform} />
+                      ) : (
+                        <span className="bo-mono brand-eyebrow text-[10px]">
+                          {link.label.slice(0, 2)}
+                        </span>
+                      )}
                     </a>
                   </li>
                 ))}
               </ul>
             </nav>
-          </div>
+          </>
         ) : null}
 
-        {/*
-          Sosyal blok varsa serit ondan hemen sonra gelir (ikinci bir 80px
-          bosluk ve ikinci bir cizgi ritmi bozardi).
-        */}
+        {/* Ince ayrac — seridin kapanisi. */}
         <div
-          /* Sayfanin alt boslugu tasarimda 60px — iletisim bolumunun degil,
-             seridin altinda. */
-          className={`grid gap-x-6 gap-y-2 pb-[60px] sm:grid-cols-12 ${
-            socialLinks.length > 0
-              ? "mt-10"
-              : "mt-20 border-t border-[var(--brand-border)] pt-5"
-          }`}
-        >
-          <p className="bo-index-sm brand-eyebrow sm:col-span-4">{name}</p>
+          aria-hidden="true"
+          className="mx-auto mt-12 h-px w-16 bg-[var(--brand-border)]"
+        />
 
-          {/*
-            Tasarimda serit BUTUN olarak ayni harf araligina sahip. brand-eyebrow
-            kullaniliyor cunku sabit tracking Arapca'da bitisik yaziyi koparir;
-            utility Arapca'da araligi sifirliyor.
-          */}
+        {/*
+          Tek satirlik kunye. Ayni harf araligi butun satirda: brand-eyebrow
+          kullaniliyor cunku sabit tracking Arapca'da bitisik yaziyi koparir,
+          utility Arapca'da araligi sifirliyor.
+        */}
+        <p className="bo-index-sm brand-eyebrow mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
           {coords ? (
-            <p className="bo-index-sm brand-eyebrow sm:col-span-4" dir="ltr">
-              {coords}
-            </p>
+            <>
+              <span dir="ltr">{coords}</span>
+              <span aria-hidden="true">·</span>
+            </>
           ) : null}
-
-          <p className="bo-index-sm brand-eyebrow sm:col-span-4 sm:col-start-9 sm:text-end">
-            © {year}
-          </p>
-        </div>
+          <span>© {year}</span>
+        </p>
       </div>
     </footer>
   );

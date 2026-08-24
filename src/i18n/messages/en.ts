@@ -32,6 +32,7 @@ const en: Messages = {
     viewAll: "See all shops",
     pageIntro: "Categories and the full directory",
     featured: "Featured",
+    shopCount: "{count} shops",
     lead: "{shops} independent shops across {categories} categories — from clothing and shoes to tailors, comics, hairdressers and the post office.",
     enlarge: "Enlarge photo of {name}",
     closeImage: "Close",

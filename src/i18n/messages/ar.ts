@@ -32,6 +32,7 @@ const ar: Messages = {
     viewAll: "عرض جميع المتاجر",
     pageIntro: "الفئات ودليل المتاجر الكامل",
     featured: "مميّز",
+    shopCount: "{count} متجرًا",
     lead: "{shops} متجرًا مستقلًا في {categories} فئة — من الملابس والأحذية إلى الخياطين والقصص المصوّرة والحلاقين ومكتب البريد.",
     enlarge: "تكبير صورة {name}",
     closeImage: "إغلاق",

@@ -41,8 +41,25 @@ import { siteSettings } from "../src/db/schema";
  */
 const ZOOM = 16;
 const TILE = 256;
-const COLS = 6;
-const ROWS = 3;
+/** Kirpilmis son olcu — bolumdeki genis kutuyla ayni oran (2:1). */
+const OUT_W = 1600;
+const OUT_H = 800;
+
+/*
+ * Izgara, KIRPMA PENCERESINE gore kuruluyor — merkeze gore degil.
+ *
+ * Once dunya piksel uzayinda istenen pencerenin sol/ust kosesi bulunuyor
+ * (carsi tam ortada kalacak sekilde), sonra o kosenin dustugu karodan
+ * baslaniyor. Boylece pencere HER ZAMAN izgaranin icinde kaliyor ve
+ * isaretci tam merkeze oturuyor.
+ *
+ * Onceki surumde izgara merkeze gore kuruluyordu ve pencere kenara dayanip
+ * kirpiliyordu: isaretci merkezden 130px kayik duruyordu.
+ *
+ * Gereken karo sayisi: pencere + bir karoluk tasma payi.
+ */
+const COLS = Math.ceil(OUT_W / TILE) + 1;
+const ROWS = Math.ceil(OUT_H / TILE) + 1;
 
 const OUT_DIR = join(process.cwd(), "public", "harita");
 /**
@@ -114,9 +131,15 @@ async function main() {
   const centerX = lngToTileX(settings.lng, ZOOM);
   const centerY = latToTileY(settings.lat, ZOOM);
 
-  // Izgaranin sol ust karosu
-  const startX = Math.floor(centerX - COLS / 2);
-  const startY = Math.floor(centerY - ROWS / 2);
+  // Carsinin dunya piksel konumu ve istenen pencerenin sol ust kosesi.
+  const centerPxX = centerX * TILE;
+  const centerPxY = centerY * TILE;
+  const windowX = centerPxX - OUT_W / 2;
+  const windowY = centerPxY - OUT_H / 2;
+
+  // Pencerenin sol ust kosesinin dustugu karo — izgara buradan basliyor.
+  const startX = Math.floor(windowX / TILE);
+  const startY = Math.floor(windowY / TILE);
 
   console.log(`[harita] ${COLS * ROWS} karo indiriliyor (zoom ${ZOOM})…`);
 
@@ -130,27 +153,41 @@ async function main() {
     }
   }
 
-  const width = COLS * TILE;
-  const height = ROWS * TILE;
+  const gridW = COLS * TILE;
+  const gridH = ROWS * TILE;
 
-  // Merkezin izgara icindeki piksel konumu — isaretci tam oraya oturacak.
-  const pinX = Math.round((centerX - startX) * TILE);
-  const pinY = Math.round((centerY - startY) * TILE);
-
-  const MARKER = 46;
-  composites.push({
-    input: markerSvg(MARKER),
-    left: Math.round(pinX - MARKER / 2),
-    // Isaretcinin UCU koordinati gostermeli, merkezi degil.
-    top: Math.round(pinY - MARKER),
-  });
-
-  const image = await sharp({
-    create: { width, height, channels: 3, background: "#e8e4dd" },
+  // Once yalnizca karolari birlestir (isaretci kirpmadan SONRA basilacak).
+  const grid = await sharp({
+    create: { width: gridW, height: gridH, channels: 3, background: "#e8e4dd" },
   })
     .composite(composites)
     .png()
     .toBuffer();
+
+  /*
+   * Pencerenin izgara icindeki konumu. Insaat geregi 0 <= left < TILE
+   * oldugu icin kirpma her zaman izgaranin icinde kaliyor.
+   */
+  const left = Math.round(windowX - startX * TILE);
+  const top = Math.round(windowY - startY * TILE);
+
+  const MARKER = 54;
+  const image = await sharp(grid)
+    .extract({ left, top, width: OUT_W, height: OUT_H })
+    .composite([
+      {
+        input: markerSvg(MARKER),
+        // Carsi kirpilmis karenin TAM ORTASINDA.
+        left: Math.round(OUT_W / 2 - MARKER / 2),
+        // Isaretcinin UCU koordinati gostermeli, merkezi degil.
+        top: Math.round(OUT_H / 2 - MARKER),
+      },
+    ])
+    .png()
+    .toBuffer();
+
+  const width = OUT_W;
+  const height = OUT_H;
 
   mkdirSync(OUT_DIR, { recursive: true });
 

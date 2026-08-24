@@ -73,7 +73,13 @@ export default function Location({ content }: SectionProps) {
               sira dogal: once NEREDE oldugunu goruyorsun (harita), sonra
               adresi okuyorsun, sonra yol tarifini aliyorsun.
             */}
-            <div className="mx-auto max-w-[62rem]">
+            {/*
+              Harita kutusu genisledi (62rem -> 78rem) ve orani 2:1'e sabitlendi
+              (kaynak gorsel de 1600x800). "Konum daha buyuk olsun" istegi
+              bunu isaret ediyordu; carsi karenin TAM ORTASINDA duruyor
+              (bkz. scripts/build-map.ts, kirpma penceresi).
+            */}
+            <div className="mx-auto max-w-[78rem]">
               {/*
                 HARITA CERCEVESI.
 
@@ -112,7 +118,7 @@ export default function Location({ content }: SectionProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={t.location.directions}
-                    className="group relative block aspect-16/10 w-full overflow-hidden sm:aspect-2/1"
+                    className="group relative block aspect-4/3 w-full overflow-hidden sm:aspect-2/1"
                   >
                     <Image
                       src={MAP_IMAGE}
@@ -138,7 +144,7 @@ export default function Location({ content }: SectionProps) {
               </Reveal>
 
               <Reveal delay={0.12}>
-                <div className="mt-10 text-center">
+                <div className="mt-8 text-center">
                   {contact.address ? (
                     <p className="brand-display mx-auto max-w-[36ch] text-[clamp(1.0625rem,1.8vw,1.375rem)] leading-[1.5] tracking-[-0.015em] text-balance">
                       {contact.address}
@@ -160,7 +166,7 @@ export default function Location({ content }: SectionProps) {
                     href={directionsHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="brand-rounded mt-8 inline-flex items-center gap-2.5 bg-[var(--brand-primary)] px-7 py-3.5 text-[14px] font-medium text-[var(--brand-primary-contrast)] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                    className="brand-rounded mt-6 inline-flex items-center gap-2.5 bg-[var(--brand-primary)] px-7 py-3.5 text-[14px] font-medium text-[var(--brand-primary-contrast)] transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                   >
                     <span>{t.location.directions}</span>
                     <ArrowIcon className="size-4" />
