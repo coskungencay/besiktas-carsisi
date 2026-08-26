@@ -1,7 +1,22 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import { appUrl } from "@/lib/env";
+
 export const metadata: Metadata = {
+  /*
+   * metadataBase panel icin de yaziliyor.
+   *
+   * Uygulamanin kokunde bir opengraph-image.tsx var; Next onu MUTLAK bir
+   * adrese cevirmek zorunda ve metadataBase yoksa "http://localhost:3000"a
+   * dusuyor. Bu, uretim loglarina her acilista bir uyari birakiyordu
+   * (canli sunucuda goruldu) ve panelin OG adresleri yerel makineyi
+   * gosteriyordu. Panel zaten noindex, ama loglar temiz olmali ve yanlis
+   * adres hicbir yerde uretilmemeli.
+   *
+   * Kamuya acik sayfalarin metadataBase'i src/lib/seo.ts'te ayrica veriliyor.
+   */
+  metadataBase: new URL(appUrl()),
   title: "Yönetim Paneli",
   robots: { index: false, follow: false },
 };

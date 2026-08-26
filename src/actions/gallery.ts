@@ -15,6 +15,11 @@ import {
 import { purgeTranslations } from "@/actions/locales";
 import { requirePanelUser } from "@/lib/session";
 import { deleteImage, storeImage, UploadError } from "@/lib/uploads";
+import {
+  MAX_ACTION_BYTES,
+  MAX_BATCH_FILES,
+  formatBytes,
+} from "@/lib/upload-limits";
 import { galleryImageSchema, reorderSchema } from "@/lib/validators";
 
 function revalidateGallery() {
@@ -33,7 +38,22 @@ export async function uploadGalleryAction(
     .filter((f): f is File => f instanceof File && f.size > 0);
 
   if (files.length === 0) return fail("Yüklenecek görsel seçin.");
-  if (files.length > 30) return fail("Tek seferde en fazla 30 görsel.");
+  if (files.length > MAX_BATCH_FILES) {
+    return fail(`Tek seferde en fazla ${MAX_BATCH_FILES} görsel.`);
+  }
+
+  /*
+   * Toplam boyut kontrolu. Istemci tarafi zaten gondermeden once uyariyor
+   * (GalleryManager), ama JS kapaliysa ya da istek elle olusturulduysa burasi
+   * son durak. Cercevenin 413'une takilmadan anlamli bir mesaj donuyor.
+   */
+  const total = files.reduce((sum, f) => sum + f.size, 0);
+  if (total > MAX_ACTION_BYTES) {
+    return fail(
+      `Seçilen ${files.length} dosya toplam ${formatBytes(total)}. ` +
+        `Tek seferde en fazla ${formatBytes(MAX_ACTION_BYTES)} yükleyebilirsiniz — daha az dosya seçin.`,
+    );
+  }
 
   const startRow = db
     .select({ max: sql<number | null>`max(${galleryImages.sortOrder})` })

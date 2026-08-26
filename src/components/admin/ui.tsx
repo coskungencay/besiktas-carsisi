@@ -17,10 +17,17 @@ export function SubmitButton({
   children = "Kaydet",
   variant = "primary",
   confirm,
+  disabled = false,
 }: {
   children?: ReactNode;
   variant?: "primary" | "secondary" | "danger";
   confirm?: string;
+  /**
+   * Cagiran taraf gonderimi engellemek istediginde. Buton zaten `pending`
+   * sirasinda kendiliginden kapanir; bu, ona EK bir kosul (orn. secilen
+   * dosyalarin toplam boyutu tavani asiyor) eklemek icin.
+   */
+  disabled?: boolean;
 }) {
   const { pending } = useFormStatus();
 
@@ -34,7 +41,7 @@ export function SubmitButton({
   return (
     <button
       type="submit"
-      disabled={pending}
+      disabled={pending || disabled}
       onClick={(event) => {
         if (confirm && !window.confirm(confirm)) event.preventDefault();
       }}

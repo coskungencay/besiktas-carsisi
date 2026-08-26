@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import {
   deleteGalleryImageAction,
@@ -20,9 +20,36 @@ import {
 import type { GalleryImageRow } from "@/db/schema";
 import { IDLE } from "@/lib/action-result";
 import { thumbUrl } from "@/lib/format";
+import {
+  MAX_ACTION_BYTES,
+  MAX_BATCH_FILES,
+  MAX_UPLOAD_BYTES,
+  formatBytes,
+} from "@/lib/upload-limits";
 
 export function GalleryManager({ images }: { images: GalleryImageRow[] }) {
   const [uploadState, uploadAction] = useActionState(uploadGalleryAction, IDLE);
+
+  /*
+   * SECIM ANINDA UYARI.
+   *
+   * Server action govdesi bellekte tamponlanir ve tavani asilirsa istek
+   * uygulama koduna HIC varmaz: Next 413 doner, kullanici da anlamli bir
+   * uyari degil ham "Application error" ekrani gorur. Yani sunucu tarafi
+   * kontrolu bu durumda gec kaliyor.
+   *
+   * Bu yuzden kontrol dosyalar SECILIR SECILMEZ burada yapiliyor: kullanici
+   * 40 MB'lik bir secimin neden gitmeyecegini gonder tusuna basmadan once,
+   * rakamlariyla goruyor. Sunucudaki ayni kontrol yine duruyor (JS kapali
+   * ya da elle olusturulmus istekler icin).
+   */
+  const [pick, setPick] = useState<{ count: number; bytes: number } | null>(
+    null,
+  );
+
+  const tooManyFiles = pick !== null && pick.count > MAX_BATCH_FILES;
+  const tooLarge = pick !== null && pick.bytes > MAX_ACTION_BYTES;
+  const blocked = tooManyFiles || tooLarge;
   const [altState, altAction] = useActionState(updateGalleryAltAction, IDLE);
   const [deleteState, deleteAction] = useActionState(
     deleteGalleryImageAction,
@@ -48,16 +75,49 @@ export function GalleryManager({ images }: { images: GalleryImageRow[] }) {
               accept="image/*"
               multiple
               required
+              onChange={(event) => {
+                const files = Array.from(event.currentTarget.files ?? []);
+                setPick(
+                  files.length === 0
+                    ? null
+                    : {
+                        count: files.length,
+                        bytes: files.reduce((sum, f) => sum + f.size, 0),
+                      },
+                );
+              }}
               className="mt-1.5 block w-full text-sm text-zinc-700 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-white"
             />
+            {/*
+              Yazili sinir artik GERCEKTEN gecerli olan sinir. Onceden
+              "30 dosya x 12 MB" yaziyordu — yani 360 MB — ama cerceve
+              1 MB'da kesiyordu; vaat ile davranis arasinda 360 katlik fark
+              vardi ve kullanici bunu ancak hata ekraniyla ogreniyordu.
+            */}
             <p className="mt-1 text-xs text-zinc-500">
-              Tek seferde en fazla 30 dosya, dosya başına 12 MB. Görseller
-              otomatik olarak WebP&apos;ye çevrilir ve küçültülür.
+              Tek seferde en fazla {MAX_BATCH_FILES} dosya, dosya başına{" "}
+              {formatBytes(MAX_UPLOAD_BYTES)}, toplam{" "}
+              {formatBytes(MAX_ACTION_BYTES)}. Görseller otomatik olarak
+              WebP&apos;ye çevrilir ve küçültülür.
             </p>
+
+            {pick ? (
+              <p
+                className={`mt-2 text-xs ${blocked ? "font-semibold text-red-700" : "text-zinc-600"}`}
+                role={blocked ? "alert" : undefined}
+              >
+                {pick.count} dosya seçildi · {formatBytes(pick.bytes)}
+                {tooManyFiles
+                  ? ` — tek seferde en fazla ${MAX_BATCH_FILES} dosya yükleyebilirsiniz.`
+                  : tooLarge
+                    ? ` — tek seferde en fazla ${formatBytes(MAX_ACTION_BYTES)} yükleyebilirsiniz. Daha az dosya seçip birkaç kez yükleyin.`
+                    : ""}
+              </p>
+            ) : null}
           </div>
 
           <div className="flex items-center gap-3">
-            <SubmitButton>Yükle</SubmitButton>
+            <SubmitButton disabled={blocked}>Yükle</SubmitButton>
             <FormMessage state={uploadState} />
           </div>
         </form>

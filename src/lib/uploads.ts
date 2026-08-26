@@ -6,11 +6,18 @@ import { extname, isAbsolute, join, resolve } from "node:path";
 import sharp from "sharp";
 
 import { uploadsDir } from "@/lib/env";
+import { MAX_UPLOAD_BYTES } from "@/lib/upload-limits";
 
 export const MAX_WIDTH = 1920;
 export const THUMB_WIDTH = 400;
-export const MAX_UPLOAD_BYTES = 12 * 1024 * 1024; // 12 MB
 export const UPLOAD_URL_PREFIX = "/api/uploads/";
+
+/*
+ * Dosya tavani artik upload-limits.ts'te: ayni sayi istemci tarafinda da
+ * gerekiyor ve bu dosya `server-only` oldugu icin oradan okunamiyor.
+ * Disariya buradan da veriliyor ki mevcut import'lar kirilmasin.
+ */
+export { MAX_UPLOAD_BYTES };
 
 /**
  * Hareketli gorseller icin daha dar bir tavan. Animasyonlu bir WebP'de her kare
