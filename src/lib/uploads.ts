@@ -30,15 +30,39 @@ export const MAX_ANIMATED_WIDTH = 960;
 /*                                    Kota                                     */
 /* -------------------------------------------------------------------------- */
 
-/** Musteri basina yuklenebilecek medya adedi (her yukleme = 1 medya). */
-export const MAX_MEDIA_COUNT = 100;
+/**
+ * Musteri basina yuklenebilecek medya adedi (her yukleme = 1 medya).
+ *
+ * 100'DEN 2000'E CIKARILDI. Sablonun 100'u kucuk bir kafe icin olculmustu:
+ * bir menu, birkac vitrin karesi. Bu carsida 87 magaza, 20 kategori ve bir
+ * galeri var; panel gercek kullanimin ilk iki haftasinda 98/100'e ulasti ve
+ * yeni magaza fotografi eklenemez hale geldi. Oysa ayni anda disk kotasinin
+ * yalnizca %15'i (179 MB / 1200 MB) doluydu — yani adet siniri, ASIL sinir
+ * olan diskten cok once devreye giriyordu. Iki tavan artik birbiriyle
+ * tutarli: gozlenen ortalama medya basina ~1,8 MB (uc varyant dahil), yani
+ * 2000 medya ~3,6 GB eder ve iki sinir asagi yukari ayni noktada baglar.
+ *
+ * TARAMA MALIYETI OLCULDU (mediaUsage her panel acilisinda diski okur):
+ *   100 medya  /  300 dosya →  2 ms
+ *  1000 medya  / 3000 dosya → 12 ms
+ *  3000 medya  / 9000 dosya → 33 ms
+ * Yani adedi buyutmenin panel hizina kayda deger bir bedeli yok.
+ */
+export const MAX_MEDIA_COUNT = 2000;
 
 /**
  * Diskte kaplanabilecek toplam alan. DIKKAT: bu, yuklenen dosyalarin degil
  * diskteki UC varyantin (ana WebP + thumb + orijinal) toplamidir; kullanici
- * "1200 MB" gordugunde sunucuda gercekten o kadar yer tutuldugunu bilir.
+ * "4096 MB" gordugunde sunucuda gercekten o kadar yer tutuldugunu bilir.
+ *
+ * 1200 MB'dan 4 GB'a cikarildi. BU SINIR KEYFI DEGIL, sunucunun gercek
+ * durumundan turetildi: disk 38 GB, 16 GB bos ve AYNI SUNUCUDA baska
+ * uygulamalar da calisiyor. 4 GB tavan, bu site tavanina kadar dolsa bile
+ * geriye 12 GB birakiyor — yani tek bir musterinin yuklemesi sunucudaki
+ * diger isleri disk dolmasiyla dusuremiyor. Sinirsiz birakmak cazip ama
+ * paylasimli bir sunucuda dogru degil.
  */
-export const MAX_MEDIA_BYTES = 1200 * 1024 * 1024; // 1200 MB
+export const MAX_MEDIA_BYTES = 4096 * 1024 * 1024; // 4 GB
 
 export type MediaUsage = {
   /** Yuklenmis medya adedi (uuid sayisi, varyantlar tek sayilir). */

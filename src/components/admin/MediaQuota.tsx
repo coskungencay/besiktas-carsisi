@@ -10,9 +10,13 @@ function mb(bytes: number): string {
  * Medya kotasi gostergesi.
  *
  * Yukleme yapilabilen her panel sayfasinin ustunde durur. Sayim DISKTEN
- * okunur (bkz. lib/uploads.ts): musteri burada "1200 MB" gordugunde sunucuda
- * gercekten o kadar yer tutuldugunu bilir — yukledigi dosyalarin toplami
- * degil, saklanan tum varyantlar.
+ * okunur (bkz. lib/uploads.ts): buradaki MB, yuklenen dosyalarin toplami
+ * degil diskte GERCEKTEN tutulan yerdir — her medyanin uc varyanti (ana
+ * WebP + thumb + orijinal) dahil.
+ *
+ * Esikler yuzde uzerinden calisiyor, sabit sayilar uzerinden degil; bu yuzden
+ * kotalar degistiginde (bkz. MAX_MEDIA_COUNT / MAX_MEDIA_BYTES) burada
+ * dokunulacak bir sey yok.
  */
 export async function MediaQuota() {
   const { count, bytes, maxCount, maxBytes } = await mediaUsage();
